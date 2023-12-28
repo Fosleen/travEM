@@ -1,0 +1,46 @@
+@import "../../../utils/theme.scss";
+
+.horizontal-post-item-container {
+  display: flex;
+  background-color: rgba($color: #d9d9d9, $alpha: 0.6);
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+
+  &.small {
+    background-color: transparent;
+  }
+
+  & .horizontal-post-item-image-container {
+    width: 144px;
+    height: 96px;
+
+    &.small {
+      width: 124px;
+      height: 88px;
+    }
+
+    img {
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+  }
+  .horizontal-post-item-text-container {
+    padding: 8px;
+    flex: 1;
+
+    p {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 130%;
+
+      &.small {
+        font-size: 14px;
+        font-weight: 700;
+      }
+    }
+  }
+}

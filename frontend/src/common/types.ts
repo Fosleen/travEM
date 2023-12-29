@@ -8,6 +8,8 @@ export interface ButtonProps {
   red?: boolean;
   grey?: boolean;
   primary?: boolean;
+  circle?: boolean;
+  fitText?: boolean;
   white?: boolean;
   adminPrimary?: boolean;
   form?: string;
@@ -21,10 +23,12 @@ export interface InputProps {
   placeholder: string;
   error?: string;
   disabled?: boolean;
+  green?: boolean;
   adminView?: boolean;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export interface SearchProps {
+  green?: boolean;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }

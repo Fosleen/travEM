@@ -2,26 +2,36 @@
 
 .search-container {
   position: relative;
-  width: 100%;
 
-  input {
+  .search {
     background-color: #e6edf5;
-    padding: 8px;
-    padding-right: 30px;
+    padding: 16px 30px 16px 24px;
     border: none;
-    border-radius: 8px;
+    border-radius: 24px;
     outline: none;
     width: 100%;
+    font-weight: 500;
 
     &:focus {
       border-color: $lightBlue;
+    }
+
+    &-green {
+      background-color: $bg;
+      border: 2px solid $green;
+      border-radius: 24px;
+      padding: 14px 30px 14px 24px;
+
+      &:focus {
+        border-color: $greenHover;
+      }
     }
   }
 
   svg {
     position: absolute;
     top: 50%;
-    right: 8px;
+    right: 20px;
     transform: translateY(-50%);
     cursor: pointer;
     color: $grey;

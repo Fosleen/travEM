@@ -2,14 +2,15 @@
 
 .button {
   width: 100%;
-  border-radius: 16px;
+  border-radius: 24px;
   display: flex;
   flex-direction: row;
+  font-size: 14px;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   font-weight: bold;
-  padding: 12px 4px;
+  padding: 15px 4px;
   border: none;
   text-transform: uppercase;
 
@@ -21,21 +22,53 @@
   &-white {
     background-color: $bg;
     color: $grey;
-    border: 4px solid $grey;
+    border: 3px solid $grey;
+    padding: 12px 4px;
   }
 
   &-admin-primary {
     background-color: $green;
     color: $bg;
+
+    &:hover {
+      background-color: $greenHover;
+      transition: 0.2s;
+    }
   }
 
   &-primary {
     background-color: $limeGreen;
     color: $grey;
+
+    &:hover {
+      background-color: $limeGreenHover;
+      transition: 0.2s;
+    }
+  }
+
+  &-fit {
+    width: fit-content;
+    padding: 12px 24px;
+  }
+
+  &-circle {
+    background-color: $green;
+    color: $bg;
+    font-size: 40px;
+    font-weight: 300;
+    padding: 0px;
+    padding-left: 14px;
+    padding-right: 14px;
+
+    &:hover {
+      background-color: $greenHover;
+      transition: 0.2s;
+    }
   }
 
   &-disabled {
-    background-color: red;
+    background-color: rgb(195, 174, 174);
+    cursor: not-allowed;
   }
 
   &-red {

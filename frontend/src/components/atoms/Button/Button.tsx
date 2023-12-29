@@ -1,7 +1,8 @@
+import { FC } from "react";
 import { ButtonProps } from "../../../common/types";
 import "./Button.scss";
 
-const Button: React.FC<ButtonProps> = ({
+const Button: FC<ButtonProps> = ({
   children,
   onClick,
   type = "button",
@@ -10,6 +11,8 @@ const Button: React.FC<ButtonProps> = ({
   primary = false,
   grey = false,
   white = false,
+  fitText = true,
+  circle = false,
   adminPrimary = false,
   form,
 }) => {
@@ -19,12 +22,20 @@ const Button: React.FC<ButtonProps> = ({
     buttonClasses += ` button-red `;
   }
 
+  if (fitText) {
+    buttonClasses += ` button-fit `;
+  }
+
   if (primary) {
     buttonClasses += ` button-primary `;
   }
 
   if (white) {
     buttonClasses += ` button-white `;
+  }
+
+  if (circle) {
+    buttonClasses += ` button-circle `;
   }
 
   if (adminPrimary) {

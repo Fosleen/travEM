@@ -10,6 +10,7 @@ const Input: FC<InputProps> = ({
   name,
   placeholder,
   error,
+  green = false,
   disabled = false,
   onChange,
 }) => {
@@ -18,6 +19,10 @@ const Input: FC<InputProps> = ({
 
   if (disabled) {
     inputClasses += ` input-disabled `;
+  }
+
+  if (green) {
+    inputClasses += ` input-green `;
   }
 
   if (adminView) {

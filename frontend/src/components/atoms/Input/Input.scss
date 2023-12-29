@@ -1,0 +1,27 @@
+@import "../../../utils/theme.scss";
+
+.input-parent-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input {
+  width: 100%;
+  background-color: $bg;
+  padding: 8px 4px;
+  border-radius: 8px;
+  border: 1px solid $lightBlue;
+  color: $grey;
+
+  &-label {
+    color: $grey;
+    font-size: 16px;
+  }
+}
+
+.input-admin-view {
+  font-weight: bold;
+  font-size: 24px;
+}

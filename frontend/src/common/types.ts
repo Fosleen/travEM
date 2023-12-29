@@ -1,3 +1,5 @@
+import { ChangeEvent, HTMLInputTypeAttribute } from "react";
+
 export interface ButtonProps {
   children: React.ReactNode;
   onClick: React.MouseEventHandler<HTMLButtonElement>;
@@ -9,4 +11,16 @@ export interface ButtonProps {
   white?: boolean;
   adminPrimary?: boolean;
   form?: string;
+}
+
+export interface InputProps {
+  type?: HTMLInputTypeAttribute;
+  label?: string;
+  value?: string | number;
+  name: string;
+  placeholder: string;
+  error?: string;
+  disabled?: boolean;
+  adminView?: boolean;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }

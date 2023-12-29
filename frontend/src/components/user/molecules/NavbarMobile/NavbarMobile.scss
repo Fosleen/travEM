@@ -9,6 +9,9 @@
     top: -64px;
 
     svg {
+      background-color: $limeLight;
+      padding: 8px;
+      border-radius: 24px;
       cursor: pointer;
     }
   }
@@ -30,7 +33,7 @@
         background-color: $bg;
         border-radius: 8px;
         width: fit-content;
-        padding:8px 6px;
+        padding: 8px 6px;
         display: flex;
         align-items: center;
         gap: 2px;

@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import logoWhite from "../../../../assets/travem-logo-white.png";
 import logoGrey from "../../../../assets/travem-logo-grey.png";
 import "./Header.scss";
@@ -27,10 +27,13 @@ const Header = () => {
 
   return (
     <div className="header-container">
-      <div className="header-logo">
-        <img src={isHomePage ? logoWhite : logoGrey} alt="travem-logo" />
+      <div className="header-top">
+        <Link to="/">
+          <img src={isHomePage ? logoWhite : logoGrey} alt="travem-logo" />
+        </Link>
+        {isDesktop && <NavbarDesktop />}
       </div>
-      {isDesktop ? <NavbarDesktop /> : <NavbarMobile />}
+      {!isDesktop && <NavbarMobile />}
     </div>
   );
 };

@@ -1,0 +1,52 @@
+@import "../../../../utils/theme.scss";
+
+.navbar-desktop-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  .navbar-desktop-inner-container {
+    display: flex;
+    align-items: center;
+    gap: 0px;
+    margin-left: 16px;
+
+    &:last-of-type {
+      gap: 16px;
+    }
+
+    .navbar-item {
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      color: $grey;
+      cursor: pointer;
+
+      & svg {
+        fill: $grey;
+      }
+
+      &.dark {
+        color: $bg;
+
+        & svg {
+          fill: $bg;
+        }
+      }
+
+      &:hover {
+        color: $grey;
+        background-color: $bg;
+        box-shadow: 0px 0px 6px 2px $limeGreen;
+
+        & svg {
+          fill: $grey;
+        }
+      }
+    }
+  }
+}

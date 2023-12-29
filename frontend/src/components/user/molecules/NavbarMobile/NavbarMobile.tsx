@@ -1,7 +1,6 @@
-import { List, X, CaretDown, CaretUp, Divide } from "@phosphor-icons/react";
+import { List, X, CaretDown, CaretUp } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import "./NavbarMobile.scss";
-import { Link } from "react-router-dom";
 import SocialMediaLinks from "../../../atoms/SocialMediaLinks/SocialMediaLinks";
 import Search from "../../../atoms/Search";
 
@@ -17,7 +16,7 @@ const NavbarMobile = () => {
     setOpenNav(false);
   };
 
-  const handleSubcategoryChange = (type) => {
+  const handleSubcategoryChange = (type: string) => {
     console.log(type);
     7;
     if (type != selectedSubcategory) {
@@ -38,14 +37,14 @@ const NavbarMobile = () => {
           <X
             onClick={navHandler}
             className={`cursor-pointer ${openNav ? "block" : "hidden"}`}
-            size={32}
+            size={40}
             color="black"
           />
         ) : (
           <List
             onClick={navHandler}
             className={`cursor-pointer ${openNav ? "hidden" : "block"}`}
-            size={32}
+            size={40}
             color="black"
           />
         )}

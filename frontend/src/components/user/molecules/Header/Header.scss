@@ -1,9 +1,24 @@
 @import "../../../../utils/theme.scss";
 
 .header-container {
-  .header-logo {
+  .header-top {
     width: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
+
+    img{
+      padding: 8px 0;
+    }
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .header-container {
+    .header-top {
+      max-width: 1300px;
+      margin: 0 auto;
+      justify-content: start;
+    }
   }
 }

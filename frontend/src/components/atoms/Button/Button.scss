@@ -1,0 +1,45 @@
+@import "../../../utils/theme.scss";
+
+.button {
+  width: 100%;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 12px 4px;
+  border: none;
+  text-transform: uppercase;
+
+  &-grey {
+    background-color: $grey;
+    color: $bg;
+  }
+
+  &-white {
+    background-color: $bg;
+    color: $grey;
+    border: 4px solid $grey;
+  }
+
+  &-admin-primary {
+    background-color: $green;
+    color: $bg;
+  }
+
+  &-primary {
+    background-color: $limeGreen;
+    color: $grey;
+  }
+
+  &-disabled {
+    background-color: red;
+  }
+
+  &-red {
+    background-color: $delete;
+    color: $bg;
+  }
+}

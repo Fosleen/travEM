@@ -1,0 +1,51 @@
+@import "../../../../utils/theme.scss";
+
+.navbar-mobile-container {
+  position: relative;
+
+  .navbar-mobile-icon {
+    position: absolute;
+    right: 16px;
+    top: -64px;
+
+    svg {
+      cursor: pointer;
+    }
+  }
+
+  .navbar-mobile-menu {
+    background-color: $limeLight;
+
+    a {
+      text-decoration: none;
+    }
+
+    .navbar-mobile-menu-categories {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px;
+
+      .navbar-mobile-item {
+        border: 2px solid $green;
+        background-color: $bg;
+        border-radius: 8px;
+        width: fit-content;
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        font-size: 16px;
+        font-weight: 700;
+
+        &.selected {
+          background-color: $green;
+          color: $bg;
+        }
+      }
+    }
+
+    .navbar-mobile-content {
+      padding: 8px;
+    }
+  }
+}

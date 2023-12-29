@@ -1,0 +1,29 @@
+@import "../../../utils/theme.scss";
+
+.search-container {
+  position: relative;
+  width: 100%;
+
+  input {
+    background-color: #e6edf5;
+    padding: 8px;
+    padding-right: 30px;
+    border: none;
+    border-radius: 8px;
+    outline: none;
+    width: 100%;
+
+    &:focus {
+      border-color: $lightBlue;
+    }
+  }
+
+  svg {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: $grey;
+  }
+}

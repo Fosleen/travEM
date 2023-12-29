@@ -24,3 +24,7 @@ export interface InputProps {
   adminView?: boolean;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
+
+export interface SearchProps {
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+}

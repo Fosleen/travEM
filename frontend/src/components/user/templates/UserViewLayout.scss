@@ -8,5 +8,32 @@
 
   .user-view-layout-page {
     flex: 1;
+    width: 100%;
+
+    &.max-width {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .user-view-layout-container {
+    .user-view-layout-page {
+      &.max-width {
+        padding: 0 24px;
+      }
+    }
+  }
+}
+
+@media screen and ($desktopLarge) {
+  .user-view-layout-container {
+    .user-view-layout-page {
+      &.max-width {
+        padding: 0;
+      }
+    }
   }
 }

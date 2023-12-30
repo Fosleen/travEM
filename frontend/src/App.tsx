@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
-import AirplaneTickets from "./Pages/UserViewPages/AirplaneTickets/AirplaneTickets";
 import UserViewLayout from "./components/user/templates/UserViewLayout";
+import Homepage from "./Pages/UserViewPages/Homepage/Homepage";
+import About from "./Pages/UserViewPages/About/About";
 
 function App() {
   return (

@@ -6,8 +6,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-left: 8px;
 
-    img{
+    img {
       padding: 8px 0;
     }
   }
@@ -19,6 +20,22 @@
       max-width: 1300px;
       margin: 0 auto;
       justify-content: start;
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .header-container {
+    .header-top {
+      padding: 0 24px;
+    }
+  }
+}
+
+@media screen and ($desktopLarge) {
+  .header-container {
+    .header-top {
+      padding: 0;
     }
   }
 }

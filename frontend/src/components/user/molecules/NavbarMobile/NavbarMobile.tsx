@@ -52,44 +52,49 @@ const NavbarMobile = () => {
       {openNav && (
         <div className="navbar-mobile-menu">
           <div className="navbar-mobile-menu-categories">
-            <div
-              className={`navbar-mobile-item ${
-                selectedSubcategory === "destinacije" && "selected"
-              }`}
-              onClick={() => handleSubcategoryChange("destinacije")}
-            >
-              Destinacije
-              {selectedSubcategory === "destinacije" ? (
-                <CaretUp size={16} weight="bold" color="#e0e0e0" />
-              ) : (
-                <CaretDown size={16} weight="bold" color="#303030" />
-              )}
+            <div className="navbar-mobile-menu-search">
+              <Search green onChange={() => {}} />
             </div>
-            <div
-              className={`navbar-mobile-item ${
-                selectedSubcategory === "savjeti" && "selected"
-              }`}
-              onClick={() => handleSubcategoryChange("savjeti")}
-            >
-              Savjeti
-              {selectedSubcategory === "savjeti" ? (
-                <CaretUp size={16} weight="bold" color="#e0e0e0" />
-              ) : (
-                <CaretDown size={16} weight="bold" color="#303030" />
-              )}
-            </div>
-            <div
-              className={`navbar-mobile-item ${
-                selectedSubcategory === "aviokarte" && "selected"
-              }`}
-              onClick={() => handleSubcategoryChange("aviokarte")}
-            >
-              Aviokarte
-              {selectedSubcategory === "aviokarte" ? (
-                <CaretUp size={16} weight="bold" color="#e0e0e0" />
-              ) : (
-                <CaretDown size={16} weight="bold" color="#303030" />
-              )}
+            <div className="navbar-mobile-menu-list">
+              <div
+                className={`navbar-mobile-item ${
+                  selectedSubcategory === "destinacije" && "selected"
+                }`}
+                onClick={() => handleSubcategoryChange("destinacije")}
+              >
+                Destinacije
+                {selectedSubcategory === "destinacije" ? (
+                  <CaretUp size={16} weight="bold" color="#e0e0e0" />
+                ) : (
+                  <CaretDown size={16} weight="bold" color="#303030" />
+                )}
+              </div>
+              <div
+                className={`navbar-mobile-item ${
+                  selectedSubcategory === "savjeti" && "selected"
+                }`}
+                onClick={() => handleSubcategoryChange("savjeti")}
+              >
+                Savjeti
+                {selectedSubcategory === "savjeti" ? (
+                  <CaretUp size={16} weight="bold" color="#e0e0e0" />
+                ) : (
+                  <CaretDown size={16} weight="bold" color="#303030" />
+                )}
+              </div>
+              <div
+                className={`navbar-mobile-item ${
+                  selectedSubcategory === "aviokarte" && "selected"
+                }`}
+                onClick={() => handleSubcategoryChange("aviokarte")}
+              >
+                Aviokarte
+                {selectedSubcategory === "aviokarte" ? (
+                  <CaretUp size={16} weight="bold" color="#e0e0e0" />
+                ) : (
+                  <CaretDown size={16} weight="bold" color="#303030" />
+                )}
+              </div>
             </div>
           </div>
 
@@ -99,7 +104,6 @@ const NavbarMobile = () => {
             )}
             {selectedSubcategory === "savjeti" && <div>savjeti popis </div>}
             {selectedSubcategory === "aviokarte" && <div>aviokarte popis </div>}
-            <Search green onChange={() => {}} />
             <SocialMediaLinks />
           </div>
         </div>

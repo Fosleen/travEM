@@ -2,7 +2,7 @@
 
 .button {
   width: 100%;
-  border-radius: 24px;
+  border-radius: 32px;
   display: flex;
   flex-direction: row;
   font-size: 14px;
@@ -13,6 +13,12 @@
   padding: 15px 4px;
   border: none;
   text-transform: uppercase;
+
+  &-fit {
+    width: fit-content;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
 
   &-grey {
     background-color: $grey;
@@ -39,16 +45,12 @@
   &-primary {
     background-color: $limeGreen;
     color: $grey;
+    padding: 16px 32px;
 
     &:hover {
       background-color: $limeGreenHover;
       transition: 0.2s;
     }
-  }
-
-  &-fit {
-    width: fit-content;
-    padding: 12px 24px;
   }
 
   &-circle {

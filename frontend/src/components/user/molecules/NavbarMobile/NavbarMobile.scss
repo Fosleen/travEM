@@ -1,0 +1,101 @@
+@import "../../../../utils/theme.scss";
+
+.navbar-mobile-container {
+  position: relative;
+
+  .navbar-mobile-icon {
+    position: absolute;
+    right: 16px;
+    top: -64px;
+    z-index: 1;
+
+    svg {
+      background-color: $limeLight;
+      padding: 8px;
+      border-radius: 24px;
+      cursor: pointer;
+    }
+  }
+
+  .navbar-mobile-menu {
+    background-color: $limeLight;
+
+    a {
+      text-decoration: none;
+    }
+
+    .navbar-mobile-menu-categories {
+      display: flex;
+      flex-direction: column;
+      padding: 8px;
+
+      .navbar-mobile-menu-search {
+        width: 100%;
+        max-width: 344px;
+        margin: 0 auto;
+      }
+
+      .navbar-mobile-menu-list {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        padding: 8px;
+
+        .navbar-mobile-item {
+          border: 2px solid $green;
+          background-color: $bg;
+          border-radius: 8px;
+          width: fit-content;
+          padding: 8px 6px;
+          display: flex;
+          align-items: center;
+          gap: 2px;
+          font-size: 16px;
+          font-weight: 700;
+
+          &.selected {
+            background-color: $green;
+            color: $bg;
+          }
+        }
+      }
+    }
+
+    .navbar-mobile-content {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 8px;
+    }
+
+    &:last-child {
+      padding-bottom: 8px;
+    }
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .navbar-mobile-container {
+    .navbar-mobile-menu {
+      .navbar-mobile-menu-categories {
+        flex-direction: row;
+        justify-content: center;
+        gap: 8px;
+        flex-flow: row-reverse;
+
+        .navbar-mobile-menu-list {
+          padding: 0;
+
+          .navbar-mobile-item {
+            padding: 12px;
+          }
+        }
+
+        .navbar-mobile-menu-search {
+          max-width: none;
+          margin: 0;
+        }
+      }
+    }
+  }
+}

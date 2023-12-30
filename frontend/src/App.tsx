@@ -1,7 +1,17 @@
+import { Route, Routes } from "react-router-dom";
+import UserViewLayout from "./components/user/templates/UserViewLayout";
+import Homepage from "./Pages/UserViewPages/Homepage/Homepage";
+import About from "./Pages/UserViewPages/About/About";
+
 function App() {
   return (
     <>
-      <p>TravEM page</p>
+      <Routes>
+        <Route path="/" element={<UserViewLayout />}>
+          <Route index element={<Homepage />} />
+          <Route path="/o-nama" element={<About />} />
+        </Route>
+      </Routes>
     </>
   );
 }

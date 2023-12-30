@@ -1,0 +1,43 @@
+@import "../../../../utils/theme.scss";
+
+.header-container {
+  .header-top {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 8px;
+
+    img {
+      padding: 8px 0;
+      position: relative;
+      z-index: 2;
+    }
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .header-container {
+    .header-top {
+      max-width: 1300px;
+      margin: 0 auto;
+      justify-content: start;
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .header-container {
+    .header-top {
+      padding: 0 24px;
+    }
+  }
+}
+
+@media screen and ($desktopLarge) {
+  .header-container {
+    .header-top {
+      padding: 0;
+    }
+  }
+}

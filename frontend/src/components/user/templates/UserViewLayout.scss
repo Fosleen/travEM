@@ -1,0 +1,12 @@
+@import "../../../utils/theme.scss";
+
+.user-view-layout-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: $bg;
+
+  .user-view-layout-page {
+    flex: 1;
+  }
+}

@@ -1,0 +1,49 @@
+@import "../../../utils/theme.scss";
+
+.tips-and-tricks-grid-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
+  @media screen and ($tablet) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+  }
+}
+
+.tips-and-tricks-text-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  h2 {
+    color: $textPrimary;
+    font-size: 96px;
+  }
+}
+.tips-and-tricks-connected-articles-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
+  @media screen and ($tabletMedium) {
+    flex-direction: row;
+  }
+}
+
+.tips-and-tricks-text-articles-wrapper {
+  h2 {
+    font-weight: bold;
+    font-size: 40px;
+  }
+}
+
+.tips-and-tricks-parent-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-top: 28px;
+  padding-bottom: 28px;
+}

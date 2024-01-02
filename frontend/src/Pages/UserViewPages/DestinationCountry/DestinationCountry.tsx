@@ -5,6 +5,7 @@ import "./DestinationCountry.scss";
 import HorizontalPostItemBig from "../../../components/user/atoms/HorizontalPostItemBig";
 import CountryPlaces from "../../../components/user/molecules/CountryPlaces";
 import CountryHighlight from "../../../components/user/atoms/CountryHighlight";
+import VisaInfo from "../../../components/user/molecules/VisaInfo";
 
 const DestinationCountry = () => {
   return (
@@ -37,6 +38,10 @@ const DestinationCountry = () => {
       <div className="destination-country-highlights-container">
         <CountryHighlight iconNmbr={"1"} />
         <CountryHighlight iconNmbr={"2"} />
+      </div>
+
+      <div className="destination-country-visa-info-container">
+        <VisaInfo />
       </div>
     </div>
   );

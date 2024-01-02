@@ -1,0 +1,23 @@
+@import "../../../utils/theme.scss";
+
+.destination-country-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  .destination-country-upper-container {
+    display: flex;
+    gap: 8px;
+    flex-direction: column;
+    padding: 0 16px;
+    width: 100%;
+  }
+}
+
+@media screen and ($desktop) {
+  .destination-country-page-container {
+    .destination-country-upper-container {
+      flex-direction: row;
+    }
+  }
+}

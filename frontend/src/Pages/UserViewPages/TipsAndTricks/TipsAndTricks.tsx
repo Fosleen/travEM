@@ -1,4 +1,4 @@
-import HorizontalPostItemBig from "../../../components/atoms/HorizontalPostItemBig/HorizontalPostItemBig";
+import HorizontalPostItemBig from "../../../components/user/atoms/HorizontalPostItemBig/HorizontalPostItemBig";
 import "./TipsAndTricks.scss";
 
 const TipsAndTricks = () => {

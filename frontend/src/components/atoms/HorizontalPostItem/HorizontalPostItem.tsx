@@ -1,4 +1,4 @@
-import postImage from "../../../assets/post-image.jpg";
+import postImage from "../../../assets/images/post-image.jpg";
 import "./HorizontalPostItem.scss";
 
 const HorizontalPostItem = ({ isSmall }) => {

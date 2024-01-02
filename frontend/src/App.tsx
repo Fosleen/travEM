@@ -5,6 +5,9 @@ import About from "./pages/UserViewPages/About/About";
 import AirplaneTickets from "./pages/UserViewPages/AirplaneTickets/AirplaneTickets";
 import SearchResults from "./pages/UserViewPages/SearchResults/SearchResults";
 import TipsAndTricks from "./pages/UserViewPages/TipsAndTricks/TipsAndTricks";
+import "./App.scss";
+import "./assets/fonts/BlackSingature.ttf";
+import DestinationCountry from "./pages/UserViewPages/DestinationCountry/DestinationCountry";
 
 function App() {
   return (
@@ -16,6 +19,7 @@ function App() {
           <Route path="/aviokarte" element={<AirplaneTickets />} />
           <Route path="/pretrazivanje" element={<SearchResults />} />
           <Route path="/savjeti/let-avionom" element={<TipsAndTricks />} />
+          <Route path="destinacija/:id" element={<DestinationCountry />} />
         </Route>
       </Routes>
     </>

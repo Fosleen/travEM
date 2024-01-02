@@ -1,4 +1,4 @@
-import footerImage from "../../../../assets/footer-image.jpg";
+import footerImage from "../../../../assets/images/footer-image.jpg";
 import "./NewsletterImage.scss";
 
 const NewsletterImage = () => {

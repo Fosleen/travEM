@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import SocialMediaLinks from "../../../atoms/SocialMediaLinks/SocialMediaLinks";
-import logo from "../../../../assets/logo-light.png";
+import logo from "../../../../assets/images/logo-light.png";
 import "./Footer.scss";
 
 const Footer = () => {

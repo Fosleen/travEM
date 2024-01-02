@@ -1,6 +1,6 @@
 import { FC } from "react";
 import "./HorizontalPostItemBig.scss";
-import postImage from "../../../assets/post-image.jpg";
+import postImage from "../../../assets/images/post-image.jpg";
 import { Link } from "react-router-dom";
 
 interface HorizontalPostItemBigProps {

@@ -7,17 +7,39 @@
 
   .destination-country-upper-container {
     display: flex;
-    gap: 8px;
+    gap: 16px;
     flex-direction: column;
     padding: 0 16px;
     width: 100%;
   }
 }
 
-@media screen and ($desktop) {
+@media screen and ($tabletMedium) {
   .destination-country-page-container {
     .destination-country-upper-container {
-      flex-direction: row;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .destination-country-page-container {
+    .destination-country-upper-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      gap: 24px;
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .destination-country-page-container {
+    gap: 80px;
+    margin-bottom: 80px;
+
+    .destination-country-upper-container {
+      gap: 40px;
     }
   }
 }

@@ -2,6 +2,7 @@ import MainCountryPost from "../../../components/user/atoms/MainCountryPost";
 import DestinationHero from "../../../components/user/molecules/DestinationHero";
 import MainCountryInfo from "../../../components/user/atoms/MainCountryInfo/MainCountryInfo";
 import "./DestinationCountry.scss";
+import HorizontalPostItemBig from "../../../components/user/atoms/HorizontalPostItemBig";
 
 const DestinationCountry = () => {
   return (
@@ -13,6 +14,19 @@ const DestinationCountry = () => {
         </div>
         <div className="destination-country-upper-container-item">
           <MainCountryPost />
+        </div>
+      </div>
+      <div className="destination-country-posts-container">
+        <h2>Pročitajte naše članke</h2>
+        <div className="destination-country-posts">
+          <HorizontalPostItemBig thin hasDate={false} />
+          <HorizontalPostItemBig thin hasDate={false} />
+          <HorizontalPostItemBig thin hasDate={false} />
+          <HorizontalPostItemBig thin hasDate={false} />
+          <HorizontalPostItemBig thin hasDate={false} />
+          <HorizontalPostItemBig thin hasDate={false} />
+          <HorizontalPostItemBig thin hasDate={false} />
+          <HorizontalPostItemBig thin hasDate={false} />
         </div>
       </div>
     </div>

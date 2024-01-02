@@ -94,12 +94,12 @@
 @media screen and ($tabletMedium) {
   .main-country-post-container {
     .main-country-post-bg-image-container {
-      height: 100%; // 464px;
+      height: 100%;
     }
 
     .main-country-top-layer {
       .main-country-post-top-image-container {
-        height: calc(100% - 120px); //calc(464px - 120px);
+        height: calc(100% - 120px);
       }
 
       .main-country-icon-container {

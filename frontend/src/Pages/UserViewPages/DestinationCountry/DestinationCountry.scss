@@ -31,6 +31,16 @@
       gap: 8px;
     }
   }
+
+  .destination-country-highlights-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-width: 1300px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 16px;
+  }
 }
 
 @media screen and ($tabletMedium) {
@@ -45,6 +55,11 @@
         grid-template-columns: repeat(2, 1fr);
         gap: 16px;
       }
+    }
+
+    .destination-country-highlights-container {
+      flex-direction: row;
+      gap: 16px;
     }
   }
 }
@@ -85,10 +100,8 @@
     padding: 0;
     gap: 80px;
 
-    .destination-country-upper-container {
-      padding: 0;
-    }
-
+    .destination-country-upper-container,
+    .destination-country-highlights-container,
     .destination-country-posts-container {
       padding: 0;
     }

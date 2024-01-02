@@ -16,11 +16,11 @@ const Login = () => {
         validate={(values) => {
           const errors = {};
           if (!values.username) {
-            errors.username = "Required";
+            errors.username = "Unesi korisničko ime";
           }
 
           if (!values.password) {
-            errors.password = "Required";
+            errors.password = "Unesi lozinku";
           }
 
           return errors;

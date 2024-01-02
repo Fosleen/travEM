@@ -5,11 +5,13 @@ import About from "./pages/UserViewPages/About/About";
 import AirplaneTickets from "./pages/UserViewPages/AirplaneTickets/AirplaneTickets";
 import SearchResults from "./pages/UserViewPages/SearchResults/SearchResults";
 import TipsAndTricks from "./pages/UserViewPages/TipsAndTricks/TipsAndTricks";
+import Login from "./pages/AdminViewPages/Login/Login";
 
 function App() {
   return (
     <>
       <Routes>
+        <Route path="/login" element={<Login />} />
         <Route path="/" element={<UserViewLayout />}>
           <Route index element={<Homepage />} />
           <Route path="/o-nama" element={<About />} />

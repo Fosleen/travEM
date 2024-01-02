@@ -1,0 +1,53 @@
+@import "../../../utils/theme.scss";
+
+.login-form-wrapper {
+  background-image: url("../../../assets/login_background.png");
+  background-repeat: no-repeat;
+  background-size: 80%;
+  background-position: center;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    gap: 24px;
+    background: linear-gradient(180deg, #d2eb64, #2bac82);
+    border-radius: 8px;
+
+    flex-direction: column;
+    width: 90%;
+
+    @media screen and ($tablet) {
+      width: 460px;
+      padding: 42px;
+    }
+
+    .button {
+      width: 70%;
+    }
+  }
+}
+
+.login-form-logo {
+  width: 120px;
+  height: 120px;
+}
+
+.login-form-logo-wrapper {
+  display: flex;
+  //width: 460px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.login-form-and-logo-wrapper {
+  background-color: red;
+  display: flex;
+  flex-direction: column;
+}

@@ -15,12 +15,14 @@
 
   .destination-country-posts-container {
     padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 
     h2 {
-      font-size: 32px;
-      font-weight: 800;
+      font-size: 24px;
+      font-weight: 700;
       color: $greyMiddleDark;
-      padding-bottom: 8px;
     }
 
     .destination-country-posts {
@@ -59,16 +61,17 @@
 
 @media screen and ($desktop) {
   .destination-country-page-container {
-    gap: 80px;
+    gap: 40px;
     margin-bottom: 80px;
-    max-width: 1300px;
-    margin: 0 auto;
 
     .destination-country-upper-container {
       gap: 40px;
     }
 
     .destination-country-posts-container {
+      max-width: 1300px;
+      margin: 0 auto;
+
       .destination-country-posts {
         grid-template-columns: repeat(4, 1fr);
         gap: 24px;
@@ -80,6 +83,7 @@
 @media screen and ($desktopLarge) {
   .destination-country-page-container {
     padding: 0;
+    gap: 80px;
 
     .destination-country-upper-container {
       padding: 0;
@@ -87,6 +91,10 @@
 
     .destination-country-posts-container {
       padding: 0;
+    }
+
+    .destination-country-places-container {
+      width: 80%;
     }
   }
 }

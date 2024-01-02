@@ -15,7 +15,7 @@
   form {
     display: flex;
     justify-content: center;
-    align-items: center;
+    //align-items: center;
     padding: 24px;
     gap: 24px;
     background: linear-gradient(180deg, #d2eb64, #2bac82);
@@ -50,4 +50,17 @@
   background-color: red;
   display: flex;
   flex-direction: column;
+}
+
+.error-message {
+  color: red;
+  display: flex;
+  align-items: flex-start;
+}
+
+.login-form-title-wrapper,
+.login-form-button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

@@ -7,11 +7,12 @@ const Input: FC<InputProps> = ({
   label = "",
   adminView = false,
   value,
+  error,
   name,
   placeholder,
-  error,
   green = false,
   disabled = false,
+  onBlur,
   onChange,
 }) => {
   let inputClasses = `input `;
@@ -44,14 +45,11 @@ const Input: FC<InputProps> = ({
           placeholder={placeholder}
           onChange={onChange}
           disabled={disabled}
+          onBlur={onBlur}
         />
       </div>
 
-      {error && (
-        <p className=" text-red-500 font-medium text-center md:text-left rounded-md px-4">
-          {error}
-        </p>
-      )}
+      {error && <div className="error-message">{error}</div>}
     </div>
   );
 };

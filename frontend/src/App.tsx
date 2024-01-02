@@ -1,7 +1,10 @@
 import { Route, Routes } from "react-router-dom";
 import UserViewLayout from "./components/user/templates/UserViewLayout";
-import Homepage from "./Pages/UserViewPages/Homepage/Homepage";
-import About from "./Pages/UserViewPages/About/About";
+import Homepage from "./pages/UserViewPages/Homepage/Homepage";
+import About from "./pages/UserViewPages/About/About";
+import AirplaneTickets from "./pages/UserViewPages/AirplaneTickets/AirplaneTickets";
+import SearchResults from "./pages/UserViewPages/SearchResults/SearchResults";
+import TipsAndTricks from "./pages/UserViewPages/TipsAndTricks/TipsAndTricks";
 
 function App() {
   return (
@@ -10,6 +13,9 @@ function App() {
         <Route path="/" element={<UserViewLayout />}>
           <Route index element={<Homepage />} />
           <Route path="/o-nama" element={<About />} />
+          <Route path="/aviokarte" element={<AirplaneTickets />} />
+          <Route path="/pretrazivanje" element={<SearchResults />} />
+          <Route path="/savjeti/let-avionom" element={<TipsAndTricks />} />
         </Route>
       </Routes>
     </>

@@ -1,0 +1,54 @@
+@import "../../../utils/theme.scss";
+
+.airplane-tickets-grid-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
+  @media screen and ($tablet) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+  }
+}
+
+.airplane-tickets-text-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  h2 {
+    color: $textPrimary;
+    font-size: 40px;
+  }
+}
+.airplane-tickets-connected-articles-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
+  @media screen and ($tabletMedium) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media screen and ($desktopLarge) {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.airplane-tickets-text-articles-wrapper {
+  h2 {
+    font-weight: bold;
+    font-size: 40px;
+  }
+}
+
+.airplane-tickets-parent-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-top: 28px;
+  padding-bottom: 28px;
+}

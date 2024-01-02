@@ -1,0 +1,82 @@
+@import "../../../utils/theme.scss";
+
+.horizontal-post-item-big-container {
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  position: relative;
+  height: 300px;
+
+  &.stretched {
+    height: 300px;
+  }
+
+  .horizontal-post-item-big-image-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+
+    img {
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+  }
+}
+
+.horizontal-post-item-big-text-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin: 0;
+  width: 100%;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 24px;
+  box-sizing: border-box;
+
+  background-color: rgb(0 0 0 / 0.5);
+  color: white;
+
+  h4,
+  p {
+    color: white;
+  }
+
+  h4 {
+    font-size: 24px;
+
+    @media screen and ($tabletMedium) {
+      font-size: 32px;
+    }
+    font-weight: bold;
+  }
+
+  p {
+    font-size: 12px;
+
+    @media screen and ($tabletMedium) {
+      font-size: 16px;
+    }
+  }
+
+  &.small {
+    font-size: 14px;
+    font-weight: 700;
+  }
+}
+
+.horizontal-post-item-big-inner-text-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+//350 i 400

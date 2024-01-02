@@ -28,7 +28,13 @@
   gap: 28px;
 
   @media screen and ($tabletMedium) {
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media screen and ($desktopLarge) {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 

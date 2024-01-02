@@ -19,8 +19,21 @@
   flex-direction: column;
 
   h2 {
+    font-size: 48px;
     color: $textPrimary;
-    font-size: 96px;
+
+    @media screen and ($tabletMedium) {
+      font-size: 96px;
+    }
+  }
+
+  h4 {
+    font-size: 18px;
+    color: $textPrimary;
+
+    @media screen and ($tabletMedium) {
+      font-size: 24px;
+    }
   }
 }
 .tips-and-tricks-connected-articles-wrapper {
@@ -29,7 +42,13 @@
   gap: 28px;
 
   @media screen and ($tabletMedium) {
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media screen and ($desktopLarge) {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 

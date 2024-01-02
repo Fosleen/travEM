@@ -20,10 +20,10 @@ const AirplaneTickets = () => {
       </div>
 
       <div className="airplane-tickets-connected-articles-wrapper">
-        <HorizontalPostItemBig stretched />
-        <HorizontalPostItemBig stretched />
-        <HorizontalPostItemBig stretched />
-        <HorizontalPostItemBig stretched />
+        <HorizontalPostItemBig />
+        <HorizontalPostItemBig />
+        <HorizontalPostItemBig />
+        <HorizontalPostItemBig />
       </div>
     </div>
   );

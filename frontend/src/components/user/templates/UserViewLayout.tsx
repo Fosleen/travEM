@@ -7,7 +7,8 @@ import "./UserViewLayout.scss";
 
 const UserViewLayout = () => {
   const location = useLocation();
-  const isHomePage = location.pathname === "/";
+  const isHomePage =
+    location.pathname === "/" || location.pathname.startsWith("/destinacija");
 
   return (
     <main className="user-view-layout-container">

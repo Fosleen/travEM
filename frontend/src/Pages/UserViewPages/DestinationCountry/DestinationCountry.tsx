@@ -1,4 +1,4 @@
-import DestinationHero from "../../../components/user/atoms/DestinationHero";
+import DestinationHero from "../../../components/user/molecules/DestinationHero";
 
 const DestinationCountry = () => {
   return (

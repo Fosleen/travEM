@@ -1,3 +1,4 @@
+import DestinationImage from "../../atoms/DestinationImage";
 import "./DestinationHero.scss";
 
 const DestinationHero = () => {
@@ -5,17 +6,19 @@ const DestinationHero = () => {
     <div className="destination-hero-container">
       <div className="destination-hero-left">
         <div className="destination-hero-titles">
-          <h2 className="bold-black">Cipar</h2>
-          <h2 className="bold-color">Cipar</h2>
-          <h2 className="cursive-black">Cipar</h2>
+          <h2 className="bold-grey">Bosna i Hercegovina</h2>
+          <h2 className="bold-color">Bosna i Hercegovina</h2>
+          <h2 className="cursive-black">Bosna i Hercegovina</h2>
         </div>
-        <div className="destination-hero-description">
+        <p className="destination-hero-description">
           Na svakom koraku iznenađuje autentičnošću, netaknutom ljepotom i
           kristalno čistim morem. Nudi brojne mogućnosti za opuštanje i pravi
           odmor.
-        </div>
+        </p>
       </div>
-      <div className="destination-hero-right">slika</div>
+      <div className="destination-hero-right">
+        <DestinationImage />
+      </div>
     </div>
   );
 };

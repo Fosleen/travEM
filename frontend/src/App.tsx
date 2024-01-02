@@ -6,7 +6,6 @@ import AirplaneTickets from "./pages/UserViewPages/AirplaneTickets/AirplaneTicke
 import SearchResults from "./pages/UserViewPages/SearchResults/SearchResults";
 import TipsAndTricks from "./pages/UserViewPages/TipsAndTricks/TipsAndTricks";
 import "./App.scss";
-import "./assets/fonts/BlackSingature.ttf";
 import DestinationCountry from "./pages/UserViewPages/DestinationCountry/DestinationCountry";
 
 function App() {

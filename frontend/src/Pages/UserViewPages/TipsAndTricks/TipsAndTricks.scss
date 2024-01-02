@@ -5,10 +5,14 @@
   flex-direction: column;
   gap: 28px;
 
-  @media screen and ($tablet) {
+  @media screen and ($tabletMedium) {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 28px;
+  }
+
+  @media screen and ($desktopLarge) {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 

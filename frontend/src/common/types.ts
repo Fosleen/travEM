@@ -32,11 +32,3 @@ export interface SearchProps {
   green?: boolean;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
-
-export interface PaginationProps {
-  handleClickPrevious: React.MouseEventHandler<HTMLButtonElement>;
-  handleClickNext: React.MouseEventHandler<HTMLButtonElement>;
-  handleClickNumber: React.MouseEventHandler<HTMLButtonElement>;
-  currentPage: number;
-  totalPages: number;
-}

@@ -1,0 +1,56 @@
+@import "../../../../utils/theme.scss";
+
+.destination-videos-container {
+  position: relative;
+
+  .destination-videos-image {
+    position: absolute;
+    overflow: hidden;
+    right: 8px;
+    top: -64px;
+
+    img {
+      width: 32px;
+    }
+  }
+
+  .destination-videos {
+    position: relative;
+    display: grid;
+    grid-template-columns: none;
+    grid-template-rows: 1fr;
+    gap: 40px;
+    padding: 16px 0;
+  }
+}
+
+@media screen and ($tablet) {
+  .destination-videos-container {
+    .destination-videos-image {
+      top: -72px;
+
+      img {
+        width: 64px;
+      }
+    }
+
+    .destination-videos {
+      gap: 8px;
+      grid-template-columns: 1fr 1fr 1fr;
+      height: fit-content;
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .destination-videos-container {
+    .destination-videos-image {
+      right: -16px;
+      top: -104px;
+
+      img {
+        width: 112px;
+      }
+    }
+  }
+}

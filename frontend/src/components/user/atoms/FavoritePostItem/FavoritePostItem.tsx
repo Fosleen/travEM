@@ -1,5 +1,5 @@
-import postImage from "../../../assets/post-image.jpg";
-import mapImage from "../../../assets/spain-map.png";
+import postImage from "../../../../assets/images/post-image.jpg";
+import mapImage from "../../../../assets/images/spain-map.png";
 
 import "./FavoritePostItem.scss";
 

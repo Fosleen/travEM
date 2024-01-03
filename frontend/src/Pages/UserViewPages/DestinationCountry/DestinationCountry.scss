@@ -1,0 +1,131 @@
+@import "../../../utils/theme.scss";
+
+.destination-country-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  .destination-country-upper-container {
+    display: flex;
+    gap: 16px;
+    flex-direction: column;
+    padding: 0 16px;
+    width: 100%;
+  }
+
+  .destination-country-posts-container {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: $greyMiddleDark;
+    }
+
+    .destination-country-posts {
+      display: grid;
+      flex-direction: column;
+      gap: 8px;
+
+      &.last:last-child {
+        margin-bottom: 64px;
+      }
+    }
+  }
+
+  .destination-country-highlights-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-width: 1300px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 16px;
+  }
+
+  .destination-country-visa-info-container,
+  .destination-country-videos-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 16px;
+
+    h2 {
+      color: $greyMiddleDark;
+    }
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .destination-country-page-container {
+    .destination-country-upper-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .destination-country-posts-container {
+      .destination-country-posts {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+    }
+
+    .destination-country-highlights-container {
+      flex-direction: row;
+      gap: 16px;
+    }
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .destination-country-page-container {
+    .destination-country-upper-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      gap: 24px;
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .destination-country-page-container {
+    gap: 40px;
+    margin-bottom: 80px;
+
+    .destination-country-upper-container {
+      gap: 40px;
+    }
+
+    .destination-country-posts-container {
+      max-width: 1300px;
+      margin: 0 auto;
+
+      h2 {
+        margin-top: 24px;
+      }
+
+      .destination-country-posts {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+      }
+    }
+  }
+}
+
+@media screen and ($desktopLarge) {
+  .destination-country-page-container {
+    padding: 0;
+    gap: 80px;
+
+    .destination-country-upper-container,
+    .destination-country-highlights-container,
+    .destination-country-posts-container,
+    .destination-country-visa-info-container,
+    .destination-country-videos-container {
+      padding: 0;
+    }
+  }
+}

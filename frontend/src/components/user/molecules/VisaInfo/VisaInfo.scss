@@ -1,0 +1,104 @@
+@import "../../../../utils/theme.scss";
+
+.visa-info-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+
+  .visa-info-text {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    h2 {
+      max-width: 300px;
+      font-size: 24px;
+      font-weight: 700;
+      color: $greyMiddleDark;
+    }
+  }
+
+  img {
+    position: absolute;
+    right: 0;
+    width: 64px;
+    height: 64px;
+  }
+
+  .visa-info-results {
+    padding: 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    .visa-info-result {
+      h4 {
+        font-size: 16px;
+        font-weight: 600;
+      }
+      p {
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .visa-info-container {
+    img {
+      width: 176px;
+      height: 176px;
+    }
+
+    .visa-info-text {
+      h2 {
+        max-width: none;
+      }
+    }
+  }
+}
+
+@media screen and ($tablet) {
+  .visa-info-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+
+    img {
+      position: static;
+      width: 296px;
+      height: 296px;
+    }
+
+    .visa-info-text {
+      height: 100%;
+      padding: 48px 0;
+      gap: 24px;
+
+      h2 {
+        max-width: none;
+      }
+    }
+
+    .visa-info-results {
+      padding: 48px 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      gap: 24px;
+
+      .visa-info-result {
+        h4 {
+          font-size: 16px;
+          font-weight: 600;
+        }
+        p {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-@import "../../../utils/theme.scss";
+@import "../../../../utils/theme.scss";
 
 .horizontal-post-item-big-container {
   align-items: center;
@@ -9,6 +9,14 @@
 
   &.stretched {
     height: 300px;
+  }
+
+  &.thin {
+    height: 160px;
+
+    @media screen and ($tabletMedium) {
+      height: 300px;
+    }
   }
 
   .horizontal-post-item-big-image-container {
@@ -54,13 +62,13 @@
     font-size: 24px;
 
     @media screen and ($tabletMedium) {
-      font-size: 32px;
+      font-size: 20px;
     }
     font-weight: bold;
   }
 
   p {
-    font-size: 12px;
+    font-size: 14px;
 
     @media screen and ($tabletMedium) {
       font-size: 16px;

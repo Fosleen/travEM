@@ -1,21 +1,25 @@
 import { FC } from "react";
 import "./HorizontalPostItemBig.scss";
-import postImage from "../../../assets/post-image.jpg";
+import postImage from "../../../../assets/images/post-image.jpg";
 import { Link } from "react-router-dom";
 
 interface HorizontalPostItemBigProps {
   stretched?: boolean;
+  thin?: boolean;
+  hasDate?: boolean;
 }
 
 const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
   stretched,
+  thin,
+  hasDate = true,
 }) => {
   return (
     <Link to="/">
       <div
         className={`horizontal-post-item-big-container ${
           stretched ? "stretched" : ""
-        }`}
+        }${thin ? "thin" : ""}`}
       >
         <div className="horizontal-post-item-big-image-container">
           <img src={postImage} alt="post-image" />
@@ -24,7 +28,7 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
           <h4>Kako ja letim za 5E</h4>
           <div className="horizontal-post-item-big-inner-text-container">
             <p>Ovo morate znati prije </p>
-            {!stretched && <p>5.5.2025.</p>}
+            {!stretched && hasDate && <p>5.5.2025.</p>}
           </div>
         </div>
       </div>

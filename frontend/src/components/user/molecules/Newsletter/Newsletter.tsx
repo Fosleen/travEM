@@ -1,6 +1,6 @@
 import Button from "../../../atoms/Button";
 import Input from "../../../atoms/Input";
-import envelope from "../../../../assets/envelope.png";
+import envelope from "../../../../assets/images/envelope.png";
 import "./Newsletter.scss";
 import NewsletterImage from "../../atoms/NewsletterImage";
 import { useState } from "react";

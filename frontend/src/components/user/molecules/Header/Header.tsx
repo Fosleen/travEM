@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import logoWhite from "../../../../assets/travem-logo-white.png";
-import logoGrey from "../../../../assets/travem-logo-grey.png";
+import logoWhite from "../../../../assets/images/travem-logo-white.png";
+import logoGrey from "../../../../assets/images/travem-logo-grey.png";
 import "./Header.scss";
 import { useEffect, useState } from "react";
 import NavbarDesktop from "../NavbarDesktop";

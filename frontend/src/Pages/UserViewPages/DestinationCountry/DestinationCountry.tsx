@@ -6,6 +6,7 @@ import HorizontalPostItemBig from "../../../components/user/atoms/HorizontalPost
 import CountryPlaces from "../../../components/user/molecules/CountryPlaces";
 import CountryHighlight from "../../../components/user/atoms/CountryHighlight";
 import VisaInfo from "../../../components/user/molecules/VisaInfo";
+import DestinationVideos from "../../../components/user/molecules/DestinationVideos";
 
 const DestinationCountry = () => {
   return (
@@ -42,6 +43,13 @@ const DestinationCountry = () => {
 
       <div className="destination-country-visa-info-container">
         <VisaInfo />
+      </div>
+
+      <div className="destination-country-videos-container">
+        <h2>Vlogovi i video putopisi</h2>
+        <div className="destination-country-videos">
+          <DestinationVideos />
+        </div>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import { useState } from "react";
 import passportImage from "../../../../assets/images/passport-icon.png";
 import "./VisaInfo.scss";
 import Button from "../../../atoms/Button";
-import Dropdown from "../../../atoms/Dropdown/Dropdown";
+import Dropdown from "../../../atoms/Dropdown";
 
 const VisaInfo = () => {
   const [isInfoShown, setInfoShown] = useState(false);
@@ -18,11 +18,11 @@ const VisaInfo = () => {
   };
 
   const countries = [
-    { id: 1, name: "Austrija" },
-    { id: 2, name: "Belgija" },
-    { id: 3, name: "Bugarska" },
-    { id: 4, name: "Cipar" },
-    { id: 5, name: "Hrvatska" },
+    { id: 1, name: "Hrvatska" },
+    { id: 2, name: "Slovenija" },
+    { id: 3, name: "Bosna i Hercegovina" },
+    { id: 4, name: "Srbija" },
+    { id: 5, name: "Crna Gora" },
   ];
 
   return (

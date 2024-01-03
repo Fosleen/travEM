@@ -7,23 +7,36 @@
   align-items: center;
   z-index: 200;
   background-color: white;
+  border-radius: 8px;
+
   @media screen and ($tabletMedium) {
     width: fit-content;
   }
-  border-radius: 8px;
-  padding: 8px;
 
   ul {
     display: flex;
-    gap: 6px;
+    justify-content: space-around;
+    width: 100%;
+    gap: 4px;
+    padding: 12px;
 
     @media screen and ($tabletMedium) {
-      gap: 24px;
+      gap: 16px;
     }
-    padding: 12px;
 
     li {
       list-style: none;
+      padding: 4px;
+      min-width: 28px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+
+      @media screen and ($tabletMedium) {
+        padding: 0px;
+        min-width: 32px;
+      }
+
       a {
         text-decoration: none;
         cursor: pointer;
@@ -66,4 +79,9 @@
 .page-link-previous {
   font-weight: bold;
   color: $green;
+  padding: 8px;
+
+  @media screen and ($tabletMedium) {
+    padding: 12px 24px;
+  }
 }

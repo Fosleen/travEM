@@ -1,5 +1,5 @@
 import "./VerticalPostItem.scss";
-import postImage from "../../../assets/images/post-image.jpg";
+import postImage from "../../../../assets/images/post-image.jpg";
 
 const VerticalPostItem = () => {
   return (

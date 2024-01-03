@@ -1,7 +1,7 @@
 import { List, X, CaretDown, CaretUp } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import "./NavbarMobile.scss";
-import SocialMediaLinks from "../../../atoms/SocialMediaLinks/SocialMediaLinks";
+import SocialMediaLinks from "../../atoms/SocialMediaLinks/SocialMediaLinks";
 import Search from "../../../atoms/Search";
 
 const NavbarMobile = () => {

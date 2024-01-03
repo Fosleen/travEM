@@ -1,11 +1,15 @@
 import HomepageImage from "../../atoms/HomepageImage";
 import travemLogo from "../../../../assets/images/travem-logo-hero.png";
+import suitcaseIcon from "../../../../assets/images/suitcase-icon.png";
+import planeIcon from "../../../../assets/images/plane-icon.png";
 import { ArrowDown } from "@phosphor-icons/react";
 import "./HomepageHero.scss";
 
 const HomepageHero = () => {
   return (
     <div className="homepage-hero-container">
+      <img className="overlay-icon-1" src={suitcaseIcon} alt="suitcase" />
+      <img className="overlay-icon-2" src={planeIcon} alt="plane" />
       <div className="homepage-hero-left">
         <HomepageImage />
       </div>

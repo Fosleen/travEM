@@ -10,10 +10,10 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media screen and ($desktopLarge) {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-  }
+  // @media screen and ($desktopLarge) {
+  //   display: grid;
+  //   grid-template-columns: repeat(4, 1fr);
+  // }
 }
 
 .tips-and-tricks-text-wrapper {

@@ -1,0 +1,69 @@
+@import "../../../utils/theme.scss";
+
+.pagination-wrapper {
+  background-color: white;
+  width: 240px;
+  @media screen and ($tabletMedium) {
+    width: fit-content; //on desktop
+  }
+  border-radius: 8px;
+  padding: 8px;
+
+  ul {
+    display: flex;
+    gap: 24px;
+    padding: 12px;
+
+    li {
+      list-style: none;
+      a {
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      a.page-item-carrot {
+        background-color: red;
+      }
+    }
+  }
+
+  ul.pagination {
+    text-decoration: none;
+    //width: 240px;
+  }
+}
+
+.active-pagination {
+  color: blue;
+}
+
+.page-item {
+  background-color: $limeLight;
+  border-radius: 8px;
+  padding: 4px 8px;
+  color: $grey;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+
+.page-item-carrot {
+  background-color: $limeLight;
+  color: $green;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+.active-pagination {
+  background-color: $green;
+
+  .page-link {
+    color: white;
+  }
+}
+
+.page-link-next,
+.page-link-previous {
+  font-weight: bold;
+  color: $green;
+}

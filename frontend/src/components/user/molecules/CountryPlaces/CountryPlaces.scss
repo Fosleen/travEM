@@ -1,5 +1,15 @@
 @import "../../../../utils/theme.scss";
 
+.destination-country-places-container {
+  @media screen and ($desktopLarge) {
+    width: 85%;
+  }
+
+  @media screen and ($desktop2k) {
+    width: 76%;
+  }
+}
+
 .country-places-container {
   display: flex;
   flex-direction: column;

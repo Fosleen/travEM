@@ -1,7 +1,7 @@
 import "./Login.scss";
 import Input from "../../../components/atoms/Input";
 import Button from "../../../components/atoms/Button";
-import Logo from "../../../assets/travem-logo-grey.png";
+import Logo from "../../../assets/images/travem-logo-grey.png";
 import { Field, Formik, Form } from "formik";
 
 const Login = () => {

@@ -8,7 +8,7 @@
   z-index: 200;
   background-color: white;
   @media screen and ($tabletMedium) {
-    width: fit-content; //on desktop
+    width: fit-content;
   }
   border-radius: 8px;
   padding: 8px;
@@ -28,31 +28,23 @@
         text-decoration: none;
         cursor: pointer;
       }
-
-      a.page-item-carrot {
-        background-color: red;
-      }
     }
   }
 
   ul.pagination {
     text-decoration: none;
-    //width: 240px;
   }
-}
-
-.active-pagination {
-  color: blue;
 }
 
 .page-item {
   background-color: $limeLight;
   border-radius: 8px;
-  padding: 4px 8px;
+  padding: 6px 8px;
   color: $grey;
-  font-weight: bold;
+  font-weight: 600;
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .page-item-carrot {

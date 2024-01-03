@@ -15,7 +15,7 @@ const HorizontalPostItem = ({ isSmall = false }) => {
       </div>
       <div className="horizontal-post-item-text-container">
         <p className={`${isSmall && "small"}`}>
-          Ciparske avanture s morskim psima za đ Ciparske avanture Ciparske avanture 
+          Ciparske avanture s morskim psima za đ
         </p>
       </div>
     </Link>

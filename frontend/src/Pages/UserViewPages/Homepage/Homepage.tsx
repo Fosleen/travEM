@@ -1,7 +1,12 @@
-import React from "react";
+import "./Homepage.scss";
+import HomepageHero from "../../../components/user/molecules/HomepageHero";
 
 const Homepage = () => {
-  return <div>Homepage</div>;
+  return (
+    <div className="homepage-container">
+      <HomepageHero />
+    </div>
+  );
 };
 
 export default Homepage;

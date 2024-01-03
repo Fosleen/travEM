@@ -1,8 +1,12 @@
 @import "../../../utils/theme.scss";
 
 .pagination-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
   background-color: white;
-  width: 240px;
   @media screen and ($tabletMedium) {
     width: fit-content; //on desktop
   }
@@ -11,7 +15,11 @@
 
   ul {
     display: flex;
-    gap: 24px;
+    gap: 6px;
+
+    @media screen and ($tabletMedium) {
+      gap: 24px;
+    }
     padding: 12px;
 
     li {

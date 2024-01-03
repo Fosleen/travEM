@@ -51,6 +51,15 @@ const DestinationCountry = () => {
           <DestinationVideos />
         </div>
       </div>
+      <div className="destination-country-posts-container">
+        <h2>Povezani članci</h2>
+        <div className="destination-country-posts last">
+          <HorizontalPostItemBig thin hasDate={false} />
+          <HorizontalPostItemBig thin hasDate={false} />
+          <HorizontalPostItemBig thin hasDate={false} />
+          <HorizontalPostItemBig thin hasDate={false} />
+        </div>
+      </div>
     </div>
   );
 };

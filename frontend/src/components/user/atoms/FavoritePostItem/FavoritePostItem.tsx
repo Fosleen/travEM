@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import postImage from "../../../../assets/images/post-image.jpg";
 import mapImage from "../../../../assets/images/spain-map.png";
 
@@ -5,7 +6,7 @@ import "./FavoritePostItem.scss";
 
 const FavoritePostItem = () => {
   return (
-    <div className="favorite-post-item-container">
+    <Link to="/" className="favorite-post-item-container">
       <div className="favorite-post-item-icon-container">
         <img
           className="favorite-post-item-icon"
@@ -21,7 +22,7 @@ const FavoritePostItem = () => {
           <img src={postImage} alt="post-image" />
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

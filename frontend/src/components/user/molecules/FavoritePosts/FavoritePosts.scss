@@ -1,0 +1,31 @@
+@import "../../../../utils/theme.scss";
+
+.favorite-posts-container {
+  margin-top: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media screen and ($tablet) {
+  .favorite-posts-container {
+    margin-top: 160px;
+    gap: 0px;
+    padding: 0 16px;
+  }
+}
+
+@media screen and ($desktop) {
+  .favorite-posts-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    flex-direction: row;
+    gap: 0px;
+  }
+}
+
+@media screen and ($desktopLarge) {
+  .favorite-posts-container {
+    padding: 0;
+  }
+}

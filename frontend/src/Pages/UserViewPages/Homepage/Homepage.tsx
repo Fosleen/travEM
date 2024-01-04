@@ -4,6 +4,7 @@ import FavoritePosts from "../../../components/user/molecules/FavoritePosts";
 import HomepageBanner from "../../../components/user/molecules/HomepageBanner";
 import OtherPosts from "../../../components/user/molecules/OtherPosts";
 import BlogStats from "../../../components/user/molecules/BlogStats";
+import Map from "../../../components/organisms/Map/Map";
 
 const Homepage = () => {
   return (
@@ -11,6 +12,7 @@ const Homepage = () => {
       <HomepageHero />
       <FavoritePosts />
       <HomepageBanner />
+      <Map />
       <BlogStats />
       <OtherPosts />
     </div>

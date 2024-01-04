@@ -1,0 +1,21 @@
+@import "../../../utils/theme.scss";
+
+.article-container {
+  max-width: 1300px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 auto;
+
+  .article-content {
+    padding: 16px;
+  }
+}
+
+@media screen and ($desktopLarge) {
+  .article-container {
+    .article-content {
+      padding: 0;
+    }
+  }
+}

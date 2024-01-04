@@ -8,6 +8,7 @@ import TipsAndTricks from "./pages/UserViewPages/TipsAndTricks/TipsAndTricks";
 import "./App.scss";
 import DestinationCountry from "./pages/UserViewPages/DestinationCountry/DestinationCountry";
 import Login from "./pages/AdminViewPages/Login/Login";
+import Article from "./pages/UserViewPages/Article/Article";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/pretrazivanje" element={<SearchResults />} />
           <Route path="/savjeti/let-avionom" element={<TipsAndTricks />} />
           <Route path="/destinacija/:id" element={<DestinationCountry />} />
+          <Route path="/clanak/:id" element={<Article />} />
         </Route>
       </Routes>
     </>

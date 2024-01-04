@@ -8,6 +8,7 @@
   gap: 8px;
   width: 100%;
   height: fit-content;
+  position: relative;
 
   svg {
     display: inline-block;
@@ -42,5 +43,28 @@
 .rsm-geographies {
   path {
     cursor: pointer;
+  }
+  background-color: red;
+  overflow: hidden;
+}
+
+.zoom-buttons {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+
+  button {
+    width: 100%;
+    padding: 8px;
+    background-color: red;
+    font-size: 34px;
+    border: none;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

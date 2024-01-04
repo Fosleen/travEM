@@ -1,9 +1,20 @@
 @import "../../../utils/theme.scss";
 
-.destination-country-page-container {
+.destination-place-page-container {
   display: flex;
   flex-direction: column;
   gap: 24px;
+
+  .destination-place-videos-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 16px;
+
+    h2 {
+      color: $greyMiddleDark;
+    }
+  }
 }
 
 @media screen and ($desktop) {
@@ -17,5 +28,9 @@
   .destination-country-page-container {
     padding: 0;
     gap: 80px;
+
+    .destination-place-videos-container {
+      padding: 0;
+    }
   }
 }

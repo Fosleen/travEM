@@ -8,6 +8,7 @@ import TipsAndTricks from "./pages/UserViewPages/TipsAndTricks/TipsAndTricks";
 import "./App.scss";
 import DestinationCountry from "./pages/UserViewPages/DestinationCountry/DestinationCountry";
 import Login from "./pages/AdminViewPages/Login/Login";
+import DestinationPlace from "./pages/UserViewPages/DestinationPlace";
 
 function App() {
   return (
@@ -20,7 +21,14 @@ function App() {
           <Route path="/aviokarte" element={<AirplaneTickets />} />
           <Route path="/pretrazivanje" element={<SearchResults />} />
           <Route path="/savjeti/let-avionom" element={<TipsAndTricks />} />
-          <Route path="/destinacija/:id" element={<DestinationCountry />} />
+          <Route
+            path="/destinacija/:idDrzave"
+            element={<DestinationCountry />}
+          />
+          <Route
+            path="/destinacija/:idDrzave/:idGrada"
+            element={<DestinationPlace />}
+          />
         </Route>
       </Routes>
     </>

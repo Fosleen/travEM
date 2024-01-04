@@ -13,6 +13,7 @@
     flex-direction: column;
     height: 340px;
     justify-content: center;
+
     .destination-hero-titles {
       padding-top: 48px;
       position: relative;
@@ -59,7 +60,9 @@
       z-index: 1;
       position: relative;
       max-width: 240px;
-      background-color: $bg;
+      text-shadow: -1px -1px 0 #f8f8f8, 0 -1px 0 #f8f8f8, 1px -1px 0 #f8f8f8,
+        1px 0 0 #f8f8f8, 1px 1px 0 #f8f8f8, 0 1px 0 #f8f8f8, -1px 1px 0 #f8f8f8,
+        -1px 0 0 #f8f8f8;
     }
   }
 

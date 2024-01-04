@@ -7,6 +7,7 @@ import CountryPlaces from "../../../components/user/molecules/CountryPlaces";
 import CountryHighlight from "../../../components/user/atoms/CountryHighlight";
 import VisaInfo from "../../../components/user/molecules/VisaInfo";
 import DestinationVideos from "../../../components/user/molecules/DestinationVideos";
+import RecommendedPosts from "../../../components/user/molecules/RecommendedPosts";
 
 const DestinationCountry = () => {
   return (
@@ -52,13 +53,7 @@ const DestinationCountry = () => {
         </div>
       </div>
       <div className="destination-country-posts-container">
-        <h2>Povezani članci</h2>
-        <div className="destination-country-posts last">
-          <HorizontalPostItemBig thin hasDate={false} />
-          <HorizontalPostItemBig thin hasDate={false} />
-          <HorizontalPostItemBig thin hasDate={false} />
-          <HorizontalPostItemBig thin hasDate={false} />
-        </div>
+        <RecommendedPosts />
       </div>
     </div>
   );

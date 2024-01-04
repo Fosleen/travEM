@@ -18,22 +18,6 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-
-    h2 {
-      font-size: 24px;
-      font-weight: 700;
-      color: $greyMiddleDark;
-    }
-
-    .destination-country-posts {
-      display: grid;
-      flex-direction: column;
-      gap: 8px;
-
-      &.last:last-child {
-        margin-bottom: 64px;
-      }
-    }
   }
 
   .destination-country-highlights-container {
@@ -64,28 +48,14 @@
     .destination-country-upper-container {
       display: grid;
       grid-template-columns: 1fr 1fr;
-    }
-
-    .destination-country-posts-container {
-      .destination-country-posts {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-      }
+      max-width: 1300px;
+      margin: 0 auto;
+      gap: 24px;
     }
 
     .destination-country-highlights-container {
       flex-direction: row;
       gap: 16px;
-    }
-  }
-}
-
-@media screen and ($tabletMedium) {
-  .destination-country-page-container {
-    .destination-country-upper-container {
-      max-width: 1300px;
-      margin: 0 auto;
-      gap: 24px;
     }
   }
 }
@@ -102,15 +72,6 @@
     .destination-country-posts-container {
       max-width: 1300px;
       margin: 0 auto;
-
-      h2 {
-        margin-top: 24px;
-      }
-
-      .destination-country-posts {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 24px;
-      }
     }
   }
 }

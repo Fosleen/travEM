@@ -15,21 +15,34 @@
       color: $greyMiddleDark;
     }
   }
+
+  .destination-place-posts-container {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
 }
 
 @media screen and ($desktop) {
-  .destination-country-page-container {
+  .destination-place-page-container {
     gap: 40px;
     margin-bottom: 80px;
+
+    .destination-place-posts-container {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
   }
 }
 
 @media screen and ($desktopLarge) {
-  .destination-country-page-container {
+  .destination-place-page-container {
     padding: 0;
     gap: 80px;
 
-    .destination-place-videos-container {
+    .destination-place-videos-container,
+    .destination-place-posts-container {
       padding: 0;
     }
   }

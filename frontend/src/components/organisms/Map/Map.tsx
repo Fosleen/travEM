@@ -13,16 +13,21 @@ const Map = () => {
   const [selectedCountry, setSelectedCountry] = useState(null);
   const navigate = useNavigate();
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
+
   const handleCountryClick = (geo) => {
     const countryName = geo.properties.name;
     setSelectedCountry(countryName);
-    // Navigate to the URL based on the country name
     navigate(`/${countryName}`);
   };
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   const handleCountryHover = (geo, isHovered) => {
     setSelectedCountry(isHovered ? geo.properties.name : null);
   };
+
+  const coloredCountries = ["Germany", "France", "Spain", "Croatia"];
 
   return (
     <div className="map-parent-wrapper">
@@ -37,8 +42,10 @@ const Map = () => {
                   geography={geo}
                   fill={
                     selectedCountry === geo.properties.name
-                      ? "#2BAC82"
-                      : "white"
+                      ? "#2BAC82" // Color for the selected country
+                      : coloredCountries.includes(geo.properties.name)
+                      ? "orange" // Color for specific countries
+                      : "white" // Default color for other countries
                   }
                   stroke="grey"
                   strokeOpacity={0.05}
@@ -55,6 +62,9 @@ const Map = () => {
             }
           </Geographies>
         </ZoomableGroup>
+        {/* <Marker coordinates={[45.80881, 15.9304]}>
+          <PushPin color="red" size={24} weight="fill" />   markers dont work as they should
+        </Marker> */}
       </ComposableMap>
     </div>
   );

@@ -1,0 +1,37 @@
+@import "../../../../utils/theme.scss";
+
+.article-table-of-contents-items-wrapper {
+  background-image: url("../../../../assets/login_background.png");
+  background-repeat: no-repeat;
+  background-size: 80%;
+  background-position: center;
+  border-radius: 8px;
+
+  width: 90%;
+  padding: 16px;
+  box-shadow: 0px 0px 6px 0px #deebeb inset,
+    0px 4px 12px 0px rgba(0, 32, 64, 0.1);
+
+  @media screen and ($tablet) {
+    width: 600px;
+  }
+
+  @media screen and ($desktop) {
+    width: 800px;
+  }
+
+  h4 {
+    margin-bottom: 16px;
+    padding-left: 16px;
+  }
+
+  ul {
+    //background-color: green;
+    padding-left: 16px;
+    text-decoration: underline;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}

@@ -1,0 +1,14 @@
+@import "../../../utils/theme.scss";
+
+.homepage-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media screen and ($desktop) {
+  .homepage-container {
+    gap: 48px;
+  }
+}

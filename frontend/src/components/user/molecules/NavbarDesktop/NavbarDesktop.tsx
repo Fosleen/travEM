@@ -1,6 +1,6 @@
 import { CaretDown } from "@phosphor-icons/react";
 import Search from "../../../atoms/Search";
-import SocialMediaLinks from "../../../atoms/SocialMediaLinks/SocialMediaLinks";
+import SocialMediaLinks from "../../atoms/SocialMediaLinks/SocialMediaLinks";
 import "./NavbarDesktop.scss";
 import { useLocation } from "react-router";
 

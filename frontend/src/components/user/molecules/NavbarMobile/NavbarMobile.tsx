@@ -1,7 +1,7 @@
 import { List, X, CaretDown, CaretUp } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import "./NavbarMobile.scss";
-import SocialMediaLinks from "../../../atoms/SocialMediaLinks/SocialMediaLinks";
+import SocialMediaLinks from "../../atoms/SocialMediaLinks/SocialMediaLinks";
 import Search from "../../../atoms/Search";
 
 const NavbarMobile = () => {
@@ -34,23 +34,14 @@ const NavbarMobile = () => {
     <div className="navbar-mobile-container">
       <div className="navbar-mobile-icon">
         {openNav ? (
-          <X
-            onClick={navHandler}
-            className={`cursor-pointer ${openNav ? "block" : "hidden"}`}
-            size={40}
-            color="black"
-          />
+          <X onClick={navHandler} size={40} color="white" className="color" />
         ) : (
-          <List
-            onClick={navHandler}
-            className={`cursor-pointer ${openNav ? "hidden" : "block"}`}
-            size={40}
-            color="black"
-          />
+          <List onClick={navHandler} size={40} color="black" />
         )}
       </div>
       {openNav && (
         <div className="navbar-mobile-menu">
+          <div className="navbar-empty-header"></div>
           <div className="navbar-mobile-menu-categories">
             <div className="navbar-mobile-menu-search">
               <Search green onChange={() => {}} />

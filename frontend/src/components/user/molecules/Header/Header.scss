@@ -18,6 +18,8 @@
 
 @media screen and ($tabletMedium) {
   .header-container {
+    position: relative;
+    z-index: 1;
     .header-top {
       max-width: 1300px;
       margin: 0 auto;

@@ -32,3 +32,15 @@ export interface SearchProps {
   green?: boolean;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
+
+export interface DropdownProps {
+  success?: boolean;
+  error?: boolean;
+  label: string;
+  message?: string;
+  defaultValue?: string;
+  options: Array<object>;
+  hardcodedValue?: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  isDisabled: boolean;
+}

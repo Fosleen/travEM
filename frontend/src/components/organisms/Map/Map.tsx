@@ -32,7 +32,7 @@ const Map = () => {
   return (
     <div className="map-parent-wrapper">
       <ComposableMap>
-        <ZoomableGroup center={[15, 50]} zoom={4} minZoom={2} maxZoom={8}>
+        <ZoomableGroup center={[15, 50]} zoom={6} minZoom={2} maxZoom={8}>
           <rect width="100%" height="100%" fill="#73b6e6" />
           <Geographies geography={WorldCountries}>
             {({ geographies }) =>
@@ -44,7 +44,7 @@ const Map = () => {
                     selectedCountry === geo.properties.name
                       ? "#2BAC82" // Color for the selected country
                       : coloredCountries.includes(geo.properties.name)
-                      ? "orange" // Color for specific countries
+                      ? "#D2EB64" // Color for specific countries
                       : "white" // Default color for other countries
                   }
                   stroke="grey"

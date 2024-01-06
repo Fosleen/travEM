@@ -9,42 +9,41 @@ import Grid4 from "../../../assets/images/grid4.png";
 import Grid5 from "../../../assets/images/grid5.png";
 import Grid6 from "../../../assets/images/grid6.png";
 import "./Article.scss";
-import Gallery from "../../../components/user/atoms/Gallery/Gallery";
+import Gallery from "react-photo-gallery";
 import ArticleReadMore from "../../../components/user/atoms/ArticleReadMore/ArticleReadMore";
 import Location from "../../../assets/images/location.png";
-import CountryPlaces from "../../../components/user/molecules/CountryPlaces";
 
 const Article = () => {
   const photos = [
     {
-      src: Grid1,
+      src: Grid1, //larger width means more columns
       width: 2,
-      height: 4,
+      height: 2,
     },
     {
       src: Grid2,
       width: 2,
-      height: 4,
+      height: 2,
     },
     {
       src: Grid3,
-      width: 4,
-      height: 4,
+      width: 3,
+      height: 1,
     },
     {
       src: Grid4,
       width: 2,
-      height: 4,
+      height: 2,
     },
     {
       src: Grid5,
-      width: 2,
-      height: 4,
+      width: 3,
+      height: 1,
     },
     {
       src: Grid6,
-      width: 1.5,
-      height: 3,
+      width: 2,
+      height: 2,
     },
   ];
 
@@ -79,10 +78,8 @@ const Article = () => {
       </div>
 
       <div className="article-gallery-wrapper">
-        <Gallery images={photos} />
+        <Gallery photos={photos} />
       </div>
-
-      <CountryPlaces />
       <div className="article-text-articles-wrapper">
         <h2>Povezani članci</h2>
       </div>

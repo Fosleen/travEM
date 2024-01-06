@@ -12,6 +12,7 @@ import "./Article.scss";
 import Gallery from "react-photo-gallery";
 import ArticleReadMore from "../../../components/user/atoms/ArticleReadMore/ArticleReadMore";
 import Location from "../../../assets/images/location.png";
+import CountryPlaces from "../../../components/user/molecules/CountryPlaces";
 
 const Article = () => {
   const photos = [
@@ -80,6 +81,7 @@ const Article = () => {
       <div className="article-gallery-wrapper">
         <Gallery photos={photos} />
       </div>
+      <CountryPlaces />
       <div className="article-text-articles-wrapper">
         <h2>Povezani članci</h2>
       </div>

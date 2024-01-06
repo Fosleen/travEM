@@ -37,6 +37,8 @@
   display: flex;
   flex-direction: column;
   gap: 28px;
+  margin-bottom: 24px;
+  padding: 16px;
 
   @media screen and ($tabletMedium) {
     display: grid;
@@ -57,4 +59,40 @@
     font-weight: bold;
     font-size: 40px;
   }
+}
+
+.article-gallery-wrapper {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.article-location {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: underline;
+  max-width: 1300px;
+
+  h2 {
+    font-weight: bold;
+  }
+}
+
+.article-gallery-text-wrapper {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.article-location-parent {
+  max-width: 1300px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 auto;
+  margin-bottom: 24px;
 }

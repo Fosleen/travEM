@@ -1,0 +1,22 @@
+@import "../../../../utils/theme.scss";
+
+.article-read-more-wrapper {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+
+  img {
+    height: 50px;
+  }
+
+  h2 {
+    color: $grey;
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  a {
+    color: $green;
+    font-size: 24px;
+  }
+}

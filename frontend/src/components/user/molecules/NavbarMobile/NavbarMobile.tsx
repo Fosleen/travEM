@@ -4,6 +4,7 @@ import "./NavbarMobile.scss";
 import SocialMediaLinks from "../../atoms/SocialMediaLinks/SocialMediaLinks";
 import Search from "../../../atoms/Search";
 import AirplaneTicketsMenu from "../../organisms/AirplaneTicketsMenu";
+import DestinationsMenu from "../../organisms/DestinationsMenu";
 
 const NavbarMobile = ({ location }) => {
   const [openNav, setOpenNav] = useState(false);
@@ -97,7 +98,9 @@ const NavbarMobile = ({ location }) => {
 
           <div className="navbar-mobile-content">
             {selectedSubcategory === "destinacije" && (
-              <div>destinacije popis</div>
+              <div>
+                <DestinationsMenu />
+              </div>
             )}
             {selectedSubcategory === "savjeti" && <div>savjeti popis </div>}
             {selectedSubcategory === "aviokarte" && (

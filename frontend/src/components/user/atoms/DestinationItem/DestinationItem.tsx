@@ -13,7 +13,7 @@ const DestinationItem = ({
       to={`/destinacija/${name.toLowerCase()}`}
       className={`destination-item-container ${
         (mapItem || filterMenuItem) && "has-icon flag"
-      }`}
+      } ${(filterMenuItem) && "full-width"}`}
     >
       {filterMenuItem && <img src={flag} alt="destination-image" />}
       <p>{name}</p>

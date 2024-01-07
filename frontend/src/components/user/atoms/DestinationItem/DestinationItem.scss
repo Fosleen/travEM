@@ -22,6 +22,11 @@
     background: $greyMiddle;
   }
 
+  &.full-width {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
   &:hover {
     background-color: $green;
     transition: 0.3s;
@@ -60,6 +65,15 @@
 
     img {
       height: 36px;
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .destination-item-container {
+    &.full-width {
+      width: fit-content;
+      justify-content: center;
     }
   }
 }

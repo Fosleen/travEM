@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import NavbarDesktop from "../../molecules/NavbarDesktop";
 import NavbarMobile from "../../molecules/NavbarMobile";
 import AirplaneTicketsMenu from "../AirplaneTicketsMenu";
+import DestinationsMenu from "../DestinationsMenu";
 
 const Header = () => {
   const [isDesktop, setDesktop] = useState(window.innerWidth >= 1024);
@@ -26,6 +27,7 @@ const Header = () => {
 
   const isHomePage = location.pathname === "/";
   const [isPlaneTicketsMenuShown, setIsPlaneTicketsMenuShown] = useState(false);
+  const [isDestinationsMenuShown, setIsDestinationsMenuShown] = useState(false);
 
   return (
     <div className="header-container">
@@ -36,6 +38,7 @@ const Header = () => {
         {isDesktop && (
           <NavbarDesktop
             setIsPlaneTicketsMenuShown={setIsPlaneTicketsMenuShown}
+            setIsDestinationsMenuShown={setIsDestinationsMenuShown}
           />
         )}
       </div>
@@ -45,6 +48,11 @@ const Header = () => {
         {isPlaneTicketsMenuShown && (
           <AirplaneTicketsMenu
             setIsPlaneTicketsMenuShown={setIsPlaneTicketsMenuShown}
+          />
+        )}
+        {isDestinationsMenuShown && (
+          <DestinationsMenu
+            setIsDestinationsMenuShown={setIsDestinationsMenuShown}
           />
         )}
       </div>

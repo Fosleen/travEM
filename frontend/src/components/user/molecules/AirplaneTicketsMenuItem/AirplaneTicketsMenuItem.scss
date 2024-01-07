@@ -12,8 +12,8 @@
   }
 
   .airplane-tickets-menu-items {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
   }
 }
@@ -22,6 +22,19 @@
   .airplane-tickets-menu-item-container {
     h2 {
       font-size: 24px;
+    }
+
+    .airplane-tickets-menu-items {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .airplane-tickets-menu-item-container {
+    .airplane-tickets-menu-items {
+      display: flex;
+      flex-wrap: wrap;
     }
   }
 }

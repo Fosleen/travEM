@@ -6,14 +6,48 @@
   box-shadow: 0 0 8px 2px $green;
   border-radius: 36px;
   padding: 12px;
-  text-transform: uppercase;
-  font-weight: 700;
-  font-size: 14px;
-  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  &.has-icon {
+    padding: 4px 12px;
+  }
+
+  &:hover {
+    background-color: $green;
+    transition: 0.3s;
+    color: $bg;
+
+    p {
+      color: $bg;
+    }
+  }
+
+  p {
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 14px;
+    color: $grey;
+    text-decoration: none;
+  }
+
+  img {
+    height: 32px;
+  }
 }
 
 @media screen and ($tabletMedium) {
   .destination-item-container {
     padding: 16px 24px;
+
+    &.has-icon {
+      padding: 6px 20px;
+    }
+
+    img {
+      height: 36px;
+    }
   }
 }

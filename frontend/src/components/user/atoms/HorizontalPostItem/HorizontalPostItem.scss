@@ -13,7 +13,7 @@
 
   & .horizontal-post-item-image-container {
     width: 144px;
-    height: 96px;
+    height: 100px;
 
     &.small {
       width: 124px;
@@ -28,6 +28,7 @@
       border-radius: 8px;
     }
   }
+
   .horizontal-post-item-text-container {
     padding: 8px;
     flex: 1;
@@ -40,6 +41,18 @@
       &.small {
         font-size: 14px;
         font-weight: 700;
+      }
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .horizontal-post-item-container {
+    .horizontal-post-item-text-container {
+      max-width: 360px;
+
+      p {
+        margin-right: 20px;
       }
     }
   }

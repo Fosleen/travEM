@@ -7,21 +7,33 @@
     position: absolute;
     right: 16px;
     top: -64px;
-    z-index: 1;
+    z-index: 4;
 
     svg {
       background-color: $limeLight;
       padding: 8px;
       border-radius: 24px;
       cursor: pointer;
+
+      &.color {
+        background-color: $grey;
+      }
     }
   }
 
   .navbar-mobile-menu {
+    position: absolute;
+    z-index: 2;
+    width: 100%;
+    top: -100px;
     background-color: $limeLight;
 
     a {
       text-decoration: none;
+    }
+
+    .navbar-empty-header {
+      height: 80px;
     }
 
     .navbar-mobile-menu-categories {

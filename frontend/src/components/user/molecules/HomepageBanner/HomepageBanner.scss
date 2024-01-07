@@ -1,0 +1,114 @@
+@import "../../../../utils/theme.scss";
+
+.homepage-banner-container {
+  position: relative;
+
+  .homepage-banner-bg-image {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    .overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .homepage-banner-wrapper {
+    display: flex;
+    flex-direction: column;
+
+    .homepage-banner-left {
+      position: relative;
+      padding: 40px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      justify-content: center;
+      max-width: 512px;
+      z-index: 2;
+
+      h4 {
+        font-size: 20px;
+        font-weight: 700;
+        text-shadow: 0 4px 4px rgba($color: #000000, $alpha: 0.45);
+        color: $bg;
+      }
+
+      h2 {
+        font-size: 48px;
+        font-weight: 800;
+        text-shadow: 0 4px 4px rgba($color: #000000, $alpha: 0.45);
+        color: $bg;
+      }
+
+      p {
+        font-weight: 500;
+        text-shadow: 0 4px 4px rgba($color: #000000, $alpha: 0.45);
+        color: $bg;
+        font-size: 16px;
+        margin-bottom: 8px;
+        line-height: 120%;
+      }
+    }
+
+    .homepage-banner-right {
+      position: relative;
+      padding: 8px;
+      background-color: rgba($color: #ffffff, $alpha: 0.3);
+      z-index: 2;
+
+      .homepage-banner-right-content {
+        padding: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .homepage-banner-container {
+    .homepage-banner-wrapper {
+      flex-direction: row;
+      max-width: 1300px;
+      margin: 0 auto;
+      justify-content: space-between;
+
+      .homepage-banner-right {
+        margin: 48px 24px 48px 0;
+        border-radius: 16px;
+
+        .homepage-banner-right-content {
+          padding: 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and ($desktopLarge) {
+  .homepage-banner-container {
+    .homepage-banner-wrapper {
+      .homepage-banner-right {
+        margin: 80px 0;
+      }
+    }
+  }
+}

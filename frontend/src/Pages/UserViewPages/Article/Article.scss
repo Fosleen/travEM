@@ -22,7 +22,7 @@
 .article-content {
   padding: 16px;
   @media screen and ($desktop) {
-    padding-left: 65px;
+    padding-left: 16px;
   }
   max-width: 900px;
   display: flex;
@@ -73,6 +73,11 @@
   gap: 12px;
   text-decoration: underline;
   max-width: 1300px;
+  padding: 16px;
+
+  @media screen and ($desktop) {
+    padding: 0;
+  }
 
   h2 {
     font-weight: bold;

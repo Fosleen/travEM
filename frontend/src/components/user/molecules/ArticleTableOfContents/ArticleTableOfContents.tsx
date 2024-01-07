@@ -6,7 +6,6 @@ import PlaneIcon from "../../../../assets/images/plane_icon.png";
 import PlaneIcon2 from "../../../../assets/images/plane_icon2.png";
 import StudentIcon from "../../../../assets/images/student_icon.png";
 import TableOfContentsItem from "../../atoms/TableOfContentsItem/TableOfContentsItem";
-import { Money } from "@phosphor-icons/react";
 
 const ArticleTableOfContents = () => {
   return (

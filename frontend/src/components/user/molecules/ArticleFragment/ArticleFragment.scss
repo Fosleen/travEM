@@ -6,7 +6,11 @@
   max-width: 900px;
   img {
     border-radius: 8px;
-    width: 400px;
+    width: 300px;
+
+    @media screen and ($desktop) {
+      width: 400px;
+    }
   }
 
   @media screen and ($desktop) {
@@ -34,7 +38,7 @@
   iframe {
     border-radius: 8px;
     border: none;
-    width: 380px;
+    width: 300px;
     height: 400px;
 
     @media screen and ($tablet) {
@@ -61,7 +65,11 @@
   }
 
   p {
-    font-size: 20px;
+    font-size: 16px;
     line-height: 1.5;
+
+    @media screen and ($desktop) {
+      font-size: 20px;
+    }
   }
 }

@@ -6,7 +6,7 @@ const ArticleReadMore = () => {
   return (
     <div className="article-read-more-wrapper">
       <img src={ReadMore} alt="" />
-      <h2>Pročitaj:</h2>
+      {/* <h2>Pročitaj:</h2> */}
       <Link to="/">Kako smo išli na Mjesec i natrag?</Link>
     </div>
   );

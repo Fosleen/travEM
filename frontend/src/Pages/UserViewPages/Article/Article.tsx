@@ -5,9 +5,7 @@ import ArticleTableOfContents from "../../../components/user/molecules/ArticleTa
 import Grid1 from "../../../assets/images/grid1.png";
 import Grid2 from "../../../assets/images/grid2.png";
 import Grid3 from "../../../assets/images/grid3.png";
-import Grid4 from "../../../assets/images/grid4.png";
 import Grid5 from "../../../assets/images/grid5.png";
-import Grid6 from "../../../assets/images/grid6.png";
 import "./Article.scss";
 import Gallery from "react-photo-gallery";
 import ArticleReadMore from "../../../components/user/atoms/ArticleReadMore/ArticleReadMore";
@@ -32,7 +30,7 @@ const Article = () => {
       height: 1,
     },
     {
-      src: Grid4,
+      src: Grid2,
       width: 2,
       height: 2,
     },
@@ -42,7 +40,7 @@ const Article = () => {
       height: 1,
     },
     {
-      src: Grid6,
+      src: Grid1,
       width: 2,
       height: 2,
     },

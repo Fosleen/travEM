@@ -1,8 +1,19 @@
 import "./ArticleFragment.scss";
 import FooterImage from "../../../../assets/images/footer-image.jpg";
 import Food2 from "../../../../assets/images/food2.png";
+import { FC } from "react";
 
-const ArticleFragment = ({ hasImage, hasVideo, hasImages }) => {
+interface ArticleProps {
+  hasImage?: boolean;
+  hasVideo?: boolean;
+  hasImages?: boolean;
+}
+
+const ArticleFragment: FC<ArticleProps> = ({
+  hasImage,
+  hasVideo,
+  hasImages,
+}) => {
   return (
     <div className="article-wrapper">
       <h3>1. Planiranje i proračun</h3>

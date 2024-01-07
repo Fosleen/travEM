@@ -18,6 +18,8 @@
   &.flag {
     padding: 4px;
     padding-right: 12px;
+    box-shadow: none;
+    background: $greyMiddle;
   }
 
   &:hover {

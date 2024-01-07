@@ -3,10 +3,19 @@ import Search from "../../../atoms/Search";
 import SocialMediaLinks from "../../atoms/SocialMediaLinks/SocialMediaLinks";
 import "./NavbarDesktop.scss";
 import { useLocation } from "react-router";
+import { useEffect } from "react";
 
-const NavbarDesktop = () => {
+const NavbarDesktop = ({ setIsPlaneTicketsMenuShown }) => {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
+
+  const handleMouseOver = () => {
+    setIsPlaneTicketsMenuShown(true);
+  };
+
+  useEffect(() => {
+    setIsPlaneTicketsMenuShown(false);
+  }, [location]);
 
   return (
     <div className="navbar-desktop-container">
@@ -17,7 +26,10 @@ const NavbarDesktop = () => {
         <div className={`navbar-item ${isHomePage && "dark"}`}>
           Savjeti <CaretDown size={16} weight="bold" />
         </div>
-        <div className={`navbar-item ${isHomePage && "dark"}`}>
+        <div
+          className={`navbar-item ${isHomePage && "dark"}`}
+          onMouseOver={handleMouseOver}
+        >
           Aviokarte <CaretDown size={16} weight="bold" />
         </div>
       </div>

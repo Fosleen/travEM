@@ -3,8 +3,9 @@ import logoWhite from "../../../../assets/images/travem-logo-white.png";
 import logoGrey from "../../../../assets/images/travem-logo-grey.png";
 import "./Header.scss";
 import { useEffect, useState } from "react";
-import NavbarDesktop from "../NavbarDesktop";
-import NavbarMobile from "../NavbarMobile";
+import NavbarDesktop from "../../molecules/NavbarDesktop";
+import NavbarMobile from "../../molecules/NavbarMobile";
+import AirplaneTicketsMenu from "../AirplaneTicketsMenu";
 
 const Header = () => {
   const [isDesktop, setDesktop] = useState(window.innerWidth >= 1024);
@@ -24,6 +25,7 @@ const Header = () => {
   });
 
   const isHomePage = location.pathname === "/";
+  const [isPlaneTicketsMenuShown, setIsPlaneTicketsMenuShown] = useState(false);
 
   return (
     <div className="header-container">
@@ -31,9 +33,21 @@ const Header = () => {
         <Link to="/">
           <img src={isHomePage ? logoWhite : logoGrey} alt="travem-logo" />
         </Link>
-        {isDesktop && <NavbarDesktop />}
+        {isDesktop && (
+          <NavbarDesktop
+            setIsPlaneTicketsMenuShown={setIsPlaneTicketsMenuShown}
+          />
+        )}
       </div>
       {!isDesktop && <NavbarMobile />}
+
+      <div className="header-filter-menu-container">
+        {isPlaneTicketsMenuShown && (
+          <AirplaneTicketsMenu
+            setIsPlaneTicketsMenuShown={setIsPlaneTicketsMenuShown}
+          />
+        )}
+      </div>
     </div>
   );
 };

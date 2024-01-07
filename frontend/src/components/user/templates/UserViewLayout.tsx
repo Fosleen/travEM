@@ -1,6 +1,6 @@
 import { Outlet } from "react-router";
 import { useLocation } from "react-router-dom";
-import Header from "../molecules/Header";
+import Header from "../organisms/Header";
 import Footer from "../molecules/Footer";
 import Newsletter from "../molecules/Newsletter";
 import "./UserViewLayout.scss";

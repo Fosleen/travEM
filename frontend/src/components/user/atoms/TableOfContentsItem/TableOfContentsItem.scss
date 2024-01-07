@@ -2,4 +2,13 @@
   display: flex;
   gap: 14px;
   align-items: center;
+
+  .table-of-contents-item-image {
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }

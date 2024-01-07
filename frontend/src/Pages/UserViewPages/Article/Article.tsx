@@ -79,7 +79,7 @@ const Article = () => {
       <div className="article-gallery-wrapper">
         <Gallery photos={photos} />
       </div>
-      <CountryPlaces />
+      <CountryPlaces hasPadding={false} />
       <div className="article-text-articles-wrapper">
         <h2>Povezani članci</h2>
       </div>

@@ -113,3 +113,11 @@
     }
   }
 }
+
+@media screen and ($desktopLarge) {
+  .article-hero-container {
+    .article-hero-left {
+      padding: 0;
+    }
+  }
+}

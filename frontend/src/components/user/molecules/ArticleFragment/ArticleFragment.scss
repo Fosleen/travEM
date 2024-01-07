@@ -4,6 +4,7 @@
   flex-direction: row;
   gap: 12px;
   max-width: 900px;
+
   img {
     border-radius: 8px;
     width: 300px;
@@ -58,6 +59,8 @@
   flex-direction: column;
   gap: 24px;
   margin-bottom: 24px;
+  max-width: 900px;
+
   h3 {
     font-weight: 800;
     font-size: 24px;

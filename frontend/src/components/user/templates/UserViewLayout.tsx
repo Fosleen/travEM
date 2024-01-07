@@ -4,6 +4,7 @@ import Header from "../molecules/Header";
 import Footer from "../molecules/Footer";
 import Newsletter from "../molecules/Newsletter";
 import "./UserViewLayout.scss";
+import ScrollToTop from "../../atoms/ScrollToTop/ScrollToTop";
 
 const UserViewLayout = () => {
   const location = useLocation();
@@ -14,6 +15,7 @@ const UserViewLayout = () => {
 
   return (
     <main className="user-view-layout-container">
+      <ScrollToTop />
       <Header />
       <div
         className={`user-view-layout-page ${

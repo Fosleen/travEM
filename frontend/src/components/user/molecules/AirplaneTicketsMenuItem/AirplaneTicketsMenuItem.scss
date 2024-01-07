@@ -8,11 +8,20 @@
 
   h2 {
     text-align: left;
+    font-size: 18px;
   }
 
   .airplane-tickets-menu-items {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .airplane-tickets-menu-item-container {
+    h2 {
+      font-size: 24px;
+    }
   }
 }

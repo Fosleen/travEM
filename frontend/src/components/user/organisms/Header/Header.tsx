@@ -39,7 +39,7 @@ const Header = () => {
           />
         )}
       </div>
-      {!isDesktop && <NavbarMobile />}
+      {!isDesktop && <NavbarMobile location={location} />}
 
       <div className="header-filter-menu-container">
         {isPlaneTicketsMenuShown && (

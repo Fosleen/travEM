@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import "./NavbarMobile.scss";
 import SocialMediaLinks from "../../atoms/SocialMediaLinks/SocialMediaLinks";
 import Search from "../../../atoms/Search";
+import AirplaneTicketsMenu from "../../organisms/AirplaneTicketsMenu";
 
-const NavbarMobile = () => {
+const NavbarMobile = ({ location }) => {
   const [openNav, setOpenNav] = useState(false);
   const [selectedSubcategory, setSelectedSubcategory] = useState("");
 
@@ -15,6 +16,11 @@ const NavbarMobile = () => {
   const closeNav = () => {
     setOpenNav(false);
   };
+
+  useEffect(() => {
+    setOpenNav(false);
+    setSelectedSubcategory("");
+  }, [location]);
 
   const handleSubcategoryChange = (type: string) => {
     console.log(type);
@@ -94,7 +100,11 @@ const NavbarMobile = () => {
               <div>destinacije popis</div>
             )}
             {selectedSubcategory === "savjeti" && <div>savjeti popis </div>}
-            {selectedSubcategory === "aviokarte" && <div>aviokarte popis </div>}
+            {selectedSubcategory === "aviokarte" && (
+              <div>
+                <AirplaneTicketsMenu />
+              </div>
+            )}
             <SocialMediaLinks />
           </div>
         </div>

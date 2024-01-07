@@ -1,9 +1,15 @@
+import { FC } from "react";
 import AirplaneTicketsMenuItem from "../../molecules/AirplaneTicketsMenuItem";
 import "./AirplaneTicketsMenu.scss";
+import { AirplaneTicketsMenuProps } from "../../../../common/types";
 
-const AirplaneTicketsMenu = ({ setIsPlaneTicketsMenuShown }) => {
+const AirplaneTicketsMenu: FC<AirplaneTicketsMenuProps> = ({
+  setIsPlaneTicketsMenuShown,
+}) => {
   const handleMouseLeave = () => {
-    setIsPlaneTicketsMenuShown(false);
+    if (setIsPlaneTicketsMenuShown) {
+      setIsPlaneTicketsMenuShown(false);
+    }
   };
 
   return (

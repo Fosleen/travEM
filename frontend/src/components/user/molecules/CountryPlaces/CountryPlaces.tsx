@@ -2,11 +2,11 @@ import DestinationItem from "../../atoms/DestinationItem";
 import worldMap from "../../../../assets/images/world-map.jpg";
 import "./CountryPlaces.scss";
 
-const CountryPlaces = () => {
+const CountryPlaces = ({ hasPadding = true }) => {
   return (
     <div className="country-places-container">
       <h2>Proučite specifične lokacije</h2>
-      <div className="country-places">
+      <div className={`country-places ${hasPadding && "has-padding"}`}>
         <DestinationItem />
         <DestinationItem />
         <DestinationItem />

@@ -1,0 +1,30 @@
+@import "../../../../utils/theme.scss";
+
+.article-hero-image-container {
+  height: 260px;
+  width: 100%;
+  position: relative;
+
+  .article-hero-clip {
+    top: 0;
+    position: absolute;
+    z-index: 0;
+    width: 100%;
+  }
+
+  img {
+    clip-path: url("#article-hero-clip-custom");
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+  }
+}
+
+@media screen and ($tablet) {
+  .article-hero-image-container {
+    height: 560px;
+    //width: 700px;
+  }
+}

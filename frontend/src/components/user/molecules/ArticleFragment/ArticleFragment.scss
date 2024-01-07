@@ -1,0 +1,78 @@
+@import "../../../../utils/theme.scss";
+
+.article-fragment-images-wrapper {
+  flex-direction: row;
+  gap: 12px;
+  max-width: 900px;
+
+  img {
+    border-radius: 8px;
+    width: 300px;
+
+    @media screen and ($desktop) {
+      width: 400px;
+    }
+  }
+
+  @media screen and ($desktop) {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+.article-fragment-image-wrapper {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  img {
+    border-radius: 8px;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.article-fragment-video-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  iframe {
+    border-radius: 8px;
+    border: none;
+    width: 300px;
+    height: 400px;
+
+    @media screen and ($tablet) {
+      width: 600px;
+      height: 350px;
+    }
+
+    @media screen and ($desktop) {
+      width: 900px;
+      height: 500px;
+    }
+  }
+}
+
+.article-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 24px;
+  max-width: 900px;
+
+  h3 {
+    font-weight: 800;
+    font-size: 24px;
+    color: $grey;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.5;
+
+    @media screen and ($desktop) {
+      font-size: 20px;
+    }
+  }
+}

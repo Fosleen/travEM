@@ -1,0 +1,123 @@
+@import "../../../../utils/theme.scss";
+
+.article-hero-container {
+  min-height: 480px;
+  width: 100%;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+
+  .article-hero-left {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    justify-content: center;
+    z-index: 1;
+    padding-left: 16px;
+
+    .article-hero-titles {
+      position: relative;
+
+      h2 {
+        font-size: 32px;
+        color: transparent;
+        text-shadow: 2px 0 0 rgba($color: #2bac82, $alpha: 0.3);
+      }
+
+      .top {
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        color: $grey;
+        text-shadow: -1px -1px 0 #f8f8f8, 0 -1px 0 #f8f8f8, 1px -1px 0 #f8f8f8,
+          1px 0 0 #f8f8f8, 1px 1px 0 #f8f8f8, 0 1px 0 #f8f8f8,
+          -1px 1px 0 #f8f8f8, -1px 0 0 #f8f8f8;
+      }
+    }
+
+    h5,
+    p {
+      font-size: 16px;
+      font-weight: 400;
+      padding-right: 16px;
+    }
+  }
+
+  .article-hero-right {
+    position: absolute;
+    right: -120px;
+    width: 300px;
+    overflow: hidden;
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .article-hero-container {
+    .article-hero-left {
+      max-width: 560px;
+
+      .article-hero-titles {
+        h2 {
+          font-size: 40px;
+        }
+      }
+    }
+
+    .article-hero-right {
+      right: -50px;
+    }
+  }
+}
+
+@media screen and ($tablet) {
+  .article-hero-container {
+    min-height: 640px;
+
+    .article-hero-left {
+      .article-hero-titles {
+        h2 {
+          font-size: 48px;
+        }
+      }
+    }
+
+    .article-hero-right {
+      right: 0px;
+      width: 320px;
+      height: 560px;
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .article-hero-container {
+    .article-hero-left {
+      max-width: 600px;
+
+      .article-hero-titles {
+        h2 {
+          font-size: 64px;
+        }
+      }
+      p {
+        text-shadow: -2px -2px 0 #f8f8f8, 0 -2px 0 #f8f8f8, 2px -2px 0 #f8f8f8,
+          2px 0 0 #f8f8f8, 2px 2px 0 #f8f8f8, 0 2px 0 #f8f8f8,
+          -2px 2px 0 #f8f8f8, -2px 0 0 #f8f8f8;
+      }
+    }
+
+    .article-hero-right {
+      right: 0px;
+      width: 640px;
+      height: 560px;
+    }
+  }
+}
+
+@media screen and ($desktopLarge) {
+  .article-hero-container {
+    .article-hero-left {
+      padding: 0;
+    }
+  }
+}

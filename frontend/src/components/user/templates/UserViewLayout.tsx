@@ -4,6 +4,7 @@ import Header from "../organisms/Header";
 import Footer from "../molecules/Footer";
 import Newsletter from "../molecules/Newsletter";
 import "./UserViewLayout.scss";
+import ScrollToTop from "../../atoms/ScrollToTop/ScrollToTop";
 import { useState } from "react";
 
 const UserViewLayout = () => {
@@ -21,6 +22,7 @@ const UserViewLayout = () => {
 
   return (
     <main className="user-view-layout-container">
+      <ScrollToTop />
       <Header
         isPlaneTicketsMenuShown={isPlaneTicketsMenuShown}
         setIsPlaneTicketsMenuShown={setIsPlaneTicketsMenuShown}

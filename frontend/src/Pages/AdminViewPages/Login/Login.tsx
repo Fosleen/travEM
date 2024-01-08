@@ -3,6 +3,7 @@ import Input from "../../../components/atoms/Input";
 import Button from "../../../components/atoms/Button";
 import Logo from "../../../assets/images/travem-logo-grey.png";
 import { Field, Formik, Form } from "formik";
+import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 
 const Login = () => {
   return (
@@ -27,7 +28,9 @@ const Login = () => {
         }}
         onSubmit={(values, { setSubmitting }) => {
           setTimeout(() => {
-            alert(JSON.stringify(values, null, 2));
+            //alert(JSON.stringify(values, null, 2));
+            notifySuccess("Uspjesna prijava!");
+
             setSubmitting(false);
             console.log("Vrijednosti su", values);
           }, 400);

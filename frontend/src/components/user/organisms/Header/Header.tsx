@@ -7,6 +7,7 @@ import NavbarDesktop from "../../molecules/NavbarDesktop";
 import NavbarMobile from "../../molecules/NavbarMobile";
 import AirplaneTicketsMenu from "../AirplaneTicketsMenu";
 import DestinationsMenu from "../DestinationsMenu";
+import TipsMenu from "../TipsMenu";
 
 const Header = () => {
   const [isDesktop, setDesktop] = useState(window.innerWidth >= 1024);
@@ -28,6 +29,7 @@ const Header = () => {
   const isHomePage = location.pathname === "/";
   const [isPlaneTicketsMenuShown, setIsPlaneTicketsMenuShown] = useState(false);
   const [isDestinationsMenuShown, setIsDestinationsMenuShown] = useState(false);
+  const [isTipsMenuShown, setIsTipsMenuShown] = useState(false);
 
   return (
     <div className="header-container">
@@ -39,6 +41,7 @@ const Header = () => {
           <NavbarDesktop
             setIsPlaneTicketsMenuShown={setIsPlaneTicketsMenuShown}
             setIsDestinationsMenuShown={setIsDestinationsMenuShown}
+            setIsTipsMenuShown={setIsTipsMenuShown}
           />
         )}
       </div>
@@ -54,6 +57,9 @@ const Header = () => {
           <DestinationsMenu
             setIsDestinationsMenuShown={setIsDestinationsMenuShown}
           />
+        )}
+        {isTipsMenuShown && (
+          <TipsMenu setIsTipsMenuShown={setIsTipsMenuShown} />
         )}
       </div>
     </div>

@@ -8,6 +8,7 @@ import { useEffect } from "react";
 const NavbarDesktop = ({
   setIsPlaneTicketsMenuShown,
   setIsDestinationsMenuShown,
+  setIsTipsMenuShown,
 }) => {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
@@ -22,9 +23,15 @@ const NavbarDesktop = ({
     setIsDestinationsMenuShown(true);
   };
 
+  const handleTipsMouseOver = () => {
+    closeAllMenus();
+    setIsTipsMenuShown(true);
+  };
+
   const closeAllMenus = () => {
     setIsPlaneTicketsMenuShown(false);
     setIsDestinationsMenuShown(false);
+    setIsTipsMenuShown(false);
   };
 
   useEffect(() => {
@@ -41,7 +48,10 @@ const NavbarDesktop = ({
         >
           Destinacije <CaretDown size={16} weight="bold" />
         </div>
-        <div className={`navbar-item ${isHomePage && "dark"}`}>
+        <div
+          className={`navbar-item ${isHomePage && "dark"}`}
+          onMouseOver={handleTipsMouseOver}
+        >
           Savjeti <CaretDown size={16} weight="bold" />
         </div>
         <div

@@ -5,6 +5,7 @@ import SocialMediaLinks from "../../atoms/SocialMediaLinks/SocialMediaLinks";
 import Search from "../../../atoms/Search";
 import AirplaneTicketsMenu from "../../organisms/AirplaneTicketsMenu";
 import DestinationsMenu from "../../organisms/DestinationsMenu";
+import TipsMenu from "../../organisms/TipsMenu";
 
 const NavbarMobile = ({ location }) => {
   const [openNav, setOpenNav] = useState(false);
@@ -102,7 +103,11 @@ const NavbarMobile = ({ location }) => {
                 <DestinationsMenu />
               </div>
             )}
-            {selectedSubcategory === "savjeti" && <div>savjeti popis </div>}
+            {selectedSubcategory === "savjeti" && (
+              <div>
+                <TipsMenu />
+              </div>
+            )}
             {selectedSubcategory === "aviokarte" && (
               <div>
                 <AirplaneTicketsMenu />

@@ -1,7 +1,7 @@
 import DestinationItem from "../../atoms/DestinationItem";
-import "./RecommendedaMapDestinations.scss";
+import "./RecommendedMapDestinations.scss";
 
-const RecommendedaMapDestinations = () => {
+const RecommendedMapDestinations = () => {
   return (
     <div className="recommended-map-destinations-container">
       <h2>Otkrij</h2>
@@ -17,4 +17,4 @@ const RecommendedaMapDestinations = () => {
   );
 };
 
-export default RecommendedaMapDestinations;
+export default RecommendedMapDestinations;

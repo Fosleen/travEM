@@ -12,8 +12,8 @@ const DestinationItem = ({
     <Link
       to={`/destinacija/${name.toLowerCase()}`}
       className={`destination-item-container ${
-        (mapItem || filterMenuItem) && "has-icon flag"
-      } ${(filterMenuItem) && "full-width"}`}
+        (mapItem || filterMenuItem) && "has-icon "
+      } ${filterMenuItem && "full-width flag"}`}
     >
       {filterMenuItem && <img src={flag} alt="destination-image" />}
       <p>{name}</p>

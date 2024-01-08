@@ -5,7 +5,7 @@ import HomepageBanner from "../../../components/user/molecules/HomepageBanner";
 import OtherPosts from "../../../components/user/molecules/OtherPosts";
 import BlogStats from "../../../components/user/molecules/BlogStats";
 import Map from "../../../components/organisms/Map/Map";
-import RecommendedaMapDestinations from "../../../components/user/molecules/RecommendedaMapDestinations";
+import RecommendedMapDestinations from "../../../components/user/molecules/RecommendedMapDestinations";
 
 const Homepage = () => {
   return (
@@ -13,7 +13,7 @@ const Homepage = () => {
       <HomepageHero />
       <FavoritePosts />
       <HomepageBanner />
-      <RecommendedaMapDestinations />
+      <RecommendedMapDestinations />
       <Map />
       <BlogStats />
       <OtherPosts />

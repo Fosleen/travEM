@@ -9,7 +9,18 @@ import AirplaneTicketsMenu from "../AirplaneTicketsMenu";
 import DestinationsMenu from "../DestinationsMenu";
 import TipsMenu from "../TipsMenu";
 
-const Header = () => {
+const Header = ({
+  isPlaneTicketsMenuShown,
+  setIsPlaneTicketsMenuShown,
+  isDestinationsMenuShown,
+  setIsDestinationsMenuShown,
+  isTipsMenuShown,
+  setIsTipsMenuShown,
+  setOpenNav,
+  openNav,
+  setSelectedSubcategory,
+  selectedSubcategory,
+}) => {
   const [isDesktop, setDesktop] = useState(window.innerWidth >= 1024);
   const location = useLocation();
 
@@ -27,9 +38,6 @@ const Header = () => {
   });
 
   const isHomePage = location.pathname === "/";
-  const [isPlaneTicketsMenuShown, setIsPlaneTicketsMenuShown] = useState(false);
-  const [isDestinationsMenuShown, setIsDestinationsMenuShown] = useState(false);
-  const [isTipsMenuShown, setIsTipsMenuShown] = useState(false);
 
   return (
     <div className="header-container">
@@ -45,7 +53,15 @@ const Header = () => {
           />
         )}
       </div>
-      {!isDesktop && <NavbarMobile location={location} />}
+      {!isDesktop && (
+        <NavbarMobile
+          location={location}
+          setOpenNav={setOpenNav}
+          openNav={openNav}
+          selectedSubcategory={selectedSubcategory}
+          setSelectedSubcategory={setSelectedSubcategory}
+        />
+      )}
 
       <div className="header-filter-menu-container">
         {isPlaneTicketsMenuShown && (

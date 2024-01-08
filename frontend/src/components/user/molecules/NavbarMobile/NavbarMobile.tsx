@@ -7,10 +7,13 @@ import AirplaneTicketsMenu from "../../organisms/AirplaneTicketsMenu";
 import DestinationsMenu from "../../organisms/DestinationsMenu";
 import TipsMenu from "../../organisms/TipsMenu";
 
-const NavbarMobile = ({ location }) => {
-  const [openNav, setOpenNav] = useState(false);
-  const [selectedSubcategory, setSelectedSubcategory] = useState("");
-
+const NavbarMobile = ({
+  location,
+  setOpenNav,
+  openNav,
+  setSelectedSubcategory,
+  selectedSubcategory,
+}) => {
   const navHandler = () => {
     setOpenNav(!openNav);
   };

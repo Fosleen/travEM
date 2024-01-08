@@ -20,11 +20,16 @@
     padding-right: 12px;
     box-shadow: none;
     background: $greyMiddle;
+    justify-content: flex-start;
+    text-align: left;
   }
 
   &.full-width {
     width: 100%;
-    justify-content: flex-start;
+  }
+
+  &.sights {
+    justify-content: center;
   }
 
   &:hover {

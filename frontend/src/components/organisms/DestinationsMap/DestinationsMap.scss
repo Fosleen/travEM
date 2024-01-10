@@ -1,13 +1,14 @@
 @import "../../../utils/theme.scss";
 
 .map-parent-wrapper {
+  height: 400px;
   padding-left: 16px;
   padding-right: 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 100%;
-  height: fit-content;
+
   position: relative;
 
   svg {
@@ -18,6 +19,8 @@
 
 @media screen and ($tablet) {
   .map-parent-wrapper {
+    height: 500px;
+
     gap: 0px;
     padding: 0 16px;
   }

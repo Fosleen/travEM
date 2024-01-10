@@ -1,0 +1,48 @@
+@import "../../../../utils/theme.scss";
+
+.destinations-menu-item-container {
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+  z-index: 5;
+
+  .destinations-menu-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+      text-align: left;
+      font-size: 18px;
+    }
+  }
+
+  .destinations-menu-items {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .destinations-menu-item-container {
+    .destinations-menu-item-header {
+      h2 {
+        font-size: 24px;
+      }
+    }
+
+    .destinations-menu-items {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .destinations-menu-item-container {
+    .destinations-menu-items {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  }
+}

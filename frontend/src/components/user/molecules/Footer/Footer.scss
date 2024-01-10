@@ -28,6 +28,7 @@
 
       .footer-list-item-content {
         color: $bg;
+        cursor: pointer;
       }
 
       .footer-list-item-links {
@@ -38,11 +39,23 @@
 
   .footer-logo {
     display: flex;
-    padding: 16px 32px 48px;
-    justify-content: end;
+    padding: 16px 32px 72px;
+    justify-content: start;
 
     img {
       width: 80px;
+    }
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .footer-container {
+    .footer-logo {
+      justify-content: center;
+
+      img {
+        width: 96px;
+      }
     }
   }
 }
@@ -66,9 +79,10 @@
     }
 
     .footer-logo {
-      padding: 16px 24px 72px;
+      padding: 16px 24px 48px;
       max-width: 1300px;
       margin: 0 auto;
+      justify-content: start;
 
       img {
         width: 120px;
@@ -84,7 +98,7 @@
     }
 
     .footer-logo {
-      padding: 16px 0px 72px;
+      padding: 16px 0px 48px;
     }
   }
 }

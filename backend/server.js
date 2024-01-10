@@ -1,47 +1,35 @@
+const { Sequelize } = require("sequelize");
 const express = require("express");
-const { Sequelize, DataTypes } = require("sequelize");
+const dbConfig = require("./app/config/db-config");
+const db = require("./app/models");
 
 const app = express();
 
-// Sequelize setup
-const sequelize = new Sequelize({
-  dialect: "sqlite",
-  storage: "./app/config/database.sqlite", // Specify your database file path
-});
+const sequelize = new Sequelize(
+  `${dbConfig.DIALECT}://${dbConfig.USER}:${dbConfig.PASSWORD}@${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DATABASE}`
+);
 
-// Define User model
-const User = sequelize.define("User", {
-  username: DataTypes.STRING,
-});
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log("Connection has been established successfully.");
+  })
+  .catch((error) => {
+    console.error("Unable to connect to the database: ", error);
+  });
 
-// Create table if not exists
-sequelize.sync();
-
-// Express route to create a user
-app.post("/create-user", async (req, res) => {
-  try {
-    const { username } = req.body;
-    const user = await User.create({ username });
-    res.json(user);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// Express route to get all users
-app.get("/get-users", async (req, res) => {
-  try {
-    const users = await User.findAll();
-    res.json(users);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
+// Create tables from models folder
+db.sequelize
+  .sync()
+  .then(() => {
+    console.log("Table created successfully!");
+  })
+  .catch((error) => {
+    console.error("Unable to create table : ", error);
+  });
 
 // Start the server
-const PORT = process.env.PORT || 3000;
+const PORT = dbConfig.PORT;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

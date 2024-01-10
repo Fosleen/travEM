@@ -44,3 +44,7 @@ export interface DropdownProps {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   isDisabled: boolean;
 }
+
+export interface AirplaneTicketsMenuProps {
+  setIsPlaneTicketsMenuShown?: (value: boolean) => void;
+}

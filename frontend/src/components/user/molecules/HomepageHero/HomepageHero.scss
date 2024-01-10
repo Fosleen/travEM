@@ -24,11 +24,14 @@
   p {
     font-size: 16px;
     font-weight: 600;
-    color: #888888;
     text-shadow: -1px -1px 0 #fff, 0 -1px 0 #fff, 1px -1px 0 #fff, 1px 0 0 #fff,
       1px 1px 0 #fff, 0 1px 0 #fff, -1px 1px 0 #fff, -1px 0 0 #fff;
     max-width: 256px;
     text-align: right;
+
+    &.light-color {
+      color: #888888;
+    }
   }
 
   .homepage-hero-right {
@@ -228,6 +231,26 @@
             align-items: center;
           }
         }
+      }
+    }
+
+    .homepage-hero-destinations-menu-here-container {
+      position: absolute;
+      bottom: -344px;
+      position: absolute;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 2;
+
+      p {
+        text-shadow: none;
+        //color: $grey;
+        font-weight: 700;
+        font-size: 14px;
       }
     }
   }

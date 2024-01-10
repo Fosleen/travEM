@@ -1,0 +1,23 @@
+@import "../../../utils/theme.scss";
+
+.country-not-found-wrapper {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 16px;
+  padding: 16px;
+  gap: 24px;
+  margin-top: 20px;
+
+  img {
+    height: 200px;
+
+    @media screen and ($tablet) {
+      height: 280px;
+    }
+
+    @media screen and ($desktop) {
+      height: 300px;
+    }
+  }
+}

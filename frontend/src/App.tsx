@@ -10,7 +10,7 @@ import DestinationCountry from "./pages/UserViewPages/DestinationCountry/Destina
 import Login from "./pages/AdminViewPages/Login/Login";
 import Article from "./pages/UserViewPages/Article/Article";
 import DestinationPlace from "./pages/UserViewPages/DestinationPlace";
-
+import NotFound from "./pages/UserViewPages/NotFound/NotFound";
 
 function App() {
   return (
@@ -27,6 +27,8 @@ function App() {
           <Route path="/destinacija/:id" element={<DestinationCountry />} />
           <Route path="/clanak/:id" element={<Article />} />
 
+          <Route path="/nema-drzave" element={<NotFound />} />
+
           <Route
             path="/destinacija/:idDrzave"
             element={<DestinationCountry />}
@@ -35,7 +37,6 @@ function App() {
             path="/destinacija/:idDrzave/:idGrada"
             element={<DestinationPlace />}
           />
-
         </Route>
       </Routes>
     </>

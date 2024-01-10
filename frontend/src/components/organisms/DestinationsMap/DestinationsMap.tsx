@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import Map, {
   Marker,
   NavigationControl,
@@ -25,7 +25,7 @@ const DestinationsMap = () => {
   const [cursor, setCursor] = useState<string>("auto");
 
   const onClick = useCallback(async (event) => {
-    console.log(mapRef);
+    //  console.log(mapRef);
     const map = mapRef.current.getMap();
     const features = await map.queryRenderedFeatures(event.point, {
       layers: [layerId],
@@ -34,13 +34,12 @@ const DestinationsMap = () => {
     if (features.length > 0) {
       const clickedCountryName = features[0].properties.name;
 
-      console.log(`kliknuto na ${clickedCountryName}`);
       navigate(`/destinacija/${clickedCountryName}`); // problem je kaj mi koristimo hrvatska imena drzava
     }
   }, []);
 
   const onHover = useCallback(async (event) => {
-    console.log(mapRef);
+    //   console.log(mapRef);
     const map = mapRef.current.getMap();
     const features = await map.queryRenderedFeatures(event.point, {
       layers: [layerId],

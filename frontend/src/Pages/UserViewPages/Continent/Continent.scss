@@ -1,0 +1,36 @@
+@import "../../../utils/theme.scss";
+
+.continent-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.continent-text-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  h2 {
+    color: $textPrimary;
+    font-size: 40px;
+  }
+}
+
+.continent-page-recommended-wrapper {
+  margin-top: 24px;
+  margin-bottom: 24px;
+  gap: 24px;
+  display: flex;
+  flex-direction: column;
+
+  @media screen and ($tablet) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media screen and ($desktop) {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

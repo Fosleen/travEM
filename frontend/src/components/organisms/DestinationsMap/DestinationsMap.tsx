@@ -15,7 +15,7 @@ import "./DestinationsMap.scss";
 import CITIES from "./cities";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
-
+import { countries } from "./visited_countries.ts";
 const DestinationsMap = () => {
   const [popupInfo, setPopupInfo] = useState(null);
 
@@ -45,7 +45,16 @@ const DestinationsMap = () => {
     if (features.length > 0) {
       const clickedCountryName = features[0].properties.name;
 
-      navigate(`/destinacija/${clickedCountryName}`); // problem je kaj mi koristimo hrvatska imena drzava
+      const countryNames = countries.map((country) => country.trim());
+
+      // Check if the clicked country is in the list
+      const isCountryInList = countryNames.includes(clickedCountryName);
+
+      if (isCountryInList) {
+        navigate(`/destinacija/${clickedCountryName}`);
+      } else {
+        navigate("/nema-drzave");
+      }
     }
   }, []);
 
@@ -138,7 +147,7 @@ const DestinationsMap = () => {
           >
             <div>
               <Link
-                to={`/${popupInfo.city}`}
+                to={`/destinacija/${popupInfo.city}`}
                 target="_new"
                 href={`http://en.wikipedia.org/w/index.php?title=Special:Search&search=${popupInfo.city}, ${popupInfo.state}`}
               >

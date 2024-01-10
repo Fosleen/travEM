@@ -16,7 +16,16 @@ import CITIES from "./cities";
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { countries } from "./visited_countries.ts";
-const DestinationsMap = () => {
+import { FC } from "react";
+
+interface DestinationsMapProps {
+  initialLongitude: number;
+  initialLatitude: number;
+}
+const DestinationsMap: FC<DestinationsMapProps> = ({
+  initialLongitude,
+  initialLatitude,
+}) => {
   const [popupInfo, setPopupInfo] = useState(null);
 
   const onMarkerHover = useCallback((city) => {
@@ -99,8 +108,8 @@ const DestinationsMap = () => {
       <Map
         ref={mapRef}
         initialViewState={{
-          latitude: 51.1657,
-          longitude: 10.4515,
+          latitude: Number(initialLatitude),
+          longitude: Number(initialLongitude),
           zoom: 3,
           bearing: 0,
           pitch: 0,

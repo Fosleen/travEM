@@ -14,7 +14,7 @@ const Homepage = () => {
       <FavoritePosts />
       <HomepageBanner />
       <RecommendedMapDestinations />
-      <DestinationsMap />
+      <DestinationsMap initialLatitude={51.1657} initialLongitude={10.4515} />
       <BlogStats />
       <OtherPosts />
     </div>

@@ -4,8 +4,8 @@ import "./NotFound.scss";
 const NotFound = () => {
   return (
     <div className="country-not-found-wrapper">
-      <h1>Na žalost još nismo posjetili ovu državu</h1>
-      <img src={Warning} alt="" />
+      <h1>Nažalost, još nismo posjetili ovu državu.</h1>
+      <img src={Warning} alt="error-icon" />
     </div>
   );
 };

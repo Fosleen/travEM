@@ -7,14 +7,25 @@ import Map, {
   GeolocateControl,
   Source,
   Layer,
+  Popup,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import Pin from "../../atoms/Pin/Pin";
 import "./DestinationsMap.scss";
 import CITIES from "./cities";
 import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
 
 const DestinationsMap = () => {
+  const [popupInfo, setPopupInfo] = useState(null);
+
+  const onMarkerHover = useCallback((city) => {
+    setPopupInfo(city);
+  }, []);
+
+  const onMarkerLeave = useCallback(() => {
+    setPopupInfo(null);
+  }, []);
   const geojsonUrl =
     "https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_admin_0_countries.geojson";
   const sourceId = "countries";
@@ -47,7 +58,7 @@ const DestinationsMap = () => {
 
     if (features.length > 0) {
       const hovered = features[0].properties.name;
-      console.log(`hoverano na ${hovered}`);
+      //console.log(`hoverano na ${hovered}`);
 
       setHoveredCountry(hovered);
       setCursor("pointer"); // nekak bi da se ovo i makne ak nije vise hoverana drzava (ostane zadnja hoverana i pointer kursor)
@@ -61,7 +72,12 @@ const DestinationsMap = () => {
           key={`marker-${index}`}
           longitude={city.longitude}
           latitude={city.latitude}
-          anchor="bottom"
+          onClick={(e) => {
+            // If we let the click event propagates to the map, it will immediately close the popup
+            // with `closeOnClick: true`
+            e.originalEvent.stopPropagation();
+            setPopupInfo(city);
+          }}
         >
           <Pin />
         </Marker>
@@ -101,7 +117,7 @@ const DestinationsMap = () => {
               "fill-color": [
                 "case",
                 ["==", ["get", "name"], "Austria"],
-                "#d2eb64", // oznacene (posjecene) drzave - TODO problem je kaj se one ne hoveraju, nego ostaje ta defaultna boja...
+                "#d2eb64",
                 ["==", ["get", "name"], hoveredCountry],
                 "#218161", // hoverana
                 "#f8f8f8", // ostale o kojima nema clanaka
@@ -112,6 +128,29 @@ const DestinationsMap = () => {
         </Source>
 
         {pins}
+
+        {popupInfo && (
+          <Popup
+            anchor="top"
+            longitude={Number(popupInfo.longitude)}
+            latitude={Number(popupInfo.latitude)}
+            onClose={() => setPopupInfo(null)}
+          >
+            <div>
+              <Link
+                to={`/${popupInfo.city}`}
+                target="_new"
+                href={`http://en.wikipedia.org/w/index.php?title=Special:Search&search=${popupInfo.city}, ${popupInfo.state}`}
+              >
+                {popupInfo.city}
+              </Link>
+            </div>
+            <img
+              width="100%"
+              src="https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/06/26/18/porto-main.jpg"
+            />
+          </Popup>
+        )}
       </Map>
     </div>
   );

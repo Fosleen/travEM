@@ -13,7 +13,7 @@ const Homepage = () => {
       <HomepageHero />
       <FavoritePosts />
       <HomepageBanner />
-      <RecommendedaMapDestinations />
+      <RecommendedMapDestinations />
       <DestinationsMap />
       <BlogStats />
       <OtherPosts />

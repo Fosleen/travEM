@@ -146,18 +146,16 @@ const DestinationsMap = () => {
             onClose={() => setPopupInfo(null)}
           >
             <div>
-              <Link
-                to={`/destinacija/${popupInfo.city}`}
-                target="_new"
-                href={`http://en.wikipedia.org/w/index.php?title=Special:Search&search=${popupInfo.city}, ${popupInfo.state}`}
-              >
+              <Link to={`/destinacija/${popupInfo.city}`} target="_new">
                 {popupInfo.city}
               </Link>
             </div>
-            <img
-              width="100%"
-              src="https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/06/26/18/porto-main.jpg"
-            />
+            <Link to={`/destinacija/${popupInfo.city}`} target="_new">
+              <img
+                width="100%"
+                src="https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/06/26/18/porto-main.jpg"
+              />
+            </Link>
           </Popup>
         )}
       </Map>

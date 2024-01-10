@@ -11,6 +11,8 @@ import Login from "./pages/AdminViewPages/Login/Login";
 import Article from "./pages/UserViewPages/Article/Article";
 import DestinationPlace from "./pages/UserViewPages/DestinationPlace";
 import NotFound from "./pages/UserViewPages/NotFound/NotFound";
+
+import AdminViewLayout from "./components/admin/templates/AdminViewLayout";
 import Continent from "./pages/UserViewPages/Continent/Continent";
 
 function App() {
@@ -24,13 +26,10 @@ function App() {
           <Route path="/aviokarte" element={<AirplaneTickets />} />
           <Route path="/pretrazivanje" element={<SearchResults />} />
           <Route path="/savjeti/let-avionom" element={<TipsAndTricks />} />
-
           <Route path="/destinacija/:id" element={<DestinationCountry />} />
           <Route path="/clanak/:id" element={<Article />} />
-
           <Route path="/nema-drzave" element={<NotFound />} />
           <Route path="/kontinent" element={<Continent />} />
-
           <Route
             path="/destinacija/:idDrzave"
             element={<DestinationCountry />}
@@ -40,6 +39,7 @@ function App() {
             element={<DestinationPlace />}
           />
         </Route>
+        <Route path="/admin" element={<AdminViewLayout />}></Route>
       </Routes>
     </>
   );

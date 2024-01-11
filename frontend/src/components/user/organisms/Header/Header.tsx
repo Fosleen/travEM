@@ -54,10 +54,6 @@ const Header = ({
   const [isDesktop, setDesktop] = useState(window.innerWidth >= 1024);
   const location = useLocation();
 
-  useEffect(() => {
-    console.log(`location: ${location.pathname}`);
-  }, [location]);
-
   const updateMedia = () => {
     setDesktop(window.innerWidth >= 1024);
   };

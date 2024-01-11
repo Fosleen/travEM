@@ -1,19 +1,19 @@
 import { Route, Routes } from "react-router-dom";
 import UserViewLayout from "./components/user/templates/UserViewLayout";
-import Homepage from "./pages/UserViewPages/Homepage/Homepage";
-import About from "./pages/UserViewPages/About/About";
-import AirplaneTickets from "./pages/UserViewPages/AirplaneTickets/AirplaneTickets";
-import SearchResults from "./pages/UserViewPages/SearchResults/SearchResults";
-import TipsAndTricks from "./pages/UserViewPages/TipsAndTricks/TipsAndTricks";
+import Homepage from "./Pages/UserViewPages/Homepage/Homepage";
+import About from "./Pages/UserViewPages/About/About";
+import AirplaneTickets from "./Pages/UserViewPages/AirplaneTickets/AirplaneTickets";
+import SearchResults from "./Pages/UserViewPages/SearchResults/SearchResults";
+import TipsAndTricks from "./Pages/UserViewPages/TipsAndTricks/TipsAndTricks";
 import "./App.scss";
-import DestinationCountry from "./pages/UserViewPages/DestinationCountry/DestinationCountry";
-import Login from "./pages/AdminViewPages/Login/Login";
-import Article from "./pages/UserViewPages/Article/Article";
-import DestinationPlace from "./pages/UserViewPages/DestinationPlace";
-import NotFound from "./pages/UserViewPages/NotFound/NotFound";
+import DestinationCountry from "./Pages/UserViewPages/DestinationCountry/DestinationCountry";
+import Login from "./Pages/AdminViewPages/Login/Login";
+import Article from "./Pages/UserViewPages/Article/Article";
+import DestinationPlace from "./Pages/UserViewPages/DestinationPlace";
+import NotFound from "./Pages/UserViewPages/NotFound/NotFound";
 
 import AdminViewLayout from "./components/admin/templates/AdminViewLayout";
-import Continent from "./pages/UserViewPages/Continent/Continent";
+import Continent from "./Pages/UserViewPages/Continent/Continent";
 
 function App() {
   return (

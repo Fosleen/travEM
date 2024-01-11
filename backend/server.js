@@ -1,7 +1,7 @@
-const { Sequelize } = require("sequelize");
-const express = require("express");
-const dbConfig = require("./app/config/db-config");
-const db = require("./app/models");
+import { Sequelize } from "sequelize";
+import express from "express";
+import dbConfig from "./app/config/db-config.js";
+import db from "./app/models/index.js";
 
 const app = express();
 

@@ -1,5 +1,6 @@
-const dbConfig = require("../config/db-config");
-const Sequelize = require("sequelize");
+import dbConfig from "../config/db-config.js";
+import { Sequelize } from "sequelize";
+import User from "./user.js";
 
 const sequelize = new Sequelize(
   `${dbConfig.DIALECT}://${dbConfig.USER}:${dbConfig.PASSWORD}@${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DATABASE}`
@@ -8,6 +9,6 @@ const sequelize = new Sequelize(
 const db = {};
 db.sequelize = sequelize;
 db.models = {};
-db.models.User = require("./user")(sequelize, Sequelize.DataTypes);
+db.models.User = User(sequelize, Sequelize.DataTypes);
 
-module.exports = db;
+export default db;

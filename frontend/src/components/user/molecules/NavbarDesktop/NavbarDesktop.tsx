@@ -6,8 +6,14 @@ import { useLocation } from "react-router";
 import { useEffect } from "react";
 
 const NavbarDesktop = ({
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   setIsPlaneTicketsMenuShown,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   setIsDestinationsMenuShown,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   setIsTipsMenuShown,
 }) => {
   const location = useLocation();

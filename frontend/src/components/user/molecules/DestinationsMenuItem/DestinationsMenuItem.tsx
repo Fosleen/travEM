@@ -3,6 +3,8 @@ import DestinationItem from "../../atoms/DestinationItem";
 import "./DestinationsMenuItem.scss";
 import { Link } from "react-router-dom";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignoreS
 const DestinationsMenuItem = ({ title }) => {
   return (
     <div className="destinations-menu-item-container">

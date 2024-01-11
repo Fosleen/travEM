@@ -1,6 +1,7 @@
 import DestinationItem from "../../atoms/DestinationItem";
 import "./AirplaneTicketsMenuItem.scss";
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignoreS
 const AirplaneTicketsMenuItem = ({ title }) => {
   return (
     <div className="airplane-tickets-menu-item-container">

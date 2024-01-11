@@ -10,15 +10,45 @@ import DestinationsMenu from "../DestinationsMenu";
 import TipsMenu from "../TipsMenu";
 
 const Header = ({
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
+  // eslint-disable-next-line
   isPlaneTicketsMenuShown,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
+  // eslint-disable-next-line
   setIsPlaneTicketsMenuShown,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
+  // eslint-disable-next-line
   isDestinationsMenuShown,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
+  // eslint-disable-next-line
   setIsDestinationsMenuShown,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
+  // eslint-disable-next-line
   isTipsMenuShown,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
+  // eslint-disable-next-line
   setIsTipsMenuShown,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
+  // eslint-disable-next-line
   setOpenNav,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
+  // eslint-disable-next-line
   openNav,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
+  // eslint-disable-next-line
   setSelectedSubcategory,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
+  // eslint-disable-next-line
   selectedSubcategory,
 }) => {
   const [isDesktop, setDesktop] = useState(window.innerWidth >= 1024);

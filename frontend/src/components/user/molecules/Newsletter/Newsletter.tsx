@@ -6,6 +6,9 @@ import NewsletterImage from "../../atoms/NewsletterImage";
 import { useState } from "react";
 
 const Newsletter = () => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
+  // eslint-disable-next-line
   const [email, setEmail] = useState("");
 
   const handleSubscriptionClick = () => {

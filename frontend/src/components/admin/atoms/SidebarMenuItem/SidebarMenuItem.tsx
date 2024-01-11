@@ -6,8 +6,13 @@ import {
   Buildings,
   Info,
 } from "@phosphor-icons/react/dist/ssr";
+import { FC } from "react";
 
-const SidebarMenuItem = ({ text }) => {
+interface SidebarMenuItemProps {
+  text: string;
+}
+
+const SidebarMenuItem: FC<SidebarMenuItemProps> = ({ text }) => {
   return (
     <Link
       to={`/admin/${text.toLowerCase()}`}

@@ -5,8 +5,13 @@ import food from "../../../../assets/images/food-image.jpg";
 import { Dot } from "@phosphor-icons/react";
 import icon1 from "../../../../assets/images/menu-icon.png";
 import icon2 from "../../../../assets/images/teamwork-icon.png";
+import { FC } from "react";
 
-const CountryHighlight = ({ iconNmbr }) => {
+interface CountryHighlightProps {
+  iconNmbr: string; //i think this should be number
+}
+
+const CountryHighlight: FC<CountryHighlightProps> = ({ iconNmbr }) => {
   return (
     <div className="country-highligth-container">
       <div className="country-highligth-left">

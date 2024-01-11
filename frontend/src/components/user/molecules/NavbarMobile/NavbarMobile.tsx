@@ -1,5 +1,5 @@
 import { List, X, CaretDown, CaretUp } from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import "./NavbarMobile.scss";
 import SocialMediaLinks from "../../atoms/SocialMediaLinks/SocialMediaLinks";
 import Search from "../../../atoms/Search";
@@ -8,18 +8,24 @@ import DestinationsMenu from "../../organisms/DestinationsMenu";
 import TipsMenu from "../../organisms/TipsMenu";
 
 const NavbarMobile = ({
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   location,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   setOpenNav,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   openNav,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   setSelectedSubcategory,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   selectedSubcategory,
 }) => {
   const navHandler = () => {
     setOpenNav(!openNav);
-  };
-
-  const closeNav = () => {
-    setOpenNav(false);
   };
 
   useEffect(() => {

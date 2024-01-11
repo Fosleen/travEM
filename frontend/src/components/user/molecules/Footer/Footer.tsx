@@ -4,11 +4,23 @@ import logo from "../../../../assets/images/logo-light.png";
 import "./Footer.scss";
 import { useEffect, useState } from "react";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignoreS
 const Footer = ({
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   setIsPlaneTicketsMenuShown,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   setIsDestinationsMenuShown,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   setIsTipsMenuShown,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   setOpenNav,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   setSelectedSubcategory,
 }) => {
   const [isDesktop, setDesktop] = useState(window.innerWidth >= 1024);

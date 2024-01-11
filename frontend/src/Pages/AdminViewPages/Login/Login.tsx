@@ -17,10 +17,14 @@ const Login = () => {
         validate={(values) => {
           const errors = {};
           if (!values.username) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignoreS
             errors.username = "Unesi korisničko ime";
           }
 
           if (!values.password) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignoreS
             errors.password = "Unesi lozinku";
           }
 

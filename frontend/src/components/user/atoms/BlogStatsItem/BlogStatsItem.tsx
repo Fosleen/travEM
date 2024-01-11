@@ -1,6 +1,11 @@
 import "./BlogStatsItem.scss";
+import { FC } from "react";
 
-const BlogStatsItem = ({ icon }) => {
+interface BlogStatsItemProps {
+  icon: string;
+}
+
+const BlogStatsItem: FC<BlogStatsItemProps> = ({ icon }) => {
   return (
     <div className="blog-stats-item-container">
       <div className="blog-stats-item-wrapper">

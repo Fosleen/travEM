@@ -52,7 +52,7 @@ const Dropdown: FC<DropdownProps> = ({
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignoreS
           <option key={option.id} value={option.id} className="dropdown-item">
-            {option.name}
+            {(option as { name: string }).name}
           </option>
         ))}
       </select>

@@ -26,6 +26,7 @@ export interface InputProps {
   green?: boolean;
   adminView?: boolean;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export interface SearchProps {

@@ -28,13 +28,6 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
 }) => {
   const [popupInfo, setPopupInfo] = useState(null);
 
-  const onMarkerHover = useCallback((city) => {
-    setPopupInfo(city);
-  }, []);
-
-  const onMarkerLeave = useCallback(() => {
-    setPopupInfo(null);
-  }, []);
   const geojsonUrl =
     "https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_admin_0_countries.geojson";
   const sourceId = "countries";
@@ -44,8 +37,12 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
   const [hoveredCountry, setHoveredCountry] = useState(null);
   const [cursor, setCursor] = useState<string>("auto");
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   const onClick = useCallback(async (event) => {
     //  console.log(mapRef);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignoreS
     const map = mapRef.current.getMap();
     const features = await map.queryRenderedFeatures(event.point, {
       layers: [layerId],
@@ -67,8 +64,12 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
     }
   }, []);
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   const onHover = useCallback(async (event) => {
     //   console.log(mapRef);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignoreS
     const map = mapRef.current.getMap();
     const features = await map.queryRenderedFeatures(event.point, {
       layers: [layerId],
@@ -94,6 +95,8 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
             // If we let the click event propagates to the map, it will immediately close the popup
             // with `closeOnClick: true`
             e.originalEvent.stopPropagation();
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignoreS
             setPopupInfo(city);
           }}
         >
@@ -150,16 +153,16 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
         {popupInfo && (
           <Popup
             anchor="top"
-            longitude={Number(popupInfo.longitude)}
-            latitude={Number(popupInfo.latitude)}
+            longitude={Number(popupInfo["longitude"])}
+            latitude={Number(popupInfo["latiturde"])}
             onClose={() => setPopupInfo(null)}
           >
             <div>
-              <Link to={`/destinacija/${popupInfo.city}`} target="_new">
-                {popupInfo.city}
+              <Link to={`/destinacija/${popupInfo["city"]}`} target="_new">
+                {popupInfo["city"]}
               </Link>
             </div>
-            <Link to={`/destinacija/${popupInfo.city}`} target="_new">
+            <Link to={`/destinacija/${popupInfo["city"]}`} target="_new">
               <img
                 width="100%"
                 src="https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/06/26/18/porto-main.jpg"

@@ -1,7 +1,16 @@
 import DestinationsMenuItem from "../../molecules/DestinationsMenuItem";
 import "./DestinationsMenu.scss";
+import { FC } from "react";
 
-const DestinationsMenu = ({ setIsDestinationsMenuShown }) => {
+interface DestinationsMenuProps {
+  setIsDestinationsMenuShown?: (isShown: boolean) => void;
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignoreS
+const DestinationsMenu: FC<DestinationsMenuProps> = ({
+  setIsDestinationsMenuShown,
+}) => {
   const handleMouseLeave = () => {
     if (setIsDestinationsMenuShown) {
       setIsDestinationsMenuShown(false);

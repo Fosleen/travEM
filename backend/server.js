@@ -67,12 +67,44 @@ const createAssociations = () => {
   });
   db.models.Section.belongsTo(db.models.Article);
 
+  db.models.Footer.hasMany(db.models.FooterGroup, {
+    foreignKey: { allowNull: false },
+  });
+
+  db.models.FooterGroup.hasMany(db.models.FooterItem, {
+    foreignKey: { allowNull: false },
+  });
+
+  db.models.Country.belongsTo(db.models.Color, {
+    foreignKey: { allowNull: false },
+  });
+
+  db.models.Country.belongsTo(db.models.Continent, {
+    foreignKey: { allowNull: false },
+  });
+
+  db.models.Country.hasMany(db.models.Characteristic, {
+    foreignKey: { allowNull: false },
+  });
+
+  db.models.CharacteristicIcon.hasMany(db.models.Characteristic, {
+    foreignKey: { allowNull: false },
+  });
+
   // M:N
   db.models.Section.belongsToMany(db.models.SectionImage, {
     through: "section_image_has_section",
   });
   db.models.SectionImage.belongsToMany(db.models.Section, {
     through: "section_image_has_section",
+  });
+
+  db.models.ArticleSpecialType.belongsToMany(db.models.Article, {
+    through: "article_has_article_special_type",
+  });
+
+  db.models.Article.belongsToMany(db.models.ArticleSpecialType, {
+    through: "article_has_article_special_type",
   });
 };
 

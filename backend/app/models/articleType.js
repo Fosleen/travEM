@@ -4,9 +4,7 @@ export default (sequelize, DataTypes) => {
     {
       name: { type: DataTypes.STRING(100), allowNull: false },
     },
-    {
-      freezeTableName: true, // da ne pluralizira tablicu
-    }
+    { underscored: true, timestamps: false, freezeTableName: true }
   );
 
   return ArticleType;

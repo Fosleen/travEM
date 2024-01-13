@@ -1,7 +1,10 @@
 import { Sequelize } from "sequelize";
 import express from "express";
+import cors from "cors";
+import logger from "morgan";
 import dbConfig from "./app/config/db-config.js";
 import db from "./app/models/index.js";
+import router from "./app/routes/index.js";
 
 const app = express();
 
@@ -129,6 +132,12 @@ db.sequelize
   .catch((error) => {
     console.error("Unable to create table : ", error);
   });
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(logger("dev"));
+app.use("/api", router);
 
 // Start the server
 const PORT = dbConfig.PORT;

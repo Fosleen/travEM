@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import logger from "morgan";
 import dbConfig from "./app/config/db-config.js";
 import db from "./app/models/index.js";
@@ -123,6 +124,7 @@ sequelize
 // Create all 1:1, 1:M and M:N
 createAssociations();
 
+/*
 // Create tables from models folder
 db.sequelize
   .sync()
@@ -132,12 +134,15 @@ db.sequelize
   .catch((error) => {
     console.error("Unable to create table : ", error);
   });
+*/
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(logger("dev"));
-app.use("/api", router);
+app.use(helmet());
+
+app.use("/api/v1", router);
 
 // Start the server
 const PORT = dbConfig.PORT;

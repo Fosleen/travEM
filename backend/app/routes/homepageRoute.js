@@ -1,9 +1,12 @@
 import { Router } from "express";
-import { getAll } from "../controllers/homepageController.js";
+import controller from "../controllers/homepageController.js";
 
 const router = new Router();
 
 // GET /api/v1/homepage
-router.get("/", getAll);
+router.get("/", controller.getHomepage);
+
+// PATCH /api/v1/homepage
+router.patch("/", controller.patchHomepage);
 
 export default router;

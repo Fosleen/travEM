@@ -6,8 +6,12 @@ import { ArrowDown } from "@phosphor-icons/react";
 import "./HomepageHero.scss";
 import { useState } from "react";
 import DestinationsMenu from "../../organisms/DestinationsMenu";
+import { FC } from "react";
+import { HomepageData } from "../../../../common/types";
 
-const HomepageHero = () => {
+const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
+  homepageContent,
+}) => {
   const [isDestinationsMenuHereShown, setIsDestinationsMenuHereShown] =
     useState(false);
 
@@ -20,7 +24,7 @@ const HomepageHero = () => {
       <img className="overlay-icon-1" src={suitcaseIcon} alt="suitcase" />
       <img className="overlay-icon-2" src={planeIcon} alt="plane" />
       <div className="homepage-hero-left">
-        <HomepageImage />
+        <HomepageImage url={homepageContent.hero_image_url} />
       </div>
       <div className="homepage-hero-right">
         <div className="homepage-hero-welcome">

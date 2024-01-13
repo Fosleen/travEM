@@ -49,3 +49,15 @@ export interface DropdownProps {
 export interface AirplaneTicketsMenuProps {
   setIsPlaneTicketsMenuShown?: (value: boolean) => void;
 }
+
+export interface HomepageData {
+  id: number;
+  hero_image_url: string;
+  banner_title: string;
+  banner_small_text: string;
+  banner_description: string;
+  button_text: string;
+  flights_nmbr: string;
+  videos_nmbr: string;
+  distance_nmbr: string;
+}

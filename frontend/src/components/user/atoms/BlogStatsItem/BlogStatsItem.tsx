@@ -3,9 +3,10 @@ import { FC } from "react";
 
 interface BlogStatsItemProps {
   icon: string;
+  value?: string;
 }
 
-const BlogStatsItem: FC<BlogStatsItemProps> = ({ icon }) => {
+const BlogStatsItem: FC<BlogStatsItemProps> = ({ icon, value }) => {
   return (
     <div className="blog-stats-item-container">
       <div className="blog-stats-item-wrapper">
@@ -13,7 +14,7 @@ const BlogStatsItem: FC<BlogStatsItemProps> = ({ icon }) => {
           <img src={icon} alt="icon" />
         </div>
         <div className="blog-stats-item-value">
-          <p>150k</p>
+          <p>{value ? value : "0"}</p>
         </div>
       </div>
       <p>prijeđenih kilometara</p>

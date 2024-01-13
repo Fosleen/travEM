@@ -122,7 +122,7 @@ createAssociations();
 
 // Create tables from models folder
 db.sequelize
-  .sync({ force: true })
+  .sync()
   .then(() => {
     console.log("Table created successfully!");
   })

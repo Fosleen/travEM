@@ -16,8 +16,15 @@
     }
   }
 
-  .edit-hero-buttons {
+  .edit-hero-input-container {
+    max-width: 800px;
+  }
+
+  p {
     margin-top: 24px;
+  }
+
+  .edit-hero-buttons {
     display: flex;
     gap: 8px;
   }

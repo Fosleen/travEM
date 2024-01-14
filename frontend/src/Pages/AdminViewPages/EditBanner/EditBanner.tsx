@@ -10,6 +10,7 @@ import {
   notifySuccess,
 } from "../../../components/atoms/Toast/Toast";
 import { ErrorMessage, Field, Form, Formik } from "formik";
+import * as Yup from "yup";
 
 const EditBanner = () => {
   const [homepageContent, setHomepageContent] = useState<HomepageData | null>(
@@ -51,6 +52,14 @@ const EditBanner = () => {
     fetchData();
   }, []);
 
+  const ValidationSchema = Yup.object().shape({
+    banner_title: Yup.string().required("Obavezno polje!"),
+    banner_small_text: Yup.string().required("Obavezno polje!"),
+    banner_description: Yup.string().required("Obavezno polje!"),
+    button_text: Yup.string().required("Obavezno polje!"),
+    banner_image_url: Yup.string().required("Obavezno polje!"),
+  });
+
   return (
     <div className="edit-banner-container">
       <h2>Uredi ravni banner i preporučene članke</h2>
@@ -63,32 +72,7 @@ const EditBanner = () => {
             button_text: homepageContent.button_text,
             banner_image_url: homepageContent.banner_image_url,
           }}
-          validator={(values: EditBannerData) => {
-            const errors: EditBannerData = {
-              banner_title: "",
-              banner_small_text: "",
-              banner_description: "",
-              button_text: "",
-              banner_image_url: "",
-            };
-            if (!values.banner_title) {
-              errors.banner_title = "Unesi veliki naslov bannera!";
-            }
-            if (!values.banner_small_text) {
-              errors.banner_small_text = "Unesi sitan naslov bannera!";
-            }
-            if (!values.banner_description) {
-              errors.banner_description = "Unesi opis bannera!";
-            }
-            if (!values.button_text) {
-              errors.button_text = "Unesi tekst gumba bannera!";
-            }
-            if (!values.banner_image_url) {
-              errors.banner_image_url = "Unesi URL pozadinske slike bannera!";
-            }
-
-            return errors;
-          }}
+          validationSchema={ValidationSchema}
           onSubmit={handleSave}
         >
           <Form>
@@ -106,32 +90,39 @@ const EditBanner = () => {
                 as={Input}
                 label="Veliki naslov *"
               />
+              <ErrorMessage name="banner_title" component="div" />
               <Field
                 name="banner_description"
                 type="text"
                 as={Input}
                 label="Tekst odlomka *"
               />
+              <ErrorMessage name="banner_description" component="div" />
               <Field
                 name="button_text"
                 type="text"
                 as={Input}
                 label="Tekst gumba *"
               />
+              <ErrorMessage name="button_text" component="div" />
               <Field
                 name="banner_image_url"
                 type="text"
                 as={Input}
                 label="URL slike bannera *"
               />
+              <ErrorMessage name="banner_image_url" component="div" />
               <Field
                 name="recommended_post_1"
                 type="text"
                 as={Input}
                 label="Preporučeni članci *"
               />
+              <ErrorMessage name="recommended_post_1" component="div" />
               <Field name="recommended_post_2" type="text" as={Input} />
+              <ErrorMessage name="recommended_post_2" component="div" />
               <Field name="recommended_post_3" type="text" as={Input} />
+              <ErrorMessage name="recommended_post_3" component="div" />
             </div>
             <div className="edit-banner-image-container">
               <img

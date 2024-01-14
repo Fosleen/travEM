@@ -8,9 +8,6 @@ import db from "./app/models/index.js";
 import router from "./app/routes/index.js";
 import passport from "passport";
 import session from "express-session";
-import bcrypt from "bcrypt";
-import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import jwt from "jsonwebtoken";
 import { authenticateJwt, login } from "./app/middleware/auth.js";
 
 const app = express();

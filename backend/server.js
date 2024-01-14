@@ -11,6 +11,7 @@ import session from "express-session";
 import bcrypt from "bcrypt";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import jwt from "jsonwebtoken";
+import { authenticateJwt, login } from "./app/middleware/auth.js";
 
 const app = express();
 
@@ -161,62 +162,9 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: "1234", // Replace with your secret key for JWT
-};
-
-passport.use(
-  new JwtStrategy(jwtOptions, async (jwtPayload, done) => {
-    try {
-      const user = await db.models.User.findByPk(jwtPayload.id);
-
-      if (!user) {
-        return done(null, false, { message: "User not found." });
-      }
-
-      return done(null, user);
-    } catch (error) {
-      return done(error);
-    }
-  })
-);
-
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser((id, done) => {
-  const user = users.find((u) => u.id === id);
-  done(null, user);
-});
-
-app.post("/login", async (req, res, next) => {
-  try {
-    const { username, password } = req.body;
-
-    const user = await db.models.User.findOne({ where: { username } });
-
-    if (!user || password !== user.password) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Authentication failed." });
-    }
-
-    // Generate a new JWT token for the authenticated user
-    const token = jwt.sign({ id: user.id }, "1234"); // trebal bu se zamjeniti key
-
-    return res.json({
-      success: true,
-      message: "Authentication succeeded.",
-      token,
-    });
-  } catch (error) {
-    return next(error);
-  }
-});
-
+app.post("/login", login);
 app.use("/api/v1", router);
+app.use("/api/v1/secure", authenticateJwt, router); //middleware checking for jwt validity
 
 // Start the server
 const PORT = dbConfig.PORT;

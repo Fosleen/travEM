@@ -3,6 +3,8 @@
 .main-country-post-container {
   position: relative;
   cursor: pointer;
+  display: inline-block;
+  height: 100%;
 
   .main-country-post-bg-image-container {
     width: 100%;

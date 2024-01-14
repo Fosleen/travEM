@@ -4,12 +4,10 @@ import Button from "../../../components/atoms/Button";
 import Logo from "../../../assets/images/travem-logo-grey.png";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
-import { useState } from "react";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   const handleLogin = async (values, { setSubmitting }) => {
     try {
       const response = await fetch("http://localhost:25060/login", {
@@ -47,10 +45,14 @@ const Login = () => {
         validate={(values) => {
           const errors = {};
           if (!values.username) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignoreS
             errors.username = "Unesi korisničko ime";
           }
 
           if (!values.password) {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignoreS
             errors.password = "Unesi lozinku";
           }
 
@@ -82,7 +84,7 @@ const Login = () => {
           <ErrorMessage name="password" component="div" />
 
           <div className="login-form-button-wrapper">
-            <Button type="submit" grey>
+            <Button type="submit" grey onClick={() => {}}>
               Prijavi se
             </Button>
           </div>

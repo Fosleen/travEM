@@ -1,8 +1,7 @@
 import "./HomepageImage.scss";
-import heroImage from "../../../../assets/images/post-image.jpg";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
-const HomepageImage = () => {
+const HomepageImage: FC<{ url: string }> = ({ url }) => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
   useEffect(() => {
@@ -17,7 +16,7 @@ const HomepageImage = () => {
 
   return (
     <div className="homepage-image-container">
-      <img src={heroImage} alt="homepage-hero-image" />
+      <img src={url} alt="homepage-hero-image" />
       <svg
         className="homepage-clip scalableSvg"
         width="61"

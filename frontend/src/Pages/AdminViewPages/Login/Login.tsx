@@ -2,10 +2,38 @@ import "./Login.scss";
 import Input from "../../../components/atoms/Input";
 import Button from "../../../components/atoms/Button";
 import Logo from "../../../assets/images/travem-logo-grey.png";
-import { Field, Formik, Form } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 
 const Login = () => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
+  const handleLogin = async (values, { setSubmitting }) => {
+    try {
+      const response = await fetch("http://localhost:25060/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        console.log("Authentication succeeded");
+        notifySuccess("Uspjesna prijava!");
+      } else {
+        console.log("Authentication failed");
+      }
+    } catch (error) {
+      console.error("Error during authentication", error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="login-form-wrapper">
       <div className="login-form-logo-wrapper">
@@ -30,51 +58,37 @@ const Login = () => {
 
           return errors;
         }}
-        onSubmit={(values, { setSubmitting }) => {
-          setTimeout(() => {
-            //alert(JSON.stringify(values, null, 2));
-            notifySuccess("Uspjesna prijava!");
-
-            setSubmitting(false);
-            console.log("Vrijednosti su", values);
-          }, 400);
-        }}
+        onSubmit={handleLogin}
       >
-        {({ handleSubmit, isSubmitting, errors, touched }) => (
-          <Form className="login-form-wrapper-form" onSubmit={handleSubmit}>
-            <div className="login-form-title-wrapper">
-              <h2>Dobrodošao natrag!</h2>
-            </div>
+        <Form className="login-form-wrapper-form">
+          <div className="login-form-title-wrapper">
+            <h2>Dobrodošao natrag!</h2>
+          </div>
 
-            <Field
-              name="username"
-              type="text"
-              as={Input}
-              adminView
-              label="Korisničko ime"
-              error={touched.username && errors.username}
-            />
+          <Field
+            name="username"
+            type="text"
+            as={Input}
+            adminView
+            label="Korisničko ime"
+          />
+          <ErrorMessage name="username" component="div" />
 
-            <Field
-              name="password"
-              type="password"
-              as={Input}
-              adminView
-              label="Lozinka"
-              error={touched.password && errors.password}
-            />
-            <div className="login-form-button-wrapper">
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                grey
-                onClick={() => {}}
-              >
-                Prijavi se
-              </Button>
-            </div>
-          </Form>
-        )}
+          <Field
+            name="password"
+            type="password"
+            as={Input}
+            adminView
+            label="Lozinka"
+          />
+          <ErrorMessage name="password" component="div" />
+
+          <div className="login-form-button-wrapper">
+            <Button type="submit" grey onClick={() => {}}>
+              Prijavi se
+            </Button>
+          </div>
+        </Form>
       </Formik>
     </div>
   );

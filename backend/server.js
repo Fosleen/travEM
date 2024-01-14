@@ -9,7 +9,8 @@ import router from "./app/routes/index.js";
 import passport from "passport";
 import session from "express-session";
 import bcrypt from "bcrypt";
-import LocalStrategy from "passport-local";
+import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
+import jwt from "jsonwebtoken";
 
 const app = express();
 
@@ -160,18 +161,18 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+const jwtOptions = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: "1234", // Replace with your secret key for JWT
+};
+
 passport.use(
-  new LocalStrategy(async (username, password, done) => {
+  new JwtStrategy(jwtOptions, async (jwtPayload, done) => {
     try {
-      const user = await db.models.User.findOne({ where: { username } });
+      const user = await db.models.User.findByPk(jwtPayload.id);
 
       if (!user) {
-        return done(null, false, { message: "Incorrect username." });
-      }
-
-      // Use normal string comparison for passwords
-      if (password !== user.password) {
-        return done(null, false, { message: "Incorrect password." });
+        return done(null, false, { message: "User not found." });
       }
 
       return done(null, user);
@@ -190,8 +191,29 @@ passport.deserializeUser((id, done) => {
   done(null, user);
 });
 
-app.post("/login", passport.authenticate("local"), (req, res) => {
-  res.json({ success: true, message: "Authentication succeeded." });
+app.post("/login", async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+
+    const user = await db.models.User.findOne({ where: { username } });
+
+    if (!user || password !== user.password) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Authentication failed." });
+    }
+
+    // Generate a new JWT token for the authenticated user
+    const token = jwt.sign({ id: user.id }, "1234"); // trebal bu se zamjeniti key
+
+    return res.json({
+      success: true,
+      message: "Authentication succeeded.",
+      token,
+    });
+  } catch (error) {
+    return next(error);
+  }
 });
 
 app.use("/api/v1", router);

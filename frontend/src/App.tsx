@@ -14,6 +14,7 @@ import NotFound from "./Pages/UserViewPages/NotFound/NotFound";
 
 import AdminViewLayout from "./components/admin/templates/AdminViewLayout";
 import Continent from "./Pages/UserViewPages/Continent/Continent";
+import EditHomepageMenu from "./Pages/AdminViewPages/EditHomepageMenu/EditHomepageMenu";
 
 function App() {
   return (
@@ -39,7 +40,9 @@ function App() {
             element={<DestinationPlace />}
           />
         </Route>
-        <Route path="/admin" element={<AdminViewLayout />}></Route>
+        <Route path="/admin" element={<AdminViewLayout />}>
+          <Route path="/admin/meni-uredi-pocetnu" element={<EditHomepageMenu />} />
+        </Route>
       </Routes>
     </>
   );

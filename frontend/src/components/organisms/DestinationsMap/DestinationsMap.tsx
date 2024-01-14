@@ -39,10 +39,12 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignoreS
+  // eslint-disable-next-line
   const onClick = useCallback(async (event) => {
     //  console.log(mapRef);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignoreS
+    // eslint-disable-next-line
     const map = mapRef.current.getMap();
     const features = await map.queryRenderedFeatures(event.point, {
       layers: [layerId],
@@ -66,10 +68,12 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignoreS
+  // eslint-disable-next-line
   const onHover = useCallback(async (event) => {
     //   console.log(mapRef);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignoreS
+    // eslint-disable-next-line
     const map = mapRef.current.getMap();
     const features = await map.queryRenderedFeatures(event.point, {
       layers: [layerId],
@@ -97,6 +101,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
             e.originalEvent.stopPropagation();
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignoreS
+            // eslint-disable-next-line
             setPopupInfo(city);
           }}
         >
@@ -154,7 +159,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
           <Popup
             anchor="top"
             longitude={Number(popupInfo["longitude"])}
-            latitude={Number(popupInfo["latiturde"])}
+            latitude={Number(popupInfo["latitude"])}
             onClose={() => setPopupInfo(null)}
           >
             <div>

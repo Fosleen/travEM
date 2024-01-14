@@ -159,8 +159,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.post("/login", login);
-app.post("/register", register);
 app.use("/api/v1", router);
 app.use("/api/v1/secure", authenticateJwt, router); //middleware checking for jwt validity
 

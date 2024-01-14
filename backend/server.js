@@ -8,7 +8,7 @@ import db from "./app/models/index.js";
 import router from "./app/routes/index.js";
 import passport from "passport";
 import session from "express-session";
-import { authenticateJwt, login } from "./app/middleware/auth.js";
+import { authenticateJwt, login, register } from "./app/middleware/auth.js";
 
 const app = express();
 
@@ -159,7 +159,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.post("/login", login);
 app.use("/api/v1", router);
 app.use("/api/v1/secure", authenticateJwt, router); //middleware checking for jwt validity
 

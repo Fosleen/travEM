@@ -1,6 +1,5 @@
 import Button from "../../../atoms/Button";
 import HorizontalPostItem from "../../atoms/HorizontalPostItem";
-import bgImage from "../../../../assets/images/post-image.jpg";
 import "./HomepageBanner.scss";
 import { FC } from "react";
 import { HomepageData } from "../../../../common/types";
@@ -12,7 +11,7 @@ const HomepageBanner: FC<{ homepageContent: HomepageData }> = ({
     <div className="homepage-banner-container">
       <div className="homepage-banner-bg-image">
         <div className="overlay"></div>
-        <img src={bgImage} alt="image-banner-bg" />
+        <img src={homepageContent.banner_image_url} alt="image-banner-bg" />
       </div>
       <div className="homepage-banner-wrapper">
         <div className="homepage-banner-left">

@@ -8,6 +8,7 @@ export interface ButtonProps {
   red?: boolean;
   grey?: boolean;
   primary?: boolean;
+  edit?: boolean;
   circle?: boolean;
   fitText?: boolean;
   white?: boolean;

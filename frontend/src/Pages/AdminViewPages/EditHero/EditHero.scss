@@ -1,0 +1,24 @@
+@import "../../../utils/theme.scss";
+
+.edit-hero-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 12px;
+
+  .edit-hero-image-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    img {
+      max-width: 800px;
+    }
+  }
+
+  .edit-hero-buttons {
+    margin-top: 24px;
+    display: flex;
+    gap: 8px;
+  }
+}

@@ -8,6 +8,7 @@ const Button: FC<ButtonProps> = ({
   type = "button",
   disabled = false,
   red = false,
+  edit = false,
   primary = false,
   grey = false,
   white = false,
@@ -32,6 +33,10 @@ const Button: FC<ButtonProps> = ({
 
   if (white) {
     buttonClasses += ` button-white `;
+  }
+
+  if (edit) {
+    buttonClasses += ` button-edit `;
   }
 
   if (circle) {

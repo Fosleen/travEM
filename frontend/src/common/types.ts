@@ -2,7 +2,7 @@ import { ChangeEvent, HTMLInputTypeAttribute } from "react";
 
 export interface ButtonProps {
   children: React.ReactNode;
-  onClick: React.MouseEventHandler<HTMLButtonElement>;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
   red?: boolean;
@@ -54,6 +54,7 @@ export interface AirplaneTicketsMenuProps {
 export interface HomepageData {
   id: number;
   hero_image_url: string;
+  banner_image_url: string;
   banner_title: string;
   banner_small_text: string;
   banner_description: string;
@@ -61,4 +62,12 @@ export interface HomepageData {
   flights_nmbr: string;
   videos_nmbr: string;
   distance_nmbr: string;
+}
+
+export interface EditBannerData {
+  banner_title: string;
+  banner_small_text: string;
+  banner_description: string;
+  button_text: string;
+  banner_image_url: string;
 }

@@ -40,8 +40,8 @@ const Login = () => {
           }, 400);
         }}
       >
-        {({ handleSubmit, isSubmitting, errors, touched }) => (
-          <Form className="login-form-wrapper-form" onSubmit={handleSubmit}>
+        {({ isSubmitting, errors, touched }) => (
+          <Form className="login-form-wrapper-form">
             <div className="login-form-title-wrapper">
               <h2>Dobrodošao natrag!</h2>
             </div>

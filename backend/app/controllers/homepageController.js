@@ -19,7 +19,8 @@ class HomepageController {
       req.body.button_text,
       req.body.flights_nmbr,
       req.body.videos_nmbr,
-      req.body.distance_nmbr
+      req.body.distance_nmbr,
+      req.body.banner_image_url
     );
     if (response == undefined) {
       res.status(500).json({ error: "Error updating homepage" });

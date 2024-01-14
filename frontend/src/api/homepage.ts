@@ -31,3 +31,34 @@ export async function updateHeroImage(url: string) {
   }
   return data;
 }
+
+export async function updateBanner(
+  banner_title: string,
+  banner_small_text: string,
+  banner_description: string,
+  button_text: string,
+  banner_image_url: string
+) {
+  const response = await fetch(`${apiUrl}/homepage`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "PATCH",
+    body: JSON.stringify({
+      banner_title: banner_title,
+      banner_small_text: banner_small_text,
+      banner_description: banner_description,
+      button_text: button_text,
+      banner_image_url: banner_image_url,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}

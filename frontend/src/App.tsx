@@ -16,6 +16,7 @@ import AdminViewLayout from "./components/admin/templates/AdminViewLayout";
 import Continent from "./Pages/UserViewPages/Continent/Continent";
 import EditHomepageMenu from "./Pages/AdminViewPages/EditHomepageMenu/EditHomepageMenu";
 import EditHero from "./Pages/AdminViewPages/EditHero/EditHero";
+import EditBanner from "./Pages/AdminViewPages/EditBanner/EditBanner";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
         <Route path="/admin" element={<AdminViewLayout />}>
           <Route path="/admin/sadržaj" element={<EditHomepageMenu />} />
           <Route path="/admin/uredi-hero" element={<EditHero />} />
+          <Route path="/admin/uredi-banner" element={<EditBanner />} />
         </Route>
       </Routes>
     </>

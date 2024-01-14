@@ -123,7 +123,6 @@ sequelize
 
 // Create all 1:1, 1:M and M:N
 createAssociations();
-
 /*
 // Create tables from models folder
 db.sequelize
@@ -135,7 +134,6 @@ db.sequelize
     console.error("Unable to create table : ", error);
   });
 */
-
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

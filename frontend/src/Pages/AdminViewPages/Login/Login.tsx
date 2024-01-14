@@ -3,36 +3,11 @@ import Input from "../../../components/atoms/Input";
 import Button from "../../../components/atoms/Button";
 import Logo from "../../../assets/images/travem-logo-grey.png";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { notifySuccess } from "../../../components/atoms/Toast/Toast";
+import { handleLogin } from "../../../api/users";
 
 const Login = () => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignoreS
-  const handleLogin = async (values, { setSubmitting }) => {
-    try {
-      const response = await fetch("http://localhost:25060/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-        credentials: "include",
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        console.log("Authentication succeeded");
-        notifySuccess("Uspjesna prijava!");
-      } else {
-        console.log("Authentication failed");
-      }
-    } catch (error) {
-      console.error("Error during authentication", error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   return (
     <div className="login-form-wrapper">

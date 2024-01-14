@@ -6,6 +6,10 @@ import logger from "morgan";
 import dbConfig from "./app/config/db-config.js";
 import db from "./app/models/index.js";
 import router from "./app/routes/index.js";
+import passport from "passport";
+import session from "express-session";
+import bcrypt from "bcrypt";
+import LocalStrategy from "passport-local";
 
 const app = express();
 
@@ -136,11 +140,59 @@ db.sequelize
   });
 */
 
-app.use(cors());
+const corsOptions = {
+  origin: "http://localhost:5173", // Replace with your client's origin
+  credentials: true,
+};
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(logger("dev"));
 app.use(helmet());
+app.set("view engine", "ejs");
+app.use(cors(corsOptions));
+app.use(
+  session({
+    secret: "1234", // Replace with a secret key for session encryption
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(
+  new LocalStrategy(async (username, password, done) => {
+    try {
+      const user = await db.models.User.findOne({ where: { username } });
+
+      if (!user) {
+        return done(null, false, { message: "Incorrect username." });
+      }
+
+      // Use normal string comparison for passwords
+      if (password !== user.password) {
+        return done(null, false, { message: "Incorrect password." });
+      }
+
+      return done(null, user);
+    } catch (error) {
+      return done(error);
+    }
+  })
+);
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  const user = users.find((u) => u.id === id);
+  done(null, user);
+});
+
+app.post("/login", passport.authenticate("local"), (req, res) => {
+  res.json({ success: true, message: "Authentication succeeded." });
+});
 
 app.use("/api/v1", router);
 

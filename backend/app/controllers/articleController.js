@@ -10,6 +10,16 @@ class ArticleController {
     }
   }
 
+  async getArticleById(req, res) {
+    const { id } = req.params;
+    const response = await service.getArticleById(id);
+    if (response == undefined) {
+      res.status(404).json({ error: "No articles found" });
+    } else {
+      res.status(200).json(response);
+    }
+  }
+
   async addArticle(req, res) {
     const response = await service.addArticle(
       req.body.title,

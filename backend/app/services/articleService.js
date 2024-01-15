@@ -10,6 +10,16 @@ class ArticleService {
     }
   }
 
+  async getArticleById(id) {
+    try {
+      const article = await db.models.Article.findByPk(id);
+      return article;
+    } catch (error) {
+      console.log(error);
+      return `not found article with PK ${id}`;
+    }
+  }
+
   async addArticle(
     title,
     subtitle,

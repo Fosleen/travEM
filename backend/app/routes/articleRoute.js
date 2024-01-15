@@ -21,4 +21,7 @@ router.get("/:id", controller.getArticleById);
 // POST /api/v1/articles
 router.post("/", controller.addArticle);
 
+// PUT /api/v1/articles/country/top
+router.put("/country/top", controller.updateOrCreateTopCountryArticle);
+
 export default router;

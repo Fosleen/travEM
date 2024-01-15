@@ -55,7 +55,7 @@ class ArticleController {
     if (response.length == 0) {
       res
         .status(404)
-        .json({ error: `No articles for country with id ${id} found` });
+        .json({ error: `No top articles for country with id ${id} found` });
     } else {
       res.status(200).json(response);
     }
@@ -68,6 +68,18 @@ class ArticleController {
       res
         .status(404)
         .json({ error: `No articles for country with id ${id} found` });
+    } else {
+      res.status(200).json(response);
+    }
+  }
+
+  async updateOrCreateTopCountryArticle(req, res) {
+    const response = await service.updateOrCreateTopCountryArticle(
+      req.body.article_id
+    );
+
+    if (response.length == 0) {
+      res.status(404).json({ error: `No articles found` });
     } else {
       res.status(200).json(response);
     }

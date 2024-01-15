@@ -39,7 +39,7 @@ class ArticleService {
           },
           {
             model: db.models.ArticleSpecialType,
-            through: "article_has_article_special_type",
+            through: db.models.Article_ArticleSpecialType,
           },
         ],
       });
@@ -87,7 +87,7 @@ class ArticleService {
         include: [
           {
             model: db.models.ArticleSpecialType,
-            through: "article_has_article_special_type",
+            through: db.models.Article_ArticleSpecialType,
             where: {
               id: [1, 3, 4, 5],
             },
@@ -109,7 +109,7 @@ class ArticleService {
         include: [
           {
             model: db.models.ArticleSpecialType,
-            through: "article_has_article_special_type",
+            through: db.models.Article_ArticleSpecialType,
             where: {
               id: 2,
             },
@@ -131,6 +131,51 @@ class ArticleService {
       });
       return articles;
     } catch (error) {
+      return [];
+    }
+  }
+
+  async updateOrCreateTopCountryArticle(article_id) {
+    try {
+      const article = await db.models.Article.findByPk(article_id);
+      const countryId = article.toJSON().countryId;
+
+      const existingArticle =
+        await db.models.Article_ArticleSpecialType.findOne({
+          where: {
+            articleSpecialTypeId: 2,
+          },
+          include: {
+            model: db.models.Article, // ovo se moze zbog super many to many veze
+            where: {
+              countryId: countryId,
+            },
+          },
+        });
+
+      console.log(existingArticle);
+
+      if (existingArticle) {
+        //vec postoji top clanak za ovu drzavu - update
+        const oldTopArticleId = existingArticle.toJSON().article.id;
+        await db.models.Article_ArticleSpecialType.update(
+          {
+            articleId: article_id,
+            articleSpecialTypeId: 2,
+          },
+          { where: { articleId: oldTopArticleId } }
+        );
+      } else {
+        // jos ne postoji top clanak za ovu drzavu - insert
+        await db.models.Article_ArticleSpecialType.create({
+          articleId: article_id,
+          articleSpecialTypeId: 2, // 2 = top country article
+        });
+      }
+
+      return article;
+    } catch (error) {
+      console.log(error.message);
       return [];
     }
   }

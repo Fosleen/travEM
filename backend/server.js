@@ -8,7 +8,7 @@ import db from "./app/models/index.js";
 import router from "./app/routes/index.js";
 import passport from "passport";
 import session from "express-session";
-import { authenticateJwt, login, register } from "./app/middleware/auth.js";
+import { authenticateJwt } from "./app/middleware/auth.js";
 
 const app = express();
 
@@ -103,14 +103,17 @@ const createAssociations = () => {
     foreignKey: { allowNull: false },
   });
 
-  // M:N
+  // M:N - super many to many - da se iz many-many tablice mogu pozivat tablice od kojih se sastoji (inace se moze samo obrnuto)
   db.models.ArticleSpecialType.belongsToMany(db.models.Article, {
-    through: "article_has_article_special_type",
+    through: db.models.Article_ArticleSpecialType,
   });
-
   db.models.Article.belongsToMany(db.models.ArticleSpecialType, {
-    through: "article_has_article_special_type",
+    through: db.models.Article_ArticleSpecialType,
   });
+  db.models.ArticleSpecialType.hasMany(db.models.Article_ArticleSpecialType);
+  db.models.Article_ArticleSpecialType.belongsTo(db.models.ArticleSpecialType);
+  db.models.Article.hasMany(db.models.Article_ArticleSpecialType);
+  db.models.Article_ArticleSpecialType.belongsTo(db.models.Article);
 };
 
 sequelize

@@ -12,7 +12,16 @@ class ArticleService {
 
   async getArticleById(id) {
     try {
-      const article = await db.models.Article.findByPk(id);
+      const article = await db.models.Article.findByPk(id, {
+        include: [
+          {
+            model: db.models.User,
+          },
+          {
+            model: db.models.GalleryImage,
+          },
+        ],
+      });
       return article;
     } catch (error) {
       console.log(error);

@@ -75,6 +75,48 @@ class ArticleService {
       return [];
     }
   }
+
+  // dohvati clanke koji u vise vise tablici imaju samo veze s homepageom (prema id-u special article typea)
+  async getHomepageArticles() {
+    try {
+      const articles = await db.models.Article.findAll({
+        include: [
+          {
+            model: db.models.ArticleSpecialType,
+            through: "article_has_article_special_type",
+            where: {
+              id: [1, 3, 4, 5],
+            },
+          },
+        ],
+      });
+      return articles;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  async getTopCountryArticle(id) {
+    try {
+      const articles = await db.models.Article.findAll({
+        where: {
+          countryId: id
+        },
+        include: [
+          {
+            model: db.models.ArticleSpecialType,
+            through: "article_has_article_special_type",
+            where: {
+              id: 2,
+            },
+          },
+        ],
+      });
+      return articles;
+    } catch (error) {
+      return [];
+    }
+  }
 }
 
 export default new ArticleService();

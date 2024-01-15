@@ -3,7 +3,7 @@ import controller from "../controllers/articleController.js";
 
 const router = new Router();
 
-// GET /api/v1/articles
+// GET /api/v1/articles?page=1&pageSize=12
 router.get("/", controller.getArticles);
 
 // GET /api/v1/articles/homepage

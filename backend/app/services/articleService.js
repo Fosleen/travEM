@@ -1,10 +1,23 @@
 import db from "../models/index.js";
 
 class ArticleService {
-  async getArticles() {
+  async getArticles(page, pageSize) {
+    const limit = pageSize;
+    const offset = (page - 1) * pageSize;
+
     try {
-      const articles = await db.models.Article.findAll();
-      return articles;
+      const articles = await db.models.Article.findAndCountAll({
+        limit: limit,
+        offset: offset,
+      });
+
+      return {
+        total: articles.count,
+        totalPages: Math.ceil(articles.count / pageSize),
+        currentPage: page,
+        pageSize: pageSize,
+        articles: articles.rows,
+      };
     } catch (error) {
       return [];
     }

@@ -2,8 +2,12 @@ import service from "../services/articleService.js";
 
 class ArticleController {
   async getArticles(req, res) {
-    const response = await service.getArticles();
-    if (response.length == 0) {
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 12;
+
+    const response = await service.getArticles(page, pageSize);
+
+    if (response.articles.length === 0) {
       res.status(404).json({ error: "No articles found" });
     } else {
       res.status(200).json(response);

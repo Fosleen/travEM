@@ -57,7 +57,9 @@ class ArticleService {
     main_image_url,
     date_written,
     user_id,
-    article_type_id
+    article_type_id,
+    country_id,
+    place_id
   ) {
     try {
       const article = await db.models.Article.create({
@@ -68,6 +70,8 @@ class ArticleService {
         date_written: date_written,
         userId: user_id, // vanjski kljucevi se moraju pisat camelcase, makar u bazi nisu tak...
         articleTypeId: article_type_id,
+        countryId: country_id,
+        placeId: place_id,
       });
       return article;
     } catch (error) {
@@ -100,7 +104,7 @@ class ArticleService {
     try {
       const articles = await db.models.Article.findAll({
         where: {
-          countryId: id
+          countryId: id,
         },
         include: [
           {
@@ -111,6 +115,19 @@ class ArticleService {
             },
           },
         ],
+      });
+      return articles;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  async getArticlesByCountryId(id) {
+    try {
+      const articles = await db.models.Article.findAll({
+        where: {
+          countryId: id,
+        },
       });
       return articles;
     } catch (error) {

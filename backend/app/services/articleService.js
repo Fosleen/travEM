@@ -42,6 +42,7 @@ class ArticleService {
             through: db.models.Article_ArticleSpecialType,
           },
         ],
+        order: [[{ model: db.models.Section }, "order", "ASC"]],
       });
       return article;
     } catch (error) {
@@ -127,6 +128,19 @@ class ArticleService {
       const articles = await db.models.Article.findAll({
         where: {
           countryId: id,
+        },
+      });
+      return articles;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  async getArticlesByPlaceId(id) {
+    try {
+      const articles = await db.models.Article.findAll({
+        where: {
+          placeId: id,
         },
       });
       return articles;

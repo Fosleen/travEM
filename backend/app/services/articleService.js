@@ -20,6 +20,27 @@ class ArticleService {
           {
             model: db.models.GalleryImage,
           },
+          {
+            model: db.models.Video,
+          },
+          {
+            model: db.models.Country,
+          },
+          {
+            model: db.models.Place,
+          },
+          {
+            model: db.models.Section,
+            include: [
+              {
+                model: db.models.SectionImage,
+              },
+            ],
+          },
+          {
+            model: db.models.ArticleSpecialType,
+            through: "article_has_article_special_type",
+          },
         ],
       });
       return article;

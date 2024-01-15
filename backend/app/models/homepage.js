@@ -8,9 +8,9 @@ export default (sequelize, DataTypes) => {
       banner_small_text: { type: DataTypes.STRING(45), allowNull: false },
       banner_description: { type: DataTypes.STRING(45), allowNull: false },
       button_text: { type: DataTypes.STRING(45), allowNull: false },
-      flights_nmbr: { type: DataTypes.INTEGER, allowNull: false },
-      videos_nmbr: { type: DataTypes.INTEGER, allowNull: false },
-      distance_nmbr: { type: DataTypes.INTEGER, allowNull: false },
+      flights_nmbr: { type: DataTypes.STRING(4), allowNull: false },
+      videos_nmbr: { type: DataTypes.STRING(4), allowNull: false },
+      distance_nmbr: { type: DataTypes.STRING(4), allowNull: false },
     },
     {
       underscored: true,

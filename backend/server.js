@@ -74,6 +74,11 @@ const createAssociations = () => {
   });
   db.models.Section.belongsTo(db.models.Article);
 
+  db.models.Section.hasMany(db.models.SectionImage, {
+    foreignKey: { allowNull: false },
+  });
+  db.models.SectionImage.belongsTo(db.models.Section);
+
   db.models.Footer.hasMany(db.models.FooterGroup, {
     foreignKey: { allowNull: false },
   });
@@ -99,13 +104,6 @@ const createAssociations = () => {
   });
 
   // M:N
-  db.models.Section.belongsToMany(db.models.SectionImage, {
-    through: "section_image_has_section",
-  });
-  db.models.SectionImage.belongsToMany(db.models.Section, {
-    through: "section_image_has_section",
-  });
-
   db.models.ArticleSpecialType.belongsToMany(db.models.Article, {
     through: "article_has_article_special_type",
   });

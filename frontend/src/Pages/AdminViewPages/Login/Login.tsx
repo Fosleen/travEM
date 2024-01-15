@@ -2,10 +2,13 @@ import "./Login.scss";
 import Input from "../../../components/atoms/Input";
 import Button from "../../../components/atoms/Button";
 import Logo from "../../../assets/images/travem-logo-grey.png";
-import { Field, Formik, Form } from "formik";
-import { notifySuccess } from "../../../components/atoms/Toast/Toast";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { handleLogin } from "../../../api/users";
 
 const Login = () => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
+
   return (
     <div className="login-form-wrapper">
       <div className="login-form-logo-wrapper">
@@ -30,51 +33,37 @@ const Login = () => {
 
           return errors;
         }}
-        onSubmit={(values, { setSubmitting }) => {
-          setTimeout(() => {
-            //alert(JSON.stringify(values, null, 2));
-            notifySuccess("Uspjesna prijava!");
-
-            setSubmitting(false);
-            console.log("Vrijednosti su", values);
-          }, 400);
-        }}
+        onSubmit={handleLogin}
       >
-        {({ isSubmitting, errors, touched }) => (
-          <Form className="login-form-wrapper-form">
-            <div className="login-form-title-wrapper">
-              <h2>Dobrodošao natrag!</h2>
-            </div>
+        <Form className="login-form-wrapper-form">
+          <div className="login-form-title-wrapper">
+            <h2>Dobrodošao natrag!</h2>
+          </div>
 
-            <Field
-              name="username"
-              type="text"
-              as={Input}
-              adminView
-              label="Korisničko ime"
-              error={touched.username && errors.username}
-            />
+          <Field
+            name="username"
+            type="text"
+            as={Input}
+            adminView
+            label="Korisničko ime"
+          />
+          <ErrorMessage name="username" component="div" />
 
-            <Field
-              name="password"
-              type="password"
-              as={Input}
-              adminView
-              label="Lozinka"
-              error={touched.password && errors.password}
-            />
-            <div className="login-form-button-wrapper">
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                grey
-                onClick={() => {}}
-              >
-                Prijavi se
-              </Button>
-            </div>
-          </Form>
-        )}
+          <Field
+            name="password"
+            type="password"
+            as={Input}
+            adminView
+            label="Lozinka"
+          />
+          <ErrorMessage name="password" component="div" />
+
+          <div className="login-form-button-wrapper">
+            <Button type="submit" grey onClick={() => {}}>
+              Prijavi se
+            </Button>
+          </div>
+        </Form>
       </Formik>
     </div>
   );

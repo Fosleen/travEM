@@ -6,6 +6,9 @@ import logger from "morgan";
 import dbConfig from "./app/config/db-config.js";
 import db from "./app/models/index.js";
 import router from "./app/routes/index.js";
+import passport from "passport";
+import session from "express-session";
+import { authenticateJwt, login, register } from "./app/middleware/auth.js";
 
 const app = express();
 
@@ -123,6 +126,7 @@ sequelize
 
 // Create all 1:1, 1:M and M:N
 createAssociations();
+
 /*
 // Create tables from models folder
 db.sequelize
@@ -134,13 +138,29 @@ db.sequelize
     console.error("Unable to create table : ", error);
   });
 */
-app.use(cors());
+
+const corsOptions = {
+  origin: "http://localhost:5173", // Replace with your client's origin
+  credentials: true,
+};
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(logger("dev"));
 app.use(helmet());
+app.set("view engine", "ejs");
+app.use(cors(corsOptions));
+app.use(
+  session({
+    secret: "1234", // Replace with a secret key for session encryption
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/api/v1", router);
+app.use("/api/v1/secure", authenticateJwt, router); //middleware checking for jwt validity
 
 // Start the server
 const PORT = dbConfig.PORT;

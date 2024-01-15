@@ -120,6 +120,7 @@
       display: grid;
       grid-template-columns: none;
       grid-template-rows: 1fr 1fr 1fr;
+      max-width: 112px;
 
       .country-highlight-image-container {
         max-height: 140px;

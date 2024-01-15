@@ -29,7 +29,13 @@
     background-color: $bg;
     color: $grey;
     border: 3px solid $grey;
-    padding: 12px 4px;
+    padding: 12px 20px;
+
+    &:hover {
+      background-color: $grey;
+      color: $bg;
+      transition: 0.2s;
+    }
   }
 
   &-admin-primary {
@@ -49,6 +55,18 @@
 
     &:hover {
       background-color: $limeGreenHover;
+      transition: 0.2s;
+    }
+  }
+
+  &-edit {
+    background-color: $bg;
+    color: $grey;
+    padding: 8px 32px;
+    border: 1px solid $green;
+
+    &:hover {
+      background-color: $greyMiddle;
       transition: 0.2s;
     }
   }

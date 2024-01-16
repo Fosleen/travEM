@@ -235,23 +235,12 @@ class ArticleService {
           },
         });
 
-      if (special_type_id == 1 || special_type_id == 3) {
-        // 1 = top_homepage_article 3 = top_banner_article --> max 1 clanak
-        const oldTopArticleId = existingArticles.rows[0].articleId;
-
-        await db.models.Article_ArticleSpecialType.update(
-          {
-            articleId: article_ids[0],
-            articleSpecialTypeId: special_type_id,
-          },
-          {
-            where: {
-              articleId: oldTopArticleId,
-              articleSpecialTypeId: special_type_id,
-            },
-          }
-        );
-      } else if (special_type_id == 4 || special_type_id == 5) {
+      if (
+        special_type_id == 4 ||
+        special_type_id == 5 ||
+        special_type_id == 1 ||
+        special_type_id == 3
+      ) {
         {
           // provjeri nove vrijednosti koje nisu u bazi
           const valuesToAdd = article_ids.filter(

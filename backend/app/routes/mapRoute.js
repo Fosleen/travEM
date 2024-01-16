@@ -6,4 +6,6 @@ const router = new Router();
 
 router.get("/", controller.getCountries);
 
+router.get("/favorite-places", controller.getFavoritePlaces);
+
 export default router;

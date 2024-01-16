@@ -81,3 +81,14 @@ export interface MapCountriesData {
   colorId: number;
   continentId: number;
 }
+
+export interface VisitedPlacesData {
+  id: number;
+  name: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  is_on_homepage_map: boolean;
+  map_icon: string;
+  country_id: number;
+}

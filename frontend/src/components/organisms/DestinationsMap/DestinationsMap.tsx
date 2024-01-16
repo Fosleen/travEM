@@ -17,8 +17,8 @@ import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { countries } from "./visited_countries.ts";
 import { FC } from "react";
-import { getVisitedCountries } from "../../../api/map.ts";
-import { MapCountriesData } from "../../../common/types.ts";
+import { getVisitedCountries, getVisitedPlaces } from "../../../api/map.ts";
+import { MapCountriesData, VisitedPlacesData } from "../../../common/types.ts";
 
 interface DestinationsMapProps {
   initialLongitude: number;
@@ -39,12 +39,20 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignoreS
   const [mapContent, setMapContent] = useState<MapCountriesData | null>(null);
+  const [visitedPlaces, setVisitedPlaces] = useState<VisitedPlacesData | null>(
+    []
+  );
+
   const [matchingCountries, setMatchingCountries] = useState([]);
 
   const fetchData = async () => {
     try {
       const content = await getVisitedCountries();
+      const visitedPlaces = await getVisitedPlaces();
       setMapContent(content);
+      setVisitedPlaces(visitedPlaces);
+
+      console.log("Posjecena mjesta su", visitedPlaces);
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignoreS

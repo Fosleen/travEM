@@ -36,4 +36,7 @@ router.put(
   controller.updateOrCreateTopHomepageArticles // update articles on any homepage part
 );
 
+// DELETE /api/v1/articles/4
+router.delete("/:id", controller.deleteArticle);
+
 export default router;

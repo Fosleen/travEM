@@ -62,6 +62,19 @@ class SectionService {
       return null;
     }
   }
+
+  async deleteSection(id) {
+    try {
+      await db.models.Section.destroy({
+        where: { id: id },
+      });
+
+      return [];
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
 }
 
 export default new SectionService();

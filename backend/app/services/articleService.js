@@ -327,6 +327,19 @@ class ArticleService {
       return null;
     }
   }
+
+  async deleteArticle(id) {
+    try {
+      await db.models.Article.destroy({
+        where: { id: id },
+      });
+
+      return [];
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
 }
 
 export default new ArticleService();

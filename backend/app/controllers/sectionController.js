@@ -20,7 +20,6 @@ class SectionController {
   }
 
   async patchSection(req, res) {
-
     const response = await service.patchSection(
       req.params.id,
       req.body.text,
@@ -35,6 +34,18 @@ class SectionController {
       res.status(500).json({ error: `Error updating section ${id}` });
     } else {
       res.status(200).json(response);
+    }
+  }
+
+  async deleteSection(req, res) {
+    const { id } = req.params;
+    const response = await service.deleteSection(id);
+    if (response) {
+      res.status(200).json({});
+    } else {
+      res
+        .status(500)
+        .json({ error: `Error while deleting section with id ${id}` });
     }
   }
 }

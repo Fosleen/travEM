@@ -18,7 +18,7 @@ class ArticleController {
   async getArticleById(req, res) {
     const { id } = req.params;
     const response = await service.getArticleById(id);
-    if (response.length == 0) {
+    if (!response || response.length == 0) {
       res.status(404).json({ error: `No article found by id ${id}` });
     } else {
       res.status(200).json(response);
@@ -132,6 +132,18 @@ class ArticleController {
       res.status(500).json({ error: `Error updating article ${id}` });
     } else {
       res.status(200).json(response);
+    }
+  }
+
+  async deleteArticle(req, res) {
+    const { id } = req.params;
+    const response = await service.deleteArticle(id);
+    if (response) {
+      res.status(200).json({});
+    } else {
+      res
+        .status(500)
+        .json({ error: `Error while deleting article with id ${id}` });
     }
   }
 }

@@ -48,12 +48,15 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignoreS
-      const visitedCountries = content.map((country) => ({
-        eng_name: country.name.charAt(0).toUpperCase() + country.name.slice(1),
-        cro_name:
-          country.description.charAt(0).toUpperCase() +
-          country.description.slice(1),
-      }));
+      const visitedCountries = content.map((country) => {
+        const eng_name =
+          country.name.charAt(0).toUpperCase() + country.name.slice(1);
+        const cro_name = countries.some((c) => c.eng_name === eng_name)
+          ? country.name
+          : eng_name;
+
+        return { eng_name, cro_name };
+      });
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignoreS

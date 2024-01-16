@@ -71,3 +71,13 @@ export interface EditBannerData {
   button_text: string;
   banner_image_url: string;
 }
+
+export interface MapCountriesData {
+  id: number;
+  name: string;
+  description: string;
+  main_image_url: string;
+  flag_image_url: string;
+  colorId: number;
+  continentId: number;
+}

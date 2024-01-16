@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Map, {
   Marker,
   NavigationControl,
@@ -17,6 +17,8 @@ import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { countries } from "./visited_countries.ts";
 import { FC } from "react";
+import { getVisitedCountries } from "../../../api/map.ts";
+import { MapCountriesData } from "../../../common/types.ts";
 
 interface DestinationsMapProps {
   initialLongitude: number;
@@ -26,8 +28,6 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
   initialLongitude,
   initialLatitude,
 }) => {
-  const [popupInfo, setPopupInfo] = useState(null);
-
   const geojsonUrl =
     "https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_admin_0_countries.geojson";
   const sourceId = "countries";
@@ -36,43 +36,71 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
   const mapRef = useRef(null);
   const [hoveredCountry, setHoveredCountry] = useState(null);
   const [cursor, setCursor] = useState<string>("auto");
+  const [mapContent, setMapContent] = useState<MapCountriesData | null>(null);
+  const [matchingCountries, setMatchingCountries] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const content = await getVisitedCountries();
+      setMapContent(content);
+
+      // Create a list of visited countries with uppercase first letter
+      const visitedCountries = content.map((country) => ({
+        eng_name: country.name.charAt(0).toUpperCase() + country.name.slice(1),
+        cro_name:
+          country.description.charAt(0).toUpperCase() +
+          country.description.slice(1),
+      }));
+
+      // Filter and print countries that match their Croatian name
+      const matchingCountries = countries.filter((country) =>
+        visitedCountries.some(
+          (visitedCountry) => visitedCountry.cro_name === country.cro_name
+        )
+      );
+
+      console.log(matchingCountries);
+      setMatchingCountries(matchingCountries);
+    } catch (error) {
+      console.error("Error occurred while fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignoreS
   // eslint-disable-next-line
-  const onClick = useCallback(async (event) => {
-    //  console.log(mapRef);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignoreS
-    // eslint-disable-next-line
-    const map = mapRef.current.getMap();
-    const features = await map.queryRenderedFeatures(event.point, {
-      layers: [layerId],
-    });
+  const onClick = useCallback(
+    async (event) => {
+      //  console.log(mapRef);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignoreS
+      // eslint-disable-next-line
+      const map = mapRef.current.getMap();
+      const features = await map.queryRenderedFeatures(event.point, {
+        layers: [layerId],
+      });
 
-    if (features.length > 0) {
-      const clickedCountryName = features[0].properties.name;
+      if (features.length > 0) {
+        const clickedCountryName = features[0].properties.name;
 
-      // Extract the English and Croatian names from the countries array
-      const countryNames = countries.map((country) => ({
-        eng_name: country.eng_name.trim(),
-        cro_name: country.cro_name.trim(),
-      }));
+        // Check if the clicked country is in the list
+        const isCountryInList = matchingCountries.some(
+          (country) => country.eng_name === clickedCountryName
+        );
 
-      // Check if the clicked country is in the list
-      const isCountryInList = countryNames.some(
-        (country) =>
-          country.eng_name === clickedCountryName ||
-          country.cro_name === clickedCountryName
-      );
-
-      if (isCountryInList) {
-        navigate(`/destinacija/${clickedCountryName}`);
-      } else {
-        navigate("/nema-drzave");
+        if (isCountryInList) {
+          navigate(`/destinacija/${clickedCountryName}`);
+        } else {
+          navigate("/nema-drzave");
+        }
       }
-    }
-  }, []);
+    },
+    [matchingCountries]
+  );
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignoreS
@@ -119,6 +147,10 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
     []
   );
 
+  const [popupInfo, setPopupInfo] = useState(null);
+
+  console.log("Matching Countries Array:", matchingCountries);
+
   return (
     <div className="map-parent-wrapper">
       <Map
@@ -150,11 +182,18 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
             paint={{
               "fill-color": [
                 "case",
-                ["==", ["get", "name"], "Austria"],
-                "#d2eb64",
                 ["==", ["get", "name"], hoveredCountry],
-                "#218161", // hoverana
-                "#f8f8f8", // ostale o kojima nema clanaka
+                "#218161", // Hovered country color
+                [
+                  "in",
+                  ["get", "name"],
+                  [
+                    "literal",
+                    matchingCountries.map((country) => country.eng_name),
+                  ],
+                ],
+                "#d2eb64", // Visited country color
+                "#f8f8f8", // Default color for other countries
               ],
               "fill-opacity": 0.5,
             }}

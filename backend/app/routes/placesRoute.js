@@ -7,4 +7,6 @@ router.get("/", placesController.getCountries);
 
 router.get("/favorite", placesController.getFavoritePlaces);
 
+router.get("/continent/:id", placesController.getContinentCountries);
+
 export default router;

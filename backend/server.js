@@ -8,7 +8,7 @@ import db from "./app/models/index.js";
 import router from "./app/routes/index.js";
 import passport from "passport";
 import session from "express-session";
-import { authenticateJwt, login, register } from "./app/middleware/auth.js";
+import { authenticateJwt } from "./app/middleware/auth.js";
 
 const app = express();
 
@@ -74,6 +74,11 @@ const createAssociations = () => {
   });
   db.models.Section.belongsTo(db.models.Article);
 
+  db.models.Section.hasMany(db.models.SectionImage, {
+    foreignKey: { allowNull: false },
+  });
+  db.models.SectionImage.belongsTo(db.models.Section);
+
   db.models.Footer.hasMany(db.models.FooterGroup, {
     foreignKey: { allowNull: false },
   });
@@ -98,21 +103,17 @@ const createAssociations = () => {
     foreignKey: { allowNull: false },
   });
 
-  // M:N
-  db.models.Section.belongsToMany(db.models.SectionImage, {
-    through: "section_image_has_section",
-  });
-  db.models.SectionImage.belongsToMany(db.models.Section, {
-    through: "section_image_has_section",
-  });
-
+  // M:N - super many to many - da se iz many-many tablice mogu pozivat tablice od kojih se sastoji (inace se moze samo obrnuto)
   db.models.ArticleSpecialType.belongsToMany(db.models.Article, {
-    through: "article_has_article_special_type",
+    through: db.models.Article_ArticleSpecialType,
   });
-
   db.models.Article.belongsToMany(db.models.ArticleSpecialType, {
-    through: "article_has_article_special_type",
+    through: db.models.Article_ArticleSpecialType,
   });
+  db.models.ArticleSpecialType.hasMany(db.models.Article_ArticleSpecialType);
+  db.models.Article_ArticleSpecialType.belongsTo(db.models.ArticleSpecialType);
+  db.models.Article.hasMany(db.models.Article_ArticleSpecialType);
+  db.models.Article_ArticleSpecialType.belongsTo(db.models.Article);
 };
 
 sequelize

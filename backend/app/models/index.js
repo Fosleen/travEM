@@ -21,6 +21,7 @@ import Continent from "./continent.js";
 import Characteristic from "./characteristic.js";
 import CharacteristicIcon from "./characteristicIcon.js";
 import ArticleSpecialType from "./articleSpecialType.js";
+import article_articleSpecialType from "./article_articleSpecialType.js";
 
 const sequelize = new Sequelize(
   `${dbConfig.DIALECT}://${dbConfig.USER}:${dbConfig.PASSWORD}@${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DATABASE}`
@@ -58,5 +59,7 @@ db.models.ArticleSpecialType = ArticleSpecialType(
   sequelize,
   Sequelize.DataTypes
 );
+
+db.models.Article_ArticleSpecialType = article_articleSpecialType(sequelize);
 
 export default db;

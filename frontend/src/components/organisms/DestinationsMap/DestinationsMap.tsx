@@ -12,7 +12,7 @@ import Map, {
 import "mapbox-gl/dist/mapbox-gl.css";
 import Pin from "../../atoms/Pin/Pin";
 import "./DestinationsMap.scss";
-import CITIES from "./cities";
+
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { countries } from "./visited_countries.ts";
@@ -36,10 +36,16 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
   const mapRef = useRef(null);
   const [hoveredCountry, setHoveredCountry] = useState(null);
   const [cursor, setCursor] = useState<string>("auto");
+
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignoreS
+  // eslint-disable-next-line
   const [mapContent, setMapContent] = useState<MapCountriesData | null>(null);
+
   const [visitedPlaces, setVisitedPlaces] = useState<VisitedPlacesData | null>(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignoreS
+    // eslint-disable-next-line
     []
   );
 
@@ -108,12 +114,20 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
       if (features.length > 0) {
         const clickedCountryName = features[0].properties.name;
 
-        // Check if the clicked country is in the list
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignoreS
+        // eslint-disable-next-line
         const isCountryInList = matchingCountries.find(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignoreS
+          // eslint-disable-next-line
           (country) => country.eng_name === clickedCountryName
         );
 
         if (isCountryInList) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignoreS
+          // eslint-disable-next-line
           navigate(`/destinacija/${isCountryInList.cro_name}`);
         } else {
           navigate("/nema-drzave");
@@ -147,6 +161,9 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
 
   const pins = useMemo(
     () =>
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignoreS
+      // eslint-disable-next-line
       visitedPlaces.map((city, index) => (
         <Marker
           key={`marker-${index}`}

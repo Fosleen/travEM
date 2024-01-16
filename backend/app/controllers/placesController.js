@@ -1,6 +1,6 @@
-import service from "../services/mapService.js";
+import service from "../services/placesService.js";
 
-class MapController {
+class PlacesController {
   async getCountries(req, res) {
     const response = await service.getCountries();
     if (response == undefined) {
@@ -20,4 +20,4 @@ class MapController {
   }
 }
 
-export default new MapController();
+export default new PlacesController();

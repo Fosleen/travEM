@@ -1,6 +1,6 @@
 import db from "../models/index.js";
 
-class MapService {
+class PlacesService {
   async getCountries() {
     try {
       const visitedCountries = await db.models.Country.findAll();
@@ -23,4 +23,4 @@ class MapService {
   }
 }
 
-export default new MapService();
+export default new PlacesService();

@@ -1,7 +1,7 @@
 import { apiUrl } from "./api";
 
 export async function getVisitedCountries() {
-  const response = await fetch(`${apiUrl}/map`);
+  const response = await fetch(`${apiUrl}/places`);
   const data = await response.json();
 
   if (!response.ok) {
@@ -12,7 +12,7 @@ export async function getVisitedCountries() {
 }
 
 export async function getVisitedPlaces() {
-  const response = await fetch(`${apiUrl}/favorite-places`);
+  const response = await fetch(`${apiUrl}/places/favorite`);
   const data = await response.json();
 
   if (!response.ok) {

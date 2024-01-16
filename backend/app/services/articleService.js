@@ -1,9 +1,12 @@
 import db from "../models/index.js";
 
 class ArticleService {
-  async getArticles(page, pageSize) {
+  async getArticles(page, pageSize, articleType) {
     const limit = pageSize;
     const offset = (page - 1) * pageSize;
+    const optionalArticleTypeWhere = articleType
+      ? { articleTypeId: articleType }
+      : {};
 
     try {
       const articles = await db.models.Article.findAndCountAll({
@@ -20,6 +23,7 @@ class ArticleService {
             model: db.models.Place,
           },
         ],
+        where: optionalArticleTypeWhere,
       });
 
       return {

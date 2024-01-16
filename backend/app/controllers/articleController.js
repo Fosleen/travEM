@@ -4,8 +4,9 @@ class ArticleController {
   async getArticles(req, res) {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 12;
+    const articleType = parseInt(req.query.articleType) || null;
 
-    const response = await service.getArticles(page, pageSize);
+    const response = await service.getArticles(page, pageSize, articleType);
 
     if (response.articles.length === 0) {
       res.status(404).json({ error: "No articles found" });

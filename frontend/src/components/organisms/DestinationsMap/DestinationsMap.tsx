@@ -53,10 +53,18 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
     if (features.length > 0) {
       const clickedCountryName = features[0].properties.name;
 
-      const countryNames = countries.map((country) => country.trim());
+      // Extract the English and Croatian names from the countries array
+      const countryNames = countries.map((country) => ({
+        eng_name: country.eng_name.trim(),
+        cro_name: country.cro_name.trim(),
+      }));
 
       // Check if the clicked country is in the list
-      const isCountryInList = countryNames.includes(clickedCountryName);
+      const isCountryInList = countryNames.some(
+        (country) =>
+          country.eng_name === clickedCountryName ||
+          country.cro_name === clickedCountryName
+      );
 
       if (isCountryInList) {
         navigate(`/destinacija/${clickedCountryName}`);

@@ -36,6 +36,8 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
   const mapRef = useRef(null);
   const [hoveredCountry, setHoveredCountry] = useState(null);
   const [cursor, setCursor] = useState<string>("auto");
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignoreS
   const [mapContent, setMapContent] = useState<MapCountriesData | null>(null);
   const [matchingCountries, setMatchingCountries] = useState([]);
 
@@ -44,7 +46,8 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
       const content = await getVisitedCountries();
       setMapContent(content);
 
-      // Create a list of visited countries with uppercase first letter
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignoreS
       const visitedCountries = content.map((country) => ({
         eng_name: country.name.charAt(0).toUpperCase() + country.name.slice(1),
         cro_name:
@@ -52,14 +55,19 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
           country.description.slice(1),
       }));
 
-      // Filter and print countries that match their Croatian name
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignoreS
       const matchingCountries = countries.filter((country) =>
         visitedCountries.some(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignoreS
           (visitedCountry) => visitedCountry.cro_name === country.cro_name
         )
       );
 
       console.log(matchingCountries);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignoreS
       setMatchingCountries(matchingCountries);
     } catch (error) {
       console.error("Error occurred while fetching data:", error);
@@ -74,6 +82,8 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
   // @ts-ignoreS
   // eslint-disable-next-line
   const onClick = useCallback(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignoreS
     async (event) => {
       //  console.log(mapRef);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -88,12 +98,12 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
         const clickedCountryName = features[0].properties.name;
 
         // Check if the clicked country is in the list
-        const isCountryInList = matchingCountries.some(
+        const isCountryInList = matchingCountries.find(
           (country) => country.eng_name === clickedCountryName
         );
 
         if (isCountryInList) {
-          navigate(`/destinacija/${clickedCountryName}`);
+          navigate(`/destinacija/${isCountryInList.cro_name}`);
         } else {
           navigate("/nema-drzave");
         }
@@ -189,6 +199,8 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
                   ["get", "name"],
                   [
                     "literal",
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignoreS
                     matchingCountries.map((country) => country.eng_name),
                   ],
                 ],

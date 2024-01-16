@@ -147,7 +147,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
 
   const pins = useMemo(
     () =>
-      CITIES.map((city, index) => (
+      visitedPlaces.map((city, index) => (
         <Marker
           key={`marker-${index}`}
           longitude={city.longitude}
@@ -165,7 +165,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
           <Pin />
         </Marker>
       )),
-    []
+    [visitedPlaces]
   );
 
   const [popupInfo, setPopupInfo] = useState(null);
@@ -233,15 +233,12 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
             onClose={() => setPopupInfo(null)}
           >
             <div>
-              <Link to={`/destinacija/${popupInfo["city"]}`} target="_new">
-                {popupInfo["city"]}
+              <Link to={`/destinacija/${popupInfo["name"]}`} target="_new">
+                {popupInfo["name"]}
               </Link>
             </div>
-            <Link to={`/destinacija/${popupInfo["city"]}`} target="_new">
-              <img
-                width="100%"
-                src="https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/06/26/18/porto-main.jpg"
-              />
+            <Link to={`/destinacija/${popupInfo["name"]}`} target="_new">
+              <img width="100%" src={popupInfo.main_image_url} />
             </Link>
           </Popup>
         )}

@@ -113,6 +113,26 @@ class ArticleController {
       res.status(200).json(response);
     }
   }
+
+  async patchArticle(req, res) {
+    const response = await service.patchArticle(
+      req.params.id,
+      req.body.title,
+      req.body.subtitle,
+      req.body.description,
+      req.body.main_image_url,
+      req.body.date_written,
+      req.body.article_type_id,
+      req.body.user_id,
+      req.body.country_id,
+      req.body.place_id
+    );
+    if (response.length == 0) {
+      res.status(500).json({ error: `Error updating article ${id}` });
+    } else {
+      res.status(200).json(response);
+    }
+  }
 }
 
 export default new ArticleController();

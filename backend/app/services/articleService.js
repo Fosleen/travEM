@@ -294,6 +294,46 @@ class ArticleService {
       return [];
     }
   }
+
+  async patchArticle(
+    id,
+    title,
+    subtitle,
+    description,
+    main_image_url,
+    date_written,
+    article_type_id,
+    user_id,
+    country_id,
+    place_id
+  ) {
+    console.log(id);
+
+    try {
+      await db.models.Article.update(
+        {
+          title: title,
+          subtitle: subtitle,
+          description: description,
+          main_image_url: main_image_url,
+          date_written: date_written,
+          articleTypeId: article_type_id,
+          userId: user_id,
+          countryId: country_id,
+          placeId: place_id,
+        },
+        {
+          where: { id: id },
+        }
+      );
+
+      const updatedArticle = await db.models.Article.findByPk(id);
+      return updatedArticle;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
 }
 
 export default new ArticleService();

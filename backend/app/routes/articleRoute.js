@@ -24,6 +24,9 @@ router.get("/:id", controller.getArticleById);
 // POST /api/v1/articles
 router.post("/", controller.addArticle);
 
+// PATCH /api/v1/articles/4
+router.patch("/:id", controller.patchArticle);
+
 // PUT /api/v1/articles/country/top
 router.put("/country/top", controller.updateOrCreateTopCountryArticle);
 

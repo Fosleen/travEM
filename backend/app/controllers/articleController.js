@@ -100,6 +100,19 @@ class ArticleController {
       res.status(200).json(response);
     }
   }
+
+  async updateOrCreateTopHomepageArticles(req, res) {
+    const response = await service.updateOrCreateTopHomepageArticles(
+      req.body.article_id,
+      req.params.specialTypeId
+    );
+
+    if (response.length == 0) {
+      res.status(500).json({ error: `No articles updated` });
+    } else {
+      res.status(200).json(response);
+    }
+  }
 }
 
 export default new ArticleController();

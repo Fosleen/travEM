@@ -27,4 +27,10 @@ router.post("/", controller.addArticle);
 // PUT /api/v1/articles/country/top
 router.put("/country/top", controller.updateOrCreateTopCountryArticle);
 
+// PUT /api/v1/articles/homepage/1
+router.put(
+  "/homepage/:specialTypeId",
+  controller.updateOrCreateTopHomepageArticles // update articles on any homepage part
+);
+
 export default router;

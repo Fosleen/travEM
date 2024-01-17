@@ -1,4 +1,7 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Map, {
   Marker,
   NavigationControl,
@@ -12,11 +15,13 @@ import Map, {
 import "mapbox-gl/dist/mapbox-gl.css";
 import Pin from "../../atoms/Pin/Pin";
 import "./DestinationsMap.scss";
-import CITIES from "./cities";
+
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { countries } from "./visited_countries.ts";
 import { FC } from "react";
+import { getVisitedCountries, getVisitedPlaces } from "../../../api/map.ts";
+import { PlacesData } from "../../../common/types.ts";
 
 interface DestinationsMapProps {
   initialLongitude: number;
@@ -26,8 +31,6 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
   initialLongitude,
   initialLatitude,
 }) => {
-  const [popupInfo, setPopupInfo] = useState(null);
-
   const geojsonUrl =
     "https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_admin_0_countries.geojson";
   const sourceId = "countries";
@@ -37,43 +40,70 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
   const [hoveredCountry, setHoveredCountry] = useState(null);
   const [cursor, setCursor] = useState<string>("auto");
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
-  // eslint-disable-next-line
-  const onClick = useCallback(async (event) => {
-    //  console.log(mapRef);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignoreS
-    // eslint-disable-next-line
-    const map = mapRef.current.getMap();
-    const features = await map.queryRenderedFeatures(event.point, {
-      layers: [layerId],
-    });
+  const [visitedPlaces, setVisitedPlaces] = useState<PlacesData | null>([]);
 
-    if (features.length > 0) {
-      const clickedCountryName = features[0].properties.name;
+  const [matchingCountries, setMatchingCountries] = useState([]);
 
-      const countryNames = countries.map((country) => country.trim());
+  const fetchData = async () => {
+    try {
+      const content = await getVisitedCountries();
+      const visitedPlaces = await getVisitedPlaces();
+      setVisitedPlaces(visitedPlaces);
+      // console.log("Posjecena mjesta su", visitedPlaces);
 
-      // Check if the clicked country is in the list
-      const isCountryInList = countryNames.includes(clickedCountryName);
+      const visitedCountries = content.map((country) => {
+        const eng_name =
+          country.name.charAt(0).toUpperCase() + country.name.slice(1);
+        const cro_name = countries.some((c) => c.eng_name === eng_name)
+          ? country.name
+          : eng_name;
 
-      if (isCountryInList) {
-        navigate(`/destinacija/${clickedCountryName}`);
-      } else {
-        navigate("/nema-drzave");
-      }
+        return { eng_name, cro_name };
+      });
+
+      const matchingCountries = countries.filter((country) =>
+        visitedCountries.some(
+          (visitedCountry) => visitedCountry.cro_name === country.cro_name
+        )
+      );
+
+      // console.log(matchingCountries);
+
+      setMatchingCountries(matchingCountries);
+    } catch (error) {
+      console.error("Error occurred while fetching data:", error);
     }
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
-  // eslint-disable-next-line
+  const onClick = useCallback(
+    async (event) => {
+      const map = mapRef.current.getMap();
+      const features = await map.queryRenderedFeatures(event.point, {
+        layers: [layerId],
+      });
+
+      if (features.length > 0) {
+        const clickedCountryName = features[0].properties.name;
+
+        const isCountryInList = matchingCountries.find(
+          (country) => country.eng_name === clickedCountryName
+        );
+
+        if (isCountryInList) {
+          navigate(`/destinacija/${isCountryInList.cro_name}`);
+        } else {
+          navigate("/nema-drzave");
+        }
+      }
+    },
+    [matchingCountries]
+  );
+
   const onHover = useCallback(async (event) => {
-    //   console.log(mapRef);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignoreS
-    // eslint-disable-next-line
     const map = mapRef.current.getMap();
     const features = await map.queryRenderedFeatures(event.point, {
       layers: [layerId],
@@ -84,32 +114,32 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
       //console.log(`hoverano na ${hovered}`);
 
       setHoveredCountry(hovered);
-      setCursor("pointer"); // nekak bi da se ovo i makne ak nije vise hoverana drzava (ostane zadnja hoverana i pointer kursor)
+      setCursor("pointer");
     }
   }, []);
 
   const pins = useMemo(
     () =>
-      CITIES.map((city, index) => (
+      visitedPlaces.map((city, index) => (
         <Marker
           key={`marker-${index}`}
           longitude={city.longitude}
           latitude={city.latitude}
           onClick={(e) => {
-            // If we let the click event propagates to the map, it will immediately close the popup
-            // with `closeOnClick: true`
             e.originalEvent.stopPropagation();
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignoreS
-            // eslint-disable-next-line
+
             setPopupInfo(city);
           }}
         >
           <Pin />
         </Marker>
       )),
-    []
+    [visitedPlaces]
   );
+
+  const [popupInfo, setPopupInfo] = useState(null);
+
+  // console.log("Matching Countries Array:", matchingCountries);
 
   return (
     <div className="map-parent-wrapper">
@@ -142,11 +172,19 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
             paint={{
               "fill-color": [
                 "case",
-                ["==", ["get", "name"], "Austria"],
-                "#d2eb64",
                 ["==", ["get", "name"], hoveredCountry],
-                "#218161", // hoverana
-                "#f8f8f8", // ostale o kojima nema clanaka
+                "#098f45", // Hovered country color
+                [
+                  "in",
+                  ["get", "name"],
+                  [
+                    "literal",
+
+                    matchingCountries.map((country) => country.eng_name),
+                  ],
+                ],
+                "#a9cf00", // Visited country color
+                "#f8f8f8", // Default color for other countries
               ],
               "fill-opacity": 0.5,
             }}
@@ -163,15 +201,12 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
             onClose={() => setPopupInfo(null)}
           >
             <div>
-              <Link to={`/destinacija/${popupInfo["city"]}`} target="_new">
-                {popupInfo["city"]}
+              <Link to={`/destinacija/${popupInfo["name"]}`} target="_new">
+                {popupInfo["name"]}
               </Link>
             </div>
-            <Link to={`/destinacija/${popupInfo["city"]}`} target="_new">
-              <img
-                width="100%"
-                src="https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/06/26/18/porto-main.jpg"
-              />
+            <Link to={`/destinacija/${popupInfo["name"]}`} target="_new">
+              <img width="100%" src={popupInfo.main_image_url} />
             </Link>
           </Popup>
         )}

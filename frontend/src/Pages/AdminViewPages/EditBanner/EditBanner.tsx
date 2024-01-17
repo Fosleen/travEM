@@ -53,10 +53,18 @@ const EditBanner = () => {
   }, []);
 
   const ValidationSchema = Yup.object().shape({
-    banner_title: Yup.string().required("Obavezno polje!"),
-    banner_small_text: Yup.string().required("Obavezno polje!"),
-    banner_description: Yup.string().required("Obavezno polje!"),
-    button_text: Yup.string().required("Obavezno polje!"),
+    banner_title: Yup.string()
+      .required("Obavezno polje!")
+      .max(45, "Naslov smije imati max 45 znakova!"),
+    banner_small_text: Yup.string()
+      .required("Obavezno polje!")
+      .max(45, "Sitan naslov smije imati max 45 znakova!"),
+    banner_description: Yup.string()
+      .required("Obavezno polje!")
+      .max(200, "Tekst smije imati max 200 znakova!"),
+    button_text: Yup.string()
+      .required("Obavezno polje!")
+      .max(45, "Gumb smije imati max 45 znakova!"),
     banner_image_url: Yup.string().required("Obavezno polje!"),
   });
 

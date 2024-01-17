@@ -6,7 +6,7 @@ export default (sequelize, DataTypes) => {
       banner_image_url: { type: DataTypes.STRING(255), allowNull: false },
       banner_title: { type: DataTypes.STRING(45), allowNull: false },
       banner_small_text: { type: DataTypes.STRING(45), allowNull: false },
-      banner_description: { type: DataTypes.STRING(45), allowNull: false },
+      banner_description: { type: DataTypes.STRING(200), allowNull: false },
       button_text: { type: DataTypes.STRING(45), allowNull: false },
       flights_nmbr: { type: DataTypes.STRING(4), allowNull: false },
       videos_nmbr: { type: DataTypes.STRING(4), allowNull: false },

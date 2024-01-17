@@ -5,6 +5,4 @@ const router = new Router();
 
 router.get("/map", placesController.getFavoritePlaces);
 
-router.get("/continent/:id", placesController.getContinentCountries);
-
 export default router;

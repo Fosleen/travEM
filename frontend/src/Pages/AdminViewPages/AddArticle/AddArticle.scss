@@ -1,0 +1,40 @@
+@import "../../../utils/theme.scss";
+
+.add-article-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 12px;
+
+  .add-article-inputs {
+    border-radius: 8px;
+    // border: 2px solid $greyMiddle;
+    // padding: 16px;
+    max-width: 1024px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .add-article-dropdowns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+  }
+
+  .add-article-sections-container {
+    border-radius: 8px;
+    border: 2px solid $greyMiddle;
+    padding: 16px;
+    max-width: 1024px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .add-article-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 24px;
+  }
+}

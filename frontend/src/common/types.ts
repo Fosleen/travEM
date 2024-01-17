@@ -92,3 +92,8 @@ export interface PlacesData {
   map_icon: string;
   country_id: number;
 }
+
+export interface ArticleType {
+  id: number;
+  name: string;
+}

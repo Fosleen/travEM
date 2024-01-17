@@ -1,15 +1,6 @@
 import db from "../models/index.js";
 
 class PlacesService {
-  async getCountries() {
-    try {
-      const visitedCountries = await db.models.Country.findAll();
-      return visitedCountries;
-    } catch (error) {
-      return [];
-    }
-  }
-
   async getFavoritePlaces() {
     try {
       const favoritePlaces = await db.models.Place.findAll({

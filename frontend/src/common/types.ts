@@ -82,7 +82,7 @@ export interface MapCountriesData {
   continentId: number;
 }
 
-export interface VisitedPlacesData {
+export interface PlacesData {
   id: number;
   name: string;
   description: string;

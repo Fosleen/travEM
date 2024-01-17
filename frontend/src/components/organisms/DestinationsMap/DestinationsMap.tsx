@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Map, {
   Marker,
@@ -18,7 +20,7 @@ import { Link } from "react-router-dom";
 import { countries } from "./visited_countries.ts";
 import { FC } from "react";
 import { getVisitedCountries, getVisitedPlaces } from "../../../api/map.ts";
-import { MapCountriesData, VisitedPlacesData } from "../../../common/types.ts";
+import { MapCountriesData, PlacesData } from "../../../common/types.ts";
 
 interface DestinationsMapProps {
   initialLongitude: number;
@@ -37,17 +39,9 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
   const [hoveredCountry, setHoveredCountry] = useState(null);
   const [cursor, setCursor] = useState<string>("auto");
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
-  // eslint-disable-next-line
   const [mapContent, setMapContent] = useState<MapCountriesData | null>(null);
 
-  const [visitedPlaces, setVisitedPlaces] = useState<VisitedPlacesData | null>(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignoreS
-    // eslint-disable-next-line
-    []
-  );
+  const [visitedPlaces, setVisitedPlaces] = useState<PlacesData | null>([]);
 
   const [matchingCountries, setMatchingCountries] = useState([]);
 
@@ -58,10 +52,8 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
       setMapContent(content);
       setVisitedPlaces(visitedPlaces);
 
-      console.log("Posjecena mjesta su", visitedPlaces);
+      // console.log("Posjecena mjesta su", visitedPlaces);
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignoreS
       const visitedCountries = content.map((country) => {
         const eng_name =
           country.name.charAt(0).toUpperCase() + country.name.slice(1);
@@ -72,19 +64,14 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
         return { eng_name, cro_name };
       });
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignoreS
       const matchingCountries = countries.filter((country) =>
         visitedCountries.some(
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignoreS
           (visitedCountry) => visitedCountry.cro_name === country.cro_name
         )
       );
 
-      console.log(matchingCountries);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignoreS
+      // console.log(matchingCountries);
+
       setMatchingCountries(matchingCountries);
     } catch (error) {
       console.error("Error occurred while fetching data:", error);
@@ -95,17 +82,8 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
     fetchData();
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
-  // eslint-disable-next-line
   const onClick = useCallback(
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignoreS
     async (event) => {
-      //  console.log(mapRef);
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignoreS
-      // eslint-disable-next-line
       const map = mapRef.current.getMap();
       const features = await map.queryRenderedFeatures(event.point, {
         layers: [layerId],
@@ -114,20 +92,11 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
       if (features.length > 0) {
         const clickedCountryName = features[0].properties.name;
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignoreS
-        // eslint-disable-next-line
         const isCountryInList = matchingCountries.find(
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignoreS
-          // eslint-disable-next-line
           (country) => country.eng_name === clickedCountryName
         );
 
         if (isCountryInList) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignoreS
-          // eslint-disable-next-line
           navigate(`/destinacija/${isCountryInList.cro_name}`);
         } else {
           navigate("/nema-drzave");
@@ -137,14 +106,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
     [matchingCountries]
   );
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
-  // eslint-disable-next-line
   const onHover = useCallback(async (event) => {
-    //   console.log(mapRef);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignoreS
-    // eslint-disable-next-line
     const map = mapRef.current.getMap();
     const features = await map.queryRenderedFeatures(event.point, {
       layers: [layerId],
@@ -161,21 +123,14 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
 
   const pins = useMemo(
     () =>
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignoreS
-      // eslint-disable-next-line
       visitedPlaces.map((city, index) => (
         <Marker
           key={`marker-${index}`}
           longitude={city.longitude}
           latitude={city.latitude}
           onClick={(e) => {
-            // If we let the click event propagates to the map, it will immediately close the popup
-            // with `closeOnClick: true`
             e.originalEvent.stopPropagation();
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignoreS
-            // eslint-disable-next-line
+
             setPopupInfo(city);
           }}
         >
@@ -187,7 +142,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
 
   const [popupInfo, setPopupInfo] = useState(null);
 
-  console.log("Matching Countries Array:", matchingCountries);
+  // console.log("Matching Countries Array:", matchingCountries);
 
   return (
     <div className="map-parent-wrapper">
@@ -227,8 +182,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
                   ["get", "name"],
                   [
                     "literal",
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignoreS
+
                     matchingCountries.map((country) => country.eng_name),
                   ],
                 ],

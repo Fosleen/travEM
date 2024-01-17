@@ -1,15 +1,6 @@
 import service from "../services/placesService.js";
 
 class PlacesController {
-  async getCountries(req, res) {
-    const response = await service.getCountries();
-    if (response == undefined) {
-      res.status(404).json({ error: "No countries found" });
-    } else {
-      res.status(200).json(response);
-    }
-  }
-
   async getFavoritePlaces(req, res) {
     const response = await service.getFavoritePlaces();
     if (response == undefined) {

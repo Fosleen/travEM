@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -20,7 +21,7 @@ import { Link } from "react-router-dom";
 import { countries } from "./visited_countries.ts";
 import { FC } from "react";
 import { getVisitedCountries, getVisitedPlaces } from "../../../api/map.ts";
-import { MapCountriesData, PlacesData } from "../../../common/types.ts";
+import { PlacesData } from "../../../common/types.ts";
 
 interface DestinationsMapProps {
   initialLongitude: number;
@@ -39,8 +40,6 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
   const [hoveredCountry, setHoveredCountry] = useState(null);
   const [cursor, setCursor] = useState<string>("auto");
 
-  const [mapContent, setMapContent] = useState<MapCountriesData | null>(null);
-
   const [visitedPlaces, setVisitedPlaces] = useState<PlacesData | null>([]);
 
   const [matchingCountries, setMatchingCountries] = useState([]);
@@ -49,9 +48,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
     try {
       const content = await getVisitedCountries();
       const visitedPlaces = await getVisitedPlaces();
-      setMapContent(content);
       setVisitedPlaces(visitedPlaces);
-
       // console.log("Posjecena mjesta su", visitedPlaces);
 
       const visitedCountries = content.map((country) => {
@@ -117,7 +114,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
       //console.log(`hoverano na ${hovered}`);
 
       setHoveredCountry(hovered);
-      setCursor("pointer"); // nekak bi da se ovo i makne ak nije vise hoverana drzava (ostane zadnja hoverana i pointer kursor)
+      setCursor("pointer");
     }
   }, []);
 
@@ -176,7 +173,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
               "fill-color": [
                 "case",
                 ["==", ["get", "name"], hoveredCountry],
-                "#218161", // Hovered country color
+                "#098f45", // Hovered country color
                 [
                   "in",
                   ["get", "name"],
@@ -186,7 +183,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
                     matchingCountries.map((country) => country.eng_name),
                   ],
                 ],
-                "#d2eb64", // Visited country color
+                "#a9cf00", // Visited country color
                 "#f8f8f8", // Default color for other countries
               ],
               "fill-opacity": 0.5,

@@ -12,7 +12,7 @@ export async function getVisitedCountries() {
 }
 
 export async function getVisitedPlaces() {
-  const response = await fetch(`${apiUrl}/places/favorite`);
+  const response = await fetch(`${apiUrl}/places/map`);
   const data = await response.json();
 
   if (!response.ok) {

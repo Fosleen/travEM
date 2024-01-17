@@ -45,4 +45,5 @@ export const countries = [
   { eng_name: "United Kingdom", cro_name: "Ujedinjeno Kraljevstvo" },
   { eng_name: "Vatican City", cro_name: "Vatikan" },
   { eng_name: "N. Cyprus", cro_name: "Sjeverni Cipar" },
+  { eng_name: "Turkey", cro_name: "Turska" },
 ];

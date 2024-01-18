@@ -16,6 +16,7 @@ import {
 } from "../../../common/types";
 import image from "../../../assets/images/post-image.jpg";
 import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch/ToggleSwitch";
+import { getPlacesByCountry } from "../../../api/places";
 
 const AddArticle = () => {
   const navigate = useNavigate();
@@ -79,9 +80,18 @@ const AddArticle = () => {
     }
   };
 
+  const fetchPlacesData = async () => {
+    const placesData = await getPlacesByCountry(selectedCountryId);
+    setPlaces(placesData);
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    selectedCountryId && fetchPlacesData();
+  }, [selectedCountryId]);
 
   return (
     <div className="add-article-container">
@@ -148,16 +158,16 @@ const AddArticle = () => {
                       isDisabled={false}
                       label="Država članka (opcionalno)"
                     />
-                    {selectedCountryId && (
+                    {selectedCountryId && places && (
                       <Dropdown
                         hardcodedValue={
                           "Odaberi grad ili mjesto o kojem se radi"
                         }
-                        onChange={handleCountryChange}
+                        onChange={handlePlaceChange}
                         value={selectedPlaceId}
                         isDisabled={false}
                         label="Mjesto članka (opcionalno)"
-                        options={countries} // TODO add endpoint for places by selected country
+                        options={places} // TODO add endpoint for places by selected country
                       />
                     )}
                   </>
@@ -336,7 +346,7 @@ const AddArticle = () => {
             <div className="add-article-buttons">
               <Button type="submit" adminPrimary>
                 objavi članak
-              </Button> 
+              </Button>
               {/* TODO add sweetalert before publish */}
               <Button type="button" white onClick={handleCancel}>
                 Odustani

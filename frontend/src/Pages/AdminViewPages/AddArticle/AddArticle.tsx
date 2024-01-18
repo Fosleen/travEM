@@ -8,13 +8,14 @@ import { useEffect, useState } from "react";
 import { getArticleTypes } from "../../../api/articleTypes";
 import Dropdown from "../../../components/atoms/Dropdown";
 import { getVisitedCountries } from "../../../api/map";
-import { Plus, TrashSimple } from "@phosphor-icons/react";
+import { Plus, X } from "@phosphor-icons/react";
 import {
   ArticleType,
   MapCountriesData,
   PlacesData,
 } from "../../../common/types";
 import image from "../../../assets/images/post-image.jpg";
+import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch/ToggleSwitch";
 
 const AddArticle = () => {
   const navigate = useNavigate();
@@ -26,6 +27,11 @@ const AddArticle = () => {
   >("");
   const [selectedCountryId, setSelectedCountryId] = useState("");
   const [selectedPlaceId, setSelectedPlaceId] = useState("");
+
+  const [isMainCountryPostChecked, setIsMainCountryPostChecked] =
+    useState(false);
+  const [isNotifySubscribersChecked, setIsNotifySubscribersChecked] =
+    useState(false);
 
   const ValidationSchema = Yup.object().shape({
     article_title: Yup.string()
@@ -158,7 +164,7 @@ const AddArticle = () => {
                 )}
               </div>
             </div>
-            <div className="add-article-image-container">
+            <div className="add-article-images-container">
               <div className="add-article-item">
                 <Plus size={32} color="#616161" weight="bold" />
               </div>
@@ -213,13 +219,13 @@ const AddArticle = () => {
                   />
                 </div>
                 <div className="add-article-bottom-container">
-                  <div className="add-article-image-container">
+                  <div className="add-article-images-container">
                     <div
                       className="add-article-image"
                       onClick={handleDeleteImage}
                     >
                       <div className="add-article-image-remove-icon">
-                        <TrashSimple size={32} color="#e70101" weight="fill" />
+                        <X size={32} color="#e70101" weight="bold" />
                       </div>
                       <img src={image} alt="selected-image" />
                     </div>
@@ -232,15 +238,106 @@ const AddArticle = () => {
                   </Button>
                 </div>
               </fieldset>
-              <fieldset className="add-article-section">
-                <legend>Odlomak 2</legend>
-                <h6>nekaj</h6>
-              </fieldset>
+              <Button type="button" primary onClick={handleDeleteSection}>
+                dodaj odlomak
+              </Button>
             </div>
+            <div className="add-article-gallery-container">
+              <h6>Preostale fotografije na članku:</h6>
+              <div className="add-article-images-container">
+                <div className="add-article-image" onClick={handleDeleteImage}>
+                  <div className="add-article-image-remove-icon">
+                    <X size={32} color="#e70101" weight="bold" />
+                  </div>
+                  <img src={image} alt="selected-image" />
+                </div>
+                <div className="add-article-image" onClick={handleDeleteImage}>
+                  <div className="add-article-image-remove-icon">
+                    <X size={32} color="#e70101" weight="bold" />
+                  </div>
+                  <img src={image} alt="selected-image" />
+                </div>
+                <div className="add-article-image" onClick={handleDeleteImage}>
+                  <div className="add-article-image-remove-icon">
+                    <X size={32} color="#e70101" weight="bold" />
+                  </div>
+                  <img src={image} alt="selected-image" />
+                </div>
+                <div className="add-article-image" onClick={handleDeleteImage}>
+                  <div className="add-article-image-remove-icon">
+                    <X size={32} color="#e70101" weight="bold" />
+                  </div>
+                  <img src={image} alt="selected-image" />
+                </div>
+                <div className="add-article-image" onClick={handleDeleteImage}>
+                  <div className="add-article-image-remove-icon">
+                    <X size={32} color="#e70101" weight="bold" />
+                  </div>
+                  <img src={image} alt="selected-image" />
+                </div>
+                <div className="add-article-image" onClick={handleDeleteImage}>
+                  <div className="add-article-image-remove-icon">
+                    <X size={32} color="#e70101" weight="bold" />
+                  </div>
+                  <img src={image} alt="selected-image" />
+                </div>{" "}
+                <div className="add-article-image" onClick={handleDeleteImage}>
+                  <div className="add-article-image-remove-icon">
+                    <X size={32} color="#e70101" weight="bold" />
+                  </div>
+                  <img src={image} alt="selected-image" />
+                </div>{" "}
+                <div className="add-article-image" onClick={handleDeleteImage}>
+                  <div className="add-article-image-remove-icon">
+                    <X size={32} color="#e70101" weight="bold" />
+                  </div>
+                  <img src={image} alt="selected-image" />
+                </div>{" "}
+                <div className="add-article-image" onClick={handleDeleteImage}>
+                  <div className="add-article-image-remove-icon">
+                    <X size={32} color="#e70101" weight="bold" />
+                  </div>
+                  <img src={image} alt="selected-image" />
+                </div>{" "}
+                <div className="add-article-image" onClick={handleDeleteImage}>
+                  <div className="add-article-image-remove-icon">
+                    <X size={32} color="#e70101" weight="bold" />
+                  </div>
+                  <img src={image} alt="selected-image" />
+                </div>
+                <div className="add-article-images-container">
+                  <div className="add-article-item">
+                    <Plus size={32} color="#616161" weight="bold" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="add-article-toggle-container">
+              <div className="add-article-toggle-item">
+                <ToggleSwitch
+                  name={"main-country-post"}
+                  description={"Dodaj članak kao glavni za državu"}
+                  value={isMainCountryPostChecked}
+                  setter={setIsMainCountryPostChecked}
+                />
+              </div>
+              <div className="add-article-toggle-item">
+                <ToggleSwitch
+                  name={"notify-subscribers"}
+                  description={"Obavijesti pretplatnike o ovom članku"}
+                  value={isNotifySubscribersChecked}
+                  setter={() =>
+                    setIsNotifySubscribersChecked(!isNotifySubscribersChecked)
+                  }
+                />
+              </div>
+            </div>
+
             <div className="add-article-buttons">
               <Button type="submit" adminPrimary>
                 objavi članak
-              </Button>
+              </Button> 
+              {/* TODO add sweetalert before publish */}
               <Button type="button" white onClick={handleCancel}>
                 Odustani
               </Button>

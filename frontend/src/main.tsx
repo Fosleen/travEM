@@ -4,12 +4,15 @@ import App from "./App.tsx";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { PrimeReactProvider, PrimeReactContext } from "primereact/api";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
-      <ToastContainer />
+      <PrimeReactProvider>
+        <App />
+        <ToastContainer />
+      </PrimeReactProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

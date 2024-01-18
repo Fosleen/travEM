@@ -45,6 +45,8 @@ export interface DropdownProps {
   hardcodedValue?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   isDisabled: boolean;
+  filter?: boolean;
+  images?: boolean;
 }
 
 export interface AirplaneTicketsMenuProps {
@@ -96,4 +98,9 @@ export interface PlacesData {
 export interface ArticleType {
   id: number;
   name: string;
+}
+
+export interface SectionIconsData {
+  id: number;
+  url: string;
 }

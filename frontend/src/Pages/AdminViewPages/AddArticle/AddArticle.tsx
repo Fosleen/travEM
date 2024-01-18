@@ -8,26 +8,34 @@ import { useEffect, useState } from "react";
 import { getArticleTypes } from "../../../api/articleTypes";
 import Dropdown from "../../../components/atoms/Dropdown";
 import { getVisitedCountries } from "../../../api/map";
+import { getSectionIcons } from "../../../api/sectionIcons";
 import { Plus, X } from "@phosphor-icons/react";
 import {
   ArticleType,
   MapCountriesData,
   PlacesData,
+  SectionIconsData,
 } from "../../../common/types";
 import image from "../../../assets/images/post-image.jpg";
 import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch/ToggleSwitch";
 import { getPlacesByCountry } from "../../../api/places";
+import DropdownImage from "../../../components/admin/atoms/AdvancedDropdown";
 
 const AddArticle = () => {
   const navigate = useNavigate();
   const [articleTypes, setArticleTypes] = useState("");
   const [countries, setCountries] = useState<MapCountriesData | string>("");
   const [places, setPlaces] = useState<PlacesData | string>("");
+  const [sectionIcons, setSectionIcons] = useState<SectionIconsData | string>(
+    ""
+  );
+
   const [selectedArticleTypeId, setSelectedArticleTypeId] = useState<
     number | string
   >("");
   const [selectedCountryId, setSelectedCountryId] = useState("");
   const [selectedPlaceId, setSelectedPlaceId] = useState("");
+  const [selectedSectionIcon, setSelectedSectionIcon] = useState("");
 
   const [isMainCountryPostChecked, setIsMainCountryPostChecked] =
     useState(false);
@@ -60,6 +68,12 @@ const AddArticle = () => {
     setSelectedPlaceId(selectedValue);
   };
 
+  const handleSectionIconChange = (selectedValue) => {
+    console.log(selectedValue);
+
+    setSelectedSectionIcon(selectedValue);
+  };
+
   const handleDeleteSection = () => {
     console.log("delete section");
   };
@@ -72,9 +86,11 @@ const AddArticle = () => {
     try {
       const articleTypesData = await getArticleTypes();
       const countriesData = await getVisitedCountries();
+      const sectionIconsData = await getSectionIcons();
 
       setArticleTypes(articleTypesData);
       setCountries(countriesData);
+      setSectionIcons(sectionIconsData);
     } catch (error) {
       console.error("Error occured while fetching data:", error);
     }
@@ -167,7 +183,7 @@ const AddArticle = () => {
                         value={selectedPlaceId}
                         isDisabled={false}
                         label="Mjesto članka (opcionalno)"
-                        options={places} // TODO add endpoint for places by selected country
+                        options={places}
                       />
                     )}
                   </>
@@ -196,12 +212,14 @@ const AddArticle = () => {
                     />
                   </div>
                   <div className="add-article-section-top-item">
-                    <Dropdown
-                      hardcodedValue={"Odaberi..."}
-                      options={articleTypes}
-                      onChange={handleArticleTypeChange}
-                      value={selectedArticleTypeId}
+                    <DropdownImage
+                      hardcodedValue="Odaberi..."
                       label="Vrsta ikone *"
+                      options={sectionIcons}
+                      value={selectedArticleTypeId}
+                      onChange={handleSectionIconChange}
+                      filter={false}
+                      images={true}
                     />
                   </div>
                 </div>

@@ -104,3 +104,15 @@ export interface SectionIconsData {
   id: number;
   url: string;
 }
+
+export interface Article {
+  title: string;
+  subtitle: string;
+  description: string;
+  video: string;
+  article_type_id: number;
+  country_id: number;
+  place_id: number;
+  main_image_url: string;
+  user_id: number;
+}

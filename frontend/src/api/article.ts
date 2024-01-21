@@ -1,21 +1,34 @@
 import { apiUrl } from "./api";
 
 export async function addArticle(
-  flights_nmbr: string,
-  videos_nmbr: string,
-  distance_nmbr: string
+  title: string,
+  subtitle: string,
+  description: string,
+  video: string,
+  article_type_id: number,
+  country_id: number,
+  place_id: number,
+  main_image_url: string,
+  user_id: number,
+  date_written: Date
 ) {
-    
-  const response = await fetch(`${apiUrl}/homepage`, {
+  const response = await fetch(`${apiUrl}/articles`, {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    method: "PATCH",
+    method: "POST",
     body: JSON.stringify({
-      flights_nmbr: flights_nmbr,
-      videos_nmbr: videos_nmbr,
-      distance_nmbr: distance_nmbr,
+      title: title,
+      subtitle: subtitle,
+      description: description,
+      video: video,
+      article_type_id: article_type_id,
+      country_id: country_id,
+      place_id: place_id,
+      user_id: user_id,
+      main_image_url: main_image_url,
+      date_written: date_written,
     }),
   });
 

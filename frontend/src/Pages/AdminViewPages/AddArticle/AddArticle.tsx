@@ -66,7 +66,7 @@ const AddArticle = () => {
       parseInt(values.article_place),
       "https://live.staticflickr.com/65535/53459367725_3c3e143b26_b.jpg", // main image hardcoded
       1, // hardcoded user id
-      todaysDate
+      todaysDate,
     );
 
     console.log(response);

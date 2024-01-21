@@ -91,7 +91,8 @@ class ArticleService {
     user_id,
     article_type_id,
     country_id,
-    place_id
+    place_id,
+    url
   ) {
     try {
       const article = await db.models.Article.create({
@@ -105,6 +106,7 @@ class ArticleService {
         countryId: country_id,
         placeId: place_id,
       });
+
       return article;
     } catch (error) {
       console.log(error);

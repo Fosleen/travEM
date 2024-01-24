@@ -22,6 +22,7 @@ import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch/ToggleSwi
 import { getPlacesByCountry } from "../../../api/places";
 import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
 import { addArticle } from "../../../api/article";
+import { addSection } from "../../../api/sections";
 
 const AddArticle = () => {
   const navigate = useNavigate();
@@ -55,10 +56,10 @@ const AddArticle = () => {
       "zakej se ovo opet ne poziva haaaa - jer nisi napisala naslov clanka koji je obavezan!!!!"
     );
     console.log(values);
-    /*
-    const dateString = new Date().toJSON().slice(0, 10); 
+
+    const dateString = new Date().toJSON().slice(0, 10);
     const todaysDate = new Date(dateString);
-   
+
     const response = await addArticle(
       values.article_title,
       values.article_subtitle,
@@ -72,7 +73,20 @@ const AddArticle = () => {
       todaysDate
     );
 
-    console.log(response);*/
+    console.log(response);
+    values.sections.map(async (section) => console.log(section));
+
+    values.sections.map(async (section) => {
+      return await addSection(
+        section.section_text,
+        section.section_subtitle,
+        section.order,
+        section.section_url_title,
+        section.section_url_link,
+        section.section_icon,
+        response.id
+      );
+    });
   };
 
   const handleCancel = () => {
@@ -108,7 +122,7 @@ const AddArticle = () => {
       section_url_title: "",
       section_url_link: "",
       section_icon: "",
-      order: 1,
+      order: 1, // TODO fix if this is needed. otherwise remove this attribute
     });
   };
 

@@ -7,7 +7,11 @@ class ArticleController {
     const pageSize = parseInt(req.query.pageSize) || 12;
     const articleType = parseInt(req.query.articleType) || null;
 
-    const response = await service.getArticles(page, pageSize, articleType);
+    const response = await articleService.getArticles(
+      page,
+      pageSize,
+      articleType
+    );
 
     if (response.articles.length === 0) {
       res.status(404).json({ error: "No articles found" });
@@ -18,7 +22,7 @@ class ArticleController {
 
   async getArticleById(req, res) {
     const { id } = req.params;
-    const response = await service.getArticleById(id);
+    const response = await articleService.getArticleById(id);
     if (!response || response.length == 0) {
       res.status(404).json({ error: `No article found by id ${id}` });
     } else {

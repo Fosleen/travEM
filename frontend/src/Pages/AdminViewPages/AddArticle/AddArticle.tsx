@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import Input from "../../../components/atoms/Input";
 import Button from "../../../components/atoms/Button";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getArticleTypes } from "../../../api/articleTypes";
 import Dropdown from "../../../components/atoms/Dropdown";
 import { getVisitedCountries } from "../../../api/map";
@@ -23,6 +23,7 @@ import { getPlacesByCountry } from "../../../api/places";
 import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
 import { addArticle } from "../../../api/article";
 import { addSection } from "../../../api/sections";
+import Modal from "../../../components/atoms/Modal";
 
 const AddArticle = () => {
   const navigate = useNavigate();
@@ -39,6 +40,8 @@ const AddArticle = () => {
   const [selectedCountryId, setSelectedCountryId] = useState("");
   const [selectedPlaceId, setSelectedPlaceId] = useState("");
   const [selectedSectionIcon, setSelectedSectionIcon] = useState("");
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const [modalInputValue, setModalInputValue] = useState("");
 
   const [isMainCountryPostChecked, setIsMainCountryPostChecked] =
     useState(false);
@@ -130,6 +133,21 @@ const AddArticle = () => {
     console.log("remove image");
   };
 
+  const toggleDialog = () => {
+    console.log("bok");
+    if (dialogRef && dialogRef.current) {
+      dialogRef.current.hasAttribute("open")
+        ? dialogRef.current.close()
+        : dialogRef.current.showModal();
+    }
+  };
+
+  const handleAddImage = () => {
+    console.log(`added image with url ${modalInputValue}`);
+    // TODO save image somewhere from current modalInputValue
+    setModalInputValue("");
+  };
+
   const fetchData = async () => {
     try {
       const articleTypesData = await getArticleTypes();
@@ -158,358 +176,373 @@ const AddArticle = () => {
   }, [selectedCountryId]);
 
   return (
-    <div className="add-article-container">
-      <h2>Unesi novi članak</h2>
-      {articleTypes && countries && (
-        <Formik
-          initialValues={{
-            article_title: "",
-            article_subtitle: "",
-            article_description: "",
-            article_video: "",
-            article_type: "",
-            article_country: "",
-            article_place: "",
-            sections: [
-              {
-                section_subtitle: "",
-                section_text: "",
-                section_url_title: "",
-                section_url_link: "",
-                section_icon: "",
-                order: 1,
-              },
-            ],
-          }}
-          validationSchema={ValidationSchema}
-          onSubmit={handleSave}
-        >
-          {({ values, setFieldValue }) => (
-            <Form className="add-article-form">
-              <div className="add-article-inputs">
-                <Field
-                  name="article_title"
-                  type="text"
-                  as={Input}
-                  label="Naslov članka *"
-                  placeholder="Unesi naslov..."
-                />
-                <ErrorMessage name="article_title" component="div" />
-                <Field
-                  name="article_subtitle"
-                  type="text"
-                  as={Input}
-                  label="Podaslov članka *"
-                  placeholder="Opis članka u par riječi..."
-                />
-                <ErrorMessage name="article_subtitle" component="div" />
-                <Field // TODO change to textarea
-                  name="article_description"
-                  type="text"
-                  as={Input}
-                  label="Opis članka *"
-                  placeholder="Opis članka u nekoliko rečenica..."
-                />
-                <ErrorMessage name="article_description" component="div" />
-                <div className="add-article-dropdowns">
-                  <Dropdown
-                    hardcodedValue={"Odaberi u kojem će se meniju prikazivat"}
-                    options={articleTypes}
-                    value={values.article_type}
-                    onChange={(value) => setFieldValue("article_type", value)}
-                    label="Vrsta članka *"
-                  />
-                  <ErrorMessage name="article_type" component="div" />
+    <>
+      <div className="add-article-container">
+        <h2>Unesi novi članak</h2>
+        {articleTypes && countries && (
+          <Formik
+            initialValues={{
+              article_title: "",
+              article_subtitle: "",
+              article_description: "",
+              article_video: "",
+              article_type: "",
+              article_country: "",
+              article_place: "",
+              sections: [
+                {
+                  section_subtitle: "",
+                  section_text: "",
+                  section_url_title: "",
+                  section_url_link: "",
+                  section_icon: "",
+                  order: 1,
+                },
+              ],
+            }}
+            validationSchema={ValidationSchema}
+            onSubmit={handleSave}
+          >
+            {({ values, setFieldValue }) => (
+              <Form className="add-article-form">
+                <div className="add-article-inputs">
                   <Field
-                    name="article_video"
+                    name="article_title"
+                    type="text"
                     as={Input}
-                    label="Videozapis (opcionalno) "
-                    placeholder={"Unesi link videa"}
+                    label="Naslov članka *"
+                    placeholder="Unesi naslov..."
                   />
-                  {values.article_type == 1 && (
-                    <>
-                      <Dropdown
-                        hardcodedValue={"Odaberi državu o kojoj se radi"}
-                        options={countries}
-                        value={values.article_country}
-                        onChange={(value) => {
-                          setFieldValue("article_country", value);
-                          setSelectedCountryId(value);
-                        }}
-                        isDisabled={false}
-                        label="Država članka (opcionalno)"
-                      />
-                      {values.article_country != "" && places && (
+                  <ErrorMessage name="article_title" component="div" />
+                  <Field
+                    name="article_subtitle"
+                    type="text"
+                    as={Input}
+                    label="Podaslov članka *"
+                    placeholder="Opis članka u par riječi..."
+                  />
+                  <ErrorMessage name="article_subtitle" component="div" />
+                  <Field // TODO change to textarea
+                    name="article_description"
+                    type="text"
+                    as={Input}
+                    label="Opis članka *"
+                    placeholder="Opis članka u nekoliko rečenica..."
+                  />
+                  <ErrorMessage name="article_description" component="div" />
+                  <div className="add-article-dropdowns">
+                    <Dropdown
+                      hardcodedValue={"Odaberi u kojem će se meniju prikazivat"}
+                      options={articleTypes}
+                      value={values.article_type}
+                      onChange={(value) => setFieldValue("article_type", value)}
+                      label="Vrsta članka *"
+                    />
+                    <ErrorMessage name="article_type" component="div" />
+                    <Field
+                      name="article_video"
+                      as={Input}
+                      label="Videozapis (opcionalno) "
+                      placeholder={"Unesi link videa"}
+                    />
+                    {values.article_type == 1 && (
+                      <>
                         <Dropdown
-                          hardcodedValue={
-                            "Odaberi grad ili mjesto o kojem se radi"
-                          }
-                          value={values.article_place}
-                          onChange={(value) =>
-                            setFieldValue("article_place", value)
-                          }
+                          hardcodedValue={"Odaberi državu o kojoj se radi"}
+                          options={countries}
+                          value={values.article_country}
+                          onChange={(value) => {
+                            setFieldValue("article_country", value);
+                            setSelectedCountryId(value);
+                          }}
                           isDisabled={false}
-                          label="Mjesto članka (opcionalno)"
-                          options={places}
+                          label="Država članka (opcionalno)"
                         />
-                      )}
-                    </>
-                  )}
+                        {values.article_country != "" && places && (
+                          <Dropdown
+                            hardcodedValue={
+                              "Odaberi grad ili mjesto o kojem se radi"
+                            }
+                            value={values.article_place}
+                            onChange={(value) =>
+                              setFieldValue("article_place", value)
+                            }
+                            isDisabled={false}
+                            label="Mjesto članka (opcionalno)"
+                            options={places}
+                          />
+                        )}
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div className="add-article-images-container">
-                <div className="add-article-item">
-                  <Plus size={32} color="#616161" weight="bold" />
+                <div className="add-article-images-container">
+                  <div className="add-article-item" onClick={toggleDialog}>
+                    <Plus size={32} color="#616161" weight="bold" />
+                  </div>
                 </div>
-              </div>
-              <p>* preporuča se slika u omjeru 16:9</p>
+                <p>* preporuča se slika u omjeru 16:9</p>
 
-              <div>
-                <h6>Odlomci</h6>
-                <FieldArray
-                  name="sections"
-                  render={(arrayHelpers) => {
-                    const sections = values.sections;
+                <div>
+                  <h6>Odlomci</h6>
+                  <FieldArray
+                    name="sections"
+                    render={(arrayHelpers) => {
+                      const sections = values.sections;
 
-                    return (
-                      <div className="add-article-sections-container">
-                        {sections && sections.length > 0
-                          ? sections.map((section, index) => (
-                              <fieldset
-                                key={index}
-                                className="add-article-section"
-                              >
-                                <legend>Odlomak {index + 1}</legend>
-                                <div className="add-article-section-top">
-                                  <div className="add-article-section-top-item">
-                                    <Field
-                                      name={`sections.${index}.section_subtitle`}
-                                      type="text"
-                                      as={Input}
-                                      label="Podnaslov odlomka (opcionalno)"
-                                      placeholder="Unesi podnaslov odlomka..."
-                                    />
-                                  </div>
-                                  <div className="add-article-section-top-item">
-                                    <AdvancedDropdown
-                                      hardcodedValue="Odaberi..."
-                                      label="Vrsta ikone *"
-                                      name={`sections.${index}.section_icon`} // TODO connect this with formik
-                                      options={sectionIcons}
-                                      onChange={handleSectionIconChange}
-                                      filter={false}
-                                      images={true}
-                                    />
-                                  </div>
-                                </div>
-                                <Field
-                                  type="text"
-                                  as={Input}
-                                  name={`sections.${index}.section_text`}
-                                  label="Tekst odlomka *"
-                                  placeholder="Unesi tekst odlomka..."
-                                />
-                                <div className="add-article-section-bottom">
-                                  <Field
-                                    type="text"
-                                    name={`sections.${index}.section_url_title`}
-                                    as={Input}
-                                    label="Naslov poveznice (opcionalno)"
-                                    placeholder="Unesi naslov poveznice..."
-                                  />
-                                  <Field
-                                    type="text"
-                                    name={`sections.${index}.section_url_link`}
-                                    as={Input}
-                                    label="Poveznica (opcionalno)"
-                                    placeholder="Unesi link poveznice..."
-                                  />
-                                </div>
-                                <div className="add-article-bottom-container">
-                                  <div className="add-article-images-container">
-                                    <div
-                                      className="add-article-image"
-                                      onClick={handleDeleteImage}
-                                    >
-                                      <div className="add-article-image-remove-icon">
-                                        <X
-                                          size={32}
-                                          color="#e70101"
-                                          weight="bold"
-                                        />
-                                      </div>
-                                      <img src={image} alt="selected-image" />
+                      return (
+                        <div className="add-article-sections-container">
+                          {sections && sections.length > 0
+                            ? sections.map((section, index) => (
+                                <fieldset
+                                  key={index}
+                                  className="add-article-section"
+                                >
+                                  <legend>Odlomak {index + 1}</legend>
+                                  <div className="add-article-section-top">
+                                    <div className="add-article-section-top-item">
+                                      <Field
+                                        name={`sections.${index}.section_subtitle`}
+                                        type="text"
+                                        as={Input}
+                                        label="Podnaslov odlomka (opcionalno)"
+                                        placeholder="Unesi podnaslov odlomka..."
+                                      />
                                     </div>
-                                    <div className="add-article-item">
-                                      <Plus
-                                        size={32}
-                                        color="#616161"
-                                        weight="bold"
+                                    <div className="add-article-section-top-item">
+                                      <AdvancedDropdown
+                                        hardcodedValue="Odaberi..."
+                                        label="Vrsta ikone *"
+                                        name={`sections.${index}.section_icon`} // TODO connect this with formik
+                                        options={sectionIcons}
+                                        onChange={handleSectionIconChange}
+                                        filter={false}
+                                        images={true}
                                       />
                                     </div>
                                   </div>
-                                  <Button
-                                    type="button"
-                                    red
-                                    onClick={() => {
-                                      handleDeleteSection(arrayHelpers, index);
-                                    }}
-                                  >
-                                    izbriši odlomak
-                                  </Button>
-                                </div>
-                              </fieldset>
-                            ))
-                          : null}
-                        <Button
-                          type="button"
-                          primary
-                          onClick={() => {
-                            handleAddSection(arrayHelpers);
-                          }}
-                        >
-                          dodaj odlomak
-                        </Button>
-                      </div>
-                    );
-                  }}
-                />
-              </div>
-              <div className="add-article-gallery-container">
-                <h6>Preostale fotografije na članku:</h6>
-                <div className="add-article-images-container">
-                  <div
-                    className="add-article-image"
-                    onClick={handleDeleteImage}
-                  >
-                    <div className="add-article-image-remove-icon">
-                      <X size={32} color="#e70101" weight="bold" />
-                    </div>
-                    <img src={image} alt="selected-image" />
-                  </div>
-                  <div
-                    className="add-article-image"
-                    onClick={handleDeleteImage}
-                  >
-                    <div className="add-article-image-remove-icon">
-                      <X size={32} color="#e70101" weight="bold" />
-                    </div>
-                    <img src={image} alt="selected-image" />
-                  </div>
-                  <div
-                    className="add-article-image"
-                    onClick={handleDeleteImage}
-                  >
-                    <div className="add-article-image-remove-icon">
-                      <X size={32} color="#e70101" weight="bold" />
-                    </div>
-                    <img src={image} alt="selected-image" />
-                  </div>
-                  <div
-                    className="add-article-image"
-                    onClick={handleDeleteImage}
-                  >
-                    <div className="add-article-image-remove-icon">
-                      <X size={32} color="#e70101" weight="bold" />
-                    </div>
-                    <img src={image} alt="selected-image" />
-                  </div>
-                  <div
-                    className="add-article-image"
-                    onClick={handleDeleteImage}
-                  >
-                    <div className="add-article-image-remove-icon">
-                      <X size={32} color="#e70101" weight="bold" />
-                    </div>
-                    <img src={image} alt="selected-image" />
-                  </div>
-                  <div
-                    className="add-article-image"
-                    onClick={handleDeleteImage}
-                  >
-                    <div className="add-article-image-remove-icon">
-                      <X size={32} color="#e70101" weight="bold" />
-                    </div>
-                    <img src={image} alt="selected-image" />
-                  </div>{" "}
-                  <div
-                    className="add-article-image"
-                    onClick={handleDeleteImage}
-                  >
-                    <div className="add-article-image-remove-icon">
-                      <X size={32} color="#e70101" weight="bold" />
-                    </div>
-                    <img src={image} alt="selected-image" />
-                  </div>{" "}
-                  <div
-                    className="add-article-image"
-                    onClick={handleDeleteImage}
-                  >
-                    <div className="add-article-image-remove-icon">
-                      <X size={32} color="#e70101" weight="bold" />
-                    </div>
-                    <img src={image} alt="selected-image" />
-                  </div>{" "}
-                  <div
-                    className="add-article-image"
-                    onClick={handleDeleteImage}
-                  >
-                    <div className="add-article-image-remove-icon">
-                      <X size={32} color="#e70101" weight="bold" />
-                    </div>
-                    <img src={image} alt="selected-image" />
-                  </div>{" "}
-                  <div
-                    className="add-article-image"
-                    onClick={handleDeleteImage}
-                  >
-                    <div className="add-article-image-remove-icon">
-                      <X size={32} color="#e70101" weight="bold" />
-                    </div>
-                    <img src={image} alt="selected-image" />
-                  </div>
+                                  <Field
+                                    type="text"
+                                    as={Input}
+                                    name={`sections.${index}.section_text`}
+                                    label="Tekst odlomka *"
+                                    placeholder="Unesi tekst odlomka..."
+                                  />
+                                  <div className="add-article-section-bottom">
+                                    <Field
+                                      type="text"
+                                      name={`sections.${index}.section_url_title`}
+                                      as={Input}
+                                      label="Naslov poveznice (opcionalno)"
+                                      placeholder="Unesi naslov poveznice..."
+                                    />
+                                    <Field
+                                      type="text"
+                                      name={`sections.${index}.section_url_link`}
+                                      as={Input}
+                                      label="Poveznica (opcionalno)"
+                                      placeholder="Unesi link poveznice..."
+                                    />
+                                  </div>
+                                  <div className="add-article-bottom-container">
+                                    <div className="add-article-images-container">
+                                      <div
+                                        className="add-article-image"
+                                        onClick={handleDeleteImage}
+                                      >
+                                        <div className="add-article-image-remove-icon">
+                                          <X
+                                            size={32}
+                                            color="#e70101"
+                                            weight="bold"
+                                          />
+                                        </div>
+                                        <img src={image} alt="selected-image" />
+                                      </div>
+                                      <div className="add-article-item">
+                                        <Plus
+                                          size={32}
+                                          color="#616161"
+                                          weight="bold"
+                                        />
+                                      </div>
+                                    </div>
+                                    <Button
+                                      type="button"
+                                      red
+                                      onClick={() => {
+                                        handleDeleteSection(
+                                          arrayHelpers,
+                                          index
+                                        );
+                                      }}
+                                    >
+                                      izbriši odlomak
+                                    </Button>
+                                  </div>
+                                </fieldset>
+                              ))
+                            : null}
+                          <Button
+                            type="button"
+                            primary
+                            onClick={() => {
+                              handleAddSection(arrayHelpers);
+                            }}
+                          >
+                            dodaj odlomak
+                          </Button>
+                        </div>
+                      );
+                    }}
+                  />
+                </div>
+                <div className="add-article-gallery-container">
+                  <h6>Preostale fotografije na članku:</h6>
                   <div className="add-article-images-container">
-                    <div className="add-article-item">
-                      <Plus size={32} color="#616161" weight="bold" />
+                    <div
+                      className="add-article-image"
+                      onClick={handleDeleteImage}
+                    >
+                      <div className="add-article-image-remove-icon">
+                        <X size={32} color="#e70101" weight="bold" />
+                      </div>
+                      <img src={image} alt="selected-image" />
+                    </div>
+                    <div
+                      className="add-article-image"
+                      onClick={handleDeleteImage}
+                    >
+                      <div className="add-article-image-remove-icon">
+                        <X size={32} color="#e70101" weight="bold" />
+                      </div>
+                      <img src={image} alt="selected-image" />
+                    </div>
+                    <div
+                      className="add-article-image"
+                      onClick={handleDeleteImage}
+                    >
+                      <div className="add-article-image-remove-icon">
+                        <X size={32} color="#e70101" weight="bold" />
+                      </div>
+                      <img src={image} alt="selected-image" />
+                    </div>
+                    <div
+                      className="add-article-image"
+                      onClick={handleDeleteImage}
+                    >
+                      <div className="add-article-image-remove-icon">
+                        <X size={32} color="#e70101" weight="bold" />
+                      </div>
+                      <img src={image} alt="selected-image" />
+                    </div>
+                    <div
+                      className="add-article-image"
+                      onClick={handleDeleteImage}
+                    >
+                      <div className="add-article-image-remove-icon">
+                        <X size={32} color="#e70101" weight="bold" />
+                      </div>
+                      <img src={image} alt="selected-image" />
+                    </div>
+                    <div
+                      className="add-article-image"
+                      onClick={handleDeleteImage}
+                    >
+                      <div className="add-article-image-remove-icon">
+                        <X size={32} color="#e70101" weight="bold" />
+                      </div>
+                      <img src={image} alt="selected-image" />
+                    </div>{" "}
+                    <div
+                      className="add-article-image"
+                      onClick={handleDeleteImage}
+                    >
+                      <div className="add-article-image-remove-icon">
+                        <X size={32} color="#e70101" weight="bold" />
+                      </div>
+                      <img src={image} alt="selected-image" />
+                    </div>{" "}
+                    <div
+                      className="add-article-image"
+                      onClick={handleDeleteImage}
+                    >
+                      <div className="add-article-image-remove-icon">
+                        <X size={32} color="#e70101" weight="bold" />
+                      </div>
+                      <img src={image} alt="selected-image" />
+                    </div>{" "}
+                    <div
+                      className="add-article-image"
+                      onClick={handleDeleteImage}
+                    >
+                      <div className="add-article-image-remove-icon">
+                        <X size={32} color="#e70101" weight="bold" />
+                      </div>
+                      <img src={image} alt="selected-image" />
+                    </div>{" "}
+                    <div
+                      className="add-article-image"
+                      onClick={handleDeleteImage}
+                    >
+                      <div className="add-article-image-remove-icon">
+                        <X size={32} color="#e70101" weight="bold" />
+                      </div>
+                      <img src={image} alt="selected-image" />
+                    </div>
+                    <div className="add-article-images-container">
+                      <div className="add-article-item">
+                        <Plus size={32} color="#616161" weight="bold" />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="add-article-toggle-container">
-                <div className="add-article-toggle-item">
-                  <ToggleSwitch
-                    name={"main-country-post"}
-                    description={"Dodaj članak kao glavni za državu"}
-                    value={isMainCountryPostChecked}
-                    setter={setIsMainCountryPostChecked}
-                  />
+                <div className="add-article-toggle-container">
+                  <div className="add-article-toggle-item">
+                    <ToggleSwitch
+                      name={"main-country-post"}
+                      description={"Dodaj članak kao glavni za državu"}
+                      value={isMainCountryPostChecked}
+                      setter={setIsMainCountryPostChecked}
+                    />
+                  </div>
+                  <div className="add-article-toggle-item">
+                    <ToggleSwitch
+                      name={"notify-subscribers"}
+                      description={"Obavijesti pretplatnike o ovom članku"}
+                      value={isNotifySubscribersChecked}
+                      setter={() =>
+                        setIsNotifySubscribersChecked(
+                          !isNotifySubscribersChecked
+                        )
+                      }
+                    />
+                  </div>
                 </div>
-                <div className="add-article-toggle-item">
-                  <ToggleSwitch
-                    name={"notify-subscribers"}
-                    description={"Obavijesti pretplatnike o ovom članku"}
-                    value={isNotifySubscribersChecked}
-                    setter={() =>
-                      setIsNotifySubscribersChecked(!isNotifySubscribersChecked)
-                    }
-                  />
-                </div>
-              </div>
 
-              <div className="add-article-buttons">
-                <Button type="submit" adminPrimary>
-                  objavi članak
-                </Button>
-                {/* TODO add sweetalert before publish */}
-                <Button type="button" white onClick={handleCancel}>
-                  Odustani
-                </Button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      )}
-    </div>
+                <div className="add-article-buttons">
+                  <Button type="submit" adminPrimary>
+                    objavi članak
+                  </Button>
+                  {/* TODO add sweetalert before publish */}
+                  <Button type="button" white onClick={handleCancel}>
+                    Odustani
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        )}
+      </div>
+      <Modal
+        ref={dialogRef}
+        toggleDialog={toggleDialog}
+        onClick={handleAddImage}
+        modalInputValue={modalInputValue}
+        setModalInputValue={setModalInputValue}
+      />
+      {modalInputValue.toString()}
+    </>
   );
 };
 

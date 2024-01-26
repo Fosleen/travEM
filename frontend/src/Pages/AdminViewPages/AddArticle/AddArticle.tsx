@@ -11,13 +11,11 @@ import { getVisitedCountries } from "../../../api/map";
 import { getSectionIcons } from "../../../api/sectionIcons";
 import { Plus, X } from "@phosphor-icons/react";
 import {
-  Article,
   ArticleType,
   MapCountriesData,
   PlacesData,
   SectionIconsData,
 } from "../../../common/types";
-import image from "../../../assets/images/post-image.jpg";
 import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch/ToggleSwitch";
 import { getPlacesByCountry } from "../../../api/places";
 import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
@@ -34,14 +32,19 @@ const AddArticle = () => {
     ""
   );
 
-  const [selectedArticleTypeId, setSelectedArticleTypeId] = useState<
-    number | string
-  >("");
   const [selectedCountryId, setSelectedCountryId] = useState("");
-  const [selectedPlaceId, setSelectedPlaceId] = useState("");
   const [selectedSectionIcon, setSelectedSectionIcon] = useState("");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [modalInputValue, setModalInputValue] = useState("");
+
+  // images
+  const [imageType, setImageType] = useState<string | null>(null);
+  const [sectionSelected, setSectionSelected] = useState<number>(0);
+  const [mainArticleImage, setMainArticleImage] = useState<string | null>(null);
+  const [sectionImages, setSectionImages] = useState<Array<Array<string>>>([
+    [],
+  ]);
+  const [otherArticleImages, setOtherArticleImages] = useState([]);
 
   const [isMainCountryPostChecked, setIsMainCountryPostChecked] =
     useState(false);
@@ -71,7 +74,7 @@ const AddArticle = () => {
       parseInt(values.article_type),
       parseInt(values.article_country),
       parseInt(values.article_place),
-      "https://live.staticflickr.com/65535/53459367725_3c3e143b26_b.jpg", // main image hardcoded
+      mainArticleImage,
       1, // hardcoded user id
       todaysDate
     );
@@ -96,26 +99,17 @@ const AddArticle = () => {
     navigate("/admin/članci");
   };
 
-  const handleCountryChange = (selectedValue) => {
-    setSelectedCountryId(selectedValue);
-  };
-
-  const handleArticleTypeChange = (selectedValue) => {
-    setSelectedArticleTypeId(selectedValue);
-  };
-
-  const handlePlaceChange = (selectedValue) => {
-    setSelectedPlaceId(selectedValue);
-  };
-
   const handleSectionIconChange = (selectedValue) => {
     console.log(selectedValue);
 
     setSelectedSectionIcon(selectedValue);
   };
 
-  const handleDeleteSection = (arrayHelpers, index) => {
-    arrayHelpers.remove(index);
+  const handleDeleteSection = (arrayHelpers, sectionIndex) => {
+    arrayHelpers.remove(sectionIndex);
+    setSectionImages(
+      sectionImages.filter((_el, index) => index !== sectionIndex)
+    );
   };
 
   const handleAddSection = (arrayHelpers) => {
@@ -127,14 +121,38 @@ const AddArticle = () => {
       section_icon: "",
       order: 1, // TODO fix if this is needed. otherwise remove this attribute
     });
+    setSectionImages([...sectionImages, []]);
   };
 
-  const handleDeleteImage = () => {
-    console.log("remove image");
+  const handleDeleteImage = (
+    type: string,
+    itemIndex?: number,
+    sectionIndex?: number
+  ) => {
+    console.log(
+      "remove image itemindex" + itemIndex + "section:" + sectionIndex
+    );
+    console.log(sectionImages);
+
+    if (type == "main") {
+      setMainArticleImage(null);
+    } else if (type == "other") {
+      setOtherArticleImages(
+        otherArticleImages.filter((_el, index) => index !== itemIndex)
+      );
+    } else if (type == "section") {
+      setSectionImages((prevSectionImages) => [
+        ...prevSectionImages.slice(0, sectionIndex), // kopija polja prije indexa odabrane sekcije
+        prevSectionImages[sectionIndex].filter(
+          (_el, index) => index !== itemIndex
+        ), // micanje slike prema indexu slike prema indexu
+        ...prevSectionImages.slice(sectionIndex + 1), // kopija polja nakon indexa odabrane sekcije
+      ]);
+    }
+    setImageType(null);
   };
 
   const toggleDialog = () => {
-    console.log("bok");
     if (dialogRef && dialogRef.current) {
       dialogRef.current.hasAttribute("open")
         ? dialogRef.current.close()
@@ -143,8 +161,17 @@ const AddArticle = () => {
   };
 
   const handleAddImage = () => {
-    console.log(`added image with url ${modalInputValue}`);
-    // TODO save image somewhere from current modalInputValue
+    if (imageType == "main") {
+      setMainArticleImage(modalInputValue);
+    } else if (imageType == "other") {
+      setOtherArticleImages([...otherArticleImages, modalInputValue]);
+    } else if (imageType == "section") {
+      setSectionImages((prevSectionImages) => [
+        ...prevSectionImages.slice(0, sectionSelected), // kopija polja prije indexa odabrane sekcije
+        [...prevSectionImages[sectionSelected], modalInputValue], // dodavanje slike na kraj odabrane sekcije
+        ...prevSectionImages.slice(sectionSelected + 1), // kopija polja nakon indexa odabrane sekcije
+      ]);
+    }
     setModalInputValue("");
   };
 
@@ -245,7 +272,7 @@ const AddArticle = () => {
                       label="Videozapis (opcionalno) "
                       placeholder={"Unesi link videa"}
                     />
-                    {values.article_type == 1 && (
+                    {values.article_type == "1" && (
                       <>
                         <Dropdown
                           hardcodedValue={"Odaberi državu o kojoj se radi"}
@@ -277,9 +304,32 @@ const AddArticle = () => {
                   </div>
                 </div>
                 <div className="add-article-images-container">
-                  <div className="add-article-item" onClick={toggleDialog}>
-                    <Plus size={32} color="#616161" weight="bold" />
-                  </div>
+                  {mainArticleImage ? (
+                    <div
+                      className="add-article-image"
+                      onClick={() => {
+                        handleDeleteImage("main");
+                      }}
+                    >
+                      <div className="add-article-image-remove-icon">
+                        <X size={32} color="#e70101" weight="bold" />
+                      </div>
+                      <img
+                        src={mainArticleImage}
+                        alt={`image-error-${mainArticleImage}`}
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      className="add-article-item"
+                      onClick={() => {
+                        toggleDialog();
+                        setImageType("main");
+                      }}
+                    >
+                      <Plus size={32} color="#616161" weight="bold" />
+                    </div>
+                  )}
                 </div>
                 <p>* preporuča se slika u omjeru 16:9</p>
 
@@ -293,7 +343,7 @@ const AddArticle = () => {
                       return (
                         <div className="add-article-sections-container">
                           {sections && sections.length > 0
-                            ? sections.map((section, index) => (
+                            ? sections.map((_section, index) => (
                                 <fieldset
                                   key={index}
                                   className="add-article-section"
@@ -346,20 +396,39 @@ const AddArticle = () => {
                                   </div>
                                   <div className="add-article-bottom-container">
                                     <div className="add-article-images-container">
+                                      {sectionImages &&
+                                        sectionImages[index].map(
+                                          (el, imageIndex) => (
+                                            <div
+                                              key={imageIndex}
+                                              className="add-article-image"
+                                              onClick={() => {
+                                                handleDeleteImage(
+                                                  "section",
+                                                  imageIndex,
+                                                  index
+                                                );
+                                              }}
+                                            >
+                                              <div className="add-article-image-remove-icon">
+                                                <X
+                                                  size={32}
+                                                  color="#e70101"
+                                                  weight="bold"
+                                                />
+                                              </div>
+                                              <img src={el} alt="img-error" />
+                                            </div>
+                                          )
+                                        )}
                                       <div
-                                        className="add-article-image"
-                                        onClick={handleDeleteImage}
+                                        className="add-article-item"
+                                        onClick={() => {
+                                          toggleDialog();
+                                          setImageType("section");
+                                          setSectionSelected(index);
+                                        }}
                                       >
-                                        <div className="add-article-image-remove-icon">
-                                          <X
-                                            size={32}
-                                            color="#e70101"
-                                            weight="bold"
-                                          />
-                                        </div>
-                                        <img src={image} alt="selected-image" />
-                                      </div>
-                                      <div className="add-article-item">
                                         <Plus
                                           size={32}
                                           color="#616161"
@@ -400,100 +469,28 @@ const AddArticle = () => {
                 <div className="add-article-gallery-container">
                   <h6>Preostale fotografije na članku:</h6>
                   <div className="add-article-images-container">
+                    {otherArticleImages &&
+                      otherArticleImages.map((el, index) => (
+                        <div
+                          className="add-article-image"
+                          onClick={() => {
+                            handleDeleteImage("other", index);
+                          }}
+                        >
+                          <div className="add-article-image-remove-icon">
+                            <X size={32} color="#e70101" weight="bold" />
+                          </div>
+                          <img src={el} alt="img-error" />
+                        </div>
+                      ))}
                     <div
-                      className="add-article-image"
-                      onClick={handleDeleteImage}
+                      className="add-article-item"
+                      onClick={() => {
+                        toggleDialog();
+                        setImageType("other");
+                      }}
                     >
-                      <div className="add-article-image-remove-icon">
-                        <X size={32} color="#e70101" weight="bold" />
-                      </div>
-                      <img src={image} alt="selected-image" />
-                    </div>
-                    <div
-                      className="add-article-image"
-                      onClick={handleDeleteImage}
-                    >
-                      <div className="add-article-image-remove-icon">
-                        <X size={32} color="#e70101" weight="bold" />
-                      </div>
-                      <img src={image} alt="selected-image" />
-                    </div>
-                    <div
-                      className="add-article-image"
-                      onClick={handleDeleteImage}
-                    >
-                      <div className="add-article-image-remove-icon">
-                        <X size={32} color="#e70101" weight="bold" />
-                      </div>
-                      <img src={image} alt="selected-image" />
-                    </div>
-                    <div
-                      className="add-article-image"
-                      onClick={handleDeleteImage}
-                    >
-                      <div className="add-article-image-remove-icon">
-                        <X size={32} color="#e70101" weight="bold" />
-                      </div>
-                      <img src={image} alt="selected-image" />
-                    </div>
-                    <div
-                      className="add-article-image"
-                      onClick={handleDeleteImage}
-                    >
-                      <div className="add-article-image-remove-icon">
-                        <X size={32} color="#e70101" weight="bold" />
-                      </div>
-                      <img src={image} alt="selected-image" />
-                    </div>
-                    <div
-                      className="add-article-image"
-                      onClick={handleDeleteImage}
-                    >
-                      <div className="add-article-image-remove-icon">
-                        <X size={32} color="#e70101" weight="bold" />
-                      </div>
-                      <img src={image} alt="selected-image" />
-                    </div>{" "}
-                    <div
-                      className="add-article-image"
-                      onClick={handleDeleteImage}
-                    >
-                      <div className="add-article-image-remove-icon">
-                        <X size={32} color="#e70101" weight="bold" />
-                      </div>
-                      <img src={image} alt="selected-image" />
-                    </div>{" "}
-                    <div
-                      className="add-article-image"
-                      onClick={handleDeleteImage}
-                    >
-                      <div className="add-article-image-remove-icon">
-                        <X size={32} color="#e70101" weight="bold" />
-                      </div>
-                      <img src={image} alt="selected-image" />
-                    </div>{" "}
-                    <div
-                      className="add-article-image"
-                      onClick={handleDeleteImage}
-                    >
-                      <div className="add-article-image-remove-icon">
-                        <X size={32} color="#e70101" weight="bold" />
-                      </div>
-                      <img src={image} alt="selected-image" />
-                    </div>{" "}
-                    <div
-                      className="add-article-image"
-                      onClick={handleDeleteImage}
-                    >
-                      <div className="add-article-image-remove-icon">
-                        <X size={32} color="#e70101" weight="bold" />
-                      </div>
-                      <img src={image} alt="selected-image" />
-                    </div>
-                    <div className="add-article-images-container">
-                      <div className="add-article-item">
-                        <Plus size={32} color="#616161" weight="bold" />
-                      </div>
+                      <Plus size={32} color="#616161" weight="bold" />
                     </div>
                   </div>
                 </div>

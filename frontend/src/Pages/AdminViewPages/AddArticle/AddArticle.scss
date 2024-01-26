@@ -40,7 +40,7 @@
 
       .add-article-image {
         height: 72px;
-        width: 128px;
+        // width: 108px;
         position: relative;
         cursor: pointer;
         display: inline-block;
@@ -73,7 +73,7 @@
       }
 
       .add-article-item {
-        width: 128px;
+        width: 108px;
         background-color: $greyMiddle;
         height: 72px;
         display: flex;

@@ -8,6 +8,8 @@ import place from "./placeRoute.js";
 import country from "./countryRoute.js";
 import continent from "./continentRoute.js";
 import sectionIcon from "./sectionIconRoute.js";
+import galleryImage from "./galleryImageRoute.js";
+import sectionImage from "./sectionImageRoute.js";
 
 const router = new Router();
 
@@ -16,6 +18,8 @@ router.use("/article-types", articleType);
 router.use("/articles", article);
 router.use("/sections", section);
 router.use("/section-icons", sectionIcon);
+router.use("/gallery-images", galleryImage);
+router.use("/section-images", sectionImage);
 
 router.use("/register", register);
 router.use("/login", login);

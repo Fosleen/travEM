@@ -22,6 +22,8 @@ import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
 import { addArticle } from "../../../api/article";
 import { addSection } from "../../../api/sections";
 import Modal from "../../../components/atoms/Modal";
+import { addSectionImage } from "../../../api/sectionImages";
+import { addGalleryImage } from "../../../api/galleryImages";
 
 const AddArticle = () => {
   const navigate = useNavigate();
@@ -66,7 +68,7 @@ const AddArticle = () => {
     const dateString = new Date().toJSON().slice(0, 10);
     const todaysDate = new Date(dateString);
 
-    const response = await addArticle(
+    const articleResponse = await addArticle(
       values.article_title,
       values.article_subtitle,
       values.article_description,
@@ -79,20 +81,34 @@ const AddArticle = () => {
       todaysDate
     );
 
-    console.log(response);
+    console.log(articleResponse);
     values.sections.map(async (section) => console.log(section));
 
-    values.sections.map(async (section) => {
-      return await addSection(
+    values.sections.map(async (section, index) => {
+      const sectionResponse = await addSection(
         section.section_text,
         section.section_subtitle,
-        section.order,
+        index + 1,
         section.section_url_title,
         section.section_url_link,
         section.section_icon,
-        response.id
+        articleResponse.id
+      );
+      console.log("sec odg");
+
+      console.log(sectionResponse);
+
+      sectionImages[index].map(
+        async (el) => await addSectionImage(el, sectionResponse.id)
       );
     });
+
+    console.log(sectionImages);
+    console.log(otherArticleImages);
+
+    otherArticleImages.map(
+      async (image) => await addGalleryImage(image, articleResponse.id)
+    );
   };
 
   const handleCancel = () => {

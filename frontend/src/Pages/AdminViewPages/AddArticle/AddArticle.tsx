@@ -87,9 +87,11 @@ const AddArticle = () => {
           parseInt(values.article_country),
           parseInt(values.article_place),
           mainArticleImage,
-          1, // hardcoded user id
+          1, // TODO connect with the ID of logged user
           todaysDate
         );
+
+        console.log(isMainCountryPostChecked); // TODO connect with backend to set as the main post for selected country (create backend)
 
         values.sections.map(async (section, index) => {
           const sectionResponse = await addSection(
@@ -109,7 +111,7 @@ const AddArticle = () => {
         otherArticleImages.map(
           async (image) => await addGalleryImage(image, articleResponse.id)
         );
-        // navigate("/admin/članci");
+        navigate("/admin/članci");
         notifySuccess("Uspješno predano!");
       }
     });
@@ -514,14 +516,16 @@ const AddArticle = () => {
                   </div>
                 </div>
                 <div className="add-article-toggle-container">
-                  <div className="add-article-toggle-item">
-                    <ToggleSwitch
-                      name={"main-country-post"}
-                      description={"Dodaj članak kao glavni za državu"}
-                      value={isMainCountryPostChecked}
-                      setter={setIsMainCountryPostChecked}
-                    />
-                  </div>
+                  {selectedCountryId && values.article_type == "1" && (
+                    <div className="add-article-toggle-item">
+                      <ToggleSwitch
+                        name={"main-country-post"}
+                        description={"Dodaj članak kao glavni za državu"}
+                        value={isMainCountryPostChecked}
+                        setter={setIsMainCountryPostChecked}
+                      />
+                    </div>
+                  )}
                   <div className="add-article-toggle-item">
                     <ToggleSwitch
                       name={"notify-subscribers"}

@@ -37,14 +37,13 @@ const AddArticle = () => {
   );
 
   const [selectedCountryId, setSelectedCountryId] = useState("");
-  const [selectedSectionIcon, setSelectedSectionIcon] = useState("");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [modalInputValue, setModalInputValue] = useState("");
 
   // images
   const [imageType, setImageType] = useState<string | null>(null);
   const [sectionSelected, setSectionSelected] = useState<number>(0);
-  const [mainArticleImage, setMainArticleImage] = useState<string | null>(null);
+  const [mainArticleImage, setMainArticleImage] = useState<string>("");
   const [sectionImages, setSectionImages] = useState<Array<Array<string>>>([
     [],
   ]);
@@ -62,6 +61,8 @@ const AddArticle = () => {
   });
 
   const handleSave = async (values) => {
+    console.log(values);
+
     Swal.fire({
       title: "Jeste li sigurni?",
       text: "Objavit ćete ovaj članak",
@@ -107,7 +108,7 @@ const AddArticle = () => {
         otherArticleImages.map(
           async (image) => await addGalleryImage(image, articleResponse.id)
         );
-        navigate("/admin/članci");
+        // navigate("/admin/članci");
         notifySuccess("Uspješno predano!");
       }
     });
@@ -117,12 +118,9 @@ const AddArticle = () => {
     navigate("/admin/članci");
   };
 
-  const handleSectionIconChange = (selectedValue) => {
-    console.log(selectedValue);
-    setSelectedSectionIcon(selectedValue);
-  };
-
   const handleDeleteSection = (arrayHelpers, sectionIndex) => {
+    console.log(arrayHelpers);
+
     arrayHelpers.remove(sectionIndex);
     setSectionImages(
       sectionImages.filter((_el, index) => index !== sectionIndex)
@@ -136,7 +134,7 @@ const AddArticle = () => {
       section_url_title: "",
       section_url_link: "",
       section_icon: "",
-      order: 1, // TODO fix if this is needed. otherwise remove this attribute
+      order: 1,
     });
     setSectionImages([...sectionImages, []]);
   };
@@ -234,7 +232,7 @@ const AddArticle = () => {
                   section_text: "",
                   section_url_title: "",
                   section_url_link: "",
-                  section_icon: "",
+                  section_icon: null,
                   order: 1,
                 },
               ],
@@ -372,12 +370,19 @@ const AddArticle = () => {
                                       />
                                     </div>
                                     <div className="add-article-section-top-item">
-                                      <AdvancedDropdown
+                                      <Field
+                                        type="text"
+                                        as={AdvancedDropdown}
                                         hardcodedValue="Odaberi..."
                                         label="Vrsta ikone *"
-                                        name={`sections.${index}.section_icon`} // TODO connect this with formik
+                                        name={`sections.${index}.section_icon`}
                                         options={sectionIcons}
-                                        onChange={handleSectionIconChange}
+                                        onChange={(value: SectionIconsData) => {
+                                          setFieldValue(
+                                            `sections.${index}.section_icon`,
+                                            value.id
+                                          );
+                                        }}
                                         filter={false}
                                         images={true}
                                       />
@@ -533,7 +538,6 @@ const AddArticle = () => {
                   <Button type="submit" adminPrimary>
                     objavi članak
                   </Button>
-                  {/* TODO add sweetalert before publish */}
                   <Button type="button" white onClick={handleCancel}>
                     Odustani
                   </Button>

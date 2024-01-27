@@ -21,6 +21,7 @@
       border-radius: 8px;
       background-color: $bg;
       border: 2px solid $lightBlue;
+      min-height: 48px;
 
       &::placeholder {
         color: $grey;
@@ -73,9 +74,5 @@
   .icon {
     margin-right: 2px;
     width: 30px;
-  }
-
-  &:hover {
-    background-color: #fff;
   }
 }

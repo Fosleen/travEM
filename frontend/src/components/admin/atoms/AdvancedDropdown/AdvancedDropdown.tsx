@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Dropdown } from "primereact/dropdown";
 import "./AdvancedDropdown.scss";
 import { DropdownProps } from "../../../../common/types";
@@ -15,9 +15,13 @@ const AdvancedDropdown: FC<DropdownProps> = ({
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignoreS
+
+  useEffect(() => {
+    if (selectedOption) onChange(selectedOption);
+  }, [selectedOption]);
+
   const handleSelect = (option) => {
     setSelectedOption(option);
-    onChange(option);
   };
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

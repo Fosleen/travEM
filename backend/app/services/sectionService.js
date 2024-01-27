@@ -17,7 +17,7 @@ class SectionService {
         subtitle: subtitle,
         link_title: link_title,
         link_url: link_url,
-        sectionIonId: section_icon_id,
+        sectionIconId: section_icon_id,
         articleId: article_id,
       });
       return section;

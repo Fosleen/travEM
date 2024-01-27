@@ -30,6 +30,16 @@ export interface InputProps {
   onBlur?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
+export interface TextareaProps {
+  label?: string;
+  name: string;
+  placeholder: string;
+  error?: string;
+  disabled?: boolean;
+  rows?: number;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+}
+
 export interface SearchProps {
   green?: boolean;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;

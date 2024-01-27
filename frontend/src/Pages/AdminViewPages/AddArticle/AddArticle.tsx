@@ -26,6 +26,7 @@ import Modal from "../../../components/atoms/Modal";
 import { addSectionImage } from "../../../api/sectionImages";
 import { addGalleryImage } from "../../../api/galleryImages";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
+import Textarea from "../../../components/admin/atoms/Textarea";
 
 const AddArticle = () => {
   const navigate = useNavigate();
@@ -231,7 +232,6 @@ const AddArticle = () => {
                   section_url_title: "",
                   section_url_link: "",
                   section_icon: null,
-                  order: 1,
                 },
               ],
             }}
@@ -251,16 +251,16 @@ const AddArticle = () => {
                   <ErrorMessage name="article_title" component="div" />
                   <Field
                     name="article_subtitle"
-                    type="text"
                     as={Input}
-                    label="Podaslov članka *"
+                    label="Podnaslov članka *"
                     placeholder="Opis članka u par riječi..."
                   />
                   <ErrorMessage name="article_subtitle" component="div" />
-                  <Field // TODO change to textarea
+                  <Field
                     name="article_description"
                     type="text"
-                    as={Input}
+                    as={Textarea}
+                    rows={4}
                     label="Opis članka *"
                     placeholder="Opis članka u nekoliko rečenica..."
                   />
@@ -391,7 +391,8 @@ const AddArticle = () => {
                                   </div>
                                   <Field
                                     type="text"
-                                    as={Input}
+                                    as={Textarea}
+                                    rows={12}
                                     name={`sections.${index}.section_text`}
                                     label="Tekst odlomka *"
                                     placeholder="Unesi tekst odlomka..."

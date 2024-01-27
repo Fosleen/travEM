@@ -10,6 +10,7 @@ import Dropdown from "../../../components/atoms/Dropdown";
 import { getVisitedCountries } from "../../../api/map";
 import { getSectionIcons } from "../../../api/sectionIcons";
 import { Plus, X } from "@phosphor-icons/react";
+import Swal from "sweetalert2";
 import {
   ArticleType,
   MapCountriesData,
@@ -24,6 +25,7 @@ import { addSection } from "../../../api/sections";
 import Modal from "../../../components/atoms/Modal";
 import { addSectionImage } from "../../../api/sectionImages";
 import { addGalleryImage } from "../../../api/galleryImages";
+import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 
 const AddArticle = () => {
   const navigate = useNavigate();
@@ -60,55 +62,55 @@ const AddArticle = () => {
   });
 
   const handleSave = async (values) => {
-    console.log(
-      "zakej se ovo opet ne poziva haaaa - jer nisi napisala naslov clanka koji je obavezan!!!!"
-    );
-    console.log(values);
+    Swal.fire({
+      title: "Jeste li sigurni?",
+      text: "Objavit ćete ovaj članak",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#2BAC82",
+      cancelButtonColor: "#AC2B2B",
+      cancelButtonText: "Odustani",
+      confirmButtonText: "Da, objavi!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const dateString = new Date().toJSON().slice(0, 10);
+        const todaysDate = new Date(dateString);
 
-    const dateString = new Date().toJSON().slice(0, 10);
-    const todaysDate = new Date(dateString);
+        const articleResponse = await addArticle(
+          values.article_title,
+          values.article_subtitle,
+          values.article_description,
+          values.article_video,
+          parseInt(values.article_type),
+          parseInt(values.article_country),
+          parseInt(values.article_place),
+          mainArticleImage,
+          1, // hardcoded user id
+          todaysDate
+        );
 
-    const articleResponse = await addArticle(
-      values.article_title,
-      values.article_subtitle,
-      values.article_description,
-      values.article_video,
-      parseInt(values.article_type),
-      parseInt(values.article_country),
-      parseInt(values.article_place),
-      mainArticleImage,
-      1, // hardcoded user id
-      todaysDate
-    );
+        values.sections.map(async (section, index) => {
+          const sectionResponse = await addSection(
+            section.section_text,
+            section.section_subtitle,
+            index + 1,
+            section.section_url_title,
+            section.section_url_link,
+            section.section_icon,
+            articleResponse.id
+          );
+          sectionImages[index].map(
+            async (el) => await addSectionImage(el, sectionResponse.id)
+          );
+        });
 
-    console.log(articleResponse);
-    values.sections.map(async (section) => console.log(section));
-
-    values.sections.map(async (section, index) => {
-      const sectionResponse = await addSection(
-        section.section_text,
-        section.section_subtitle,
-        index + 1,
-        section.section_url_title,
-        section.section_url_link,
-        section.section_icon,
-        articleResponse.id
-      );
-      console.log("sec odg");
-
-      console.log(sectionResponse);
-
-      sectionImages[index].map(
-        async (el) => await addSectionImage(el, sectionResponse.id)
-      );
+        otherArticleImages.map(
+          async (image) => await addGalleryImage(image, articleResponse.id)
+        );
+        navigate("/admin/članci");
+        notifySuccess("Uspješno predano!");
+      }
     });
-
-    console.log(sectionImages);
-    console.log(otherArticleImages);
-
-    otherArticleImages.map(
-      async (image) => await addGalleryImage(image, articleResponse.id)
-    );
   };
 
   const handleCancel = () => {
@@ -117,7 +119,6 @@ const AddArticle = () => {
 
   const handleSectionIconChange = (selectedValue) => {
     console.log(selectedValue);
-
     setSelectedSectionIcon(selectedValue);
   };
 
@@ -145,11 +146,6 @@ const AddArticle = () => {
     itemIndex?: number,
     sectionIndex?: number
   ) => {
-    console.log(
-      "remove image itemindex" + itemIndex + "section:" + sectionIndex
-    );
-    console.log(sectionImages);
-
     if (type == "main") {
       setMainArticleImage(null);
     } else if (type == "other") {

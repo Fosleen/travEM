@@ -10,6 +10,7 @@ const AdvancedDropdown: FC<DropdownProps> = ({
   onChange,
   filter = false,
   images = false,
+  selectedValue,
 }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
@@ -19,6 +20,12 @@ const AdvancedDropdown: FC<DropdownProps> = ({
   useEffect(() => {
     if (selectedOption) onChange(selectedOption);
   }, [selectedOption]);
+
+  useEffect(() => {
+    // to update selected value when article section is deleted
+    const option = options.find((option) => option.id === selectedValue);
+    setSelectedOption(option || null);
+  }, [selectedValue, options]);
 
   const handleSelect = (option) => {
     setSelectedOption(option);

@@ -119,8 +119,6 @@ const AddArticle = () => {
   };
 
   const handleDeleteSection = (arrayHelpers, sectionIndex) => {
-    console.log(arrayHelpers);
-
     arrayHelpers.remove(sectionIndex);
     setSectionImages(
       sectionImages.filter((_el, index) => index !== sectionIndex)
@@ -383,6 +381,9 @@ const AddArticle = () => {
                                             value.id
                                           );
                                         }}
+                                        selectedValue={
+                                          values.sections[index].section_icon
+                                        }
                                         filter={false}
                                         images={true}
                                       />

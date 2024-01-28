@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
-  const SectionImage = sequelize.define(
-    "section_image",
+  const SectionIcon = sequelize.define(
+    "section_icon",
     {
       url: { type: DataTypes.STRING, allowNull: false },
     },
@@ -11,5 +11,5 @@ export default (sequelize, DataTypes) => {
     }
   );
 
-  return SectionImage;
+  return SectionIcon;
 };

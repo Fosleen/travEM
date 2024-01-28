@@ -1,4 +1,4 @@
-import service from "../services/continentsService.js";
+import service from "../services/continentService.js";
 
 class ContinentsController {
   async getContinentCountries(req, res) {

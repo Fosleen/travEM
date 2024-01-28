@@ -1,4 +1,4 @@
-import service from "../services/placesService.js";
+import service from "../services/placeService.js";
 
 class PlacesController {
   async getFavoritePlaces(req, res) {

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import continentsController from "../controllers/continentsController.js";
+import continentsController from "../controllers/continentController.js";
 
 const router = new Router();
 

@@ -56,7 +56,7 @@ class CountriesService {
             ],
           },
           {
-            model: db.models.Country,
+            model: db.models.Article,
           },
         ],
       });

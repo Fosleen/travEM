@@ -10,6 +10,9 @@ import continent from "./continentRoute.js";
 import sectionIcon from "./sectionIconRoute.js";
 import galleryImage from "./galleryImageRoute.js";
 import sectionImage from "./sectionImageRoute.js";
+import visaInfo from "./visaInfoRoute.js";
+import characteristic from "./characteristicRoute.js";
+import specificity from "./specificityRoute.js";
 
 const router = new Router();
 
@@ -20,6 +23,9 @@ router.use("/sections", section);
 router.use("/section-icons", sectionIcon);
 router.use("/gallery-images", galleryImage);
 router.use("/section-images", sectionImage);
+router.use("/visa-info", visaInfo);
+router.use("/characteristics", characteristic);
+router.use("/specificities", specificity);
 
 router.use("/register", register);
 router.use("/login", login);

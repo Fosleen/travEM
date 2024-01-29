@@ -56,6 +56,25 @@ class CountriesController {
         .json({ error: `Error while deleting country with id ${id}` });
     }
   }
+
+  async addCountry(req, res) {
+    const response = await service.addCountry(
+      req.body.name,
+      req.body.description,
+      req.body.main_image_url,
+      req.body.flag_image_url,
+      req.body.continent_id,
+      req.body.color_id
+    );
+
+    console.log(response.toJSON());
+
+    if (response == undefined) {
+      res.status(500).json({ error: "Error inserting country" });
+    } else {
+      res.status(200).json(response);
+    }
+  }
 }
 
 export default new CountriesController();

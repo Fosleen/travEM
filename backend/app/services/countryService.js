@@ -107,6 +107,31 @@ class CountriesService {
       return null;
     }
   }
+
+  async addCountry(
+    name,
+    description,
+    main_image_url,
+    flag_image_url,
+    continent_id,
+    color_id
+  ) {
+    try {
+      const country = await db.models.Country.create({
+        name: name,
+        description: description,
+        main_image_url: main_image_url,
+        flag_image_url: flag_image_url,
+        continentId: continent_id,
+        colorId: color_id,
+      });
+
+      return country;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
 }
 
 export default new CountriesService();

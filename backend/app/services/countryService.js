@@ -94,6 +94,19 @@ class CountriesService {
       return [];
     }
   }
+
+  async deleteCountry(id) {
+    try {
+      await db.models.Country.destroy({
+        where: { id: id },
+      });
+
+      return [];
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
 }
 
 export default new CountriesService();

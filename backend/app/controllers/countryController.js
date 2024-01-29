@@ -44,6 +44,18 @@ class CountriesController {
       res.status(200).json(response);
     }
   }
+
+  async deleteCountry(req, res) {
+    const { id } = req.params;
+    const response = await service.deleteCountry(id);
+    if (response) {
+      res.status(200).json({});
+    } else {
+      res
+        .status(500)
+        .json({ error: `Error while deleting country with id ${id}` });
+    }
+  }
 }
 
 export default new CountriesController();

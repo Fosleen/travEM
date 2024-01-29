@@ -109,6 +109,9 @@ const createAssociations = () => {
   db.models.CharacteristicIcon.hasMany(db.models.Characteristic, {
     foreignKey: { allowNull: false },
   });
+  db.models.Characteristic.belongsTo(db.models.CharacteristicIcon, {
+    foreignKey: { allowNull: false },
+  });
 
   // M:N - super many to many - da se iz many-many tablice mogu pozivat tablice od kojih se sastoji (inace se moze samo obrnuto)
   db.models.ArticleSpecialType.belongsToMany(db.models.Article, {

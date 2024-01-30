@@ -1,9 +1,9 @@
 import { Router } from "express";
-import specificityController from "../controllers/specificityController.js";
+import controller from "../controllers/specificityController.js";
 
 const router = new Router();
 
 // POST /api/v1/specificities
-router.post("/", specificityController.addSpecificities);
+router.post("/", controller.addSpecificities);
 
 export default router;

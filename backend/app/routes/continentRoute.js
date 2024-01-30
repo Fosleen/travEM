@@ -1,8 +1,8 @@
 import { Router } from "express";
-import continentsController from "../controllers/continentController.js";
+import controller from "../controllers/continentController.js";
 
 const router = new Router();
 
-router.get("/countries/:id", continentsController.getContinentCountries);
+router.get("/countries/:id", controller.getContinentCountries);
 
 export default router;

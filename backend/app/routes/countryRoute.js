@@ -1,13 +1,13 @@
 import { Router } from "express";
-import countriesController from "../controllers/countryController.js";
+import controller from "../controllers/countryController.js";
 
 const router = new Router();
 
-router.get("/", countriesController.getCountries);
-router.get("/:id", countriesController.getCountryById);
-router.delete("/:id", countriesController.deleteCountry);
-router.get("/search/:name", countriesController.getCountryByName);
-router.get("/places/:id", countriesController.getCountryPlaces);
-router.post("/", countriesController.addCountry);
+router.get("/", controller.getCountries);
+router.get("/:id", controller.getCountryById);
+router.delete("/:id", controller.deleteCountry);
+router.get("/search/:name", controller.getCountryByName);
+router.get("/places/:id", controller.getCountryPlaces);
+router.post("/", controller.addCountry);
 
 export default router;

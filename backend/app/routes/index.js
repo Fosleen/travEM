@@ -13,6 +13,8 @@ import sectionImage from "./sectionImageRoute.js";
 import visaInfo from "./visaInfoRoute.js";
 import characteristic from "./characteristicRoute.js";
 import specificity from "./specificityRoute.js";
+import color from "./colorRoute.js";
+import characteristicIcon from "./characteristicIconRoute.js";
 
 const router = new Router();
 
@@ -26,6 +28,8 @@ router.use("/section-images", sectionImage);
 router.use("/visa-info", visaInfo);
 router.use("/characteristics", characteristic);
 router.use("/specificities", specificity);
+router.use("/colors", color);
+router.use("/characteristic-icons", characteristicIcon);
 
 router.use("/register", register);
 router.use("/login", login);

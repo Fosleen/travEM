@@ -1,8 +1,8 @@
 import { Router } from "express";
-import placesController from "../controllers/placeController.js";
+import controller from "../controllers/placeController.js";
 
 const router = new Router();
 
-router.get("/map", placesController.getFavoritePlaces);
+router.get("/map", controller.getFavoritePlaces);
 
 export default router;

@@ -8,7 +8,7 @@ export async function getVisitedCountries() {
     console.log(data.error);
     return data.error;
   }
-  return data;
+  return data.countries;
 }
 
 export async function getVisitedPlaces() {

@@ -7,11 +7,31 @@ class CountriesService {
     const offset = (page - 1) * pageSize;
 
     try {
-      const visitedCountries = await db.models.Country.findAll({
+      const visitedCountries = await db.models.Country.findAndCountAll({
         limit: limit,
         offset: offset,
       });
-      return visitedCountries;
+
+      const countriesWithArticleCount = await Promise.all(
+        visitedCountries.rows.map(async (country) => {
+          const articleCount = await db.models.Article.count({
+            where: { countryId: country.id },
+          });
+
+          return {
+            ...country.toJSON(),
+            articleCount,
+          };
+        })
+      );
+
+      return {
+        total: visitedCountries.count,
+        totalPages: Math.ceil(visitedCountries.count / pageSize),
+        currentPage: page,
+        pageSize: pageSize,
+        countries: countriesWithArticleCount,
+      };
     } catch (error) {
       return [];
     }

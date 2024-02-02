@@ -45,6 +45,24 @@ class CountriesController {
     }
   }
 
+  async patchCountry(req, res) {
+    const response = await service.patchCountry(
+      req.params.id,
+      req.body.name,
+      req.body.description,
+      req.body.main_image_url,
+      req.body.flag_image_url,
+      req.body.user_id,
+      req.body.color_id,
+      req.body.continent_id
+    );
+    if (response.length == 0) {
+      res.status(500).json({ error: `Error updating country ${id}` });
+    } else {
+      res.status(200).json(response);
+    }
+  }
+
   async deleteCountry(req, res) {
     const { id } = req.params;
     const response = await service.deleteCountry(id);

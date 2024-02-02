@@ -6,4 +6,7 @@ const router = new Router();
 // POST /api/v1/specificities
 router.post("/", controller.addSpecificities);
 
+// PATCH /api/v1/specificities/4
+router.patch("/:id", controller.patchSpecificities);
+
 export default router;

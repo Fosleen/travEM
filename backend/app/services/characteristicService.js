@@ -22,6 +22,34 @@ class CharacteristicService {
       return [];
     }
   }
+
+  async patchCharacteristic(
+    id,
+    title,
+    description,
+    country_id,
+    characteristic_icon_id
+  ) {
+    try {
+      await db.models.Characteristic.update(
+        {
+          title: title,
+          description: description,
+          countryId: country_id,
+          characteristicIconId: characteristic_icon_id,
+        },
+        {
+          where: { id: id },
+        }
+      );
+
+      const updatedCharacteristic = await db.models.Characteristic.findByPk(id);
+      return updatedCharacteristic;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
 }
 
 export default new CharacteristicService();

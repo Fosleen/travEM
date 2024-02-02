@@ -47,6 +47,21 @@ class SpecificityController {
       });
     }
   }
+
+  async patchSpecificities(req, res) {
+    const response = await specificityService.patchSpecificities(
+      req.params.id,
+      req.body.title,
+      req.body.country_id,
+      req.body.items,
+      req.body.images
+    );
+    if (response.length == 0) {
+      res.status(500).json({ error: `Error updating specificity ${id}` });
+    } else {
+      res.status(200).json(response);
+    }
+  }
 }
 
 export default new SpecificityController();

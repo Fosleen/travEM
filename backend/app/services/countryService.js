@@ -115,6 +115,41 @@ class CountriesService {
     }
   }
 
+  async patchCountry(
+    id,
+    name,
+    description,
+    main_image_url,
+    flag_image_url,
+    user_id,
+    continent_id
+  ) {
+    console.log(id);
+
+    try {
+      await db.models.Country.update(
+        {
+          name: name,
+          description: description,
+          main_image_url: main_image_url,
+          flag_image_url: flag_image_url,
+          userId: user_id,
+          colorId: color_id,
+          continentId: continent_id,
+        },
+        {
+          where: { id: id },
+        }
+      );
+
+      const updatedCountry = await db.models.Country.findByPk(id);
+      return updatedCountry;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
   async deleteCountry(id) {
     try {
       await db.models.Country.destroy({

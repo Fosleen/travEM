@@ -22,7 +22,8 @@ import Characteristic from "./characteristic.js";
 import CharacteristicIcon from "./characteristicIcon.js";
 import ArticleSpecialType from "./articleSpecialType.js";
 import article_articleSpecialType from "./article_articleSpecialType.js";
-import sectionIcon from "./sectionIcon.js";
+import SectionIcon from "./sectionIcon.js";
+import VisaInfo from "./visaInfo.js";
 
 const sequelize = new Sequelize(
   `${dbConfig.DIALECT}://${dbConfig.USER}:${dbConfig.PASSWORD}@${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DATABASE}`
@@ -35,7 +36,7 @@ db.models.User = User(sequelize, Sequelize.DataTypes);
 db.models.ArticleType = ArticleType(sequelize, Sequelize.DataTypes);
 db.models.Article = Article(sequelize, Sequelize.DataTypes);
 db.models.SectionImage = SectionImage(sequelize, Sequelize.DataTypes);
-db.models.SectionIcon = sectionIcon(sequelize, Sequelize.DataTypes);
+db.models.SectionIcon = SectionIcon(sequelize, Sequelize.DataTypes);
 db.models.Section = Section(sequelize, Sequelize.DataTypes);
 db.models.GalleryImage = GalleryImage(sequelize, Sequelize.DataTypes);
 db.models.Place = Place(sequelize, Sequelize.DataTypes);
@@ -52,6 +53,7 @@ db.models.FooterItem = FooterItem(sequelize, Sequelize.DataTypes);
 db.models.Color = Color(sequelize, Sequelize.DataTypes);
 db.models.Continent = Continent(sequelize, Sequelize.DataTypes);
 db.models.Characteristic = Characteristic(sequelize, Sequelize.DataTypes);
+db.models.VisaInfo = VisaInfo(sequelize, Sequelize.DataTypes);
 db.models.CharacteristicIcon = CharacteristicIcon(
   sequelize,
   Sequelize.DataTypes

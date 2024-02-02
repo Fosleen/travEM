@@ -98,11 +98,18 @@ const createAssociations = () => {
     foreignKey: { allowNull: false },
   });
 
+  db.models.Country.hasMany(db.models.VisaInfo, {
+    foreignKey: { allowNull: false },
+  });
+
   db.models.Country.hasMany(db.models.Characteristic, {
     foreignKey: { allowNull: false },
   });
 
   db.models.CharacteristicIcon.hasMany(db.models.Characteristic, {
+    foreignKey: { allowNull: false },
+  });
+  db.models.Characteristic.belongsTo(db.models.CharacteristicIcon, {
     foreignKey: { allowNull: false },
   });
 
@@ -144,7 +151,7 @@ db.sequelize
 */
 
 const corsOptions = {
-  origin: "http://164.90.168.222:25060", // Replace with your client's origin
+  origin: "http://localhost:5173", // Replace with your client's origin
   credentials: true,
 };
 app.use(express.json());

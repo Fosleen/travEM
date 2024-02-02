@@ -44,12 +44,18 @@ class ArticleController {
     );
 
     console.log(response.toJSON());
-    const response2 = await videoService.addVideo(
-      req.body.video,
-      response.toJSON().id,
-      null,
-      null
-    );
+    
+    let response2;
+    if (req.body.video) {
+      response2 = await videoService.addVideo(
+        req.body.video,
+        response.toJSON().id,
+        null,
+        null
+      );
+    } else {
+      response2 = null;
+    }
 
     if (response == undefined || response2 == undefined) {
       res.status(500).json({ error: "Error inserting article" });

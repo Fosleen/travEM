@@ -9,6 +9,7 @@ import router from "./app/routes/index.js";
 import passport from "passport";
 import session from "express-session";
 import { authenticateJwt } from "./app/middleware/auth.js";
+import { exec } from "child_process";
 
 const app = express();
 

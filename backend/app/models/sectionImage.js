@@ -3,7 +3,6 @@ export default (sequelize, DataTypes) => {
     "section_image",
     {
       url: { type: DataTypes.STRING, allowNull: false },
-      orientation: { type: DataTypes.STRING, allowNull: false },
     },
     {
       underscored: true,

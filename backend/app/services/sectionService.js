@@ -7,7 +7,7 @@ class SectionService {
     subtitle,
     link_title,
     link_url,
-    icon_url,
+    section_icon_id,
     article_id
   ) {
     try {
@@ -17,7 +17,7 @@ class SectionService {
         subtitle: subtitle,
         link_title: link_title,
         link_url: link_url,
-        icon_url: icon_url,
+        sectionIconId: section_icon_id,
         articleId: article_id,
       });
       return section;
@@ -34,7 +34,7 @@ class SectionService {
     subtitle,
     link_title,
     link_url,
-    icon_url,
+    section_icon_id,
     article_id
   ) {
     console.log(id);
@@ -47,7 +47,7 @@ class SectionService {
           subtitle: subtitle,
           link_title: link_title,
           link_url: link_url,
-          icon_url: icon_url,
+          sectionIconId: section_icon_id,
           articleId: article_id,
         },
         {

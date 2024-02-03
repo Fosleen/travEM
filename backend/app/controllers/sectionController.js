@@ -8,7 +8,7 @@ class SectionController {
       req.body.subtitle,
       req.body.link_title,
       req.body.link_url,
-      req.body.icon_url,
+      req.body.section_icon_id,
       req.body.article_id
     );
 
@@ -27,7 +27,7 @@ class SectionController {
       req.body.subtitle,
       req.body.link_title,
       req.body.link_url,
-      req.body.icon_url,
+      req.body.section_icon_id,
       req.body.article_id
     );
     if (response.length == 0) {

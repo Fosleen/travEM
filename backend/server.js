@@ -21,6 +21,9 @@ const createAssociations = () => {
   db.models.Article.hasOne(db.models.Video);
   db.models.Video.belongsTo(db.models.Article);
 
+  db.models.SectionIcon.hasOne(db.models.Section);
+  db.models.Section.belongsTo(db.models.SectionIcon);
+
   // 1:M
   db.models.ArticleType.hasMany(db.models.Article, {
     foreignKey: { allowNull: false },
@@ -95,11 +98,18 @@ const createAssociations = () => {
     foreignKey: { allowNull: false },
   });
 
+  db.models.Country.hasMany(db.models.VisaInfo, {
+    foreignKey: { allowNull: false },
+  });
+
   db.models.Country.hasMany(db.models.Characteristic, {
     foreignKey: { allowNull: false },
   });
 
   db.models.CharacteristicIcon.hasMany(db.models.Characteristic, {
+    foreignKey: { allowNull: false },
+  });
+  db.models.Characteristic.belongsTo(db.models.CharacteristicIcon, {
     foreignKey: { allowNull: false },
   });
 

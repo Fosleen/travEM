@@ -1,4 +1,5 @@
-import service from "../services/articleService.js";
+import articleService from "../services/articleService.js";
+import videoService from "../services/videoService.js";
 
 class ArticleController {
   async getArticles(req, res) {
@@ -6,7 +7,11 @@ class ArticleController {
     const pageSize = parseInt(req.query.pageSize) || 12;
     const articleType = parseInt(req.query.articleType) || null;
 
-    const response = await service.getArticles(page, pageSize, articleType);
+    const response = await articleService.getArticles(
+      page,
+      pageSize,
+      articleType
+    );
 
     if (response.articles.length === 0) {
       res.status(404).json({ error: "No articles found" });
@@ -17,7 +22,7 @@ class ArticleController {
 
   async getArticleById(req, res) {
     const { id } = req.params;
-    const response = await service.getArticleById(id);
+    const response = await articleService.getArticleById(id);
     if (!response || response.length == 0) {
       res.status(404).json({ error: `No article found by id ${id}` });
     } else {
@@ -26,7 +31,7 @@ class ArticleController {
   }
 
   async addArticle(req, res) {
-    const response = await service.addArticle(
+    const response = await articleService.addArticle(
       req.body.title,
       req.body.subtitle,
       req.body.description,
@@ -38,7 +43,21 @@ class ArticleController {
       req.body.place_id
     );
 
-    if (response == undefined) {
+    console.log(response.toJSON());
+    
+    let response2;
+    if (req.body.video) {
+      response2 = await videoService.addVideo(
+        req.body.video,
+        response.toJSON().id,
+        null,
+        null
+      );
+    } else {
+      response2 = null;
+    }
+
+    if (response == undefined || response2 == undefined) {
       res.status(500).json({ error: "Error inserting article" });
     } else {
       res.status(200).json(response);
@@ -46,7 +65,7 @@ class ArticleController {
   }
 
   async getHomepageArticles(req, res) {
-    const response = await service.getHomepageArticles();
+    const response = await articleService.getHomepageArticles();
     if (response.length == 0) {
       res.status(404).json({ error: "No articles for homepage found" });
     } else {
@@ -56,7 +75,7 @@ class ArticleController {
 
   async getTopCountryArticle(req, res) {
     const { id } = req.params;
-    const response = await service.getTopCountryArticle(id);
+    const response = await articleService.getTopCountryArticle(id);
     if (response.length == 0) {
       res
         .status(404)
@@ -68,7 +87,7 @@ class ArticleController {
 
   async getArticlesByCountryId(req, res) {
     const { id } = req.params;
-    const response = await service.getArticlesByCountryId(id);
+    const response = await articleService.getArticlesByCountryId(id);
     if (response.length == 0) {
       res
         .status(404)
@@ -80,7 +99,7 @@ class ArticleController {
 
   async getArticlesByPlaceId(req, res) {
     const { id } = req.params;
-    const response = await service.getArticlesByPlaceId(id);
+    const response = await articleService.getArticlesByPlaceId(id);
     if (response.length == 0) {
       res
         .status(404)
@@ -91,7 +110,7 @@ class ArticleController {
   }
 
   async updateOrCreateTopCountryArticle(req, res) {
-    const response = await service.updateOrCreateTopCountryArticle(
+    const response = await articleService.updateOrCreateTopCountryArticle(
       req.body.article_id
     );
 
@@ -103,7 +122,7 @@ class ArticleController {
   }
 
   async updateOrCreateTopHomepageArticles(req, res) {
-    const response = await service.updateOrCreateTopHomepageArticles(
+    const response = await articleService.updateOrCreateTopHomepageArticles(
       req.body.article_id,
       req.params.specialTypeId
     );
@@ -116,7 +135,7 @@ class ArticleController {
   }
 
   async patchArticle(req, res) {
-    const response = await service.patchArticle(
+    const response = await articleService.patchArticle(
       req.params.id,
       req.body.title,
       req.body.subtitle,
@@ -137,7 +156,7 @@ class ArticleController {
 
   async deleteArticle(req, res) {
     const { id } = req.params;
-    const response = await service.deleteArticle(id);
+    const response = await articleService.deleteArticle(id);
     if (response) {
       res.status(200).json({});
     } else {

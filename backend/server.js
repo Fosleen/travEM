@@ -173,6 +173,24 @@ app.use(passport.session());
 app.use("/api/v1", router);
 app.use("/api/v1/secure", authenticateJwt, router); //middleware checking for jwt validity
 
+app.post("/deploy", (req, res) => {
+  const { body } = req;
+  // Handle GitHub webhook payload here
+  console.log("GitHub Webhook Payload:", body);
+  // Execute deploy.php script
+  exec("php deploy.php", (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error executing deploy.php: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`Error executing deploy.php: ${stderr}`);
+      return;
+    }
+    console.log(`deploy.php output: ${stdout}`);
+  });
+});
+
 // Start the server
 const PORT = dbConfig.PORT;
 app.listen(PORT, () => {

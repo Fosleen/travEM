@@ -1,4 +1,5 @@
 import db from "../models/index.js";
+import { Op } from "sequelize";
 
 class PlacesService {
   async getFavoritePlaces() {
@@ -13,6 +14,33 @@ class PlacesService {
     }
   }
 
+  async getPlaces(page, pageSize) {
+    const limit = pageSize;
+    const offset = (page - 1) * pageSize;
+
+    try {
+      const places = await db.models.Place.findAndCountAll({
+        limit: limit,
+        offset: offset,
+        include: [
+          {
+            model: db.models.Country,
+          },
+        ],
+      });
+
+      return {
+        total: places.count,
+        totalPages: Math.ceil(places.count / pageSize),
+        currentPage: page,
+        pageSize: pageSize,
+        places: places.rows,
+      };
+    } catch (error) {
+      return [];
+    }
+  }
+
   async getContinentCountries(id) {
     try {
       const continentCountries = await db.models.Country.findAll({
@@ -22,6 +50,129 @@ class PlacesService {
       return continentCountries;
     } catch (error) {
       return [];
+    }
+  }
+
+  async getPlaceById(id) {
+    try {
+      const place = await db.models.Place.findByPk(id, {
+        include: [
+          {
+            model: db.models.Video,
+          },
+          {
+            model: db.models.Country,
+          },
+          {
+            model: db.models.Article,
+          },
+        ],
+      });
+      return place;
+    } catch (error) {
+      console.log(error);
+      return `not found place with PK ${id}`;
+    }
+  }
+
+  async getPlaceByName(name) {
+    try {
+      const place = await db.models.Place.findAll({
+        limit: 5,
+        where: {
+          name: {
+            [Op.startsWith]: name,
+          },
+        },
+      });
+      return place;
+    } catch (error) {
+      console.log(error);
+      return `not found places starting with name ${name}`;
+    }
+  }
+
+  async addPlace(
+    name,
+    description,
+    main_image_url,
+    map_icon,
+    is_on_homepage_map,
+    latitude,
+    longitude,
+    country_id
+  ) {
+    try {
+      const place = await db.models.Place.create({
+        name: name,
+        description: description,
+        main_image_url: main_image_url,
+        map_icon: map_icon,
+        is_on_homepage_map: is_on_homepage_map,
+        latitude: latitude,
+        longitude: longitude,
+        countryId: country_id,
+      });
+
+      return place;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+
+  async patchPlace(
+    id,
+    name,
+    description,
+    main_image_url,
+    map_icon,
+    is_on_homepage_map,
+    latitude,
+    longitude,
+    country_id
+  ) {
+    console.log(id);
+
+    try {
+      await db.models.Place.update(
+        {
+          name: name,
+          description: description,
+          main_image_url: main_image_url,
+          map_icon: map_icon,
+          is_on_homepage_map: is_on_homepage_map,
+          latitude: latitude,
+          longitude: longitude,
+          countryId: country_id,
+        },
+        {
+          where: { id: id },
+        }
+      );
+
+      const updatedPlace = await db.models.Place.findByPk(id);
+      return updatedPlace;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async deletePlaceAndArticles(id) {
+    try {
+      await db.models.Article.destroy({
+        where: { placeId: id },
+      });
+
+      await db.models.Place.destroy({
+        where: { id: id },
+      });
+
+      return [];
+    } catch (error) {
+      console.log(error);
+      return null;
     }
   }
 }

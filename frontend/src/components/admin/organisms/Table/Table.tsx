@@ -7,6 +7,7 @@ import Search from "../../../atoms/Search";
 import Button from "../../../atoms/Button";
 import { FC, SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
+import { ThreeDots } from "react-loader-spinner";
 
 interface TableProps {
   data: { data: object; total: number; totalPages: number; pageSize: number };
@@ -38,7 +39,7 @@ const Table: FC<TableProps> = ({
     }
   };
 
-  const handleSearch = (e: { target: { value: SetStateAction<string>; }; }) => {
+  const handleSearch = (e: { target: { value: SetStateAction<string> } }) => {
     console.log(e.target.value);
     setSearchText(e.target.value);
   };
@@ -46,17 +47,38 @@ const Table: FC<TableProps> = ({
   return (
     <div className="table-container">
       <div className="table-header">
-        <ItemsPerPageSelector setItemsPerPage={setPageSize} />
+        <ItemsPerPageSelector setItemsPerPage={setPageSize} type={type} />
         <div className="table-search-add-container">
-          <Search green onChange={handleSearch} />
+          <Search
+            green
+            onChange={handleSearch}
+            placeholder="Pretraži po nazivu..."
+          />
           <Button circle onClick={handleAddClick}>
             +
           </Button>
         </div>
       </div>
-      {data.data && <TableContent data={data.data} type={type} />}
+      {data.data ? (
+        <TableContent data={data.data} type={type} />
+      ) : (
+        <ThreeDots
+          height="80"
+          width="80"
+          radius="8"
+          color="#2BAC82"
+          ariaLabel="three-dots-loading"
+          wrapperStyle={{ justifyContent: "center" }}
+          visible={true}
+        />
+      )}
       <div className="table-footer">
-        <PageCount total={data.total} page={page} pageSize={data.pageSize} />
+        <PageCount
+          total={data.total}
+          page={page}
+          pageSize={data.pageSize}
+          type={type}
+        />
         <Pagination setPage={setPage} totalPages={data.totalPages} />
       </div>
     </div>

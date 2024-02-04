@@ -40,3 +40,29 @@ export async function addArticle(
   }
   return data;
 }
+
+export async function getArticlesByName(name: string, page = 1, pageSize = 12) {
+  const response = await fetch(
+    `${apiUrl}/articles/search/${name}?page=${page}&pageSize=${pageSize}`
+  );
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function getArticles(page = 1, pageSize = 12) {
+  const response = await fetch(
+    `${apiUrl}/articles?page=${page}&pageSize=${pageSize}`
+  );
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}

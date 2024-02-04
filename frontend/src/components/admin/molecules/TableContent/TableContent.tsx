@@ -19,6 +19,14 @@ const TableContent = ({ data, type }) => {
   const columnHelper = createColumnHelper();
   const navigate = useNavigate();
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}.`;
+  };
+
   let columns;
   if (type === "country") {
     columns = [
@@ -29,6 +37,52 @@ const TableContent = ({ data, type }) => {
       columnHelper.accessor("articleCount", {
         header: () => "Broj članaka",
         cell: (info) => info.renderValue(),
+      }),
+      columnHelper.display({
+        id: "actions",
+        cell: (row) => (
+          <Button edit onClick={() => handleEdit(row.row.original.id)}>
+            <PencilSimpleLine size={16} color="#333333" />
+          </Button>
+        ),
+      }),
+    ];
+  } else if (type === "place") {
+    columns = [
+      columnHelper.accessor("name", {
+        header: () => "Naziv",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("country.name", {
+        header: () => "Država",
+        cell: (info) => info.renderValue(),
+      }),
+      columnHelper.display({
+        id: "actions",
+        cell: (row) => (
+          <Button edit onClick={() => handleEdit(row.row.original.id)}>
+            <PencilSimpleLine size={16} color="#333333" />
+          </Button>
+        ),
+      }),
+    ];
+  } else if (type === "article") {
+    columns = [
+      columnHelper.accessor("title", {
+        header: () => "Naslov",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("article_type.name", {
+        header: () => "Tip",
+        cell: (info) => info.renderValue(),
+      }),
+      columnHelper.accessor("date_written", {
+        header: () => "Datum",
+        cell: (info) => formatDate(info.renderValue()),
+      }),
+      columnHelper.accessor("country.name", {
+        header: () => "Država",
+        cell: (info) => info.renderValue() || "-",
       }),
       columnHelper.display({
         id: "actions",

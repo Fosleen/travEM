@@ -11,17 +11,11 @@ const CountriesList = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
-
-  useEffect(() => {
-    console.log(`change ${pageSize} ${page}`);
-    fetchData();
   }, [pageSize, page]);
 
   const fetchData = async () => {
     try {
       const data = await getCountries(page, pageSize);
-      console.log(data);
       setCountries(data);
     } catch (error) {
       console.error("error while fetching:", error);
@@ -29,11 +23,8 @@ const CountriesList = () => {
   };
 
   const fetchSearch = async () => {
-    console.log(searchText, page, pageSize);
-
     try {
       const data = await getCountriesByName(searchText, page, pageSize);
-      console.log(data);
       setCountries(data);
     } catch (error) {
       console.error("error while fetching:", error);

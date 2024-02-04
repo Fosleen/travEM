@@ -34,7 +34,7 @@ class PlacesService {
         totalPages: Math.ceil(places.count / pageSize),
         currentPage: page,
         pageSize: pageSize,
-        places: places.rows,
+        data: places.rows,
       };
     } catch (error) {
       return [];
@@ -75,17 +75,32 @@ class PlacesService {
     }
   }
 
-  async getPlaceByName(name) {
+  async getPlaceByName(name, page, pageSize) {
+    const limit = pageSize;
+    const offset = (page - 1) * pageSize;
+
     try {
-      const place = await db.models.Place.findAll({
-        limit: 5,
+      const places = await db.models.Place.findAndCountAll({
+        limit: limit,
+        offset: offset,
+        include: [
+          {
+            model: db.models.Country,
+          },
+        ],
         where: {
           name: {
             [Op.startsWith]: name,
           },
         },
       });
-      return place;
+      return {
+        total: places.count,
+        totalPages: Math.ceil(places.count / pageSize),
+        currentPage: page,
+        pageSize: pageSize,
+        data: places.rows,
+      };
     } catch (error) {
       console.log(error);
       return `not found places starting with name ${name}`;

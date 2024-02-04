@@ -1,4 +1,5 @@
 import db from "../models/index.js";
+import { Op } from "sequelize";
 
 class ArticleService {
   async getArticles(page, pageSize, articleType) {
@@ -24,6 +25,7 @@ class ArticleService {
           },
         ],
         where: optionalArticleTypeWhere,
+        order: [["date_written", "DESC"]],
       });
 
       return {
@@ -179,6 +181,38 @@ class ArticleService {
       return articles;
     } catch (error) {
       return [];
+    }
+  }
+
+  async getArticleByName(name, page, pageSize) {
+    const limit = pageSize;
+    const offset = (page - 1) * pageSize;
+
+    try {
+      const articles = await db.models.Article.findAndCountAll({
+        limit: limit,
+        offset: offset,
+        include: [
+          {
+            model: db.models.Country,
+          },
+        ],
+        where: {
+          title: {
+            [Op.startsWith]: name,
+          },
+        },
+      });
+      return {
+        total: articles.count,
+        totalPages: Math.ceil(articles.count / pageSize),
+        currentPage: page,
+        pageSize: pageSize,
+        data: articles.rows,
+      };
+    } catch (error) {
+      console.log(error);
+      return `not found places starting with name ${name}`;
     }
   }
 

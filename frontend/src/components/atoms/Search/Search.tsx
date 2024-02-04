@@ -3,7 +3,11 @@ import { MagnifyingGlass } from "@phosphor-icons/react";
 import "./Search.scss";
 import { SearchProps } from "../../../common/types";
 
-const Search: FC<SearchProps> = ({ onChange, green = false }) => {
+const Search: FC<SearchProps> = ({
+  onChange,
+  green = false,
+  placeholder = "Pretraži...",
+}) => {
   let searchClasses = `search `;
   if (green) {
     searchClasses += ` search-green `;
@@ -14,7 +18,7 @@ const Search: FC<SearchProps> = ({ onChange, green = false }) => {
         type="text"
         className={searchClasses}
         onChange={onChange}
-        placeholder="Pretraži..."
+        placeholder={placeholder}
       />
       <MagnifyingGlass size={16} className="ph-magnifying-glass" />
     </div>

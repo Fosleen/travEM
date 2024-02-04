@@ -16,7 +16,7 @@ class PlacesController {
 
     const response = await service.getPlaces(page, pageSize);
 
-    if (response.places.length === 0) {
+    if (response.data.length === 0) {
       res.status(404).json({ error: "No places found" });
     } else {
       res.status(200).json(response);
@@ -35,7 +35,10 @@ class PlacesController {
 
   async getPlaceByName(req, res) {
     const { name } = req.params;
-    const response = await service.getPlaceByName(name);
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 200;
+
+    const response = await service.getPlaceByName(name, page, pageSize);
     if (!response || response.length == 0) {
       res.status(404).json({ error: `No place found by name ${name}` });
     } else {

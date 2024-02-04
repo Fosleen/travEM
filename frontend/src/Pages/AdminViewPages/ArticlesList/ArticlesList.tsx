@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import Table from "../../../components/admin/organisms/Table";
-import { getPlaces, getPlacesByName } from "../../../api/places";
-import "./PlacesList.scss";
+import "./ArticlesList.scss";
+import { getArticles, getArticlesByName } from "../../../api/article";
 
-const PlacesList = () => {
-  const [places, setPlaces] = useState([]);
+const ArticlesList = () => {
+  const [articles, setArticles] = useState([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
   const [searchText, setSearchText] = useState("");
@@ -15,8 +15,8 @@ const PlacesList = () => {
 
   const fetchData = async () => {
     try {
-      const data = await getPlaces(page, pageSize);
-      setPlaces(data);
+      const data = await getArticles(page, pageSize);
+      setArticles(data);
     } catch (error) {
       console.error("error while fetching:", error);
     }
@@ -24,8 +24,8 @@ const PlacesList = () => {
 
   const fetchSearch = async () => {
     try {
-      const data = await getPlacesByName(searchText, page, pageSize);
-      setPlaces(data);
+      const data = await getArticlesByName(searchText, page, pageSize);
+      setArticles(data);
     } catch (error) {
       console.error("error while fetching:", error);
     }
@@ -38,10 +38,10 @@ const PlacesList = () => {
   }, [searchText]);
 
   return (
-    <div className="places-list-container">
+    <div className="articles-list-container">
       <Table
-        data={places}
-        type={"place"}
+        data={articles}
+        type={"article"}
         setPageSize={setPageSize}
         page={page}
         setPage={setPage}
@@ -51,4 +51,4 @@ const PlacesList = () => {
   );
 };
 
-export default PlacesList;
+export default ArticlesList;

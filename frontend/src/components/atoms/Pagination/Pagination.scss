@@ -26,7 +26,6 @@
 
     li {
       list-style: none;
-      padding: 4px;
       min-width: 28px;
       display: flex;
       justify-content: space-around;
@@ -34,7 +33,6 @@
 
       @media screen and ($tabletMedium) {
         padding: 0px;
-        min-width: 32px;
       }
 
       a {
@@ -52,12 +50,10 @@
 .page-item {
   background-color: $limeLight;
   border-radius: 8px;
-  padding: 6px 8px;
   color: $grey;
   font-weight: 600;
   display: flex;
   align-items: center;
-  cursor: pointer;
 }
 
 .page-item-carrot {
@@ -65,6 +61,16 @@
   color: $green;
   padding: 6px 8px;
   border-radius: 8px;
+}
+
+.page-link {
+  cursor: pointer;
+  padding: 6px 8px;
+  min-width: 32px;
+  height: 100%;
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }
 
 .active-pagination {

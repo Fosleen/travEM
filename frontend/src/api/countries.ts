@@ -18,8 +18,6 @@ export async function getCountriesByName(
   page = 1,
   pageSize = 12
 ) {
-  console.log(name, page, pageSize);
-
   const response = await fetch(
     `${apiUrl}/countries/search/${name}?page=${page}&pageSize=${pageSize}`
   );

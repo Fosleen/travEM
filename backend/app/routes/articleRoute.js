@@ -18,6 +18,9 @@ router.get("/country/:id", controller.getArticlesByCountryId);
 // GET /api/v1/articles/place/1
 router.get("/place/:id", controller.getArticlesByPlaceId);
 
+// GET /api/v1/places/search/zagr?page=1&pageSize=12
+router.get("/search/:name", controller.getArticleByName);
+
 // GET /api/v1/articles/1
 router.get("/:id", controller.getArticleById);
 

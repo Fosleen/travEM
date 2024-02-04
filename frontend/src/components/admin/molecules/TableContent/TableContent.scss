@@ -1,0 +1,64 @@
+@import "../../../../utils/theme.scss";
+
+.table-content-container {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  background-color: #f9f9f9;
+  border-radius: 16px;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead {
+      text-align: left;
+      font-size: 14px;
+      width: fit-content;
+      border-radius: 16px;
+
+      th {
+        .header-content {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 4px 0 4px 16px;
+
+          svg {
+            margin-right: 12px;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+
+    tr {
+      padding: 16px;
+      border-bottom: 2px solid $greyLight;
+
+      &:last-of-type {
+        border-bottom: none;
+      }
+    }
+
+    td {
+      font-size: 14px;
+      width: 100%;
+      min-width: 156px;
+      padding: 4px 16px;
+
+      &:last-of-type {
+        min-width: 80px;
+        padding: 4px;
+      }
+    }
+
+    tbody {
+      tr {
+        &:last-of-type {
+          border-radius: 16px 16px 0 0;
+        }
+      }
+    }
+  }
+}

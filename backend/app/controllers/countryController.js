@@ -25,7 +25,10 @@ class CountriesController {
 
   async getCountryByName(req, res) {
     const { name } = req.params;
-    const response = await service.getCountryByName(name);
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 200;
+
+    const response = await service.getCountryByName(name, page, pageSize);
     if (!response || response.length == 0) {
       res.status(404).json({ error: `No country found by name ${name}` });
     } else {

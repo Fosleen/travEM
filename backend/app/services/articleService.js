@@ -31,7 +31,7 @@ class ArticleService {
         totalPages: Math.ceil(articles.count / pageSize),
         currentPage: page,
         pageSize: pageSize,
-        articles: articles.rows,
+        data: articles.rows,
       };
     } catch (error) {
       return [];

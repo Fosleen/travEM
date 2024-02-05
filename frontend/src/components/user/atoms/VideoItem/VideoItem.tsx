@@ -1,12 +1,13 @@
-import "./VideoItem.scss"
+import { FC } from "react";
+import "./VideoItem.scss";
 
-const VideoItem = () => {
+const VideoItem: FC<{ url: string }> = ({ url }) => {
   return (
     <div className="video-item-container">
       <iframe
         height="100%"
         width="100%"
-        src="https://www.youtube.com/embed/0ziriAHSqQs?si=0WYaLFf9JFfY4d6_"
+        src={url}
         title="YouTube video player"
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

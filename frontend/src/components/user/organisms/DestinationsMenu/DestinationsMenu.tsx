@@ -1,7 +1,6 @@
-import { ThreeDots } from "react-loader-spinner";
 import DestinationsMenuItem from "../../molecules/DestinationsMenuItem";
 import "./DestinationsMenu.scss";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 
 interface DestinationsMenuProps {
   setIsDestinationsMenuShown?: (isShown: boolean) => void;

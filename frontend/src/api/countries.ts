@@ -29,3 +29,14 @@ export async function getCountriesByName(
   }
   return data;
 }
+
+export async function getCountriesByContinent(id: number) {
+  const response = await fetch(`${apiUrl}/continents/countries/${id}`);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}

@@ -1,12 +1,18 @@
 import { Link } from "react-router-dom";
 import icon from "../../../../assets/images/building-icon.png";
-import flag from "../../../../assets/images/croatian-flag.png";
 import "./DestinationItem.scss";
+import { FC } from "react";
 
-const DestinationItem = ({
+const DestinationItem: FC<{
+  mapItem?: boolean;
+  filterMenuItem?: boolean;
+  name?: string;
+  flagUrl: string;
+}> = ({
   mapItem = false,
   filterMenuItem = false,
   name = "London",
+  flagUrl,
 }) => {
   return (
     <Link
@@ -15,7 +21,9 @@ const DestinationItem = ({
         (mapItem || filterMenuItem) && "has-icon full-width"
       } ${filterMenuItem && "flag"} ${mapItem && "sights"}`}
     >
-      {filterMenuItem && <img src={flag} alt="destination-image" />}
+      {filterMenuItem && (
+        <img className="flag-icon" src={flagUrl} alt="destination-image" />
+      )}
       <p>{name}</p>
       {mapItem && <img src={icon} alt="destination-image" />}
     </Link>

@@ -6,8 +6,6 @@ interface DestinationsMenuProps {
   setIsDestinationsMenuShown?: (isShown: boolean) => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignoreS
 const DestinationsMenu: FC<DestinationsMenuProps> = ({
   setIsDestinationsMenuShown,
 }) => {
@@ -22,10 +20,12 @@ const DestinationsMenu: FC<DestinationsMenuProps> = ({
       className="destinations-menu-container"
       onMouseLeave={handleMouseLeave}
     >
-      <DestinationsMenuItem title={"Europa"} />
-      <DestinationsMenuItem title={"Afrika"} />
-      <DestinationsMenuItem title={"Azija"} />
-      <DestinationsMenuItem title={"Amerika"} />
+      <>
+        <DestinationsMenuItem title={"Europa"} id={1} />
+        <DestinationsMenuItem title={"Afrika"} id={4} />
+        <DestinationsMenuItem title={"Azija"} id={2} />
+        <DestinationsMenuItem title={"Sjeverna Amerika"} id={3} />
+      </>
     </div>
   );
 };

@@ -15,6 +15,7 @@ import characteristic from "./characteristicRoute.js";
 import specificity from "./specificityRoute.js";
 import color from "./colorRoute.js";
 import characteristicIcon from "./characteristicIconRoute.js";
+import video from "./videoRoute.js";
 
 const router = new Router();
 
@@ -36,5 +37,6 @@ router.use("/login", login);
 router.use("/places", place);
 router.use("/countries", country);
 router.use("/continents", continent);
+router.use("/videos", video);
 
 export default router;

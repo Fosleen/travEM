@@ -19,6 +19,9 @@ import EditHero from "./Pages/AdminViewPages/EditHero/EditHero";
 import EditBanner from "./Pages/AdminViewPages/EditBanner/EditBanner";
 import EditStats from "./Pages/AdminViewPages/EditStats/EditStats";
 import AddArticle from "./Pages/AdminViewPages/AddArticle/AddArticle";
+import PlacesList from "./Pages/AdminViewPages/PlacesList/PlacesList";
+import CountriesList from "./Pages/AdminViewPages/CountriesList/CountriesList";
+import ArticlesList from "./Pages/AdminViewPages/ArticlesList/ArticlesList";
 
 function App() {
   return (
@@ -46,6 +49,9 @@ function App() {
         </Route>
         <Route path="/admin" element={<AdminViewLayout />}>
           <Route path="/admin/sadržaj" element={<EditHomepageMenu />} />
+          <Route path="/admin/mjesta" element={<PlacesList />} />
+          <Route path="/admin/države" element={<CountriesList />} />
+          <Route path="/admin/članci" element={<ArticlesList />} />
           <Route path="/admin/članci/dodaj" element={<AddArticle />} />
           <Route path="/admin/uredi-hero" element={<EditHero />} />
           <Route path="/admin/uredi-banner" element={<EditBanner />} />

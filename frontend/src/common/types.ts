@@ -42,6 +42,7 @@ export interface TextareaProps {
 
 export interface SearchProps {
   green?: boolean;
+  placeholder?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 

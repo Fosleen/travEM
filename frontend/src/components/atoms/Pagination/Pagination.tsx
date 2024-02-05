@@ -1,36 +1,15 @@
-import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import "./Pagination.scss";
+import { FC } from "react";
 
-const items = [...Array(33).keys()];
+interface PaginationProps {
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  totalPages: number;
+}
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignoreS
-function Pagination({ itemsPerPage }) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
-
-  const [currentItems, setCurrentItems] = useState(null);
-  const [pageCount, setPageCount] = useState(0);
-  const [itemOffset, setItemOffset] = useState(0);
-
-  useEffect(() => {
-    const endOffset = itemOffset + itemsPerPage;
-    console.log(`Loading items from ${itemOffset} to ${endOffset}`);
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignoreS
-    setCurrentItems(items.slice(itemOffset, endOffset));
-    setPageCount(Math.ceil(items.length / itemsPerPage));
-  }, [itemOffset, itemsPerPage]);
-
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
-  const handlePageClick = (event) => {
-    const newOffset = (event.selected * itemsPerPage) % items.length;
-    console.log(
-      `User requested page number ${event.selected}, which is offset ${newOffset}`
-    );
-    setItemOffset(newOffset);
+const Pagination: FC<PaginationProps> = ({ setPage, totalPages }) => {
+  const handlePageClick = (event: { selected: number }) => {
+    setPage(event.selected + 1);
   };
 
   return (
@@ -40,7 +19,7 @@ function Pagination({ itemsPerPage }) {
         onPageChange={handlePageClick}
         pageRangeDisplayed={3}
         marginPagesDisplayed={2}
-        pageCount={pageCount}
+        pageCount={totalPages}
         previousLabel="<"
         pageClassName="page-item"
         pageLinkClassName="page-link"
@@ -57,6 +36,6 @@ function Pagination({ itemsPerPage }) {
       />
     </div>
   );
-}
+};
 
 export default Pagination;

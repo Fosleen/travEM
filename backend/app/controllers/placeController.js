@@ -1,4 +1,6 @@
+import video from "../models/video.js";
 import service from "../services/placeService.js";
+import videoService from "../services/videoService.js";
 
 class PlacesController {
   async getFavoritePlaces(req, res) {
@@ -60,7 +62,25 @@ class PlacesController {
 
     console.log(response.toJSON());
 
-    if (response == undefined) {
+    let response2;
+    if (req.body.videos) {
+      const videos = req.body.videos;
+
+      videos.map(
+        async (el) =>
+          await videoService.addVideo(
+            el.video_url,
+            null,
+            response.toJSON().id,
+            null
+          )
+      );
+      response2 = videos;
+    } else {
+      response2 = null;
+    }
+
+    if (response === undefined || response2 === undefined) {
       res.status(500).json({ error: "Error inserting place" });
     } else {
       res.status(200).json(response);

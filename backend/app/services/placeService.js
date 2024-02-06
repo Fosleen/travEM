@@ -176,6 +176,10 @@ class PlacesService {
 
   async deletePlaceAndArticles(id) {
     try {
+      await db.models.Video.destroy({
+        where: { placeId: id },
+      });
+
       await db.models.Article.destroy({
         where: { placeId: id },
       });

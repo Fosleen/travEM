@@ -127,3 +127,75 @@ export interface Article {
   main_image_url: string;
   user_id: number;
 }
+
+export interface HorizontalPostItemBigProps {
+  stretched?: boolean;
+  thin?: boolean;
+  hasDate?: boolean;
+  article: {
+    id: number;
+    main_image_url: string;
+    title: string;
+    subtitle: string;
+    date_written: Date;
+  };
+}
+
+export interface PageCountProps {
+  total: number;
+  page: number;
+  pageSize: number;
+  type: string;
+}
+
+export interface TableProps {
+  data: { data: object; total: number; totalPages: number; pageSize: number };
+  type: string;
+  pageSize: number;
+  page: number;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  setPageSize: React.Dispatch<React.SetStateAction<number>>;
+  setSearchText: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export interface PaginationProps {
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+  totalPages: number;
+}
+
+export interface SidebarMenuItemProps {
+  text: string;
+}
+
+export interface ItemsPerPageSelectorProps {
+  setItemsPerPage: React.Dispatch<React.SetStateAction<number>>;
+  type: string;
+}
+
+export interface DestinationsMapProps {
+  initialLongitude: number;
+  initialLatitude: number;
+}
+
+export interface BlogStatsItemProps {
+  icon: string;
+  value?: string;
+}
+
+export interface CountryHighlightProps {
+  iconNmbr: string; //i think this should be number
+}
+
+export interface ArticleProps {
+  hasImage?: boolean;
+  hasVideo?: boolean;
+  hasImages?: boolean;
+}
+
+export interface DestinationsMenuProps {
+  setIsDestinationsMenuShown?: (isShown: boolean) => void;
+}
+
+export interface TipsMenuProps {
+  setIsTipsMenuShown?: (isShown: boolean) => void;
+}

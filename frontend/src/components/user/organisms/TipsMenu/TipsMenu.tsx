@@ -7,10 +7,8 @@ import icon5 from "../../../../assets/images/bed-icon.png";
 import icon6 from "../../../../assets/images/cards-icon.png";
 import "./TipsMenu.scss";
 import { FC } from "react";
+import { TipsMenuProps } from "../../../../common/types";
 
-interface TipsMenuProps {
-  setIsTipsMenuShown?: (isShown: boolean) => void;
-}
 const TipsMenu: FC<TipsMenuProps> = ({ setIsTipsMenuShown }) => {
   const handleMouseLeave = () => {
     if (setIsTipsMenuShown) {

@@ -13,19 +13,12 @@ import {
 import Button from "../../../atoms/Button";
 import { CaretUpDown, PencilSimpleLine } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
+import { formatDate } from "../../../../utils/global";
 
 const TableContent = ({ data, type }) => {
   const [sorting, setSorting] = useState();
   const columnHelper = createColumnHelper();
   const navigate = useNavigate();
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    return `${day}.${month}.${year}.`;
-  };
 
   let columns;
   if (type === "country") {

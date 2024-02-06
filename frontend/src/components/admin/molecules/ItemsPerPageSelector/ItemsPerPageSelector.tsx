@@ -1,12 +1,7 @@
 import { FC } from "react";
 import Dropdown from "../../../atoms/Dropdown";
-import AdvancedDropdown from "../../atoms/AdvancedDropdown";
 import "./ItemsPerPageSelector.scss";
-
-interface ItemsPerPageSelectorProps {
-  setItemsPerPage: React.Dispatch<React.SetStateAction<number>>;
-  type: string;
-}
+import { ItemsPerPageSelectorProps } from "../../../../common/types";
 
 const ItemsPerPageSelector: FC<ItemsPerPageSelectorProps> = ({
   setItemsPerPage,

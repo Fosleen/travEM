@@ -1,11 +1,7 @@
 import ReactPaginate from "react-paginate";
 import "./Pagination.scss";
 import { FC } from "react";
-
-interface PaginationProps {
-  setPage: React.Dispatch<React.SetStateAction<number>>;
-  totalPages: number;
-}
+import { PaginationProps } from "../../../common/types";
 
 const Pagination: FC<PaginationProps> = ({ setPage, totalPages }) => {
   const handlePageClick = (event: { selected: number }) => {

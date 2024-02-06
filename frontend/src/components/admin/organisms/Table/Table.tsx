@@ -8,16 +8,8 @@ import Button from "../../../atoms/Button";
 import { FC, SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
+import { TableProps } from "../../../../common/types";
 
-interface TableProps {
-  data: { data: object; total: number; totalPages: number; pageSize: number };
-  type: string;
-  pageSize: number;
-  page: number;
-  setPage: React.Dispatch<React.SetStateAction<number>>;
-  setPageSize: React.Dispatch<React.SetStateAction<number>>;
-  setSearchText: React.Dispatch<React.SetStateAction<string>>;
-}
 
 const Table: FC<TableProps> = ({
   data,

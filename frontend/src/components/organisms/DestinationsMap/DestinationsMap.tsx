@@ -21,12 +21,8 @@ import { Link } from "react-router-dom";
 import { countries } from "./visited_countries.ts";
 import { FC } from "react";
 import { getVisitedCountries, getVisitedPlaces } from "../../../api/map.ts";
-import { PlacesData } from "../../../common/types.ts";
+import { DestinationsMapProps, PlacesData } from "../../../common/types.ts";
 
-interface DestinationsMapProps {
-  initialLongitude: number;
-  initialLatitude: number;
-}
 const DestinationsMap: FC<DestinationsMapProps> = ({
   initialLongitude,
   initialLatitude,

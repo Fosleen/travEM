@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
-import postImage from "../../../../assets/images/post-image.jpg";
+import { FC, useEffect, useState } from "react";
 import "./DestinationImage.scss";
 
-const DestinationImage = () => {
+const DestinationImage: FC<{ url: string }> = ({ url }) => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
   useEffect(() => {
@@ -17,7 +16,7 @@ const DestinationImage = () => {
 
   return (
     <div className="destination-image-container">
-      <img src={postImage} alt="footer-image" />
+      <img src={url} alt="footer-image" />
       <svg className="destination-clip">
         <defs>
           <clipPath id="destination-clip-custom">

@@ -67,6 +67,9 @@ export async function addPlace(
     }),
   });
 
+
+export async function getPlacesById(id: number) {
+  const response = await fetch(`${apiUrl}/places/${id}`);
   const data = await response.json();
 
   if (!response.ok) {

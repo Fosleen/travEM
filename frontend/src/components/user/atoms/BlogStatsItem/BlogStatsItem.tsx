@@ -1,10 +1,6 @@
+import { BlogStatsItemProps } from "../../../../common/types";
 import "./BlogStatsItem.scss";
 import { FC } from "react";
-
-interface BlogStatsItemProps {
-  icon: string;
-  value?: string;
-}
 
 const BlogStatsItem: FC<BlogStatsItemProps> = ({ icon, value }) => {
   return (

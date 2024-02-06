@@ -2,12 +2,7 @@ import "./ArticleFragment.scss";
 import FooterImage from "../../../../assets/images/footer-image.jpg";
 import Food2 from "../../../../assets/images/food2.png";
 import { FC } from "react";
-
-interface ArticleProps {
-  hasImage?: boolean;
-  hasVideo?: boolean;
-  hasImages?: boolean;
-}
+import { ArticleProps } from "../../../../common/types";
 
 const ArticleFragment: FC<ArticleProps> = ({
   hasImage,

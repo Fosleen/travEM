@@ -40,11 +40,11 @@ function App() {
           <Route path="/nema-drzave" element={<NotFound />} />
           <Route path="/kontinent" element={<Continent />} />
           <Route
-            path="/destinacija/:idDrzave"
+            path="/destinacija/:countryName"
             element={<DestinationCountry />}
           />
           <Route
-            path="/destinacija/:idDrzave/:idGrada"
+            path="/destinacija/:countryName/:placeName"
             element={<DestinationPlace />}
           />
         </Route>

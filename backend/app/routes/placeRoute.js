@@ -10,7 +10,10 @@ router.get("/map", controller.getFavoritePlaces);
 router.get("/", controller.getPlaces);
 
 // GET /api/v1/places/1
-router.get("/:id", controller.getPlaceById);
+// router.get("/:id", controller.getPlaceById); // changed to getPlaceByName
+
+// GET /api/v1/places/zagreb
+router.get("/:name", controller.getPlaceByName);
 
 // GET /api/v1/places/search/zagr
 router.get("/search/:name", controller.getPlaceByName);

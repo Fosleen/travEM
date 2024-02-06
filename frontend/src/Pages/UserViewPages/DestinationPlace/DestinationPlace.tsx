@@ -4,7 +4,7 @@ import DestinationPosts from "../../../components/user/molecules/DestinationPost
 import DestinationVideos from "../../../components/user/molecules/DestinationVideos";
 import RecommendedPosts from "../../../components/user/molecules/RecommendedPosts";
 import "./DestinationPlace.scss";
-import { getPlacesById } from "../../../api/places";
+import { getPlacesByName } from "../../../api/places";
 import { useParams } from "react-router-dom";
 
 const DestinationPlace = () => {
@@ -15,14 +15,14 @@ const DestinationPlace = () => {
     articles: Array<object>;
     videos: Array<string>;
   }>();
-  const { idGrada } = useParams();
+  const { placeName } = useParams();
 
   const fetchData = async () => {
     try {
-      const data = await getPlacesById(parseInt(idGrada!));
+      const data = await getPlacesByName(placeName!, 1, 1);
       console.log(data);
 
-      setPlace(data);
+      setPlace(data.data[0]);
     } catch (error) {
       console.error("error while fetching:", error);
     }
@@ -40,7 +40,7 @@ const DestinationPlace = () => {
           description={place.description}
           main_image_url={place.main_image_url}
         />
-        {place.articles.length > 0 && (
+        {place && place.articles && place.articles.length > 0 && (
           <div className="destination-place-posts-container">
             <h2>Saznajte više</h2>
             <div className="destination-place-posts">
@@ -48,7 +48,7 @@ const DestinationPlace = () => {
             </div>
           </div>
         )}
-        {place.articles.length > 0 && (
+        {place && place.videos && place.videos.length > 0 && (
           <div className="destination-place-videos-container">
             <h2>Vlogovi i video putopisi</h2>
             <div className="destination-place-videos">

@@ -48,7 +48,7 @@ const DestinationPlace = () => {
             </div>
           </div>
         )}
-        {place.articles.length > 0 && (
+        {place.videos.length > 0 && (
           <div className="destination-place-videos-container">
             <h2>Vlogovi i video putopisi</h2>
             <div className="destination-place-videos">

@@ -1,25 +1,15 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import "./HorizontalPostItemBig.scss";
 import { Link } from "react-router-dom";
-
-interface HorizontalPostItemBigProps {
-  stretched?: boolean;
-  thin?: boolean;
-  hasDate?: boolean;
-  article: {
-    id: number;
-    main_image_url: string;
-    title: string;
-    subtitle: string;
-    date_written: Date;
-  };
-}
+import { formatDate } from "../../../../utils/global";
+import { HorizontalPostItemBigProps } from "../../../../common/types";
 
 const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
   stretched,
   thin,
   hasDate = true,
   article = {
+    id: null,
     main_image_url:
       "https://cdn.pixabay.com/photo/2014/06/03/19/38/board-361516_640.jpg",
     title: "-defaultni naslov-",
@@ -27,18 +17,6 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
     date_written: null,
   },
 }) => {
-  const formatDate = (dateString: Date) => {
-    const date = new Date(dateString);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    return `${day}.${month}.${year}.`;
-  };
-
-  useEffect(() => {
-    console.log(article);
-  }, []);
-
   return (
     <Link to={`/clanak/${article.id}`}>
       <div

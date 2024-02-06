@@ -1,12 +1,6 @@
 import { FC } from "react";
 import "./PageCount.scss";
-
-interface PageCountProps {
-  total: number;
-  page: number;
-  pageSize: number;
-  type: string;
-}
+import { PageCountProps } from "../../../../common/types";
 
 const PageCount: FC<PageCountProps> = ({ total, page, pageSize, type }) => {
   return (

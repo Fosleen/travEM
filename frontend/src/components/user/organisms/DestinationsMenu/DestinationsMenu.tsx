@@ -1,10 +1,7 @@
+import { DestinationsMenuProps } from "../../../../common/types";
 import DestinationsMenuItem from "../../molecules/DestinationsMenuItem";
 import "./DestinationsMenu.scss";
 import { FC } from "react";
-
-interface DestinationsMenuProps {
-  setIsDestinationsMenuShown?: (isShown: boolean) => void;
-}
 
 const DestinationsMenu: FC<DestinationsMenuProps> = ({
   setIsDestinationsMenuShown,

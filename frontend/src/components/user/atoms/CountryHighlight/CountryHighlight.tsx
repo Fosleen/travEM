@@ -6,10 +6,7 @@ import { Dot } from "@phosphor-icons/react";
 import icon1 from "../../../../assets/images/menu-icon.png";
 import icon2 from "../../../../assets/images/teamwork-icon.png";
 import { FC } from "react";
-
-interface CountryHighlightProps {
-  iconNmbr: string; //i think this should be number
-}
+import { CountryHighlightProps } from "../../../../common/types";
 
 const CountryHighlight: FC<CountryHighlightProps> = ({ iconNmbr }) => {
   return (

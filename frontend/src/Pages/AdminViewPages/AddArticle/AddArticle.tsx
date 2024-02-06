@@ -27,6 +27,7 @@ import { addSectionImage } from "../../../api/sectionImages";
 import { addGalleryImage } from "../../../api/galleryImages";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 import Textarea from "../../../components/admin/atoms/Textarea";
+import { ThreeDots } from "react-loader-spinner";
 
 const AddArticle = () => {
   const navigate = useNavigate();
@@ -217,7 +218,7 @@ const AddArticle = () => {
     <>
       <div className="add-article-container">
         <h2>Unesi novi članak</h2>
-        {articleTypes && countries && (
+        {articleTypes && countries ? (
           <Formik
             initialValues={{
               article_title: "",
@@ -551,6 +552,16 @@ const AddArticle = () => {
               </Form>
             )}
           </Formik>
+        ) : (
+          <ThreeDots
+            height="80"
+            width="80"
+            radius="8"
+            color="#2BAC82"
+            ariaLabel="three-dots-loading"
+            wrapperStyle={{ justifyContent: "center" }}
+            visible={true}
+          />
         )}
       </div>
       <Modal

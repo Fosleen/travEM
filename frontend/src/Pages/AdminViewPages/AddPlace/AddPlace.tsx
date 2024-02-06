@@ -96,7 +96,7 @@ const AddPlace = () => {
   };
 
   const handleCancel = () => {
-    navigate("/admin/mjesto");
+    navigate("/admin/mjesta");
   };
 
   const handleAddImage = () => {

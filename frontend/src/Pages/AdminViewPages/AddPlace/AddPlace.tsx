@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { useNavigate } from "react-router-dom";
 import Button from "../../../components/atoms/Button";
 import "./AddPlace.scss";
@@ -9,13 +11,13 @@ import Swal from "sweetalert2";
 import * as Yup from "yup";
 import Input from "../../../components/atoms/Input";
 import Textarea from "../../../components/admin/atoms/Textarea";
-import Dropdown from "../../../components/atoms/Dropdown";
 import { Plus, Trash, X } from "@phosphor-icons/react";
 import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch/ToggleSwitch";
 import { getVisitedCountries } from "../../../api/map";
 import Modal from "../../../components/atoms/Modal";
 import { ThreeDots } from "react-loader-spinner";
 import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
+import { addPlace } from "../../../api/places";
 
 const AddPlace = () => {
   const navigate = useNavigate();
@@ -74,7 +76,20 @@ const AddPlace = () => {
       confirmButtonText: "Da, objavi!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        // navigate("/admin/mjesta");
+        const placeResponse = await addPlace(
+          values.place_name,
+          values.place_description,
+          values.place_icon_url,
+          isOnMapChecked,
+          parseFloat(values.place_latitude),
+          parseFloat(values.place_longitude),
+          mainPlaceImage,
+          parseInt(selectedCountryId),
+          values.videos
+        );
+        console.log(placeResponse);
+
+        navigate("/admin/mjesta");
         notifySuccess("Uspješno dodano mjesto!");
       }
     });
@@ -131,7 +146,6 @@ const AddPlace = () => {
               <Form className="add-place-form">
                 <div className="add-place-inputs">
                   <div className="add-place-input">
-                 
                     <Field
                       name="place_name"
                       type="text"

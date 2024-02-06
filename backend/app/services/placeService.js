@@ -85,7 +85,13 @@ class PlacesService {
         offset: offset,
         include: [
           {
+            model: db.models.Video,
+          },
+          {
             model: db.models.Country,
+          },
+          {
+            model: db.models.Article,
           },
         ],
         where: {

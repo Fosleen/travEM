@@ -4,10 +4,26 @@ class ContinentsService {
   async getContinentCountries(id) {
     try {
       const continentCountries = await db.models.Country.findAll({
-        where: { continent_id: id },
+        where: { continentId: id },
       });
-      console.log("res je", continentCountries);
       return continentCountries;
+    } catch (error) {
+      return [];
+    }
+  }
+
+  async getContinentPlaces(id) {
+    try {
+      const continentPlaces = await db.models.Place.findAll({
+        include: [
+          {
+            model: db.models.Country,
+            attributes: [],
+            where: { continentId: id },
+          },
+        ],
+      });
+      return continentPlaces;
     } catch (error) {
       return [];
     }

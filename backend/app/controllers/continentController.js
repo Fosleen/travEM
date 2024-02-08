@@ -1,6 +1,15 @@
 import service from "../services/continentService.js";
 
 class ContinentsController {
+  async getContinents(req, res) {
+    const response = await service.getContinents();
+    if (response == undefined) {
+      res.status(404).json({ error: "No continents found" });
+    } else {
+      res.status(200).json(response);
+    }
+  }
+
   async getContinentCountries(req, res) {
     const { id } = req.params;
     const response = await service.getContinentCountries(id);

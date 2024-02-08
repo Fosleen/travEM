@@ -1,6 +1,15 @@
 import db from "../models/index.js";
 
 class ContinentsService {
+  async getContinents() {
+    try {
+      const continents = await db.models.Continent.findAll();
+      return continents;
+    } catch (error) {
+      return [];
+    }
+  }
+
   async getContinentCountries(id) {
     try {
       const continentCountries = await db.models.Country.findAll({

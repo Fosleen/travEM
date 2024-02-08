@@ -15,11 +15,13 @@ import * as Yup from "yup";
 import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
 import { countries as countryList } from "../../../components/organisms/DestinationsMap/visited_countries";
 import { Plus, Trash, X } from "@phosphor-icons/react";
+import { getCountries } from "../../../api/countries";
 
 const AddCountry = () => {
   const navigate = useNavigate();
   const [colors, setColors] = useState(null);
   const [countries, setCountries] = useState(null);
+  const [alreadyAddedCountries, setAlreadyAddedCountries] = useState(null);
   const [characteristicIcons, setCharacteristicIcons] = useState(null);
 
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -159,8 +161,10 @@ const AddCountry = () => {
 
   const fetchData = async () => {
     try {
+      const alreadyAddedCountriesData = await getCountries();
       const colorsData = await getColors();
       const characteristicIconsData = await getCharacteristicIcons();
+      setAlreadyAddedCountries(alreadyAddedCountriesData.data);
       setColors(colorsData);
       setCharacteristicIcons(characteristicIconsData);
     } catch (error) {
@@ -170,15 +174,30 @@ const AddCountry = () => {
 
   useEffect(() => {
     fetchData();
-    reorganizeArrays();
   }, []);
 
-  const reorganizeArrays = () => {
-    const newCountriesArray = countryList.map((el, index) => ({
-      id: index,
-      name: el.cro_name,
-    }));
-    setCountries(newCountriesArray);
+  useEffect(() => {
+    reorganizeArrays();
+  }, [alreadyAddedCountries]);
+
+  const reorganizeArrays = async () => {
+    console.log(alreadyAddedCountries);
+
+    if (alreadyAddedCountries) {
+      const allCountries = countryList.map((el, index) => ({
+        id: index,
+        name: el.cro_name, // for correct data display in dropdown
+      }));
+
+      // remove countries that are already in database (if the same name attribute exists in both arrays)
+      const filtered = allCountries.filter(
+        (el) =>
+          !alreadyAddedCountries.some(
+            (existingCountry) => existingCountry.name === el.name
+          )
+      );
+      setCountries(filtered);
+    }
   };
 
   return (
@@ -186,6 +205,7 @@ const AddCountry = () => {
       <div className="add-country-container">
         <h2>Unesi novu državu</h2>
         {characteristicIcons && colors ? (
+        {characteristicIcons && colors && countries ? (
           <Formik
             initialValues={{
               country_name: null,

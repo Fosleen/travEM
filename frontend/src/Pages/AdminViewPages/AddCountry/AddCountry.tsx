@@ -15,13 +15,18 @@ import * as Yup from "yup";
 import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
 import { countries as countryList } from "../../../components/organisms/DestinationsMap/visited_countries";
 import { Plus, Trash, X } from "@phosphor-icons/react";
-import { getCountries } from "../../../api/countries";
+import { addCountry, getCountries } from "../../../api/countries";
+import { getContinents } from "../../../api/continents";
+import { addSpecificity } from "../../../api/specificities";
+import { addCharacteristic } from "../../../api/characteristics";
+import { addVideo } from "../../../api/videos";
 
 const AddCountry = () => {
   const navigate = useNavigate();
   const [colors, setColors] = useState(null);
   const [countries, setCountries] = useState(null);
   const [alreadyAddedCountries, setAlreadyAddedCountries] = useState(null);
+  const [continents, setContinents] = useState(null);
   const [characteristicIcons, setCharacteristicIcons] = useState(null);
 
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -48,11 +53,6 @@ const AddCountry = () => {
   });
 
   const handleSave = async (values) => {
-    console.log(values);
-    console.log(specificityImages);
-    console.log(mainCountryImage);
-    console.log(flagImage);
-
     Swal.fire({
       title: "Jeste li sigurni?",
       text: "Objavit ćete ovu državu",
@@ -63,7 +63,44 @@ const AddCountry = () => {
       cancelButtonText: "Odustani",
       confirmButtonText: "Da, objavi!",
     }).then(async (result) => {
+      const selectedCountry = countries.find(
+        (el) => el.id == values.country_name
+      );
+
       if (result.isConfirmed) {
+        const countryResponse = await addCountry(
+          selectedCountry.name,
+          values.country_description,
+          mainCountryImage,
+          flagImage,
+          values.country_continent,
+          values.country_color
+        );
+
+        values.specificities.map(async (el, index) => {
+          return await addSpecificity(
+            el.title,
+            countryResponse.id,
+            el.items,
+            specificityImages[index]
+          );
+        });
+
+        values.characteristics.map(
+          async (el) =>
+            await addCharacteristic(
+              el.characteristic_title,
+              el.characteristic_description,
+              countryResponse.id,
+              el.characteristic_icon
+            )
+        );
+
+        values.videos.map(
+          async (el) =>
+            await addVideo(el.video_url, null, null, countryResponse.id)
+        );
+
         navigate("/admin/države");
         notifySuccess("Uspješno dodana država!");
       }
@@ -116,9 +153,6 @@ const AddCountry = () => {
     imageIndex?: number,
     specificityIndex?: number
   ) => {
-    console.log(imageIndex);
-    console.log(specificityIndex);
-
     if (type == "main") {
       setMainCountryImage(null);
     } else if (type == "flag") {
@@ -150,7 +184,7 @@ const AddCountry = () => {
 
   const handleAddSpecificityItem = (subarrayHelpers) => {
     subarrayHelpers.push({
-      subtitle: "",
+      title: "",
       description: "",
     });
   };
@@ -161,12 +195,15 @@ const AddCountry = () => {
 
   const fetchData = async () => {
     try {
-      const alreadyAddedCountriesData = await getCountries();
+      const alreadyAddedCountriesData = await getCountries(1, 300); // no pagination
       const colorsData = await getColors();
       const characteristicIconsData = await getCharacteristicIcons();
+      const continentsData = await getContinents();
+
       setAlreadyAddedCountries(alreadyAddedCountriesData.data);
       setColors(colorsData);
       setCharacteristicIcons(characteristicIconsData);
+      setContinents(continentsData);
     } catch (error) {
       console.error("Error occured while fetching data:", error);
     }
@@ -181,8 +218,6 @@ const AddCountry = () => {
   }, [alreadyAddedCountries]);
 
   const reorganizeArrays = async () => {
-    console.log(alreadyAddedCountries);
-
     if (alreadyAddedCountries) {
       const allCountries = countryList.map((el, index) => ({
         id: index,
@@ -190,12 +225,11 @@ const AddCountry = () => {
       }));
 
       // remove countries that are already in database (if the same name attribute exists in both arrays)
-      const filtered = allCountries.filter(
-        (el) =>
-          !alreadyAddedCountries.some(
-            (existingCountry) => existingCountry.name === el.name
-          )
-      );
+      const filtered = allCountries.filter((el) => {
+        return !alreadyAddedCountries.some((existingCountry) => {
+          return existingCountry.name === el.name;
+        });
+      });
       setCountries(filtered);
     }
   };
@@ -204,12 +238,12 @@ const AddCountry = () => {
     <>
       <div className="add-country-container">
         <h2>Unesi novu državu</h2>
-        {characteristicIcons && colors ? (
         {characteristicIcons && colors && countries ? (
           <Formik
             initialValues={{
               country_name: null,
               country_description: null,
+              country_continent: null,
               country_color: null,
               characteristics: [
                 {
@@ -246,11 +280,11 @@ const AddCountry = () => {
               specificities: [
                 {
                   title: "",
-                  items: [{ subtitle: "", description: "" }],
+                  items: [{ title: "", description: "" }],
                 },
                 {
                   title: "",
-                  items: [{ subtitle: "", description: "" }],
+                  items: [{ title: "", description: "" }],
                 },
               ],
               videos: [{ video_url: "" }],
@@ -291,6 +325,21 @@ const AddCountry = () => {
                         }}
                         selectedValue={values.country_color}
                         images
+                      />
+                      <ErrorMessage name="country_color" component="div" />
+                    </div>
+                    <div className="add-country-input">
+                      <Field
+                        name="country_continent"
+                        type="text"
+                        as={AdvancedDropdown}
+                        label="Kontinent kojem pripada *"
+                        hardcodedValue="Odaberi kontinent..."
+                        options={continents}
+                        onChange={(value: { id: number }) => {
+                          setFieldValue(`country_continent`, value.id);
+                        }}
+                        selectedValue={values.country_continent}
                       />
                       <ErrorMessage name="country_color" component="div" />
                     </div>
@@ -479,7 +528,7 @@ const AddCountry = () => {
                                                       <div className="add-country-specificities-item-column">
                                                         <Field
                                                           type="text"
-                                                          name={`specificities[${index}].items[${itemIndex}].subtitle`}
+                                                          name={`specificities[${index}].items[${itemIndex}].title`}
                                                           as={Input}
                                                           placeholder="Unesi podnaslov..."
                                                         />

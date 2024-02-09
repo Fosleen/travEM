@@ -91,7 +91,7 @@ const DestinationCountry = () => {
           )}
 
           <div className="destination-country-visa-info-container">
-            <VisaInfo />
+            <VisaInfo countryId={country.id} />
           </div>
           {country.videos.length > 0 && (
             <div className="destination-country-videos-container">

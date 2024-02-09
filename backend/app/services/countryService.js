@@ -77,6 +77,7 @@ class CountriesService {
           },
           {
             model: db.models.Article,
+            limit: 8,
           },
         ],
       });

@@ -238,16 +238,18 @@ const AddPlace = () => {
                         return (
                           <div className="add-place-videos-container">
                             <div className="add-place-header">
-                              <h6>Preporučeni videi *</h6>
-                              <Button
-                                type="button"
-                                circle
-                                onClick={() => {
-                                  handleAddVideo(arrayHelpers);
-                                }}
-                              >
-                                +
-                              </Button>
+                              <h6>Preporučeni videi (max 3) *</h6>
+                              {videos.length < 3 && (
+                                <Button
+                                  type="button"
+                                  circle
+                                  onClick={() => {
+                                    handleAddVideo(arrayHelpers);
+                                  }}
+                                >
+                                  +
+                                </Button>
+                              )}
                             </div>
                             {videos && videos.length > 0
                               ? videos.map((_videos, index) => (

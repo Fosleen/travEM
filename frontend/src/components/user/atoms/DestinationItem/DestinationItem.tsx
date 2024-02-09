@@ -7,16 +7,22 @@ const DestinationItem: FC<{
   mapItem?: boolean;
   filterMenuItem?: boolean;
   name?: string;
-  flagUrl: string;
+  flagUrl?: string;
+  countryName?: string;
 }> = ({
   mapItem = false,
   filterMenuItem = false,
   name = "London",
   flagUrl,
+  countryName = null,
 }) => {
   return (
     <Link
-      to={`/destinacija/${name.toLowerCase()}`}
+      to={
+        countryName
+          ? `/destinacija/${countryName}/${name.toLowerCase()}`
+          : `/destinacija/${name.toLowerCase()}`
+      }
       className={`destination-item-container ${
         (mapItem || filterMenuItem) && "has-icon full-width"
       } ${filterMenuItem && "flag"} ${mapItem && "sights"}`}

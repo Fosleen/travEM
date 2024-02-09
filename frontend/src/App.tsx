@@ -23,6 +23,7 @@ import PlacesList from "./Pages/AdminViewPages/PlacesList/PlacesList";
 import CountriesList from "./Pages/AdminViewPages/CountriesList/CountriesList";
 import ArticlesList from "./Pages/AdminViewPages/ArticlesList/ArticlesList";
 import AddPlace from "./Pages/AdminViewPages/AddPlace/AddPlace";
+import EditVisaInfo from "./Pages/AdminViewPages/EditVisaInfo/EditVisaInfo";
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
           <Route path="/admin/uredi-hero" element={<EditHero />} />
           <Route path="/admin/uredi-banner" element={<EditBanner />} />
           <Route path="/admin/uredi-statistiku" element={<EditStats />} />
+          <Route path="/admin/uredi-vize" element={<EditVisaInfo />} />
         </Route>
       </Routes>
     </>

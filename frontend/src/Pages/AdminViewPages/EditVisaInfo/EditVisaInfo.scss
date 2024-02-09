@@ -1,0 +1,53 @@
+@import "../../../utils/theme.scss";
+
+.edit-visa-info-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 12px;
+
+  .add-visa-info-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .add-visa-info-inputs {
+      border-radius: 8px;
+      max-width: 1024px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      .add-visa-info-input {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .add-visa-info-section {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        border-radius: 8px;
+        border: 2px solid $greyMiddle;
+        padding: 16px;
+        max-width: 512px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        .add-visa-info-item {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+      }
+    }
+
+    .add-visa-info-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 64px;
+    }
+  }
+}

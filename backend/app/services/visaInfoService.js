@@ -24,6 +24,30 @@ class VisaInfoService {
     }
   }
 
+  async getVisaInfoById(id) {
+    try {
+      const visaInfo = await db.models.VisaInfo.findByPk(id);
+      return visaInfo;
+    } catch (error) {
+      console.log(error);
+      return `not found visa info with PK ${id}`;
+    }
+  }
+
+  async getVisaInfoByCountries(country1, country2) {
+    try {
+      const info = await db.models.VisaInfo.findOne({
+        where: {
+          countryId: country1,
+          id_country_info: country2,
+        },
+      });
+      return info ? info : true; // true = no data about these countries yet
+    } catch (error) {
+      return [];
+    }
+  }
+
   async patchVisaInfo(
     id,
     id_country_info,

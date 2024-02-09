@@ -3,10 +3,16 @@ import controller from "../controllers/visaInfoController.js";
 
 const router = new Router();
 
+// GET /api/v1/visa-info/3
+router.get("/:id", controller.getVisaInfoById);
+
+// GET /api/v1/visa-info?country1=1&country2=2
+router.get("/", controller.getVisaInfoByCountries);
+
 // POST /api/v1/visa-info
 router.post("/", controller.addVisaInfo);
 
 // PATCH /api/v1/visa-info/4
-router.patch("/:id", controller.patchVisaInfo)
+router.patch("/:id", controller.patchVisaInfo);
 
 export default router;

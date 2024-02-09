@@ -23,6 +23,7 @@ import PlacesList from "./Pages/AdminViewPages/PlacesList/PlacesList";
 import CountriesList from "./Pages/AdminViewPages/CountriesList/CountriesList";
 import ArticlesList from "./Pages/AdminViewPages/ArticlesList/ArticlesList";
 import AddPlace from "./Pages/AdminViewPages/AddPlace/AddPlace";
+import AddCountry from "./Pages/AdminViewPages/AddCountry/AddCountry";
 
 function App() {
   return (
@@ -53,6 +54,7 @@ function App() {
           <Route path="/admin/mjesta" element={<PlacesList />} />
           <Route path="/admin/mjesta/dodaj" element={<AddPlace />} />
           <Route path="/admin/države" element={<CountriesList />} />
+          <Route path="/admin/države/dodaj" element={<AddCountry />} />
           <Route path="/admin/članci" element={<ArticlesList />} />
           <Route path="/admin/članci/dodaj" element={<AddArticle />} />
           <Route path="/admin/uredi-hero" element={<EditHero />} />

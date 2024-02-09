@@ -1,60 +1,70 @@
 @import "../../../utils/theme.scss";
 
-.add-place-container {
+.add-country-container {
   display: flex;
   flex-direction: column;
   gap: 16px;
   padding-right: 12px;
 
   h6 {
-    font-weight: 700;
+    font-weight: 600;
     font-size: 16px;
     margin-bottom: 4px;
   }
 
-  .add-place-form {
+  fieldset {
+    border-radius: 8px;
+    border: 2px solid $greyMiddle;
+    padding: 8px 16px;
+    max-width: 1024px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 8px;
+
+    legend {
+      padding: 0 4px;
+      font-size: 14px;
+    }
+  }
+
+  .add-country-form {
     display: flex;
     flex-direction: column;
     gap: 16px;
 
-    .add-place-inputs {
+    .add-country-inputs {
       border-radius: 8px;
       max-width: 1024px;
       display: flex;
       flex-direction: column;
       gap: 16px;
 
-      .add-place-input {
+      .add-country-input {
         display: flex;
         flex-direction: column;
         gap: 8px;
       }
 
-      .add-place-row {
+      .add-country-inputs-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 16px;
-
-        .add-place-row-item {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
       }
     }
 
-    .add-place-images-container {
+    .add-country-images-container {
       display: flex;
-      gap: 12px;
+      gap: 24px;
       flex-wrap: wrap;
 
-      .add-place-image {
+      .add-country-image {
         height: 72px;
         position: relative;
         cursor: pointer;
         display: inline-block;
 
-        .add-place-image-remove-icon {
+        .add-country-image-remove-icon {
           display: none;
           position: absolute;
           left: 50%;
@@ -70,7 +80,7 @@
         }
 
         &:hover {
-          .add-place-image-remove-icon {
+          .add-country-image-remove-icon {
             display: block;
           }
 
@@ -81,7 +91,7 @@
         }
       }
 
-      .add-place-item {
+      .add-country-item {
         width: 108px;
         background-color: $greyMiddle;
         height: 72px;
@@ -92,27 +102,74 @@
       }
     }
 
-    .add-place-videos-wrapper {
+    .add-country-characteristics-container {
+      .add-country-characteristics-inner {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 24px;
+
+        .add-country-characteristics-item {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+      }
+    }
+
+    .add-country-specificities-container {
+      max-width: 1024px;
+
+      .add-country-specificities-inner {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+
+        .add-country-specificities-item {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+
+          .add-country-specificities-item-column {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+          }
+
+          * > svg {
+            width: 52px;
+            cursor: pointer;
+          }
+        }
+
+        .add-country-specificities-images-container {
+          display: flex;
+          gap: 16px;
+        }
+      }
+    }
+
+    .add-country-videos-wrapper {
       padding: 24px 0;
       display: flex;
       flex-direction: column;
       gap: 8px;
       max-width: 1024px;
 
-      .add-place-video-outer-container {
-        .add-place-videos-container {
+      .add-country-video-outer-container {
+        .add-country-videos-container {
           display: flex;
           flex-direction: column;
           gap: 8px;
 
-          .add-place-header {
-            height: 48px;
+          .add-country-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            height: 48px;
           }
 
-          .add-place-video-row {
+          .add-country-video-row {
             display: flex;
             gap: 8px;
             align-items: center;
@@ -126,19 +183,7 @@
       }
     }
 
-    .add-place-toggle-container {
-      padding: 24px 0;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-width: 1024px;
-
-      .add-place-toggle-input {
-        margin-top: 8px;
-      }
-    }
-
-    .add-place-buttons {
+    .add-country-buttons {
       display: flex;
       gap: 8px;
       margin-bottom: 64px;

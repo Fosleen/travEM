@@ -138,7 +138,7 @@ class ArticleService {
 
   async getTopCountryArticle(id) {
     try {
-      const articles = await db.models.Article.findAll({
+      const articles = await db.models.Article.findOne({
         where: {
           countryId: id,
         },

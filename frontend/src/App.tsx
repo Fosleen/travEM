@@ -37,7 +37,6 @@ function App() {
           <Route path="/aviokarte" element={<AirplaneTickets />} />
           <Route path="/pretrazivanje" element={<SearchResults />} />
           <Route path="/savjeti/let-avionom" element={<TipsAndTricks />} />
-          <Route path="/destinacija/:id" element={<DestinationCountry />} />
           <Route path="/clanak/:id" element={<Article />} />
           <Route path="/nema-drzave" element={<NotFound />} />
           <Route path="/kontinent" element={<Continent />} />

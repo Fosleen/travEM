@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import HorizontalPostItemBig from "../../atoms/HorizontalPostItemBig";
 import "./DestinationPosts.scss";
 

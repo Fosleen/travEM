@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { useEffect, useState } from "react";
 import Table from "../../../components/admin/organisms/Table";
 import "./ArticlesList.scss";

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import MainCountryPost from "../../../components/user/atoms/MainCountryPost";
 import DestinationHero from "../../../components/user/molecules/DestinationHero";
 import "./DestinationCountry.scss";

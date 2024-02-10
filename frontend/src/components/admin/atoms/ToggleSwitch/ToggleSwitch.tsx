@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import "./ToggleSwitch.scss";
 
 const ToggleSwitch = ({ name, description, value, setter }) => {

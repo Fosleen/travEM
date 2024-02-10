@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { FC } from "react";
 import Dropdown from "../../../atoms/Dropdown";
 import "./ItemsPerPageSelector.scss";

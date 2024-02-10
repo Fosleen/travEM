@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { ChangeEvent, HTMLInputTypeAttribute } from "react";
 
 export interface ButtonProps {

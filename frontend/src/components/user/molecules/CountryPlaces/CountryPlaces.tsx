@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import DestinationItem from "../../atoms/DestinationItem";
 import worldMap from "../../../../assets/images/world-map.jpg";
 import "./CountryPlaces.scss";

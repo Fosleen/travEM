@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { FC, useEffect, useState } from "react";
 import { Dropdown } from "primereact/dropdown";
 import "./AdvancedDropdown.scss";

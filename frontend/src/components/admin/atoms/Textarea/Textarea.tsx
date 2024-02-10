@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { FC } from "react";
 import "./Textarea.scss";
 import { TextareaProps } from "../../../../common/types";

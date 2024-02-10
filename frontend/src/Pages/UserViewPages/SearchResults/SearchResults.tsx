@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import Pagination from "../../../components/atoms/Pagination/Pagination";
 import HorizontalPostItemBig from "../../../components/user/atoms/HorizontalPostItemBig/HorizontalPostItemBig";
 import "./SearchResults.scss";

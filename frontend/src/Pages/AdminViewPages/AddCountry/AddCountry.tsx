@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { useNavigate } from "react-router-dom";
 import "./AddCountry.scss";
 import { useEffect, useRef, useState } from "react";

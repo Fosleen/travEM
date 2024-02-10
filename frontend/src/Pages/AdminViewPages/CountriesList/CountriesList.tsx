@@ -24,7 +24,7 @@ const CountriesList = () => {
 
   const fetchSearch = async () => {
     try {
-      const data = await getCountriesByName(searchText, page, pageSize);
+      const data = await getCountriesByName(searchText, page, pageSize, 1);
       setCountries(data);
     } catch (error) {
       console.error("error while fetching:", error);

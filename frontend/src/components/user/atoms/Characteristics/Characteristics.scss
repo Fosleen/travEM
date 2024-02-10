@@ -1,11 +1,11 @@
 @import "../../../../utils/theme.scss";
 
-.main-country-info-container {
+.characteristics-info-container {
   position: relative;
   box-shadow: 0 0 16px #cccccc;
   border-radius: 16px;
 
-  .main-country-world-map-image {
+  .characteristics-world-map-image {
     height: 100%;
     width: 100%;
     position: absolute;
@@ -18,7 +18,7 @@
     }
   }
 
-  .main-country-info-content {
+  .characteristics-info-content {
     padding: 8px;
     display: flex;
     flex-direction: column;
@@ -34,14 +34,14 @@
       margin-top: 8px;
     }
 
-    .main-country-info-items {
+    .characteristics-info-items {
       z-index: 1;
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 16px;
       margin-bottom: 16px;
 
-      .main-country-info-item {
+      .characteristics-info-item {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -59,7 +59,7 @@
 
         p {
           font-size: 18px;
-          font-weight: 600;
+          font-weight: 500;
           text-align: center;
         }
       }
@@ -68,10 +68,10 @@
 }
 
 @media screen and ($tablet) {
-  .main-country-info-container {
+  .characteristics-info-container {
     height: 100%;
 
-    .main-country-world-map-image {
+    .characteristics-world-map-image {
       height: 100%;
       width: 100%;
       position: absolute;
@@ -84,7 +84,7 @@
       }
     }
 
-    .main-country-info-content {
+    .characteristics-info-content {
       justify-content: space-around;
       height: 100%;
       padding: 8px 16px;
@@ -93,8 +93,8 @@
         font-size: 32px;
       }
 
-      .main-country-info-items {
-        .main-country-info-item {
+      .characteristics-info-items {
+        .characteristics-info-item {
           img {
             width: 64px;
             height: 64px;
@@ -102,7 +102,7 @@
 
           h5,
           p {
-            font-size: 24px;
+            font-size: 18px;
           }
         }
       }
@@ -110,5 +110,12 @@
   }
 }
 
-@media screen and ($desktopLarge) {
+@media screen and ($desktop) {
+  .characteristics-info-container {
+    .characteristics-info-content {
+      .characteristics-info-items {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+    }
+  }
 }

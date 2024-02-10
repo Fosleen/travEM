@@ -13,13 +13,29 @@ export async function getCountries(page = 1, pageSize = 12) {
   return data;
 }
 
+export async function getCountryById(id: number) {
+  const response = await fetch(`${apiUrl}/countries/${id}`);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
 export async function getCountriesByName(
   name: string,
   page = 1,
-  pageSize = 12
+  pageSize = 12,
+  isCount?: number
 ) {
+  if (isCount === undefined) {
+    isCount = 0;
+  }
+
   const response = await fetch(
-    `${apiUrl}/countries/search/${name}?page=${page}&pageSize=${pageSize}`
+    `${apiUrl}/countries/search/${name}?page=${page}&pageSize=${pageSize}&isCount=${isCount}`
   );
   const data = await response.json();
 

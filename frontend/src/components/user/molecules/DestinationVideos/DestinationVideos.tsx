@@ -1,7 +1,7 @@
 import VideoItem from "../../atoms/VideoItem";
 import vlogIcon from "../../../../assets/images/vlog-icon.png";
 import "./DestinationVideos.scss";
-import { Key } from "react";
+import { VideoProps } from "../../../../common/types";
 
 const DestinationVideos = ({ data }) => {
   return (
@@ -12,7 +12,7 @@ const DestinationVideos = ({ data }) => {
             <img src={vlogIcon} alt="vlogging-camera-icon" />
           </div>
           <div className="destination-videos">
-            {data.map((el: { url: string }, index: Key | null | undefined) => (
+            {data.map((el: VideoProps, index: number) => (
               <VideoItem key={index} url={el.url} />
             ))}
           </div>

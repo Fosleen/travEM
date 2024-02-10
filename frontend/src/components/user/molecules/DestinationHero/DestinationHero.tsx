@@ -5,13 +5,16 @@ const DestinationHero = ({
   name = "testno",
   description = "testni opis",
   main_image_url = "",
+  color = "#d2eb64",
 }) => {
   return (
     <div className="destination-hero-container">
       <div className="destination-hero-left">
         <div className="destination-hero-titles">
           <h2 className="bold-grey">{name}</h2>
-          <h2 className="bold-color">{name}</h2>
+          <h2 className="bold-color" style={{ color: `#${color}` }}>
+            {name}
+          </h2>
           <h2 className="cursive-black">{name}</h2>
         </div>
         <p className="destination-hero-description">{description}</p>

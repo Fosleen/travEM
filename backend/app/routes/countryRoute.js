@@ -12,7 +12,7 @@ router.get("/:id", controller.getCountryById);
 // DELETE /api/v1/countries/2
 router.delete("/:id", controller.deleteCountry);
 
-// GET /api/v1/countries/search/hrva?page=1&pageSize=8
+// GET /api/v1/countries/search/hrva?page=1&pageSize=8&isCount=1
 router.get("/search/:name", controller.getCountryByName);
 
 // GET /api/v1/countries/places/5

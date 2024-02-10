@@ -27,10 +27,35 @@ class CountriesController {
     const { name } = req.params;
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 200;
+    const isCount = req.query.isCount === "1";
 
-    const response = await service.getCountryByName(name, page, pageSize);
+    const response = await service.getCountryByName(
+      name,
+      page,
+      pageSize,
+      isCount
+    );
     if (!response || response.length == 0) {
       res.status(404).json({ error: `No country found by name ${name}` });
+    } else {
+      res.status(200).json(response);
+    }
+  }
+
+  async getCountryByNameWithArticlesCount(req, res) {
+    const { name } = req.params;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 200;
+
+    const response = await service.getCountryByNameWithArticlesCount(
+      name,
+      page,
+      pageSize
+    );
+    if (!response || response.length == 0) {
+      res
+        .status(404)
+        .json({ error: `No country with articles found by name ${name}` });
     } else {
       res.status(200).json(response);
     }

@@ -3,7 +3,7 @@
 import { useNavigate } from "react-router-dom";
 import Button from "../../../components/atoms/Button";
 import "./AddPlace.scss";
-import { MapCountriesData } from "../../../common/types";
+import { CountriesData } from "../../../common/types";
 import { useEffect, useRef, useState } from "react";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
@@ -24,7 +24,7 @@ const AddPlace = () => {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [modalInputValue, setModalInputValue] = useState("");
 
-  const [countries, setCountries] = useState<Array<MapCountriesData>>([]);
+  const [countries, setCountries] = useState<Array<CountriesData>>([]);
   const [selectedCountryId, setSelectedCountryId] = useState("");
   const [mainPlaceImage, setMainPlaceImage] = useState<string>("");
 

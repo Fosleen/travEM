@@ -67,7 +67,7 @@ export async function getArticles(page = 1, pageSize = 12) {
   return data;
 }
 
-export async function getFavoriteArticleByCountry(id) {
+export async function getFavoriteArticleByCountry(id: number) {
   const response = await fetch(`${apiUrl}/articles/country/top/${id}`);
   const data = await response.json();
 

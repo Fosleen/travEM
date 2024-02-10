@@ -1,17 +1,14 @@
-import "./CountryHighlight.scss";
-import postImage from "../../../../assets/images/post-image.jpg";
-import postImagffoe from "../../../../assets/images/footer-image.jpg";
-import food from "../../../../assets/images/food-image.jpg";
+import "./Specificities.scss";
 import { Dot } from "@phosphor-icons/react";
 import icon1 from "../../../../assets/images/menu-icon.png";
 import icon2 from "../../../../assets/images/teamwork-icon.png";
 import { FC } from "react";
-import { CountryHighlightProps } from "../../../../common/types";
+import { SpecificityProps } from "../../../../common/types";
 
-const CountryHighlight: FC<CountryHighlightProps> = ({
-  iconNmbr,
-  specificities,
-}) => {
+const Specificities: FC<{
+  iconNmbr: string;
+  specificities: SpecificityProps;
+}> = ({ iconNmbr, specificities }) => {
   return (
     <>
       {specificities && specificities.specificity_items && (
@@ -34,8 +31,8 @@ const CountryHighlight: FC<CountryHighlightProps> = ({
                 </div>
               </div>
               <div className="country-highligth-content">
-                {specificities.specificity_items.map((el) => (
-                  <div className="country-highligth-content-item">
+                {specificities.specificity_items.map((el, index) => (
+                  <div className="country-highligth-content-item" key={index}>
                     <div className="country-highlights-content-item-title">
                       <Dot size={32} color="#1abb6f" weight="duotone" />
                       <h4>{el.title}</h4>
@@ -48,11 +45,13 @@ const CountryHighlight: FC<CountryHighlightProps> = ({
           </div>
 
           <div className="country-highlight-right">
-            {specificities.specificity_images.map((el) => (
-              <div className="country-highlight-image-container">
-                <img src={el.url} alt="country-highlight" />
-              </div>
-            ))}
+            {specificities &&
+              specificities.specificity_images &&
+              specificities.specificity_images.map((el, index) => (
+                <div className="country-highlight-image-container" key={index}>
+                  <img src={el.url} alt="country-highlight" />
+                </div>
+              ))}
           </div>
         </div>
       )}
@@ -60,4 +59,4 @@ const CountryHighlight: FC<CountryHighlightProps> = ({
   );
 };
 
-export default CountryHighlight;
+export default Specificities;

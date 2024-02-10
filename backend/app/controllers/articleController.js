@@ -14,7 +14,7 @@ class ArticleController {
     );
 
     if (response.data.length === 0) {
-      res.status(404).json({ error: "No articles found" });
+      res.status(404).json([{ error: "No articles found" }]);
     } else {
       res.status(200).json(response);
     }
@@ -25,7 +25,11 @@ class ArticleController {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 200;
 
-    const response = await articleService.getArticleByName(name, page, pageSize);
+    const response = await articleService.getArticleByName(
+      name,
+      page,
+      pageSize
+    );
     if (!response || response.length == 0) {
       res.status(404).json({ error: `No article found by name ${name}` });
     } else {
@@ -89,10 +93,8 @@ class ArticleController {
   async getTopCountryArticle(req, res) {
     const { id } = req.params;
     const response = await articleService.getTopCountryArticle(id);
-    if (response.length == 0) {
-      res
-        .status(404)
-        .json({ error: `No top articles for country with id ${id} found` });
+    if (!response || response.length == 0) {
+      res.status(200).json({ error: "no top article found for country" });
     } else {
       res.status(200).json(response);
     }

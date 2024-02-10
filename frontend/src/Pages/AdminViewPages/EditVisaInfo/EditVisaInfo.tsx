@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import "./EditVisaInfo.scss";
 import { getVisitedCountries } from "../../../api/map";
 import { useEffect, useState } from "react";
-import { MapCountriesData } from "../../../common/types";
+import { CountriesData } from "../../../common/types";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 import Swal from "sweetalert2";
 import {
@@ -20,7 +20,7 @@ import Dropdown from "../../../components/atoms/Dropdown";
 
 const EditVisaInfo = () => {
   const navigate = useNavigate();
-  const [countries, setCountries] = useState<Array<MapCountriesData>>([]);
+  const [countries, setCountries] = useState<Array<CountriesData>>([]);
   const [visaCountries, setVisaCountries] = useState([
     "Hrvatska",
     "Bosna i Hercegovina",

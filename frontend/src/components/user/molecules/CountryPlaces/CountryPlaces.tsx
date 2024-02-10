@@ -8,8 +8,12 @@ const CountryPlaces = ({ hasPadding = true, places = [], countryName }) => {
       <h2>Proučite specifične lokacije</h2>
       <div className={`country-places ${hasPadding && "has-padding"}`}>
         {places &&
-          places.map((el) => (
-            <DestinationItem name={el.name} countryName={countryName} />
+          places.map((el, index) => (
+            <DestinationItem
+              name={el.name}
+              countryName={countryName}
+              key={index}
+            />
           ))}
       </div>
       <div className="country-places-world-map-image">

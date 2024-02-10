@@ -85,7 +85,7 @@ export interface EditBannerData {
   banner_image_url: string;
 }
 
-export interface MapCountriesData {
+export interface CountriesData {
   id: number;
   name: string;
   description: string;
@@ -93,6 +93,17 @@ export interface MapCountriesData {
   flag_image_url: string;
   colorId: number;
   continentId: number;
+  color?: { hex_value: string };
+  characteristics?: Array<CharacteristicProps>;
+  articles?: Array<ArticleProps>;
+  places: Array<PlacesData>;
+  specificities: Array<SpecificityProps>;
+  videos: Array<VideoProps>;
+}
+
+export interface VideoProps {
+  id: number;
+  url: string;
 }
 
 export interface PlacesData {
@@ -182,8 +193,23 @@ export interface BlogStatsItemProps {
   value?: string;
 }
 
-export interface CountryHighlightProps {
-  iconNmbr: string; //i think this should be number
+export interface SpecificityProps {
+  id: number;
+  title: string;
+  specificity_items: Array<{ title: string; description: string }>;
+  specificity_images?: Array<{ url: string }>;
+}
+
+export interface CharacteristicProps {
+  id: number;
+  title: string;
+  description: string;
+  countryId: number;
+  characteristicIconId: number;
+  characteristic_icon: {
+    id: number;
+    url: string;
+  };
 }
 
 export interface ArticleProps {

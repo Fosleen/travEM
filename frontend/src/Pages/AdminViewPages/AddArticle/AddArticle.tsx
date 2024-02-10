@@ -13,7 +13,7 @@ import { Plus, X } from "@phosphor-icons/react";
 import Swal from "sweetalert2";
 import {
   ArticleType,
-  MapCountriesData,
+  CountriesData,
   PlacesData,
   SectionIconsData,
 } from "../../../common/types";
@@ -32,7 +32,7 @@ import { ThreeDots } from "react-loader-spinner";
 const AddArticle = () => {
   const navigate = useNavigate();
   const [articleTypes, setArticleTypes] = useState<ArticleType | string>("");
-  const [countries, setCountries] = useState<MapCountriesData | string>("");
+  const [countries, setCountries] = useState<CountriesData | string>("");
   const [places, setPlaces] = useState<PlacesData | string>("");
   const [sectionIcons, setSectionIcons] = useState<SectionIconsData | string>(
     ""

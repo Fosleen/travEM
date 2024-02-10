@@ -24,46 +24,55 @@ import ArticleSpecialType from "./articleSpecialType.js";
 import article_articleSpecialType from "./article_articleSpecialType.js";
 import SectionIcon from "./sectionIcon.js";
 import VisaInfo from "./visaInfo.js";
-
-const sequelize = new Sequelize(
-  `${dbConfig.DIALECT}://${dbConfig.USER}:${dbConfig.PASSWORD}@${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DATABASE}`
-);
+import sequelizeConnection from "../sequelize.js";
 
 const db = {};
-db.sequelize = sequelize;
+
+db.sequelize = sequelizeConnection;
 db.models = {};
-db.models.User = User(sequelize, Sequelize.DataTypes);
-db.models.ArticleType = ArticleType(sequelize, Sequelize.DataTypes);
-db.models.Article = Article(sequelize, Sequelize.DataTypes);
-db.models.SectionImage = SectionImage(sequelize, Sequelize.DataTypes);
-db.models.SectionIcon = SectionIcon(sequelize, Sequelize.DataTypes);
-db.models.Section = Section(sequelize, Sequelize.DataTypes);
-db.models.GalleryImage = GalleryImage(sequelize, Sequelize.DataTypes);
-db.models.Place = Place(sequelize, Sequelize.DataTypes);
-db.models.Country = Country(sequelize, Sequelize.DataTypes);
-db.models.Video = Video(sequelize, Sequelize.DataTypes);
-db.models.Specificity = Specificity(sequelize, Sequelize.DataTypes);
-db.models.SpecificityImage = SpecificityImage(sequelize, Sequelize.DataTypes);
-db.models.SpecificityItem = SpecificityItem(sequelize, Sequelize.DataTypes);
-db.models.Footer = Footer(sequelize, Sequelize.DataTypes);
-db.models.Homepage = Homepage(sequelize, Sequelize.DataTypes);
-db.models.Homepage = Homepage(sequelize, Sequelize.DataTypes);
-db.models.FooterGroup = FooterGroup(sequelize, Sequelize.DataTypes);
-db.models.FooterItem = FooterItem(sequelize, Sequelize.DataTypes);
-db.models.Color = Color(sequelize, Sequelize.DataTypes);
-db.models.Continent = Continent(sequelize, Sequelize.DataTypes);
-db.models.Characteristic = Characteristic(sequelize, Sequelize.DataTypes);
-db.models.VisaInfo = VisaInfo(sequelize, Sequelize.DataTypes);
+db.models.User = User(sequelizeConnection, Sequelize.DataTypes);
+db.models.ArticleType = ArticleType(sequelizeConnection, Sequelize.DataTypes);
+db.models.Article = Article(sequelizeConnection, Sequelize.DataTypes);
+db.models.SectionImage = SectionImage(sequelizeConnection, Sequelize.DataTypes);
+db.models.SectionIcon = SectionIcon(sequelizeConnection, Sequelize.DataTypes);
+db.models.Section = Section(sequelizeConnection, Sequelize.DataTypes);
+db.models.GalleryImage = GalleryImage(sequelizeConnection, Sequelize.DataTypes);
+db.models.Place = Place(sequelizeConnection, Sequelize.DataTypes);
+db.models.Country = Country(sequelizeConnection, Sequelize.DataTypes);
+db.models.Video = Video(sequelizeConnection, Sequelize.DataTypes);
+db.models.Specificity = Specificity(sequelizeConnection, Sequelize.DataTypes);
+db.models.SpecificityImage = SpecificityImage(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+db.models.SpecificityItem = SpecificityItem(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+db.models.Footer = Footer(sequelizeConnection, Sequelize.DataTypes);
+db.models.Homepage = Homepage(sequelizeConnection, Sequelize.DataTypes);
+db.models.FooterGroup = FooterGroup(sequelizeConnection, Sequelize.DataTypes);
+db.models.FooterItem = FooterItem(sequelizeConnection, Sequelize.DataTypes);
+db.models.Color = Color(sequelizeConnection, Sequelize.DataTypes);
+db.models.Continent = Continent(sequelizeConnection, Sequelize.DataTypes);
+db.models.Characteristic = Characteristic(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+db.models.VisaInfo = VisaInfo(sequelizeConnection, Sequelize.DataTypes);
 db.models.CharacteristicIcon = CharacteristicIcon(
-  sequelize,
+  sequelizeConnection,
   Sequelize.DataTypes
 );
 
 db.models.ArticleSpecialType = ArticleSpecialType(
-  sequelize,
+  sequelizeConnection,
   Sequelize.DataTypes
 );
 
-db.models.Article_ArticleSpecialType = article_articleSpecialType(sequelize);
+db.models.Article_ArticleSpecialType =
+  article_articleSpecialType(sequelizeConnection);
+
+// Export the db object after all models are initialized
 
 export default db;

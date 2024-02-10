@@ -27,10 +27,15 @@ export async function getCountryById(id: number) {
 export async function getCountriesByName(
   name: string,
   page = 1,
-  pageSize = 12
+  pageSize = 12,
+  isCount?: number
 ) {
+  if (isCount === undefined) {
+    isCount = 0;
+  }
+
   const response = await fetch(
-    `${apiUrl}/countries/search/${name}?page=${page}&pageSize=${pageSize}`
+    `${apiUrl}/countries/search/${name}?page=${page}&pageSize=${pageSize}&isCount=${isCount}`
   );
   const data = await response.json();
 

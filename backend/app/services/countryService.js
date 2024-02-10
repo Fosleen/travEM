@@ -88,7 +88,7 @@ class CountriesService {
     }
   }
 
-  async getCountryByName(name, page, pageSize) {
+  async getCountryByName(name, page, pageSize, isCount) {
     const limit = pageSize;
     const offset = (page - 1) * pageSize;
 
@@ -103,26 +103,36 @@ class CountriesService {
         },
       });
 
-      const countriesWithArticleCount = await Promise.all(
-        countries.rows.map(async (country) => {
-          const articleCount = await db.models.Article.count({
-            where: { countryId: country.id },
-          });
+      // return total number of articles - slows query down
+      if (isCount) {
+        const countriesWithArticleCount = await Promise.all(
+          countries.rows.map(async (country) => {
+            const articleCount = await db.models.Article.count({
+              where: { countryId: country.id },
+            });
 
-          return {
-            ...country.toJSON(),
-            articleCount,
-          };
-        })
-      );
-
-      return {
-        total: countries.count,
-        totalPages: Math.ceil(countries.count / pageSize),
-        currentPage: page,
-        pageSize: pageSize,
-        data: countriesWithArticleCount,
-      };
+            return {
+              ...country.toJSON(),
+              articleCount,
+            };
+          })
+        );
+        return {
+          total: countries.count,
+          totalPages: Math.ceil(countries.count / pageSize),
+          currentPage: page,
+          pageSize: pageSize,
+          data: countriesWithArticleCount,
+        };
+      } else {
+        return {
+          total: countries.count,
+          totalPages: Math.ceil(countries.count / pageSize),
+          currentPage: page,
+          pageSize: pageSize,
+          data: countries.rows,
+        };
+      }
     } catch (error) {
       console.log(error);
       return `not found countries starting with name ${name}`;

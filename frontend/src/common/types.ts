@@ -128,6 +128,7 @@ export interface SectionIconsData {
 }
 
 export interface Article {
+  id: number;
   title: string;
   subtitle: string;
   description: string;
@@ -137,6 +138,17 @@ export interface Article {
   place_id: number;
   main_image_url: string;
   user_id: number;
+  country?: CountriesData;
+  article_special_types?: Array<ArticleSpecialType>;
+}
+
+export interface ArticleSpecialType {
+  id: number;
+  name: string;
+  article_has_article_special_type: {
+    articleSpecialTypeId: number;
+    articleId: number;
+  };
 }
 
 export interface HorizontalPostItemBigProps {

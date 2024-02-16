@@ -128,6 +128,9 @@ class ArticleService {
               id: [1, 3, 4, 5],
             },
           },
+          {
+            model: db.models.Country,
+          },
         ],
       });
       return articles;

@@ -1,28 +1,36 @@
 import { Link } from "react-router-dom";
-import postImage from "../../../../assets/images/post-image.jpg";
-import mapImage from "../../../../assets/images/spain-map.png";
-
 import "./FavoritePostItem.scss";
+import { FC } from "react";
+import { Article } from "../../../../common/types";
 
-const FavoritePostItem = () => {
+const FavoritePostItem: FC<{ article: Article }> = ({ article }) => {
   return (
-    <Link to="/" className="favorite-post-item-container">
-      <div className="favorite-post-item-icon-container">
-        <img
-          className="favorite-post-item-icon"
-          src={mapImage}
-          alt="map-image"
-        />
-      </div>
-      <div className="favorite-post-item-content">
-        <div className="favorite-post-item-content-text">
-          <p>Top 15 stvari koje morate vidjeti na Tenerifima</p>
-        </div>
-        <div className="favorite-post-item-content-image">
-          <img src={postImage} alt="post-image" />
-        </div>
-      </div>
-    </Link>
+    <>
+      {article && (
+        <Link
+          to={`/clanak/${article.id}`}
+          className="favorite-post-item-container"
+        >
+          {article.country && article.country.flag_image_url && (
+            <div className="favorite-post-item-icon-container">
+              <img
+                className="favorite-post-item-icon"
+                src={article.country.flag_image_url}
+                alt="map-image"
+              />
+            </div>
+          )}
+          <div className="favorite-post-item-content">
+            <div className="favorite-post-item-content-text">
+              <p>{article.title}</p>
+            </div>
+            <div className="favorite-post-item-content-image">
+              <img src={article.main_image_url} alt="post-image" />
+            </div>
+          </div>
+        </Link>
+      )}
+    </>
   );
 };
 

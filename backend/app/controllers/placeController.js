@@ -12,6 +12,15 @@ class PlacesController {
     }
   }
 
+  async getFeaturedPlaces(req, res) {
+    const response = await service.getFeaturedPlaces();
+    if (response == undefined) {
+      res.status(404).json({ error: "No featured places found" });
+    } else {
+      res.status(200).json(response);
+    }
+  }
+
   async getPlaces(req, res) {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 12;

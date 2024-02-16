@@ -14,6 +14,17 @@ class PlacesService {
     }
   }
 
+  async getFeaturedPlaces() {
+    try {
+      const featuredPlaces = await db.models.Place.findAll({
+        where: { is_above_homepage_map: 1 },
+      });
+      return featuredPlaces;
+    } catch (error) {
+      return [];
+    }
+  }
+
   async getPlaces(page, pageSize) {
     const limit = pageSize;
     const offset = (page - 1) * pageSize;

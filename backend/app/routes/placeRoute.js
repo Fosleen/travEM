@@ -6,6 +6,9 @@ const router = new Router();
 // GET /api/v1/places/map
 router.get("/map", controller.getFavoritePlaces);
 
+// GET /api/v1/places/above-map
+router.get("/above-map", controller.getFeaturedPlaces);
+
 // GET /api/v1/places?page=1&pageSize=12
 router.get("/", controller.getPlaces);
 

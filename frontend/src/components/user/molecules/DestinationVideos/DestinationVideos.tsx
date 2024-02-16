@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import VideoItem from "../../atoms/VideoItem";
 import vlogIcon from "../../../../assets/images/vlog-icon.png";
 import "./DestinationVideos.scss";

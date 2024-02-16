@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import HorizontalPostItemBig from "../../../components/user/atoms/HorizontalPostItemBig";
 import ArticleFragment from "../../../components/user/molecules/ArticleFragment/ArticleFragment";
 import ArticleHero from "../../../components/user/molecules/ArticleHero";

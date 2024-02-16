@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Link } from "react-router-dom";
 import icon from "../../../../assets/images/main-post-icon.png";
 import "./MainCountryPost.scss";

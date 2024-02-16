@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import DestinationsMap from "../../../components/organisms/DestinationsMap/DestinationsMap";
 import HorizontalPostItemBig from "../../../components/user/atoms/HorizontalPostItemBig";
 

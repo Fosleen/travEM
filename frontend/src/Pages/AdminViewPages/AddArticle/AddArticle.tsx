@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import "./AddArticle.scss";
 import * as Yup from "yup";

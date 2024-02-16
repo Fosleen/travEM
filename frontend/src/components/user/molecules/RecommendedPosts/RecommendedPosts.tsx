@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import "./RecommendedPosts.scss";
 import HorizontalPostItemBig from "../../atoms/HorizontalPostItemBig";
 

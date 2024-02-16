@@ -12,6 +12,11 @@ export default (sequelize, DataTypes) => {
         allowNull: false,
         default: 0,
       },
+      is_above_homepage_map: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        default: 0,
+      },
       map_icon: { type: DataTypes.STRING },
     },
     {

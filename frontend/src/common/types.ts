@@ -115,6 +115,7 @@ export interface PlacesData {
   latitude: number;
   longitude: number;
   is_on_homepage_map: boolean;
+  is_above_homepage_map: boolean;
   map_icon: string;
   country_id: number;
 }

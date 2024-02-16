@@ -77,3 +77,14 @@ export async function getFavoriteArticleByCountry(id: number) {
   }
   return data;
 }
+
+export async function getHomepageArticles() {
+  const response = await fetch(`${apiUrl}/articles/homepage`);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}

@@ -2,11 +2,12 @@ import Button from "../../../atoms/Button";
 import HorizontalPostItem from "../../atoms/HorizontalPostItem";
 import "./HomepageBanner.scss";
 import { FC } from "react";
-import { HomepageData } from "../../../../common/types";
+import { Article, HomepageData } from "../../../../common/types";
 
-const HomepageBanner: FC<{ homepageContent: HomepageData }> = ({
-  homepageContent,
-}) => {
+const HomepageBanner: FC<{
+  homepageContent: HomepageData;
+  homepageArticles: Array<Article>;
+}> = ({ homepageContent, homepageArticles }) => {
   return (
     <div className="homepage-banner-container">
       <div className="homepage-banner-bg-image">
@@ -24,9 +25,9 @@ const HomepageBanner: FC<{ homepageContent: HomepageData }> = ({
         </div>
         <div className="homepage-banner-right">
           <div className="homepage-banner-right-content">
-            <HorizontalPostItem />
-            <HorizontalPostItem />
-            <HorizontalPostItem />
+            {homepageArticles.map((el) => (
+              <HorizontalPostItem article={el} />
+            ))}
           </div>
         </div>
       </div>

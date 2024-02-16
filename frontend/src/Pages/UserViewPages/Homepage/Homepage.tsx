@@ -9,17 +9,26 @@ import RecommendedMapDestinations from "../../../components/user/molecules/Recom
 import { getHomepage } from "../../../api/homepage";
 import { useEffect, useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
-import { HomepageData } from "../../../common/types";
+import { Article, HomepageData } from "../../../common/types";
+import { getHomepageArticles } from "../../../api/article";
 
 const Homepage = () => {
   const [homepageContent, setHomepageContent] = useState<HomepageData | null>(
     null
   );
+  const [favoriteArticles, setFavoriteArticles] = useState<Array<Article>>([]);
+  const [bannerArticles, setBannerArticles] = useState<Array<Article>>([]);
+  const [verticalArticles, setVerticalArticles] = useState<Array<Article>>([]);
+  const [horizontalArticles, setHorizontalArticles] = useState<Array<Article>>(
+    []
+  );
 
   const fetchData = async () => {
     try {
       const content = await getHomepage();
+      const articles = await getHomepageArticles();
       setHomepageContent(content);
+      regroupArticles(articles);
     } catch (error) {
       console.error("Error occured while fetching homepage data:", error);
     }
@@ -29,20 +38,65 @@ const Homepage = () => {
     fetchData();
   }, []);
 
+  const regroupArticles = (articles: Array<Article>) => {
+    const favoriteArticlesTemp = articles.filter(
+      (article) =>
+        article.article_special_types &&
+        article.article_special_types.some(
+          (type) => type.name === "top_homepage_article"
+        )
+    );
+
+    const bannerArticlesTemp = articles.filter(
+      (article) =>
+        article.article_special_types &&
+        article.article_special_types.some(
+          (type) => type.name === "banner_homepage_article"
+        )
+    );
+
+    const horizontalArticlesTemp = articles.filter(
+      (article) =>
+        article.article_special_types &&
+        article.article_special_types.some(
+          (type) => type.name === "horizontal_homepage_article"
+        )
+    );
+
+    const verticalArticlesTemp = articles.filter(
+      (article) =>
+        article.article_special_types &&
+        article.article_special_types.some(
+          (type) => type.name === "vertical_homepage_article"
+        )
+    );
+
+    setFavoriteArticles(favoriteArticlesTemp);
+    setBannerArticles(bannerArticlesTemp);
+    setHorizontalArticles(horizontalArticlesTemp);
+    setVerticalArticles(verticalArticlesTemp);
+  };
+
   return (
     <div className="homepage-container">
       {homepageContent ? (
         <>
           <HomepageHero homepageContent={homepageContent} />
-          <FavoritePosts />
-          <HomepageBanner homepageContent={homepageContent} />
+          <FavoritePosts homepageArticles={favoriteArticles} />
+          <HomepageBanner
+            homepageContent={homepageContent}
+            homepageArticles={bannerArticles}
+          />
           <RecommendedMapDestinations />
           <DestinationsMap
             initialLatitude={51.1657}
             initialLongitude={10.4515}
           />
           <BlogStats homepageContent={homepageContent} />
-          <OtherPosts />
+          <OtherPosts
+            verticalArticles={verticalArticles}
+            horizontalArticles={horizontalArticles}
+          />
         </>
       ) : (
         <ThreeDots

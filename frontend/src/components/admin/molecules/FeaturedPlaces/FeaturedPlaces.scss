@@ -1,0 +1,7 @@
+@import "../../../../utils/theme.scss";
+
+.featured-places-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

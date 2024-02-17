@@ -21,3 +21,25 @@ export async function getVisitedPlaces() {
   }
   return data;
 }
+
+export async function getOnMapPlaces() {
+  const response = await fetch(`${apiUrl}/places/map`);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function getAboveMapPlaces() {
+  const response = await fetch(`${apiUrl}/places/above-map`);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}

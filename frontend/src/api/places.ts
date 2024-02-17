@@ -13,6 +13,17 @@ export async function getPlaces(page = 1, pageSize = 12) {
   return data;
 }
 
+export async function getPlacesWithImage() {
+  const response = await fetch(`${apiUrl}/places/with-image`);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
 export async function getPlacesByCountry(id: number) {
   const response = await fetch(`${apiUrl}/countries/places/${id}`);
   const data = await response.json();
@@ -64,6 +75,90 @@ export async function addPlace(
       main_image_url: main_image_url,
       country_id: country_id,
       videos: videos,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function addPlaceOnMap(id: number) {
+  const response = await fetch(`${apiUrl}/places/${id}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "PATCH",
+    body: JSON.stringify({
+      is_on_homepage_map: 1,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function removePlaceOnMap(id: number) {
+  const response = await fetch(`${apiUrl}/places/${id}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "PATCH",
+    body: JSON.stringify({
+      is_on_homepage_map: 0,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function addPlaceAboveMap(id: number) {
+  const response = await fetch(`${apiUrl}/places/${id}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "PATCH",
+    body: JSON.stringify({
+      is_above_homepage_map: 1,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function removePlaceAboveMap(id: number) {
+  const response = await fetch(`${apiUrl}/places/${id}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "PATCH",
+    body: JSON.stringify({
+      is_above_homepage_map: 0,
     }),
   });
 

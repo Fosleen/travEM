@@ -51,13 +51,13 @@ export interface SearchProps {
 export interface DropdownProps {
   success?: boolean;
   error?: boolean;
-  label: string;
+  label?: string;
   message?: string;
-  defaultValue?: string;
+  defaultValue?: string | number;
   options: Array<object>;
   hardcodedValue?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  isDisabled: boolean;
+  isDisabled?: boolean;
   filter?: boolean;
   images?: boolean;
 }
@@ -115,6 +115,7 @@ export interface PlacesData {
   latitude: number;
   longitude: number;
   is_on_homepage_map: boolean;
+  is_above_homepage_map: boolean;
   map_icon: string;
   country_id: number;
 }

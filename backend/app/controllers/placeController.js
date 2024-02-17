@@ -12,6 +12,15 @@ class PlacesController {
     }
   }
 
+  async getFeaturedPlaces(req, res) {
+    const response = await service.getFeaturedPlaces();
+    if (response == undefined) {
+      res.status(404).json({ error: "No featured places found" });
+    } else {
+      res.status(200).json(response);
+    }
+  }
+
   async getPlaces(req, res) {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 12;
@@ -20,6 +29,15 @@ class PlacesController {
 
     if (response.data.length === 0) {
       res.status(404).json({ error: "No places found" });
+    } else {
+      res.status(200).json(response);
+    }
+  }
+
+  async getPlacesWithImage(req, res) {
+    const response = await service.getPlacesWithImage();
+    if (response == undefined) {
+      res.status(404).json({ error: "No places with image found" });
     } else {
       res.status(200).json(response);
     }
@@ -95,6 +113,7 @@ class PlacesController {
       req.body.main_image_url,
       req.body.map_icon,
       req.body.is_on_homepage_map,
+      req.body.is_above_homepage_map,
       req.body.latitude,
       req.body.longitude,
       req.body.country_id

@@ -1,9 +1,9 @@
-import { FC } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import "./FeaturedMapPlaceSelector.scss";
 
 const FeaturedMapPlaceSelector: FC<{
   isOnMapSelected: boolean;
-  setIsOnMapSelected;
+  setIsOnMapSelected: Dispatch<SetStateAction<boolean>>;
 }> = ({ isOnMapSelected, setIsOnMapSelected }) => {
   const toggleSelectedPlaceType = () => {
     setIsOnMapSelected(!isOnMapSelected);

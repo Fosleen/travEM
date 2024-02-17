@@ -51,13 +51,13 @@ export interface SearchProps {
 export interface DropdownProps {
   success?: boolean;
   error?: boolean;
-  label: string;
+  label?: string;
   message?: string;
-  defaultValue?: string;
+  defaultValue?: string | number;
   options: Array<object>;
   hardcodedValue?: string;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  isDisabled: boolean;
+  isDisabled?: boolean;
   filter?: boolean;
   images?: boolean;
 }

@@ -9,6 +9,9 @@ router.get("/map", controller.getFavoritePlaces);
 // GET /api/v1/places/above-map
 router.get("/above-map", controller.getFeaturedPlaces);
 
+// GET /api/v1/places/with-image
+router.get("/with-image", controller.getPlacesWithImage);
+
 // GET /api/v1/places?page=1&pageSize=12
 router.get("/", controller.getPlaces);
 

@@ -34,6 +34,15 @@ class PlacesController {
     }
   }
 
+  async getPlacesWithImage(req, res) {
+    const response = await service.getPlacesWithImage();
+    if (response == undefined) {
+      res.status(404).json({ error: "No places with image found" });
+    } else {
+      res.status(200).json(response);
+    }
+  }
+
   async getPlaceById(req, res) {
     const { id } = req.params;
     const response = await service.getPlaceById(id);
@@ -104,6 +113,7 @@ class PlacesController {
       req.body.main_image_url,
       req.body.map_icon,
       req.body.is_on_homepage_map,
+      req.body.is_above_homepage_map,
       req.body.latitude,
       req.body.longitude,
       req.body.country_id

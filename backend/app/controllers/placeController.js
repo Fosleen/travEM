@@ -73,6 +73,7 @@ class PlacesController {
       req.body.main_image_url,
       req.body.map_icon,
       req.body.is_on_homepage_map,
+      req.body.is_above_homepage_map,
       req.body.latitude,
       req.body.longitude,
       req.body.country_id

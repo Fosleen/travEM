@@ -81,6 +81,7 @@ const AddPlace = () => {
           values.place_description,
           values.place_icon_url,
           isOnMapChecked,
+          isFeaturedChecked,
           parseFloat(values.place_latitude),
           parseFloat(values.place_longitude),
           mainPlaceImage,

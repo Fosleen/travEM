@@ -39,6 +39,7 @@ export interface TextareaProps {
   placeholder: string;
   error?: string;
   disabled?: boolean;
+  defaultValue?: string | null;
   rows?: number;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
@@ -118,7 +119,13 @@ export interface PlacesData {
   is_on_homepage_map: boolean;
   is_above_homepage_map: boolean;
   map_icon: string;
+  main_image_url: string;
   country_id: number;
+  countryId?: number;
+  videos?: Array<{
+    id: number;
+    url: string;
+  }>;
 }
 
 export interface ContinentsData {

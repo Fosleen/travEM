@@ -20,10 +20,7 @@ $commands = array(
 );
 
 // Change directory using PHP
-//didi
 
-
-// Add remaining commands
 // $commands[] = 'echo $PWD';
 // $commands[] = 'pm2 start server.js';
 // exec commands

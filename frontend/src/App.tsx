@@ -26,6 +26,7 @@ import AddPlace from "./Pages/AdminViewPages/AddPlace/AddPlace";
 import EditVisaInfo from "./Pages/AdminViewPages/EditVisaInfo/EditVisaInfo";
 import AddCountry from "./Pages/AdminViewPages/AddCountry/AddCountry";
 import EditMap from "./Pages/AdminViewPages/EditMap/EditMap";
+import EditPlace from "./Pages/AdminViewPages/EditPlace/EditPlace";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
           <Route path="/admin/sadržaj" element={<EditHomepageMenu />} />
           <Route path="/admin/mjesta" element={<PlacesList />} />
           <Route path="/admin/mjesta/dodaj" element={<AddPlace />} />
+          <Route path="/admin/mjesta/uredi/:name" element={<EditPlace />} />
           <Route path="/admin/države" element={<CountriesList />} />
           <Route path="/admin/države/dodaj" element={<AddCountry />} />
           <Route path="/admin/članci" element={<ArticlesList />} />

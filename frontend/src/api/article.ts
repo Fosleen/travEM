@@ -88,3 +88,16 @@ export async function getHomepageArticles() {
   }
   return data;
 }
+
+export async function getRecommendedArticles(id: number, type: string) {
+  const response = await fetch(
+    `${apiUrl}/articles/recommended/${id}?type=${type}`
+  );
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}

@@ -6,9 +6,11 @@ import RecommendedPosts from "../../../components/user/molecules/RecommendedPost
 import "./DestinationPlace.scss";
 import { getPlacesByName } from "../../../api/places";
 import { useParams } from "react-router-dom";
+import { ThreeDots } from "react-loader-spinner";
 
 const DestinationPlace = () => {
   const [place, setPlace] = useState<{
+    id: number;
     name: string;
     description: string;
     main_image_url: string;
@@ -57,12 +59,22 @@ const DestinationPlace = () => {
           </div>
         )}
         <div className="destination-place-posts-container">
-          <RecommendedPosts />
+          <RecommendedPosts type={"place-page"} id={place.id} />
         </div>
       </div>
     </>
   ) : (
-    <>nekajk</>
+    <>
+      <ThreeDots
+        height="80"
+        width="80"
+        radius="8"
+        color="#2BAC82"
+        ariaLabel="three-dots-loading"
+        wrapperStyle={{ justifyContent: "center" }}
+        visible={true}
+      />
+    </>
   );
 };
 

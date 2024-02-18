@@ -9,6 +9,9 @@ router.get("/", controller.getArticles);
 // GET /api/v1/articles/homepage
 router.get("/homepage", controller.getHomepageArticles);
 
+// GET /api/v1/articles/recommended/1?type=article
+router.get("/recommended/:id", controller.getRecommendedArticles);
+
 // GET /api/v1/articles/country/top/1
 router.get("/country/top/:id", controller.getTopCountryArticle);
 

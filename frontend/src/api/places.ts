@@ -1,3 +1,4 @@
+import { PlacesData } from "../common/types";
 import { apiUrl } from "./api";
 
 export async function getPlaces(page = 1, pageSize = 12) {
@@ -53,6 +54,7 @@ export async function addPlace(
   description: string,
   map_icon: string,
   is_on_homepage_map: boolean,
+  is_above_homepage_map: boolean,
   latitude: number,
   longitude: number,
   main_image_url: string,
@@ -70,6 +72,7 @@ export async function addPlace(
       description: description,
       map_icon: map_icon,
       is_on_homepage_map: is_on_homepage_map,
+      is_above_homepage_map: is_above_homepage_map,
       latitude: latitude,
       longitude: longitude,
       main_image_url: main_image_url,
@@ -159,6 +162,48 @@ export async function removePlaceAboveMap(id: number) {
     method: "PATCH",
     body: JSON.stringify({
       is_above_homepage_map: 0,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function deletePlaceById(id: number) {
+  const response = await fetch(`${apiUrl}/places/${id}`, {
+    method: "DELETE",
+  });
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function updatePlace(place: PlacesData) {
+  const response = await fetch(`${apiUrl}/places/${place.id}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "PATCH",
+    body: JSON.stringify({
+      description: place.description,
+      name: place.name,
+      main_image_url: place.main_image_url,
+      map_icon: place.map_icon,
+      is_on_homepage_map: place.is_on_homepage_map,
+      is_above_homepage_map: place.is_above_homepage_map,
+      latitude: place.latitude,
+      longitude: place.longitude,
+      country_id: place.country_id,
     }),
   });
 

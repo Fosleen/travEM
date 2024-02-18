@@ -40,7 +40,7 @@ function App() {
           <Route path="/savjeti/let-avionom" element={<TipsAndTricks />} />
           <Route path="/clanak/:id" element={<Article />} />
           <Route path="/nema-drzave" element={<NotFound />} />
-          <Route path="/kontinent" element={<Continent />} />
+          <Route path="/kontinent/:id" element={<Continent />} />
           <Route
             path="/destinacija/:countryName"
             element={<DestinationCountry />}

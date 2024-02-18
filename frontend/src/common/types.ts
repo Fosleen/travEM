@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
 import { ChangeEvent, HTMLInputTypeAttribute } from "react";
@@ -120,6 +121,14 @@ export interface PlacesData {
   country_id: number;
 }
 
+export interface ContinentsData {
+  id: number;
+  name: string;
+  latitude: number;
+  longitude: number;
+  zoom: number;
+}
+
 export interface ArticleType {
   id: number;
   name: string;
@@ -158,10 +167,12 @@ export interface HorizontalPostItemBigProps {
   stretched?: boolean;
   thin?: boolean;
   hasDate?: boolean;
-  article: {
+  type?: string;
+  data: {
     id: number;
     main_image_url: string;
-    title: string;
+    title?: string;
+    name?: string;
     subtitle: string;
     date_written: Date;
   };
@@ -201,6 +212,8 @@ export interface ItemsPerPageSelectorProps {
 export interface DestinationsMapProps {
   initialLongitude: number;
   initialLatitude: number;
+  initialZoom?: number;
+  showOnlyFeatured?: boolean;
 }
 
 export interface BlogStatsItemProps {

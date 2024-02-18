@@ -7,9 +7,12 @@
   z-index: 5;
 
   .destinations-menu-item-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    a {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
     h2 {
       text-align: left;

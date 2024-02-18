@@ -7,7 +7,7 @@ const DestinationPosts = ({ data }) => {
   return (
     <div className="destination-posts-container">
       {data.map((el, index) => (
-        <HorizontalPostItemBig key={index} thin article={el} />
+        <HorizontalPostItemBig key={index} thin data={el} />
       ))}
     </div>
   );

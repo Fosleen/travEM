@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
 import MainCountryPost from "../../../components/user/atoms/MainCountryPost";
@@ -79,7 +80,7 @@ const DestinationCountry = () => {
                   <HorizontalPostItemBig
                     thin
                     hasDate={false}
-                    article={el}
+                    data={el}
                     key={index}
                   />
                 ))}

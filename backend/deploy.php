@@ -16,8 +16,9 @@ $commands = array(
     'git submodule sync',
     'git submodule update',
     'git submodule status',
+    'echo $PWD',
     'pm2 kill',
-    'cd backend',
+    'echo $PWD',
     'pm2 start server.js',
 );
 

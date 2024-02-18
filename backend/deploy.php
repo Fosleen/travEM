@@ -1,13 +1,9 @@
 <?php
 
-/**
- * GIT DEPLOYMENT SCRIPT
- *
- * Used for automatically deploying websites via GitHub
- *
- */
+echo "Current directory: " . getcwd() . "<br>";
 
-// array of commands
+chdir(__DIR__);
+
 $commands = array(
     'echo $PWD',
     'whoami',
@@ -17,18 +13,21 @@ $commands = array(
     'git submodule update',
     'git submodule status',
     'echo $PWD',
-    'pm2 kill',
-    'echo $PWD',
     'pm2 start server.js',
+    'echo $PWD'
 );
 
-// exec commands
 $output = '';
 foreach ($commands as $command) {
     $tmp = shell_exec($command);
 
     $output .= "<span style=\"color: #6BE234;\">\$</span><span style=\"color: #729FCF;\">{$command}\n</span><br />";
     $output .= htmlentities(trim($tmp)) . "\n<br /><br />";
+
+    if ($tmp === false) {
+        echo "Error executing command: $command";
+        break;
+    }
 }
 ?>
 

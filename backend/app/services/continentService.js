@@ -10,6 +10,16 @@ class ContinentsService {
     }
   }
 
+  async getContinentById(id) {
+    try {
+      const continent = await db.models.Continent.findByPk(id);
+      return continent;
+    } catch (error) {
+      console.log(error);
+      return `not found continent with PK ${id}`;
+    }
+  }
+
   async getContinentCountries(id) {
     try {
       const continentCountries = await db.models.Country.findAll({

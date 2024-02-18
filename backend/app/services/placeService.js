@@ -141,6 +141,7 @@ class PlacesService {
     main_image_url,
     map_icon,
     is_on_homepage_map,
+    is_above_homepage_map,
     latitude,
     longitude,
     country_id
@@ -152,6 +153,7 @@ class PlacesService {
         main_image_url: main_image_url,
         map_icon: map_icon,
         is_on_homepage_map: is_on_homepage_map,
+        is_above_homepage_map: is_above_homepage_map,
         latitude: latitude,
         longitude: longitude,
         countryId: country_id,

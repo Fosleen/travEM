@@ -157,6 +157,7 @@ export interface Article {
   place_id: number;
   main_image_url: string;
   user_id: number;
+  date_written: Date;
   country?: CountriesData;
   article_special_types?: Array<ArticleSpecialType>;
 }

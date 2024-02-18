@@ -120,7 +120,7 @@ const DestinationCountry = () => {
             </div>
           )}
           <div className="destination-country-posts-container">
-            <RecommendedPosts />
+            <RecommendedPosts type={"country-page"} id={country.id} />
           </div>
         </div>
       ) : (

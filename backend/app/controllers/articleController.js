@@ -124,6 +124,17 @@ class ArticleController {
     }
   }
 
+  async getRecommendedArticles(req, res) {
+    const { id } = req.params;
+    const { type } = req.query;
+    const response = await articleService.getRecommendedArticles(id, type);
+    if (response.length == 0) {
+      res.status(404).json({ error: `No recommended articles found` });
+    } else {
+      res.status(200).json(response);
+    }
+  }
+
   async updateOrCreateTopCountryArticle(req, res) {
     const response = await articleService.updateOrCreateTopCountryArticle(
       req.body.article_id

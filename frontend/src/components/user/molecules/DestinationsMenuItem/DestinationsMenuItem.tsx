@@ -13,7 +13,7 @@ const DestinationsMenuItem: FC<{
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [id]);
 
   const fetchData = async () => {
     try {
@@ -27,8 +27,8 @@ const DestinationsMenuItem: FC<{
   return (
     <div className="destinations-menu-item-container">
       <div className="destinations-menu-item-header">
-        <h2>{title}</h2>
-        <Link to={`destinacije/${title.toLowerCase()}`}>
+        <Link to={`/kontinent/${id}`}>
+          <h2>{title}</h2>
           <CaretRight size={32} color="#1abb6f" weight="duotone" />
         </Link>
       </div>

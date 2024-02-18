@@ -10,6 +10,16 @@ class ContinentsController {
     }
   }
 
+  async getContinentById(req, res) {
+    const { id } = req.params;
+    const response = await service.getContinentById(id);
+    if (response == undefined) {
+      res.status(404).json({ error: "No continents found" });
+    } else {
+      res.status(200).json(response);
+    }
+  }
+
   async getContinentCountries(req, res) {
     const { id } = req.params;
     const response = await service.getContinentCountries(id);

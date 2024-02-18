@@ -42,6 +42,8 @@ app.use("/api/v1/secure", authenticateJwt, router); //middleware checking for jw
 app.post("/deploy", (req, res) => {
   const { body } = req;
   console.log("GitHub Webhook Payload:", body);
+
+  console.log("Current working directory:", process.cwd());
   exec("php deploy.php", (error, stdout, stderr) => {
     if (error) {
       console.error(`Error executing deploy.php: ${error.message}`);

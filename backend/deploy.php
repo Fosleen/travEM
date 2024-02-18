@@ -4,6 +4,8 @@ echo "Current directory: " . getcwd() . "<br>";
 
 chdir(__DIR__);
 
+
+// array of commands
 $commands = array(
     'echo $PWD',
     'whoami',
@@ -17,6 +19,14 @@ $commands = array(
     'echo $PWD'
 );
 
+// Change directory using PHP
+//didi
+
+
+// Add remaining commands
+// $commands[] = 'echo $PWD';
+// $commands[] = 'pm2 start server.js';
+// exec commands
 $output = '';
 foreach ($commands as $command) {
     $tmp = shell_exec($command);

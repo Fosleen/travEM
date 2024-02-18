@@ -17,7 +17,8 @@ $commands = array(
     'git submodule update',
     'git submodule status',
     'pm2 kill',
-    'cd backend && pm2 start server.js',
+    'cd backend',
+    'pm2 start server.js',
 );
 
 // exec commands

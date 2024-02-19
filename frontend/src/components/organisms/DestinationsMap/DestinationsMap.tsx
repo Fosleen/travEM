@@ -18,7 +18,7 @@ import "./DestinationsMap.scss";
 
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
-import { countries } from "./visited_countries.ts";
+import { countries } from "../../../utils/all_countries.ts";
 import { FC } from "react";
 import { getVisitedCountries, getVisitedPlaces } from "../../../api/map.ts";
 import { DestinationsMapProps, PlacesData } from "../../../common/types.ts";

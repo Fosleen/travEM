@@ -15,7 +15,7 @@ import { getColors } from "../../../api/colors";
 import { getCharacteristicIcons } from "../../../api/characteristicIcons";
 import * as Yup from "yup";
 import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
-import { countries as countryList } from "../../../components/organisms/DestinationsMap/visited_countries";
+import { countries as countryList } from "../../../utils/all_countries";
 import { Plus, Trash, X } from "@phosphor-icons/react";
 import { addCountry, getCountries } from "../../../api/countries";
 import { getContinents } from "../../../api/continents";

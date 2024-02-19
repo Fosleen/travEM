@@ -100,9 +100,9 @@ export interface CountriesData {
   color?: { hex_value: string };
   characteristics?: Array<CharacteristicProps>;
   articles?: Array<ArticleProps>;
-  places: Array<PlacesData>;
-  specificities: Array<SpecificityProps>;
-  videos: Array<VideoProps>;
+  places?: Array<PlacesData>;
+  specificities?: Array<SpecificityProps>;
+  videos?: Array<VideoProps>;
 }
 
 export interface VideoProps {

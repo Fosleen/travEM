@@ -52,9 +52,7 @@ class SpecificityController {
     const response = await specificityService.patchSpecificities(
       req.params.id,
       req.body.title,
-      req.body.country_id,
-      req.body.items,
-      req.body.images
+      req.body.country_id
     );
     if (response.length == 0) {
       res.status(500).json({ error: `Error updating specificity ${id}` });

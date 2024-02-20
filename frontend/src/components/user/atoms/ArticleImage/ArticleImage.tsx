@@ -2,7 +2,7 @@ import "./ArticleImage.scss";
 import heroImage from "../../../../assets/images/post-image.jpg";
 import { useEffect, useState } from "react";
 
-const ArticleImage = () => {
+const ArticleImage = ({ article }) => {
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const ArticleImage = () => {
 
   return (
     <div className="article-hero-image-container">
-      <img src={heroImage} alt="article-hero-hero-image" />
+      <img src={article.main_image_url} alt="article-hero-hero-image" />
       <svg className="article-hero-clip ">
         <defs>
           <clipPath id="article-hero-clip-custom">

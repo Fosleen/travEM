@@ -101,3 +101,14 @@ export async function getRecommendedArticles(id: number, type: string) {
   }
   return data;
 }
+
+export async function getArticleById(id: number) {
+  const response = await fetch(`${apiUrl}/articles/${id}`);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}

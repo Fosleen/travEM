@@ -13,6 +13,9 @@ import Gallery from "react-photo-gallery";
 import ArticleReadMore from "../../../components/user/atoms/ArticleReadMore/ArticleReadMore";
 import Location from "../../../assets/images/location.png";
 import CountryPlaces from "../../../components/user/molecules/CountryPlaces";
+import { useEffect, useState } from "react";
+import { getArticleById } from "../../../api/article";
+import { useParams } from "react-router-dom";
 
 const Article = () => {
   const photos = [
@@ -48,38 +51,99 @@ const Article = () => {
     },
   ];
 
+  const { id } = useParams();
+
+  const [articleContent, setArticleContent] = useState({});
+
+  const fetchData = async () => {
+    try {
+      const content = await getArticleById(id);
+
+      console.log("Podaci o ovom clanku su", content);
+      setArticleContent(content);
+    } catch (error) {
+      console.error("Error occured while fetching homepage data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div>
       <div className="article-container">
-        <ArticleHero />
+        <ArticleHero article={articleContent} />
       </div>
       <div className="article-location-parent">
         <div className="article-location">
           <img src={Location} alt="" />
-          <h4>Nikozija, Cipar</h4>
+          {articleContent.articleTypeId === 1 && (
+            <h4>
+              {articleContent.place}, {articleContent.country.name}
+            </h4>
+          )}
         </div>
       </div>
 
-      <ArticleTableOfContents />
+      <ArticleTableOfContents article={articleContent} />
 
       <div className="article-content">
-        <ArticleFragment hasImages />
-        <ArticleFragment hasImage />
-        <ArticleReadMore />
-        <ArticleFragment />
-        <ArticleFragment hasVideo />
+        {articleContent?.sections?.map((section) => {
+          {
+            console.log("Section je", section);
+          }
+          return (
+            <>
+              <ArticleFragment section={section} />
+              {section.link_title !== "" && (
+                <ArticleReadMore section={section} />
+              )}
+            </>
+          );
+        })}
+
+        <ArticleFragment article={articleContent} />
       </div>
 
       <div className="article-gallery-text-wrapper">
         <h3>Slika govori 1000 riječi</h3>
         <div className="article-location">
           <img src={Location} alt="" />
-          <h4>Nikozija, Cipar</h4>
+          {articleContent.articleTypeId === 1 && (
+            <h4>
+              {articleContent.place}, {articleContent.country.name}
+            </h4>
+          )}
         </div>
       </div>
 
       <div className="article-gallery-wrapper">
-        <Gallery photos={photos} />
+        {console.log("Article content koji se gubi je", articleContent)}
+        {articleContent?.gallery_images && (
+          <Gallery
+            photos={articleContent.gallery_images.map((image) => {
+              console.log(
+                "Width and height are",
+                image.width,
+                image.height,
+                "obicni image je",
+                image
+              );
+
+              console.log(
+                "Gallery image je",
+
+                image
+              );
+              return {
+                src: image.url,
+                width: image.width,
+                height: image.height,
+              };
+            })}
+          />
+        )}
       </div>
       <CountryPlaces hasPadding={false} />
       <div className="article-text-articles-wrapper">

@@ -36,6 +36,26 @@ const Modal = forwardRef<HTMLDialogElement, ModalProps>(
                   setModalInputValue(e.target.value);
                 }}
               />
+
+              <Input
+                name="width"
+                placeholder="Unesi širinu za aspect ratio slike"
+                label="Unesi širinu"
+                value={modalInputValue}
+                onChange={(e) => {
+                  setModalInputValue(e.target.value);
+                }}
+              />
+
+              <Input
+                name="height"
+                placeholder="Unesi visinu za aspect ratio slike"
+                label="Unesi visinu"
+                value={modalInputValue}
+                onChange={(e) => {
+                  setModalInputValue(e.target.value);
+                }}
+              />
             </div>
             <div className="modal-buttons">
               <Button

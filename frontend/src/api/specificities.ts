@@ -28,3 +28,24 @@ export async function addSpecificity(
   }
   return data;
 }
+
+export async function updateSpecificity(id: number, title: string) {
+  const response = await fetch(`${apiUrl}/specificities/${id}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "PATCH",
+    body: JSON.stringify({
+      title: title,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}

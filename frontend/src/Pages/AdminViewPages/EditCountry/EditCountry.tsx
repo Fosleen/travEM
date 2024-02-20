@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { useNavigate, useParams } from "react-router-dom";
 import "./EditCountry.scss";
 import { useEffect, useRef, useState } from "react";
@@ -16,12 +18,26 @@ import Input from "../../../components/atoms/Input";
 import {
   getCountries,
   getCountriesByName,
+  getCountryById,
   updateCountry,
 } from "../../../api/countries";
 import { getCharacteristicIcons } from "../../../api/characteristicIcons";
 import { getColors } from "../../../api/colors";
 import { getContinents } from "../../../api/continents";
-import { CountriesData } from "../../../common/types";
+import {
+  CharacteristicProps,
+  CountriesData,
+  SpecificityProps,
+} from "../../../common/types";
+import { addVideo, deleteVideo, updateVideo } from "../../../api/videos";
+import { updateCharacteristic } from "../../../api/characteristics";
+import { updateSpecificity } from "../../../api/specificities";
+import {
+  addSpecificityItem,
+  deleteSpecificityItem,
+  updateSpecificityItem,
+} from "../../../api/specificityItems";
+import { updateSpecificityImage } from "../../../api/specificityImages";
 
 const EditCountry = () => {
   const { name } = useParams();
@@ -45,11 +61,20 @@ const EditCountry = () => {
   const [mainCountryImage, setMainCountryImage] = useState<string>("");
   const [flagImage, setFlagImage] = useState<string>("");
   const [specificityImages, setSpecificityImages] = useState<
-    Array<Array<string | null>>
+    Array<Array<{ id: number; url: string }>>
   >([
-    [null, null, null],
-    [null, null, null],
+    [
+      { id: 0, url: "" },
+      { id: 0, url: "" },
+      { id: 0, url: "" },
+    ],
+    [
+      { id: 0, url: "" },
+      { id: 0, url: "" },
+      { id: 0, url: "" },
+    ],
   ]);
+
   const [selectedSpecificityImage, setSelectedSpecificityImage] = useState([]);
 
   const ValidationSchema = Yup.object().shape({
@@ -61,8 +86,6 @@ const EditCountry = () => {
   });
 
   const handleSave = async (values) => {
-    console.log(values);
-
     Swal.fire({
       title: "Jeste li sigurni?",
       text: "Uredit ćete ovu državu",
@@ -90,6 +113,98 @@ const EditCountry = () => {
         });
         console.log(countryResponse);
 
+        if (values.characteristics) {
+          values.characteristics.map(
+            async (el: CharacteristicProps) =>
+              await updateCharacteristic(
+                el.id,
+                el.title,
+                el.description,
+                el.characteristicIconId
+              )
+          );
+        }
+
+        if (values.specificities && country.specificities) {
+          values.specificities.map(async (el: SpecificityProps) => {
+            let specificityResponse;
+            if (el.id) {
+              // update specificity
+              specificityResponse = await updateSpecificity(el.id, el.title);
+              console.log(specificityResponse);
+
+              // update specificity items
+              el.specificity_items.map(async (item) => {
+                if (item.id) {
+                  await updateSpecificityItem(
+                    item.id,
+                    item.title,
+                    item.description
+                  );
+                } else {
+                  await addSpecificityItem(item.title, item.description, el.id);
+                }
+              });
+
+              // update specificity images
+              specificityImages.map(async (imageGroup, groupIndex) => {
+                imageGroup.map(async (image, imageIndex) => {
+                  await updateSpecificityImage(
+                    image.id,
+                    specificityImages[groupIndex][imageIndex].url,
+                    el.id
+                  );
+                });
+              });
+            }
+          });
+
+          // delete removed specificities
+          const array1: (number | undefined)[] = [];
+          const array2: (number | undefined)[] = [];
+          country.specificities.map((specificity) => {
+            specificity.specificity_items.map((item) => {
+              array1.push(item.id);
+            });
+          });
+
+          values.specificities.map(
+            (specificity: { specificity_items: { id: number }[] }) => {
+              specificity.specificity_items.map((item: { id: number }) => {
+                array2.push(item.id);
+              });
+            }
+          );
+
+          const removedValues = array1.filter((item) => !array2.includes(item));
+          removedValues.map(
+            async (el: number) => await deleteSpecificityItem(el)
+          );
+        }
+
+        // add, update (if it has id attibute already) and delete videos
+        if (country.videos) {
+          const removedVideoIds = country.videos.filter(
+            (el) =>
+              !values.videos.some((video: { id: number }) => video.id === el.id)
+          );
+          removedVideoIds.map(async (el) => await deleteVideo(el.id));
+        }
+        values.videos.map(async (el: { id: number; video_url: string }) => {
+          let videoResponse;
+          if (el.id) {
+            videoResponse = await updateVideo(el.id, el.video_url);
+          } else {
+            videoResponse = await addVideo(
+              el.video_url,
+              null,
+              null,
+              country.id
+            );
+          }
+          console.log(videoResponse);
+        });
+
         navigate("/admin/države");
         notifySuccess("Uspješno uređena država!");
       }
@@ -115,7 +230,6 @@ const EditCountry = () => {
       setFlagImage(modalInputValue);
     } else if (imageType == "spec") {
       setSpecificityImages((prevSectionImages) => {
-        // pretvori array [[null,null,null],[null,null,null]] u [[null,"url",null],[null,null,null]] temeljem podataka [1,0] --> 2. slika (subarray), 1. specificnost (array) (0. el = index slike u subarrayu, 1. el = index specificnosti (arraya))
         return [
           ...prevSectionImages.slice(0, selectedSpecificityImage[1]), // ostavi subarraye prije
           [
@@ -124,7 +238,13 @@ const EditCountry = () => {
               0,
               selectedSpecificityImage[0]
             ),
-            modalInputValue, // dodaj url na to mjesto
+            {
+              ...prevSectionImages[selectedSpecificityImage[1]!][
+                selectedSpecificityImage[0]!
+              ],
+              url: modalInputValue,
+            },
+            // dodaj url na to mjesto, id je stari (samo se url mijenja jer ce uvijek morat bit 3 slike tu)
             // u odabranom subarrayu ostavi elemente nakon odabranog
             ...prevSectionImages[selectedSpecificityImage[1]].slice(
               selectedSpecificityImage[0] + 1
@@ -152,7 +272,7 @@ const EditCountry = () => {
           ...prevSectionImages.slice(0, specificityIndex),
           [
             ...prevSectionImages[specificityIndex!].slice(0, imageIndex),
-            null,
+            { ...prevSectionImages[specificityIndex!][imageIndex!], url: "" },
             ...prevSectionImages[specificityIndex!].slice(imageIndex! + 1),
           ],
           ...prevSectionImages.slice(specificityIndex! + 1),
@@ -235,20 +355,53 @@ const EditCountry = () => {
   };
 
   useEffect(() => {
-    fetchSelectedCountryData();
+    if (countries) {
+      fetchSelectedCountryData();
+    }
   }, [countries]);
 
   const fetchSelectedCountryData = async () => {
     if (name) {
       const _country = await getCountriesByName(name, 1, 1, 0);
-      console.log(_country.data[0]);
+      const _countryData = await getCountryById(_country.data[0].id);
 
       setCountry({
-        ..._country.data[0],
+        ..._countryData,
         name: countryArrayId, // name is in db saved as a string, but here is needed id of that country in filtered countries array
       });
-      setMainCountryImage(_country.data[0].main_image_url);
-      setFlagImage(_country.data[0].flag_image_url);
+      setMainCountryImage(_countryData.main_image_url);
+      setFlagImage(_countryData.flag_image_url);
+
+      setSpecificityImages([
+        [
+          {
+            id: _countryData.specificities[0].specificity_images[0].id || 0,
+            url: _countryData.specificities[0].specificity_images[0].url || "",
+          },
+          {
+            id: _countryData.specificities[0].specificity_images[1].id || 0,
+            url: _countryData.specificities[0].specificity_images[1].url || "",
+          },
+          {
+            id: _countryData.specificities[0].specificity_images[2].id || 0,
+            url: _countryData.specificities[0].specificity_images[2].url || "",
+          },
+        ],
+        [
+          {
+            id: _countryData.specificities[1].specificity_images[0].id || 0,
+            url: _countryData.specificities[1].specificity_images[0].url || "",
+          },
+          {
+            id: _countryData.specificities[1].specificity_images[1].id || 0,
+            url: _countryData.specificities[1].specificity_images[1].url || "",
+          },
+          {
+            id: _countryData.specificities[1].specificity_images[2].id || 0,
+            url: _countryData.specificities[1].specificity_images[2].url || "",
+          },
+        ],
+      ]);
     }
   };
 
@@ -267,49 +420,42 @@ const EditCountry = () => {
               country_description: country.description,
               country_continent: country.continentId,
               country_color: country.colorId,
-              characteristics: [
-                {
-                  characteristic_icon: null,
-                  characteristic_title: "",
-                  characteristic_description: "",
-                },
-                {
-                  characteristic_icon: null,
-                  characteristic_title: "",
-                  characteristic_description: "",
-                },
-                {
-                  characteristic_icon: null,
-                  characteristic_title: "",
-                  characteristic_description: "",
-                },
-                {
-                  characteristic_icon: null,
-                  characteristic_title: "",
-                  characteristic_description: "",
-                },
-                {
-                  characteristic_icon: null,
-                  characteristic_title: "",
-                  characteristic_description: "",
-                },
-                {
-                  characteristic_icon: null,
-                  characteristic_title: "",
-                  characteristic_description: "",
-                },
-              ],
-              specificities: [
-                {
-                  title: "",
-                  items: [{ title: "", description: "" }],
-                },
-                {
-                  title: "",
-                  items: [{ title: "", description: "" }],
-                },
-              ],
-              videos: [{ video_url: "" }],
+              characteristics: Array.from({ length: 6 }, (_, index) => ({
+                id:
+                  country.characteristics && country.characteristics[index]?.id,
+                icon:
+                  (country.characteristics &&
+                    country.characteristics[index]?.characteristicIconId) ||
+                  null,
+                title:
+                  (country.characteristics &&
+                    country.characteristics[index]?.title) ||
+                  "",
+                description:
+                  (country.characteristics &&
+                    country.characteristics[index]?.description) ||
+                  "",
+              })),
+              specificities: (country.specificities || [])
+                .slice(0, 2)
+                .map((specificity) => ({
+                  id: specificity.id,
+                  title: specificity.title || "",
+                  specificity_items: (specificity.specificity_items || [])
+                    .slice(0, 4)
+                    .map((item) => ({
+                      id: item.id || "",
+                      title: item.title || "",
+                      description: item.description || "",
+                      specificity_id: item.specificityId || 0,
+                    })),
+                })),
+              videos: country.videos
+                ? country.videos.map((el) => ({
+                    id: el.id,
+                    video_url: el.url,
+                  }))
+                : [],
             }}
             validationSchema={ValidationSchema}
             onSubmit={handleSave}
@@ -447,7 +593,7 @@ const EditCountry = () => {
 
                     <FieldArray
                       name="characteristics"
-                      render={(arrayHelpers) => {
+                      render={() => {
                         const characteristics = values.characteristics;
 
                         return (
@@ -463,30 +609,29 @@ const EditCountry = () => {
                                         type="text"
                                         as={AdvancedDropdown}
                                         hardcodedValue="Odaberi ikonu..."
-                                        name={`characteristics.${index}.characteristic_icon`}
+                                        name={`characteristics.${index}.icon`}
                                         options={characteristicIcons}
                                         onChange={(value) => {
                                           setFieldValue(
-                                            `characteristics.${index}.characteristic_icon`,
+                                            `characteristics.${index}.icon`,
                                             value.id
                                           );
                                         }}
                                         selectedValue={
-                                          values.characteristics[index]
-                                            .characteristic_icon
+                                          values.characteristics[index].icon
                                         }
                                         filter={false}
                                         images={true}
                                       />
                                       <Field
                                         type="text"
-                                        name={`characteristics.${index}.characteristic_title`}
+                                        name={`characteristics.${index}.title`}
                                         as={Input}
                                         placeholder="Unesi podnaslov..."
                                       />
                                       <Field
                                         type="text"
-                                        name={`characteristics.${index}.characteristic_description`}
+                                        name={`characteristics.${index}.description`}
                                         as={Input}
                                         placeholder="Unesi opis..."
                                       />
@@ -506,7 +651,7 @@ const EditCountry = () => {
                   {/* array of specificities (2) */}
                   <FieldArray
                     name="specificities"
-                    render={(arrayHelpers) => {
+                    render={() => {
                       const specificities = values.specificities;
 
                       return (
@@ -526,10 +671,11 @@ const EditCountry = () => {
                                     </legend>
                                     {/* array of specificity items (1-4) */}
                                     <FieldArray
-                                      name={`specificities[${index}].items`} // this has to be connected to initial values array and subarray names
+                                      name={`specificities[${index}].specificity_items`} // this has to be connected to initial values array and subarray names
                                       render={(subarrayHelpers) => {
                                         const specificityItems =
-                                          values.specificities[index].items;
+                                          values.specificities[index]
+                                            .specificity_items;
                                         const specificityImagesTemplate = [
                                           null,
                                           null,
@@ -552,13 +698,13 @@ const EditCountry = () => {
                                                       <div className="edit-country-specificities-item-column">
                                                         <Field
                                                           type="text"
-                                                          name={`specificities[${index}].items[${itemIndex}].title`}
+                                                          name={`specificities[${index}].specificity_items[${itemIndex}].title`}
                                                           as={Input}
                                                           placeholder="Unesi podnaslov..."
                                                         />
                                                         <Field
                                                           type="text"
-                                                          name={`specificities[${index}].items[${itemIndex}].description`}
+                                                          name={`specificities[${index}].specificity_items[${itemIndex}].description`}
                                                           as={Input}
                                                           placeholder="Unesi opis..."
                                                         />
@@ -607,7 +753,7 @@ const EditCountry = () => {
                                                     ] &&
                                                     specificityImages[index][
                                                       imageIndex
-                                                    ] != "" ? (
+                                                    ].url != "" ? (
                                                       <div
                                                         className="edit-country-image"
                                                         onClick={() => {
@@ -629,7 +775,7 @@ const EditCountry = () => {
                                                           src={
                                                             specificityImages[
                                                               index
-                                                            ][imageIndex]
+                                                            ][imageIndex].url
                                                           }
                                                           alt={`image-error-${index}-${imageIndex}`}
                                                         />

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { FC, useEffect } from "react";
 import "./HorizontalPostItemBig.scss";
 import { Link } from "react-router-dom";

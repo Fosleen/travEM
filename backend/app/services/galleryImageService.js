@@ -1,11 +1,13 @@
 import db from "../models/index.js";
 
 class GalleryImageService {
-  async addGalleryImage(url, article_id) {
+  async addGalleryImage(url, article_id, width, height) {
     try {
       const galleryImage = await db.models.GalleryImage.create({
         url: url,
         articleId: article_id,
+        width: width,
+        height: height,
       });
       return galleryImage;
     } catch (error) {

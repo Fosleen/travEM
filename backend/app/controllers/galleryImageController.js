@@ -4,7 +4,9 @@ class GalleryImagesController {
   async addGalleryImage(req, res) {
     const response = await service.addGalleryImage(
       req.body.url,
-      req.body.article_id
+      req.body.article_id,
+      req.body.width,
+      req.body.height
     );
     if (response.length == 0) {
       res.status(500).json({ error: "Error inserting gallery image" });

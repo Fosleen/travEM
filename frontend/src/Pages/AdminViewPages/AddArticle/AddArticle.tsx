@@ -43,6 +43,8 @@ const AddArticle = () => {
   const [selectedCountryId, setSelectedCountryId] = useState("");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [modalInputValue, setModalInputValue] = useState("");
+  const [imageHeightValue, setImageHeightValue] = useState("");
+  const [imageWidthValue, setImageWidthValue] = useState("");
 
   // images
   const [imageType, setImageType] = useState<string | null>(null);
@@ -66,7 +68,8 @@ const AddArticle = () => {
 
   const handleSave = async (values) => {
     console.log(values);
-
+    console.log("Slike koje moraju imati aspect", otherArticleImages);
+    console.log(sectionImages);
     Swal.fire({
       title: "Jeste li sigurni?",
       text: "Objavit ćete ovaj članak",
@@ -111,9 +114,16 @@ const AddArticle = () => {
           );
         });
 
-        otherArticleImages.map(
-          async (image) => await addGalleryImage(image, articleResponse.id)
-        );
+        otherArticleImages.map(async (image) => {
+          console.log(image);
+
+          return await addGalleryImage(
+            image.url,
+            image.height,
+            image.width,
+            articleResponse.id
+          );
+        });
         navigate("/admin/članci");
         notifySuccess("Uspješno predano!");
       }
@@ -151,6 +161,7 @@ const AddArticle = () => {
     if (type == "main") {
       setMainArticleImage(null);
     } else if (type == "other") {
+      //ovo tu su gallery slike
       setOtherArticleImages(
         otherArticleImages.filter((_el, index) => index !== itemIndex)
       );
@@ -178,15 +189,31 @@ const AddArticle = () => {
     if (imageType == "main") {
       setMainArticleImage(modalInputValue);
     } else if (imageType == "other") {
-      setOtherArticleImages([...otherArticleImages, modalInputValue]);
+      setOtherArticleImages([
+        ...otherArticleImages,
+        {
+          url: modalInputValue,
+          width: imageWidthValue,
+          height: imageHeightValue,
+        },
+      ]);
     } else if (imageType == "section") {
       setSectionImages((prevSectionImages) => [
         ...prevSectionImages.slice(0, sectionSelected), // kopija polja prije indexa odabrane sekcije
-        [...prevSectionImages[sectionSelected], modalInputValue], // dodavanje slike na kraj odabrane sekcije
+        [
+          ...prevSectionImages[sectionSelected],
+          {
+            url: modalInputValue,
+            width: imageWidthValue,
+            height: imageHeightValue,
+          },
+        ], // dodavanje slike na kraj odabrane sekcije...tu moram neki objekt dodavati
         ...prevSectionImages.slice(sectionSelected + 1), // kopija polja nakon indexa odabrane sekcije
       ]);
     }
     setModalInputValue("");
+    setImageHeightValue("");
+    setImageWidthValue("");
   };
 
   const fetchData = async () => {
@@ -571,9 +598,16 @@ const AddArticle = () => {
         toggleDialog={toggleDialog}
         onClick={handleAddImage}
         modalInputValue={modalInputValue}
+        modalImageHeightValue={imageHeightValue}
+        modalImageWidthValue={imageWidthValue}
         setModalInputValue={setModalInputValue}
+        setImageHeightValue={setImageHeightValue}
+        setImageWidthValue={setImageWidthValue}
+        isAddArticle
       />
       {modalInputValue.toString()}
+      {imageHeightValue.toString()}
+      {imageWidthValue.toString()}
     </>
   );
 };

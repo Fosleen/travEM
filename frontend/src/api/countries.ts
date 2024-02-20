@@ -89,3 +89,14 @@ export async function addCountry(
   }
   return data;
 }
+
+export async function getCountryPlaces(id: number) {
+  const response = await fetch(`${apiUrl}/countries/places/${id}`);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}

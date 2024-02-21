@@ -2,7 +2,6 @@
 
 import { FC, useEffect } from "react";
 import "./HorizontalPostItemBig.scss";
-import { Link } from "react-router-dom";
 import { formatDate } from "../../../../utils/global";
 import { HorizontalPostItemBigProps } from "../../../../common/types";
 
@@ -17,11 +16,11 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
     console.log("Predlozeni article je", article);
   });
   return (
-    <Link
-      to={
-        type == "article"
+    <a
+      href={
+        type === "article"
           ? `/clanak/${article.id}`
-          : `/destinacija/${article.name}`
+          : `/destinacija/${article.title}`
       }
     >
       <div
@@ -42,7 +41,7 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
           </div>
         </div>
       </div>
-    </Link>
+    </a>
   );
 };
 

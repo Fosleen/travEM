@@ -14,7 +14,12 @@ const ArticleTableOfContents = ({ article }) => {
 
         <ul>
           {article?.sections?.map((section) => {
-            return <TableOfContentsItem icon={MoneyIcon} text={section.text} />;
+            return (
+              <TableOfContentsItem
+                icon={section.section_icon.url}
+                text={section.text}
+              />
+            );
           })}
         </ul>
       </div>

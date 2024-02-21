@@ -63,7 +63,10 @@ const Article = () => {
         </div>
       </div>
 
-      <ArticleTableOfContents article={articleContent} />
+      <ArticleTableOfContents
+        article={articleContent}
+        key={articleContent.id}
+      />
 
       <div className="article-content">
         {articleContent?.sections?.map((section) => {
@@ -112,7 +115,7 @@ const Article = () => {
 
       <div className="article-connected-articles-wrapper">
         {recommendedArticles.map((article) => (
-          <HorizontalPostItemBig article={article} key={article.id} />
+          <HorizontalPostItemBig key={article.id} data={article} />
         ))}
       </div>
     </div>

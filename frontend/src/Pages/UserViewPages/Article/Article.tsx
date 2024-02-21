@@ -100,7 +100,10 @@ const Article = () => {
             <ArticleFragment article={articleContent} />
           </div>
           <div className="article-gallery-text-wrapper">
-            <h3>Slika govori 1000 riječi</h3>
+            {articleContent?.gallery_images.length > 0 && (
+              <h3>Slika govori 1000 riječi</h3>
+            )}
+
             {articleContent.articleTypeId === 1 && articleContent.place && (
               <div className="article-location">
                 <img src={Location} alt="" />

@@ -16,8 +16,8 @@ const ArticleTableOfContents = ({ article }) => {
             return (
               <TableOfContentsItem
                 key={index}
-                icon={section.section_icon.url}
-                text={section.subtitle}
+                icon={section?.section_icon?.url}
+                text={section?.subtitle}
                 href={`#${sectionId}`} // Use sectionId here
               />
             );

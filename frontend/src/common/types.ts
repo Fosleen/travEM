@@ -87,6 +87,9 @@ export interface EditBannerData {
   banner_description: string;
   button_text: string;
   banner_image_url: string;
+  recommended_post_1: number;
+  recommended_post_2: number;
+  recommended_post_3: number;
 }
 
 export interface CountriesData {
@@ -147,6 +150,7 @@ export interface SectionIconsData {
 }
 
 export interface Article {
+  [x: string]: number;
   id: number;
   title: string;
   subtitle: string;

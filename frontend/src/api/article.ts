@@ -101,3 +101,27 @@ export async function getRecommendedArticles(id: number, type: string) {
   }
   return data;
 }
+
+export async function updateOrCreateTopHomepageArticles(
+  articleIds: Array<number>,
+  specialTypeId: number
+) {
+  const response = await fetch(`${apiUrl}/articles/homepage/${specialTypeId}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "PUT",
+    body: JSON.stringify({
+      article_id: articleIds,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}

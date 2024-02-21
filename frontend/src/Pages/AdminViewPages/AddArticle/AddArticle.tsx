@@ -109,9 +109,10 @@ const AddArticle = () => {
             section.section_icon,
             articleResponse.id
           );
-          sectionImages[index].map(
-            async (el) => await addSectionImage(el, sectionResponse.id)
-          );
+          sectionImages[index].map(async (el) => {
+            console.log("El je", el); // Log the value of el
+            await addSectionImage(el.url, sectionResponse.id);
+          });
         });
 
         otherArticleImages.map(async (image) => {
@@ -124,7 +125,7 @@ const AddArticle = () => {
             articleResponse.id
           );
         });
-        navigate("/admin/članci");
+        //navigate("/admin/članci");
         notifySuccess("Uspješno predano!");
       }
     });
@@ -187,6 +188,7 @@ const AddArticle = () => {
 
   const handleAddImage = () => {
     if (imageType == "main") {
+      console.log("Modal input value", modalInputValue);
       setMainArticleImage(modalInputValue);
     } else if (imageType == "other") {
       setOtherArticleImages([
@@ -468,7 +470,10 @@ const AddArticle = () => {
                                                   weight="bold"
                                                 />
                                               </div>
-                                              <img src={el} alt="img-error" />
+                                              <img
+                                                src={el.url}
+                                                alt="img-error"
+                                              />
                                             </div>
                                           )
                                         )}
@@ -531,7 +536,7 @@ const AddArticle = () => {
                           <div className="add-article-image-remove-icon">
                             <X size={32} color="#e70101" weight="bold" />
                           </div>
-                          <img src={el} alt="img-error" />
+                          <img src={el.url} alt="img-error" />
                         </div>
                       ))}
                     <div

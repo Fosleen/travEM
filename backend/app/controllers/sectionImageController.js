@@ -2,6 +2,11 @@ import service from "../services/sectionImageService.js";
 
 class SectionImagesController {
   async addSectionImage(req, res) {
+    console.log(
+      "U kontroleru su mi parametri,",
+      req.body.url,
+      req.body.section_id
+    );
     const response = await service.addSectionImage(
       req.body.url,
       req.body.section_id

@@ -1,14 +1,11 @@
+// @ts-nocheck
+
 import "./ArticleFragment.scss";
 
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { ArticleProps } from "../../../../common/types";
 
 const ArticleFragment: FC<ArticleProps> = ({ section = {}, article = {} }) => {
-  useEffect(() => {
-    console.log("Ja dobijem sekciju", section);
-    console.log("Count je", section?.section_images?.length);
-    console.log("Dobijem ovaj article", article);
-  });
   return (
     <div className="article-wrapper">
       <h3>{section?.subtitle}</h3>

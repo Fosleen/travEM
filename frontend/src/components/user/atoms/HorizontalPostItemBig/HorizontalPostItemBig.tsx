@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import "./HorizontalPostItemBig.scss";
 import { formatDate } from "../../../../utils/global";
 import { HorizontalPostItemBigProps } from "../../../../common/types";
@@ -12,9 +12,6 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
   type = "article",
   article,
 }) => {
-  useEffect(() => {
-    console.log("Predlozeni article je", article);
-  });
   return (
     <a
       href={

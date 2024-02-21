@@ -2,7 +2,6 @@ import db from "../models/index.js";
 
 class SectionImageService {
   async addSectionImage(url, section_id) {
-    console.log("U servisu imam", url, section_id);
     try {
       const sectionImage = await db.models.SectionImage.create({
         url: url,

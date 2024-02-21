@@ -1,12 +1,9 @@
+// @ts-nocheck
+
 import "./ArticleTableOfContents.scss";
-import MoneyIcon from "../../../../assets/images/money_icon.png";
 import TableOfContentsItem from "../../atoms/TableOfContentsItem";
-import { useEffect } from "react";
 
 const ArticleTableOfContents = ({ article }) => {
-  useEffect(() => {
-    console.log("Article koji dobijem je", article);
-  });
   return (
     <div className="article-table-of-contents-wrapper">
       <div className="article-table-of-contents-items-wrapper">

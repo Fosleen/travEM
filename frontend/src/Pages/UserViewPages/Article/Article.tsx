@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { getArticleById, getRecommendedArticles } from "../../../api/article";
 import { useParams } from "react-router-dom";
 import { getCountryPlaces } from "../../../api/countries";
+import { ThreeDots } from "react-loader-spinner";
 
 const Article = () => {
   const { id } = useParams();
@@ -24,22 +25,30 @@ const Article = () => {
 
   const [countryPlaces, setCountryPlaces] = useState([]);
 
+  const [isLoading, setIsLoading] = useState(true);
+
   const fetchData = async () => {
     try {
-      const content = await getArticleById(id);
+      const contentPromise = getArticleById(id);
+      const content = await contentPromise;
 
-      const recommendedArticles = await getRecommendedArticles(
-        id,
-        content.articleTypeId
+      const recommendedArticlesPromise = contentPromise.then((content) =>
+        getRecommendedArticles(id, content.articleTypeId)
       );
+      const recommendedArticles = await recommendedArticlesPromise;
 
-      const places = await getCountryPlaces(content.placeId);
+      const placesPromise = contentPromise.then((content) =>
+        getCountryPlaces(content.placeId)
+      );
+      const places = await placesPromise;
 
       setArticleContent(content);
       setRecommendedArticles(recommendedArticles);
       setCountryPlaces(places);
+      setIsLoading(false);
     } catch (error) {
-      console.error("Error occured while fetching homepage data:", error);
+      console.error("Error occurred while fetching homepage data:", error);
+      setIsLoading(false);
     }
   };
 
@@ -48,75 +57,83 @@ const Article = () => {
   }, []);
 
   return (
-    <div>
-      <div className="article-container">
-        <ArticleHero article={articleContent} />
-      </div>
-      <div className="article-location-parent">
-        {articleContent.articleTypeId === 1 && articleContent.place && (
-          <div className="article-location">
-            <img src={Location} alt="" />
-
-            <h4>
-              {articleContent.place.name}, {articleContent.country.name}
-            </h4>
+    <>
+      {isLoading ? (
+        <ThreeDots
+          height="80"
+          width="80"
+          radius="8"
+          color="#2BAC82"
+          ariaLabel="three-dots-loading"
+          wrapperStyle={{ justifyContent: "center" }}
+          visible={true}
+        />
+      ) : (
+        <div>
+          <div className="article-container">
+            <ArticleHero article={articleContent} />
           </div>
-        )}
-      </div>
-
-      <ArticleTableOfContents article={articleContent} key={articleContent} />
-
-      <div className="article-content">
-        {articleContent?.sections?.map((section) => {
-          return (
-            <>
-              <ArticleFragment section={section} />
-              {section.link_title !== "" && (
-                <ArticleReadMore section={section} />
-              )}
-            </>
-          );
-        })}
-
-        <ArticleFragment article={articleContent} />
-      </div>
-
-      <div className="article-gallery-text-wrapper">
-        <h3>Slika govori 1000 riječi</h3>
-        <div className="article-location">
-          <img src={Location} alt="" />
-          {articleContent.articleTypeId === 1 && articleContent.place && (
-            <h4>
-              {articleContent.place.name}, {articleContent.country.name}
-            </h4>
-          )}
-        </div>
-      </div>
-
-      <div className="article-gallery-wrapper">
-        {articleContent?.gallery_images && (
-          <Gallery
-            photos={articleContent.gallery_images.map((image) => {
-              return {
-                src: image.url,
-                width: image.width,
-                height: image.height,
-              };
-            })}
+          <div className="article-location-parent">
+            {articleContent.articleTypeId === 1 && articleContent.place && (
+              <div className="article-location">
+                <img src={Location} alt="" />
+                <h4>
+                  {articleContent.place.name}, {articleContent.country.name}
+                </h4>
+              </div>
+            )}
+          </div>
+          <ArticleTableOfContents
+            article={articleContent}
+            key={articleContent}
           />
-        )}
-      </div>
-      <CountryPlaces hasPadding={false} places={countryPlaces} />
-      <div className="article-text-articles-wrapper">
-        <h2>Povezani članci</h2>
-      </div>
-
-      <div className="article-connected-articles-wrapper">
-        {recommendedArticles.map((article) => (
-          <HorizontalPostItemBig key={article.id} data={article} />
-        ))}
-      </div>
-    </div>
+          <div className="article-content">
+            {articleContent?.sections?.map((section) => (
+              <>
+                <ArticleFragment section={section} />
+                {section.link_title !== "" && (
+                  <ArticleReadMore section={section} />
+                )}
+              </>
+            ))}
+            <ArticleFragment article={articleContent} />
+          </div>
+          <div className="article-gallery-text-wrapper">
+            <h3>Slika govori 1000 riječi</h3>
+            {articleContent.articleTypeId === 1 && articleContent.place && (
+              <div className="article-location">
+                <img src={Location} alt="" />
+                <h4>
+                  {articleContent.place.name}, {articleContent.country.name}
+                </h4>
+              </div>
+            )}
+          </div>
+          <div className="article-gallery-wrapper">
+            {articleContent?.gallery_images && (
+              <Gallery
+                photos={articleContent.gallery_images.map((image) => ({
+                  src: image.url,
+                  width: image.width,
+                  height: image.height,
+                }))}
+              />
+            )}
+          </div>
+          {countryPlaces.length !== 0 && (
+            <CountryPlaces hasPadding={false} places={countryPlaces} />
+          )}
+          <div className="article-text-articles-wrapper">
+            <h2>Povezani članci</h2>
+          </div>
+          <div className="article-connected-articles-wrapper">
+            {recommendedArticles.map((article) => (
+              <HorizontalPostItemBig key={article.id} data={article} />
+            ))}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

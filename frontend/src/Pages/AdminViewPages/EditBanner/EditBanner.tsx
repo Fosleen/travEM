@@ -41,6 +41,7 @@ const EditBanner = () => {
         values.banner_image_url
       );
       setHomepageContent(updatedContent);
+      navigate("/admin/sadržaj");
       notifySuccess("Uspješno ažurirano!");
     } catch (error) {
       console.log(error);

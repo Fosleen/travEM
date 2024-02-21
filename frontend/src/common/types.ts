@@ -81,6 +81,11 @@ export interface HomepageData {
   distance_nmbr: string;
 }
 
+export interface FooterData {
+  id: number;
+  image_url: string;
+}
+
 export interface EditBannerData {
   banner_title: string;
   banner_small_text: string;
@@ -121,6 +126,7 @@ export interface PlacesData {
   map_icon: string;
   main_image_url: string;
   country_id: number;
+  country?: { name: string };
   countryId?: number;
   videos?: Array<{
     id: number;
@@ -226,7 +232,8 @@ export interface DestinationsMapProps {
 
 export interface BlogStatsItemProps {
   icon: string;
-  value?: string;
+  value: string;
+  text: string;
 }
 
 export interface SpecificityProps {
@@ -270,3 +277,5 @@ export interface DestinationsMenuProps {
 export interface TipsMenuProps {
   setIsTipsMenuShown?: (isShown: boolean) => void;
 }
+
+export declare type Nullable<T = void> = T | null | undefined;

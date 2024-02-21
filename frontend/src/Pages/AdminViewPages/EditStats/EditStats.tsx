@@ -43,6 +43,7 @@ const EditStats = () => {
         values.distance_nmbr
       );
       setHomepageContent(updatedContent);
+      navigate("/admin/sadržaj");
       notifySuccess("Uspješno ažurirano!");
     } catch (error) {
       console.log(error);

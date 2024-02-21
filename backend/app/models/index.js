@@ -14,8 +14,6 @@ import SpecificityItem from "./specificityItem.js";
 import SpecificityImage from "./specificityImage.js";
 import Footer from "./footer.js";
 import Homepage from "./homepage.js";
-import FooterGroup from "./footerGroup.js";
-import FooterItem from "./footerItem.js";
 import Color from "./color.js";
 import Continent from "./continent.js";
 import Characteristic from "./characteristic.js";
@@ -51,8 +49,6 @@ db.models.SpecificityItem = SpecificityItem(
 );
 db.models.Footer = Footer(sequelizeConnection, Sequelize.DataTypes);
 db.models.Homepage = Homepage(sequelizeConnection, Sequelize.DataTypes);
-db.models.FooterGroup = FooterGroup(sequelizeConnection, Sequelize.DataTypes);
-db.models.FooterItem = FooterItem(sequelizeConnection, Sequelize.DataTypes);
 db.models.Color = Color(sequelizeConnection, Sequelize.DataTypes);
 db.models.Continent = Continent(sequelizeConnection, Sequelize.DataTypes);
 db.models.Characteristic = Characteristic(

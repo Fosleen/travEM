@@ -1,0 +1,32 @@
+@import "../../../utils/theme.scss";
+
+.edit-footer-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 12px;
+
+  .edit-footer-image-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    img {
+      max-width: 800px;
+      max-height: 400px;
+    }
+  }
+
+  .edit-footer-input-container {
+    max-width: 800px;
+  }
+
+  p {
+    margin-top: 24px;
+  }
+
+  .edit-footer-buttons {
+    display: flex;
+    gap: 8px;
+  }
+}

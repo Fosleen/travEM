@@ -33,11 +33,15 @@ const Specificities: FC<{
               <div className="country-highligth-content">
                 {specificities.specificity_items.map((el, index) => (
                   <div className="country-highligth-content-item" key={index}>
-                    <div className="country-highlights-content-item-title">
-                      <Dot size={32} color="#1abb6f" weight="duotone" />
-                      <h4>{el.title}</h4>
-                    </div>
-                    <p>{el.description}</p>
+                    {el.title && (
+                      <>
+                        <div className="country-highlights-content-item-title">
+                          <Dot size={32} color="#1abb6f" weight="duotone" />
+                          <h4>{el.title}</h4>
+                        </div>
+                        <p>{el.description}</p>
+                      </>
+                    )}
                   </div>
                 ))}
               </div>

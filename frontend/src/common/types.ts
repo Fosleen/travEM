@@ -100,9 +100,9 @@ export interface CountriesData {
   color?: { hex_value: string };
   characteristics?: Array<CharacteristicProps>;
   articles?: Array<ArticleProps>;
-  places: Array<PlacesData>;
-  specificities: Array<SpecificityProps>;
-  videos: Array<VideoProps>;
+  places?: Array<PlacesData>;
+  specificities?: Array<SpecificityProps>;
+  videos?: Array<VideoProps>;
 }
 
 export interface VideoProps {
@@ -232,8 +232,17 @@ export interface BlogStatsItemProps {
 export interface SpecificityProps {
   id: number;
   title: string;
-  specificity_items: Array<{ title: string; description: string }>;
-  specificity_images?: Array<{ url: string }>;
+  specificity_items: Array<{
+    id?: number;
+    title: string;
+    description: string;
+    specificityId?: number;
+  }>;
+  specificity_images?: Array<{
+    id?: number;
+    url: string;
+    specificityId?: number;
+  }>;
 }
 
 export interface CharacteristicProps {

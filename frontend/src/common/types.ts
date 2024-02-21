@@ -227,7 +227,8 @@ export interface DestinationsMapProps {
 
 export interface BlogStatsItemProps {
   icon: string;
-  value?: string;
+  value: string;
+  text: string;
 }
 
 export interface SpecificityProps {

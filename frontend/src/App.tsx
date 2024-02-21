@@ -27,6 +27,8 @@ import EditVisaInfo from "./Pages/AdminViewPages/EditVisaInfo/EditVisaInfo";
 import AddCountry from "./Pages/AdminViewPages/AddCountry/AddCountry";
 import EditMap from "./Pages/AdminViewPages/EditMap/EditMap";
 import EditPlace from "./Pages/AdminViewPages/EditPlace/EditPlace";
+import EditTopArticles from "./Pages/AdminViewPages/EditTopArticles/EditTopArticles";
+import EditFavoriteArticles from "./Pages/AdminViewPages/EditFavoriteArticles/EditFavoriteArticles";
 import EditFooter from "./Pages/AdminViewPages/EditFooter/EditFooter";
 import EditCountry from "./Pages/AdminViewPages/EditCountry/EditCountry";
 
@@ -66,6 +68,11 @@ function App() {
           <Route path="/admin/uredi-hero" element={<EditHero />} />
           <Route path="/admin/uredi-banner" element={<EditBanner />} />
           <Route path="/admin/uredi-statistiku" element={<EditStats />} />
+          <Route path="/admin/uredi-top-tri" element={<EditTopArticles />} />
+          <Route
+            path="/admin/uredi-omiljene-clanke"
+            element={<EditFavoriteArticles />}
+          />
           <Route path="/admin/uredi-vize" element={<EditVisaInfo />} />
           <Route path="/admin/uredi-kartu" element={<EditMap />} />
           <Route path="/admin/uredi-footer" element={<EditFooter />} />

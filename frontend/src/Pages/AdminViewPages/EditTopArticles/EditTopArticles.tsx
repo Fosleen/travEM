@@ -1,46 +1,36 @@
-import "./EditBanner.scss";
-import Button from "../../../components/atoms/Button";
-import { useEffect, useState } from "react";
-import { EditBannerData, HomepageData } from "../../../common/types";
-import { getHomepage, updateBanner } from "../../../api/homepage";
-import Input from "../../../components/atoms/Input";
 import { useNavigate } from "react-router-dom";
-import {
-  notifyFailure,
-  notifySuccess,
-} from "../../../components/atoms/Toast/Toast";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import * as Yup from "yup";
-import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
+import "./EditTopArticles.scss";
+import { useEffect, useState } from "react";
 import {
   getArticles,
   getHomepageArticles,
   updateOrCreateTopHomepageArticles,
 } from "../../../api/article";
 import { ThreeDots } from "react-loader-spinner";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
+import Button from "../../../components/atoms/Button";
 import Swal from "sweetalert2";
+import {
+  notifyFailure,
+  notifySuccess,
+} from "../../../components/atoms/Toast/Toast";
 
-const EditBanner = () => {
-  const [homepageContent, setHomepageContent] = useState<HomepageData | null>(
-    null
-  );
+const EditTopArticles = () => {
   const [allArticles, setAllArticles] = useState(null);
   const [favoriteArticles, setFavoriteArticles] = useState<Array<{
     articleTypeId: number;
     id: number;
   }> | null>(null);
   const navigate = useNavigate();
-
   const fetchData = async () => {
     try {
-      const content = await getHomepage();
-      setHomepageContent(content);
       const _favoriteArticles = await getHomepageArticles();
       setFavoriteArticles(
         _favoriteArticles.filter(
           (el: { article_special_types: Array<{ id: number }>; id: number }) =>
             el.article_special_types.some(
-              (type) => type.id == 5 // 5 = banner_homepage_article)
+              (type) => type.id == 1 // 1 = top_homepage_article
             )
         )
       );
@@ -55,11 +45,19 @@ const EditBanner = () => {
     navigate("/admin/sadržaj");
   };
 
-  const handleSave = async (values: EditBannerData) => {
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleSave = async (values: {
+    recommended_post_1: number;
+    recommended_post_2: number;
+    recommended_post_3: number;
+  }) => {
     console.log(values);
     Swal.fire({
       title: "Jeste li sigurni?",
-      text: "Uredit ćete podatke u banneru.",
+      text: "Uredit ćete podatke top 3 istaknuta članka.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#2BAC82",
@@ -69,23 +67,14 @@ const EditBanner = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const updatedContent = await updateBanner(
-            values.banner_title,
-            values.banner_small_text,
-            values.banner_description,
-            values.button_text,
-            values.banner_image_url
-          );
           await updateOrCreateTopHomepageArticles(
             [
               values.recommended_post_1,
               values.recommended_post_2,
               values.recommended_post_3,
             ],
-            5 // 5 = banner_homepage_article
+            1 // 1 = top_homepage_article
           );
-
-          setHomepageContent(updatedContent);
           notifySuccess("Uspješno ažurirano!");
         } catch (error) {
           console.log(error);
@@ -95,89 +84,27 @@ const EditBanner = () => {
     });
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const ValidationSchema = Yup.object().shape({
-    banner_title: Yup.string()
-      .required("Obavezno polje!")
-      .max(45, "Naslov smije imati max 45 znakova!"),
-    banner_small_text: Yup.string()
-      .required("Obavezno polje!")
-      .max(45, "Sitan naslov smije imati max 45 znakova!"),
-    banner_description: Yup.string()
-      .required("Obavezno polje!")
-      .max(200, "Tekst smije imati max 200 znakova!"),
-    button_text: Yup.string()
-      .required("Obavezno polje!")
-      .max(45, "Gumb smije imati max 45 znakova!"),
-    banner_image_url: Yup.string().required("Obavezno polje!"),
-  });
-
   return (
-    <div className="edit-banner-container">
-      <h2>Uredi ravni banner i preporučene članke</h2>
-      {homepageContent && favoriteArticles && allArticles ? (
+    <div className="edit-top-homepage-articles-container">
+      <h2>Uredi top 3 istaknuta članka</h2>
+      {favoriteArticles && allArticles ? (
         <Formik
           initialValues={{
-            banner_title: homepageContent.banner_title,
-            banner_small_text: homepageContent.banner_small_text,
-            banner_description: homepageContent.banner_description,
-            button_text: homepageContent.button_text,
-            banner_image_url: homepageContent.banner_image_url,
             recommended_post_1: favoriteArticles[0].id,
             recommended_post_2: favoriteArticles[1].id,
             recommended_post_3: favoriteArticles[2].id,
           }}
-          validationSchema={ValidationSchema}
           onSubmit={handleSave}
           enableReinitialize={true}
         >
           {({ values, setFieldValue }) => (
             <Form>
-              <div className="edit-banner-inputs">
-                <Field
-                  name="banner_small_text"
-                  type="text"
-                  as={Input}
-                  label="Sitan naslov *"
-                />
-                <ErrorMessage name="banner_small_text" component="div" />
-                <Field
-                  name="banner_title"
-                  type="text"
-                  as={Input}
-                  label="Veliki naslov *"
-                />
-                <ErrorMessage name="banner_title" component="div" />
-                <Field
-                  name="banner_description"
-                  type="text"
-                  as={Input}
-                  label="Tekst odlomka *"
-                />
-                <ErrorMessage name="banner_description" component="div" />
-                <Field
-                  name="button_text"
-                  type="text"
-                  as={Input}
-                  label="Tekst gumba *"
-                />
-                <ErrorMessage name="button_text" component="div" />
-                <Field
-                  name="banner_image_url"
-                  type="text"
-                  as={Input}
-                  label="URL slike bannera *"
-                />
-                <ErrorMessage name="banner_image_url" component="div" />
+              <div className="edit-top-homepage-articles-inputs">
                 <Field
                   name="recommended_post_1"
                   type="text"
                   selectedValue={values.recommended_post_1}
                   as={AdvancedDropdown}
-                  label="Preporučeni članci *"
                   options={allArticles}
                   filterAttribute={"title"}
                   defaultValue={favoriteArticles[0].id}
@@ -216,13 +143,8 @@ const EditBanner = () => {
                 />
                 <ErrorMessage name="recommended_post_3" component="div" />
               </div>
-              <div className="edit-banner-image-container">
-                <img
-                  src={homepageContent.banner_image_url}
-                  alt="problem-with-banner-image"
-                />
-              </div>
-              <div className="edit-banner-buttons">
+
+              <div className="edit-top-homepage-articles-buttons">
                 <Button type="submit" adminPrimary>
                   spremi promjene
                 </Button>
@@ -248,4 +170,4 @@ const EditBanner = () => {
   );
 };
 
-export default EditBanner;
+export default EditTopArticles;

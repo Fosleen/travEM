@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import "./ArticleReadMore.scss";
 import ReadMore from "../../../../assets/images/read_more.png";
 

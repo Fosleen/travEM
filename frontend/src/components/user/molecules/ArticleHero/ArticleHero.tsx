@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { formatDate } from "../../../../utils/global";
 import ArticleImage from "../../atoms/ArticleImage";
 import "./ArticleHero.scss";

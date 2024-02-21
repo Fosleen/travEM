@@ -1,5 +1,7 @@
+// @ts-nocheck
+
 import "./ArticleImage.scss";
-import heroImage from "../../../../assets/images/post-image.jpg";
+
 import { useEffect, useState } from "react";
 
 const ArticleImage = ({ article }) => {

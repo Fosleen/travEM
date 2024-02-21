@@ -121,6 +121,7 @@ export interface PlacesData {
   map_icon: string;
   main_image_url: string;
   country_id: number;
+  country?: { name: string };
   countryId?: number;
   videos?: Array<{
     id: number;

@@ -1,3 +1,4 @@
+import country from "../models/country.js";
 import db from "../models/index.js";
 import { Op } from "sequelize";
 
@@ -17,6 +18,12 @@ class PlacesService {
   async getFeaturedPlaces() {
     try {
       const featuredPlaces = await db.models.Place.findAll({
+        include: [
+          {
+            model: db.models.Country,
+            attributes: ["name"],
+          },
+        ],
         where: { is_above_homepage_map: 1 },
       });
       return featuredPlaces;

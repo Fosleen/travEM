@@ -41,7 +41,7 @@ const DestinationsMenuItem: FC<{
                 key={index}
                 filterMenuItem
                 name={el.name}
-                flagUrl={el.flag_image_url}
+                iconUrl={el.flag_image_url}
               />
             )
           )}

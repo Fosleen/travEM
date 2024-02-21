@@ -59,7 +59,7 @@ const Modal = forwardRef<HTMLDialogElement, ModalProps>(
               />
 
               {isAddArticle && (
-                <div>
+                <div className="modal-input-container">
                   <Input
                     name="width"
                     placeholder="Unesi aspect ratio vrijednost za width"

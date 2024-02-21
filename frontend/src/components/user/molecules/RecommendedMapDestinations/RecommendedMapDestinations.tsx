@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import DestinationItem from "../../atoms/DestinationItem";
 import "./RecommendedMapDestinations.scss";
 import { getAboveMapPlaces } from "../../../../api/map";
-import { PlacesData } from "../../../../common/types";
-import { Nullable } from "primereact/ts-helpers";
+import { Nullable, PlacesData } from "../../../../common/types";
 
 const RecommendedMapDestinations = () => {
   const [places, setPlaces] = useState<Nullable<Array<PlacesData>>>(null);

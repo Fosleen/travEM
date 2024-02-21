@@ -81,6 +81,11 @@ export interface HomepageData {
   distance_nmbr: string;
 }
 
+export interface FooterData {
+  id: number;
+  image_url: string;
+}
+
 export interface EditBannerData {
   banner_title: string;
   banner_small_text: string;
@@ -263,3 +268,5 @@ export interface DestinationsMenuProps {
 export interface TipsMenuProps {
   setIsTipsMenuShown?: (isShown: boolean) => void;
 }
+
+export declare type Nullable<T = void> = T | null | undefined;

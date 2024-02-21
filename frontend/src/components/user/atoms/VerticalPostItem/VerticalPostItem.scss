@@ -19,7 +19,7 @@
       z-index: 2;
 
       &.text-title {
-        font-size: 24px;
+        font-size: 16px;
         font-weight: 700;
       }
 
@@ -64,6 +64,7 @@
 
       p {
         &.text-title {
+          font-size: 20px;
           font-weight: 800;
         }
         &.text-description {
@@ -89,6 +90,7 @@
         max-width: 256px;
 
         &.text-title {
+          font-size: 24px;
           font-weight: 800;
         }
       }

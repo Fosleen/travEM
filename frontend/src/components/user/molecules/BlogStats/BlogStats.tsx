@@ -6,9 +6,8 @@ import icon4 from "../../../../assets/images/plane-ticket-icon.png";
 import icon5 from "../../../../assets/images/vlogging-icon.png";
 import icon6 from "../../../../assets/images/walk-icon.png";
 import BlogStatsItem from "../../atoms/BlogStatsItem";
-import { HomepageData } from "../../../../common/types";
+import { HomepageData, Nullable } from "../../../../common/types";
 import { FC, useEffect, useState } from "react";
-import { Nullable } from "primereact/ts-helpers";
 import { getHomepageStats } from "../../../../api/homepage";
 
 const BlogStats: FC<{ homepageContent: HomepageData }> = ({
@@ -31,7 +30,7 @@ const BlogStats: FC<{ homepageContent: HomepageData }> = ({
       const stats = await getHomepageStats();
       setBlogStats(stats);
     } catch (error) {
-      console.error("Error occured while fetching homepage stats:", error);
+      console.error("Error occured while fetching blog stats:", error);
     }
   };
 

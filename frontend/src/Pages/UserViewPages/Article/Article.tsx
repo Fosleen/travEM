@@ -53,20 +53,18 @@ const Article = () => {
         <ArticleHero article={articleContent} />
       </div>
       <div className="article-location-parent">
-        <div className="article-location">
-          <img src={Location} alt="" />
-          {articleContent.articleTypeId === 1 && articleContent.place && (
+        {articleContent.articleTypeId === 1 && articleContent.place && (
+          <div className="article-location">
+            <img src={Location} alt="" />
+
             <h4>
               {articleContent.place.name}, {articleContent.country.name}
             </h4>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
-      <ArticleTableOfContents
-        article={articleContent}
-        key={articleContent.id}
-      />
+      <ArticleTableOfContents article={articleContent} key={articleContent} />
 
       <div className="article-content">
         {articleContent?.sections?.map((section) => {

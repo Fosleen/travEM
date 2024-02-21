@@ -81,6 +81,11 @@ export interface HomepageData {
   distance_nmbr: string;
 }
 
+export interface FooterData {
+  id: number;
+  image_url: string;
+}
+
 export interface EditBannerData {
   banner_title: string;
   banner_small_text: string;
@@ -103,9 +108,9 @@ export interface CountriesData {
   color?: { hex_value: string };
   characteristics?: Array<CharacteristicProps>;
   articles?: Array<ArticleProps>;
-  places: Array<PlacesData>;
-  specificities: Array<SpecificityProps>;
-  videos: Array<VideoProps>;
+  places?: Array<PlacesData>;
+  specificities?: Array<SpecificityProps>;
+  videos?: Array<VideoProps>;
 }
 
 export interface VideoProps {
@@ -124,6 +129,7 @@ export interface PlacesData {
   map_icon: string;
   main_image_url: string;
   country_id: number;
+  country?: { name: string };
   countryId?: number;
   videos?: Array<{
     id: number;
@@ -230,14 +236,24 @@ export interface DestinationsMapProps {
 
 export interface BlogStatsItemProps {
   icon: string;
-  value?: string;
+  value: string;
+  text: string;
 }
 
 export interface SpecificityProps {
   id: number;
   title: string;
-  specificity_items: Array<{ title: string; description: string }>;
-  specificity_images?: Array<{ url: string }>;
+  specificity_items: Array<{
+    id?: number;
+    title: string;
+    description: string;
+    specificityId?: number;
+  }>;
+  specificity_images?: Array<{
+    id?: number;
+    url: string;
+    specificityId?: number;
+  }>;
 }
 
 export interface CharacteristicProps {
@@ -265,3 +281,5 @@ export interface DestinationsMenuProps {
 export interface TipsMenuProps {
   setIsTipsMenuShown?: (isShown: boolean) => void;
 }
+
+export declare type Nullable<T = void> = T | null | undefined;

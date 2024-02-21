@@ -116,7 +116,17 @@ export async function updateOrCreateTopHomepageArticles(
       article_id: articleIds,
     }),
   });
+  const data = await response.json();
 
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function getArticleById(id: number) {
+  const response = await fetch(`${apiUrl}/articles/${id}`);
   const data = await response.json();
 
   if (!response.ok) {

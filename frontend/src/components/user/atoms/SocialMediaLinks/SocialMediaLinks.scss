@@ -55,6 +55,9 @@
 
 @media screen and ($desktop) {
   .socials-container {
+    padding-left: 0;
+    margin-bottom: 0;
+
     .socials-item {
       width: 36px;
       height: 36px;

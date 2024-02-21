@@ -1,22 +1,19 @@
 import { apiUrl } from "./api";
 
-export async function addGalleryImage(
+export async function updateSpecificityImage(
+  id: number,
   url: string,
-  height: string,
-  width: string,
-  article_id: number
+  specificity_id: number
 ) {
-  const response = await fetch(`${apiUrl}/gallery-images`, {
+  const response = await fetch(`${apiUrl}/specificity-images/${id}`, {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    method: "POST",
+    method: "PATCH",
     body: JSON.stringify({
       url: url,
-      height: height,
-      width: width,
-      article_id: article_id,
+      specificity_id: specificity_id,
     }),
   });
 

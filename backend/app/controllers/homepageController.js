@@ -10,6 +10,15 @@ class HomepageController {
     }
   }
 
+  async getHomepageStats(req, res) {
+    const response = await service.getHomepageStats();
+    if (response == undefined) {
+      res.status(404).json({ error: "No homepage stats found" });
+    } else {
+      res.status(200).json(response);
+    }
+  }
+
   async patchHomepage(req, res) {
     const response = await service.patchHomepage(
       req.body.hero_image_url,

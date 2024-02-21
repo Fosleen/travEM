@@ -1,3 +1,4 @@
+import { CountriesData } from "../common/types";
 import { apiUrl } from "./api";
 
 export async function getCountries(page = 1, pageSize = 12) {
@@ -87,5 +88,46 @@ export async function addCountry(
     console.log(data.error);
     return data.error;
   }
+  return data;
+}
+
+export async function getCountryPlaces(id: number) {
+  const response = await fetch(`${apiUrl}/countries/places/${id}`);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function updateCountry(country: CountriesData) {
+  console.log(country);
+
+  const response = await fetch(`${apiUrl}/countries/${country.id}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "PATCH",
+    body: JSON.stringify({
+      name: country.name,
+      description: country.description,
+      main_image_url: country.main_image_url,
+      flag_image_url: country.flag_image_url,
+      continent_id: country.continentId,
+      color_id: country.colorId,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  console.log(data);
+
   return data;
 }

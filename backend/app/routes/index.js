@@ -1,5 +1,6 @@
 import { Router } from "express";
 import homepage from "./homepageRoute.js";
+import footer from "./footerRoute.js";
 import articleType from "./articleTypeRoute.js";
 import article from "./articleRoute.js";
 import section from "./sectionRoute.js";
@@ -15,11 +16,14 @@ import characteristic from "./characteristicRoute.js";
 import specificity from "./specificityRoute.js";
 import color from "./colorRoute.js";
 import characteristicIcon from "./characteristicIconRoute.js";
+import specificityImage from "./specificityImageRoute.js";
+import specificityItem from "./specificityItemRoute.js";
 import video from "./videoRoute.js";
 
 const router = new Router();
 
 router.use("/homepage", homepage);
+router.use("/footer", footer);
 router.use("/article-types", articleType);
 router.use("/articles", article);
 router.use("/sections", section);
@@ -31,6 +35,8 @@ router.use("/characteristics", characteristic);
 router.use("/specificities", specificity);
 router.use("/colors", color);
 router.use("/characteristic-icons", characteristicIcon);
+router.use("/specificity-items", specificityItem);
+router.use("/specificity-images", specificityImage);
 
 router.use("/register", register);
 router.use("/login", login);

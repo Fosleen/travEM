@@ -14,9 +14,10 @@ const DestinationVideos = ({ data }) => {
             <img src={vlogIcon} alt="vlogging-camera-icon" />
           </div>
           <div className="destination-videos">
-            {data.map((el: VideoProps, index: number) => (
-              <VideoItem key={index} url={el.url} />
-            ))}
+            {data.map(
+              (el: VideoProps, index: number) =>
+                el.url && <VideoItem key={index} url={el.url} />
+            )}
           </div>
         </>
       )}

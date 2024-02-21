@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import icon from "../../../../assets/images/building-icon.png";
 import "./DestinationItem.scss";
 import { FC } from "react";
 
@@ -7,20 +6,20 @@ const DestinationItem: FC<{
   mapItem?: boolean;
   filterMenuItem?: boolean;
   name?: string;
-  flagUrl?: string;
+  iconUrl?: string;
   countryName?: string;
 }> = ({
   mapItem = false,
   filterMenuItem = false,
-  name = "London",
-  flagUrl,
+  name = "",
+  iconUrl,
   countryName = null,
 }) => {
   return (
     <Link
       to={
         countryName
-          ? `/destinacija/${countryName}/${name.toLowerCase()}`
+          ? `/destinacija/${countryName.toLowerCase()}/${name.toLowerCase()}`
           : `/destinacija/${name.toLowerCase()}`
       }
       className={`destination-item-container ${
@@ -28,10 +27,10 @@ const DestinationItem: FC<{
       } ${filterMenuItem && "flag"} ${mapItem && "sights"}`}
     >
       {filterMenuItem && (
-        <img className="flag-icon" src={flagUrl} alt="destination-image" />
+        <img className="flag-icon" src={iconUrl} alt="destination-image" />
       )}
       <p>{name}</p>
-      {mapItem && <img src={icon} alt="destination-image" />}
+      {mapItem && <img src={iconUrl} alt="destination-image" />}
     </Link>
   );
 };

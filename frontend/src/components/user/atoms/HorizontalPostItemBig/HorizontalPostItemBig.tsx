@@ -1,6 +1,7 @@
+// @ts-nocheck
+
 import { FC } from "react";
 import "./HorizontalPostItemBig.scss";
-import { Link } from "react-router-dom";
 import { formatDate } from "../../../../utils/global";
 import { HorizontalPostItemBigProps } from "../../../../common/types";
 
@@ -9,20 +10,12 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
   thin,
   hasDate = true,
   type = "article",
-  data = {
-    id: null,
-    main_image_url:
-      "https://cdn.pixabay.com/photo/2014/06/03/19/38/board-361516_640.jpg",
-    title: "-defaultni naslov-",
-    name: "",
-    subtitle: null,
-    date_written: null,
-  },
+  data,
 }) => {
   return (
-    <Link
-      to={
-        type == "article" ? `/clanak/${data.id}` : `/destinacija/${data.name}`
+    <a
+      href={
+        type === "article" ? `/clanak/${data.id}` : `/destinacija/${data.title}`
       }
     >
       <div
@@ -43,7 +36,7 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
           </div>
         </div>
       </div>
-    </Link>
+    </a>
   );
 };
 

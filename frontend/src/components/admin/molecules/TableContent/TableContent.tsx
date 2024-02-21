@@ -34,7 +34,10 @@ const TableContent = ({ data, type }) => {
       columnHelper.display({
         id: "actions",
         cell: (row) => (
-          <Button edit onClick={() => handleEdit(row.row.original.id)}>
+          <Button
+            edit
+            onClick={() => handleEdit(row.row.original.name.toLowerCase())}
+          >
             <PencilSimpleLine size={16} color="#333333" />
           </Button>
         ),

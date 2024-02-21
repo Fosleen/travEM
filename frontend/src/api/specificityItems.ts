@@ -1,12 +1,11 @@
 import { apiUrl } from "./api";
 
-export async function addCharacteristic(
+export async function addSpecificityItem(
   title: string,
   description: string,
-  country_id: number,
-  characteristic_icon_id: number
+  specificity_id: number
 ) {
-  const response = await fetch(`${apiUrl}/characteristics`, {
+  const response = await fetch(`${apiUrl}/specificity-items`, {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -15,8 +14,7 @@ export async function addCharacteristic(
     body: JSON.stringify({
       title: title,
       description: description,
-      country_id: country_id,
-      characteristic_icon_id: characteristic_icon_id,
+      specificity_id: specificity_id,
     }),
   });
 
@@ -29,13 +27,12 @@ export async function addCharacteristic(
   return data;
 }
 
-export async function updateCharacteristic(
+export async function updateSpecificityItem(
   id: number,
   title: string,
-  description: string,
-  characteristic_icon_id: number
+  description: string
 ) {
-  const response = await fetch(`${apiUrl}/characteristics/${id}`, {
+  const response = await fetch(`${apiUrl}/specificity-items/${id}`, {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -44,8 +41,25 @@ export async function updateCharacteristic(
     body: JSON.stringify({
       title: title,
       description: description,
-      characteristic_icon_id: characteristic_icon_id,
     }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function deleteSpecificityItem(id: number) {
+  const response = await fetch(`${apiUrl}/specificity-items/${id}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "DELETE",
   });
 
   const data = await response.json();

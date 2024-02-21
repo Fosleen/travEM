@@ -13,9 +13,7 @@ const SidebarMenu = () => {
         <SidebarMenuItem text={"Članci"} />
         <SidebarMenuItem text={"Države"} />
         <SidebarMenuItem text={"Mjesta"} />
-        <Link to="admin/meni-uredi-pocetnu">
-          <SidebarMenuItem text={"Sadržaj"} />
-        </Link>
+        <SidebarMenuItem text={"Sadržaj"} />
       </div>
     </div>
   );

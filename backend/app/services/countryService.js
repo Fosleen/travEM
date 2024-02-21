@@ -159,6 +159,7 @@ class CountriesService {
     main_image_url,
     flag_image_url,
     user_id,
+    color_id,
     continent_id
   ) {
     console.log(id);

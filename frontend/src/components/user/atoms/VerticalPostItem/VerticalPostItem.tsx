@@ -5,7 +5,7 @@ import { Article } from "../../../../common/types";
 
 const VerticalPostItem: FC<{ article: Article }> = ({ article }) => {
   return (
-    <Link to="/" className="vertical-post-item-container">
+    <Link to={`/clanak/${article.id}`} className="vertical-post-item-container">
       <div className="vertical-post-item-text-container">
         <p className="text-title">{article.title}</p>
         <p className="text-description">{article.subtitle}</p>

@@ -11,7 +11,7 @@ const HorizontalPostItem: FC<{ isSmall?: boolean; article: Article }> = ({
     <>
       {article && (
         <Link
-          to="/"
+          to={`/clanak/${article.id}`}
           className={`horizontal-post-item-container ${isSmall && "small"}`}
         >
           <div

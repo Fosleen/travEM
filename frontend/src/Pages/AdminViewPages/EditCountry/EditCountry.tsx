@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "./EditCountry.scss";
 import { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
-import { countries as countryList } from "../../../components/organisms/DestinationsMap/visited_countries";
+import { countries as countryList } from "../../../utils/all_countries.ts";
 import Swal from "sweetalert2";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 import Modal from "../../../components/atoms/Modal";

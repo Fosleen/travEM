@@ -5,9 +5,14 @@ import "./ArticleFragment.scss";
 import { FC } from "react";
 import { ArticleProps } from "../../../../common/types";
 
-const ArticleFragment: FC<ArticleProps> = ({ section = {}, article = {} }) => {
+const ArticleFragment: FC<ArticleProps> = ({
+  section = {},
+  article = {},
+  index,
+}) => {
+  const sectionId = `odlomak-${index}`;
   return (
-    <div className="article-wrapper">
+    <div className="article-wrapper" id={sectionId}>
       <h3>{section?.subtitle}</h3>
       <p>{section?.text}</p>
       {section?.section_images?.length === 1 && (

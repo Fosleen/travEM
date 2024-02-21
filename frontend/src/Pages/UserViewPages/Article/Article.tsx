@@ -15,6 +15,7 @@ import { getArticleById, getRecommendedArticles } from "../../../api/article";
 import { useParams } from "react-router-dom";
 import { getCountryPlaces } from "../../../api/countries";
 import { ThreeDots } from "react-loader-spinner";
+import React from "react";
 
 const Article = () => {
   const { id } = useParams();
@@ -88,13 +89,13 @@ const Article = () => {
             key={articleContent}
           />
           <div className="article-content">
-            {articleContent?.sections?.map((section) => (
-              <>
-                <ArticleFragment section={section} />
+            {articleContent?.sections?.map((section, index) => (
+              <React.Fragment key={index}>
+                <ArticleFragment section={section} index={index} />
                 {section.link_title !== "" && (
                   <ArticleReadMore section={section} />
                 )}
-              </>
+              </React.Fragment>
             ))}
             <ArticleFragment article={articleContent} />
           </div>

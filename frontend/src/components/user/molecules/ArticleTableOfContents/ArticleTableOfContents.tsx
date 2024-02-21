@@ -12,14 +12,13 @@ const ArticleTableOfContents = ({ article }) => {
 
         <ul>
           {article?.sections?.map((section, index) => {
-            const sectionId = `section-${index}`;
+            const sectionId = `odlomak-${index}`;
             return (
               <TableOfContentsItem
                 key={index}
                 icon={section.section_icon.url}
-                text={section.text}
-                href={`#${sectionId}`}
-                sectionId={sectionId} // Pass sectionId as prop
+                text={section.subtitle}
+                href={`#${sectionId}`} // Use sectionId here
               />
             );
           })}

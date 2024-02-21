@@ -68,6 +68,9 @@ class ArticleService {
               {
                 model: db.models.SectionImage,
               },
+              {
+                model: db.models.SectionIcon,
+              },
             ],
           },
           {

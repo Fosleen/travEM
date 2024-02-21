@@ -1,6 +1,11 @@
 import { apiUrl } from "./api";
 
-export async function addGalleryImage(url: string, article_id: number) {
+export async function addGalleryImage(
+  url: string,
+  height: string,
+  width: string,
+  article_id: number
+) {
   const response = await fetch(`${apiUrl}/gallery-images`, {
     headers: {
       Accept: "application/json",
@@ -9,6 +14,8 @@ export async function addGalleryImage(url: string, article_id: number) {
     method: "POST",
     body: JSON.stringify({
       url: url,
+      height: height,
+      width: width,
       article_id: article_id,
     }),
   });

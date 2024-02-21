@@ -1,5 +1,6 @@
 import { Router } from "express";
 import homepage from "./homepageRoute.js";
+import footer from "./footerRoute.js";
 import articleType from "./articleTypeRoute.js";
 import article from "./articleRoute.js";
 import section from "./sectionRoute.js";
@@ -20,6 +21,7 @@ import video from "./videoRoute.js";
 const router = new Router();
 
 router.use("/homepage", homepage);
+router.use("/footer", footer);
 router.use("/article-types", articleType);
 router.use("/articles", article);
 router.use("/sections", section);

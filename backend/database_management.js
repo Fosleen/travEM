@@ -66,14 +66,6 @@ export const createAssociations = () => {
   });
   db.models.SectionImage.belongsTo(db.models.Section);
 
-  db.models.Footer.hasMany(db.models.FooterGroup, {
-    foreignKey: { allowNull: false },
-  });
-
-  db.models.FooterGroup.hasMany(db.models.FooterItem, {
-    foreignKey: { allowNull: false },
-  });
-
   db.models.Country.belongsTo(db.models.Color, {
     foreignKey: { allowNull: false },
   });

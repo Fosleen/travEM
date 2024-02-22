@@ -39,6 +39,7 @@ const TipsAndTricks = () => {
   useEffect(() => {
     setArticles(null);
     findSelectedArticleType();
+    setPage(1);
   }, [articleTypes, tip]);
 
   const findSelectedArticleType = () => {

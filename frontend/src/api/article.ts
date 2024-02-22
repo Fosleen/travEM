@@ -54,7 +54,11 @@ export async function getArticlesByName(name: string, page = 1, pageSize = 12) {
   return data;
 }
 
-export async function getArticles(page = 1, pageSize = 12, articleType = null) {
+export async function getArticles(
+  page = 1,
+  pageSize = 12,
+  articleType: number | null = null
+) {
   const response = await fetch(
     `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${articleType}`
   );

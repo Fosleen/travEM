@@ -2,22 +2,22 @@ import { CaretDown } from "@phosphor-icons/react";
 import Search from "../../../atoms/Search";
 import SocialMediaLinks from "../../atoms/SocialMediaLinks/SocialMediaLinks";
 import "./NavbarDesktop.scss";
-import { useLocation } from "react-router";
-import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router";
+import { FC, SetStateAction, useEffect, useState } from "react";
 
-const NavbarDesktop = ({
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
+const NavbarDesktop: FC<{
+  setIsPlaneTicketsMenuShown: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsDestinationsMenuShown: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsTipsMenuShown: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({
   setIsPlaneTicketsMenuShown,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
   setIsDestinationsMenuShown,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
   setIsTipsMenuShown,
 }) => {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
+  const [searchText, setSearchText] = useState<string>("");
+  const navigate = useNavigate();
 
   const handlePlaneTicketsMouseOver = () => {
     closeAllMenus();
@@ -45,6 +45,16 @@ const NavbarDesktop = ({
     setIsDestinationsMenuShown(false);
   }, [location]);
 
+  const handleSearchChange = (e: {
+    target: { value: SetStateAction<string> };
+  }) => {
+    setSearchText(e.target.value);
+  };
+
+  const handleSearch = () => {
+    navigate(`/pretrazivanje?naslov=${searchText}`);
+  };
+
   return (
     <div className="navbar-desktop-container">
       <div className="navbar-desktop-inner-container">
@@ -68,7 +78,7 @@ const NavbarDesktop = ({
         </div>
       </div>
       <div className="navbar-desktop-inner-container">
-        <Search onChange={() => {}} />
+        <Search onChange={handleSearchChange} onClick={handleSearch} />
         <SocialMediaLinks />
       </div>
     </div>

@@ -5,6 +5,7 @@ import { PaginationProps } from "../../../common/types";
 
 const Pagination: FC<PaginationProps> = ({ setPage, totalPages }) => {
   const handlePageClick = (event: { selected: number }) => {
+    window.scrollTo({ top: 0, behavior: "instant" });
     setPage(event.selected + 1);
   };
 

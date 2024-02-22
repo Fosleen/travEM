@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
@@ -97,8 +98,6 @@ const AddArticle = () => {
           todaysDate
         );
 
-        console.log(isMainCountryPostChecked); // TODO connect with backend to set as the main post for selected country (create backend)
-
         values.sections.map(async (section, index) => {
           const sectionResponse = await addSection(
             section.section_text,
@@ -110,14 +109,11 @@ const AddArticle = () => {
             articleResponse.id
           );
           sectionImages[index].map(async (el) => {
-            console.log("El je", el); // Log the value of el
             await addSectionImage(el.url, sectionResponse.id);
           });
         });
 
         otherArticleImages.map(async (image) => {
-          console.log(image);
-
           return await addGalleryImage(
             image.url,
             image.height,
@@ -125,7 +121,7 @@ const AddArticle = () => {
             articleResponse.id
           );
         });
-        //navigate("/admin/članci");
+        navigate("/admin/članci");
         notifySuccess("Uspješno predano!");
       }
     });

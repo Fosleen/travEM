@@ -5,3 +5,11 @@ export const formatDate = (dateString: Date) => {
   const year = date.getFullYear();
   return `${day}.${month}.${year}.`;
 };
+
+export const convertToSlug = (sentence: string) => {
+  return sentence.toLowerCase().replace(/\s+/g, "-");
+};
+
+export const convertFromSlug = (slug: string) => {
+  return slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, " ");
+};

@@ -62,7 +62,9 @@ const SearchResults = () => {
           visible={true}
         />
       )}
-      <Pagination totalPages={totalPages} setPage={setPage} />
+      {totalPages > 1 && (
+        <Pagination totalPages={totalPages} setPage={setPage} />
+      )}
     </div>
   );
 };

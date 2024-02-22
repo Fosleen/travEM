@@ -107,7 +107,12 @@ class ArticleService {
         }
       } else if (
         startingArticle.articleTypeId == 2 ||
-        startingArticle.articleTypeId == 3
+        startingArticle.articleTypeId == 3 ||
+        startingArticle.articleTypeId == 4 ||
+        startingArticle.articleTypeId == 5 ||
+        startingArticle.articleTypeId == 6 ||
+        startingArticle.articleTypeId == 7 ||
+        startingArticle.articleTypeId == 8
       ) {
         // aviokarte ili savjeti
         nmbrSameType = 4;
@@ -115,7 +120,14 @@ class ArticleService {
 
       if (nmbrSameType > 0) {
         let articlesSameType;
-        if (startingArticle.articleTypeId == 3) {
+        if (
+          startingArticle.articleTypeId == 3 ||
+          startingArticle.articleTypeId == 4 ||
+          startingArticle.articleTypeId == 5 ||
+          startingArticle.articleTypeId == 6 ||
+          startingArticle.articleTypeId == 7 ||
+          startingArticle.articleTypeId == 8
+        ) {
           // savjeti
           articlesSameType = await db.models.Article.findAll({
             where: {
@@ -124,9 +136,6 @@ class ArticleService {
             },
             order: Sequelize.literal("rand()"), // return random items, mysql dialect = rand function
             limit: nmbrSameType,
-          });
-          articlesSameType.forEach((el) => {
-            recommendedArticles.push(el);
           });
         } else if (startingArticle.articleTypeId == 2) {
           // aviokarte

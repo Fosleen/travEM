@@ -149,6 +149,7 @@ export interface ContinentsData {
 export interface ArticleType {
   id: number;
   name: string;
+  description?: string;
 }
 
 export interface SectionIconsData {

@@ -69,6 +69,22 @@ export interface AirplaneTicketsMenuProps {
   setIsPlaneTicketsMenuShown?: (value: boolean) => void;
 }
 
+export interface SectionImage {
+  id?: number;
+  url: string;
+  sectionId: number;
+  width?: number;
+  height?: number;
+}
+
+export interface GalleryImage {
+  id?: number;
+  url: string;
+  sectionId: number;
+  width?: number;
+  height?: number;
+}
+
 export interface HomepageData {
   id: number;
   hero_image_url: string;

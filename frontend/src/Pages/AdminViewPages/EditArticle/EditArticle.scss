@@ -32,6 +32,10 @@
       flex-direction: column;
       gap: 16px;
 
+      .edit-article-button {
+        margin-top: 16px;
+      }
+
       .edit-article-dropdowns {
         display: grid;
         grid-template-columns: 1fr 1fr;

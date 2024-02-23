@@ -5,8 +5,10 @@ import {
   Article,
   ArticleType,
   CountriesData,
+  GalleryImage,
   PlacesData,
   SectionIconsData,
+  SectionImage,
 } from "../../../common/types";
 import * as Yup from "yup";
 import { getPlacesByCountry } from "../../../api/places";
@@ -26,9 +28,25 @@ import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch/ToggleSwi
 import Swal from "sweetalert2";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 import {
+  deleteArticleById,
   getArticleById,
   getFavoriteArticleByCountry,
+  updateArticle,
 } from "../../../api/article";
+import {
+  addSection,
+  deleteSection,
+  updateSection,
+} from "../../../api/sections";
+import {
+  addSectionImage,
+  deleteSectionImage,
+  updateSectionImage,
+} from "../../../api/sectionImages";
+import {
+  addGalleryImage,
+  deleteGalleryImage,
+} from "../../../api/galleryImages";
 
 const EditArticle = () => {
   const { id } = useParams();
@@ -56,8 +74,6 @@ const EditArticle = () => {
 
   const [isMainCountryPostChecked, setIsMainCountryPostChecked] =
     useState(false);
-  const [isNotifySubscribersChecked, setIsNotifySubscribersChecked] =
-    useState(false);
 
   const ValidationSchema = Yup.object().shape({
     article_title: Yup.string()
@@ -78,6 +94,112 @@ const EditArticle = () => {
       confirmButtonText: "Da, objavi!",
     }).then(async (result) => {
       if (result.isConfirmed) {
+        const countryResponse = await updateArticle(
+          article.id,
+          values.article_title,
+          values.article_subtitle,
+          values.article_description,
+          mainArticleImage,
+          values.article_type,
+          values.article_country,
+          values.article_place
+        );
+        console.log(countryResponse);
+
+        values.sections.map(async (el, index) => {
+          if (el.section_id) {
+            await updateSection(
+              el.section_id,
+              el.section_text,
+              el.section_subtitle,
+              index + 1,
+              el.section_url_title,
+              el.section_url_link,
+              el.section_icon
+            );
+
+            sectionImages[index].map(async (image: SectionImage) => {
+              if (!image.id) {
+                await addSectionImage(
+                  image.url,
+                  el.section_id,
+                  image.width,
+                  image.height
+                );
+              }
+            });
+          } else {
+            const response = await addSection(
+              el.section_text,
+              el.section_subtitle,
+              index + 1,
+              el.section_url_title,
+              el.section_url_link,
+              el.section_icon,
+              article.id
+            );
+
+            sectionImages[index].map(async (image: SectionImage) => {
+              if (!image.id) {
+                await addSectionImage(
+                  image.url,
+                  response.section_id,
+                  image.height,
+                  image.width
+                );
+              }
+            });
+          }
+        });
+
+        // delete removed sections (and images in that section automatically)
+        const removedSections = article.sections
+          .map((section) => section.id) // take only id (later sectionId)
+          .filter(
+            (sectionId) =>
+              !values.sections.some(
+                (section) => section.section_id === sectionId // and check if any section_id (of any section in values.sections) has same id as current section (if yes, don't include it in removedSections array = ! in front)
+              )
+          );
+        removedSections.map(async (el: number) => await deleteSection(el));
+
+        // delete removed section images
+        const removedSectionImages = article.sections.map((section, index) =>
+          section.section_images
+            .map((image: SectionImage) => image.id)
+            .filter(
+              (imageId: number) =>
+                !sectionImages[index].some((img) => img.id === imageId)
+            )
+        );
+
+        removedSectionImages.map(async (el: Array<number>) => {
+          el.map(async (item: number) => {
+            await deleteSectionImage(item);
+          });
+        });
+
+        otherArticleImages.map(async (image: GalleryImage) => {
+          if (!image.id) {
+            return await addGalleryImage(
+              image.url,
+              image.height,
+              image.width,
+              article.id
+            );
+          }
+        });
+
+        const removedGalleryImages = article.gallery_images
+          .map((image: GalleryImage) => image.id)
+          .filter(
+            (imageId) => !otherArticleImages.some((img) => img.id === imageId)
+          );
+
+        removedGalleryImages.map(async (id: number) => {
+          await deleteGalleryImage(id);
+        });
+
         navigate("/admin/članci");
         notifySuccess("Uspješno uređen članak!");
       }
@@ -97,6 +219,7 @@ const EditArticle = () => {
 
   const handleAddSection = (arrayHelpers) => {
     arrayHelpers.push({
+      id: null,
       section_subtitle: "",
       section_text: "",
       section_url_title: "",
@@ -115,7 +238,6 @@ const EditArticle = () => {
     if (type == "main") {
       setMainArticleImage(null);
     } else if (type == "other") {
-      //ovo tu su gallery slike
       setOtherArticleImages(
         otherArticleImages.filter((_el, index) => index !== itemIndex)
       );
@@ -141,7 +263,6 @@ const EditArticle = () => {
 
   const handleAddImage = () => {
     if (imageType == "main") {
-      console.log("Modal input value", modalInputValue);
       setMainArticleImage(modalInputValue);
     } else if (imageType == "other") {
       setOtherArticleImages([
@@ -158,11 +279,12 @@ const EditArticle = () => {
         [
           ...prevSectionImages[sectionSelected],
           {
+            id: null,
             url: modalInputValue,
-            width: imageWidthValue,
-            height: imageHeightValue,
+            width: imageWidthValue | null,
+            height: imageHeightValue | null,
           },
-        ], // dodavanje slike na kraj odabrane sekcije...tu moram neki objekt dodavati
+        ], // dodavanje slike na kraj odabrane sekcije
         ...prevSectionImages.slice(sectionSelected + 1), // kopija polja nakon indexa odabrane sekcije
       ]);
     }
@@ -181,17 +303,13 @@ const EditArticle = () => {
         const isSetAsMainCountryPost = await getFavoriteArticleByCountry(
           articleData.countryId
         );
-        console.log(isSetAsMainCountryPost);
 
         setArticleTypes(articleTypesData);
         setCountries(countriesData);
         setSectionIcons(sectionIconsData);
         setArticle(articleData);
         setMainArticleImage(articleData.main_image_url);
-        console.log(articleData);
-        console.log(articleData.sections);
         setIsMainCountryPostChecked(isSetAsMainCountryPost.id == id);
-
         setSectionImages(
           articleData.sections.map((section) => section.section_images)
         );
@@ -202,13 +320,7 @@ const EditArticle = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(sectionImages);
-  }, [sectionImages]);
-
   const fetchPlacesData = async () => {
-    console.log(selectedCountryId);
-
     const placesData = await getPlacesByCountry(parseInt(selectedCountryId));
     setPlaces(placesData);
   };
@@ -224,7 +336,7 @@ const EditArticle = () => {
   const handleDeleteArticleById = () => {
     Swal.fire({
       title: `DESTRUKTIVNA RADNJA!\nJeste li sigurni da želite izbrisati članak ${article?.title}`,
-      text: "Izbrisat ćete ovo mjesto i sve članke o njemu",
+      text: "Izbrisat ćete ovaj članak zauvijek!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#2BAC82",
@@ -233,8 +345,7 @@ const EditArticle = () => {
       confirmButtonText: "Da, izbriši!",
     }).then(async (result) => {
       if (result.isConfirmed && article) {
-        // const placeResponse = await deleteAr(place.id);
-        // console.log(placeResponse);
+        await deleteArticleById(article.id);
 
         navigate("/admin/mjesta");
         notifySuccess("Uspješno izbrisan članak!");
@@ -270,6 +381,7 @@ const EditArticle = () => {
                 article_place: article.placeId || "",
                 sections: article.sections
                   ? article.sections.map((el) => ({
+                      section_id: el.id,
                       section_subtitle: el.subtitle,
                       section_text: el.text,
                       section_url_title: el.link_title,
@@ -331,41 +443,59 @@ const EditArticle = () => {
                       />
                       {values.article_type == "1" && (
                         <>
-                          <Field
-                            name="article_country"
-                            type="text"
-                            as={AdvancedDropdown}
-                            label="Država članka (opcionalno)"
-                            hardcodedValue="Odaberi državu o kojoj se radi..."
-                            options={countries}
-                            onChange={(value) => {
-                              setFieldValue("article_country", value.id);
-                              setSelectedCountryId(value.id);
-                            }}
-                            selectedValue={values.article_country}
-                            imageAttribute="flag_image_url"
-                            filter
-                            images
-                          />
-
-                          {values.article_country != "" && places && (
+                          <>
                             <Field
-                              name="article_place"
+                              name="article_country"
                               type="text"
                               as={AdvancedDropdown}
-                              label="Mjesto članka (opcionalno)"
-                              hardcodedValue="Odaberi grad ili mjesto o kojem se radi"
-                              options={places}
+                              label="Država članka (opcionalno)"
+                              hardcodedValue="Odaberi državu o kojoj se radi..."
+                              options={countries}
                               onChange={(value) => {
-                                setFieldValue("article_place", value.id);
+                                setFieldValue("article_country", value.id);
+                                setSelectedCountryId(value.id);
                               }}
-                              selectedValue={values.article_place}
+                              selectedValue={values.article_country}
+                              imageAttribute="flag_image_url"
                               filter
+                              images
                             />
-                          )}
+
+                            {values.article_country != "" &&
+                              values.article_country &&
+                              places && (
+                                <Field
+                                  name="article_place"
+                                  type="text"
+                                  as={AdvancedDropdown}
+                                  label="Mjesto članka (opcionalno)"
+                                  hardcodedValue="Odaberi grad ili mjesto o kojem se radi"
+                                  options={places}
+                                  onChange={(value) => {
+                                    setFieldValue("article_place", value.id);
+                                  }}
+                                  selectedValue={values.article_place}
+                                  filter
+                                />
+                              )}
+                          </>
                         </>
                       )}
                     </div>
+                    {values.article_type == "1" &&
+                      values.article_country != "" &&
+                      values.article_country && (
+                        <Button
+                          red
+                          onClick={() => {
+                            setSelectedCountryId(null);
+                            setFieldValue("article_country", null);
+                            setFieldValue("article_place", null);
+                          }}
+                        >
+                          ukloni odabranu državu i grad
+                        </Button>
+                      )}
                   </div>
                   <div className="edit-article-images-container">
                     {mainArticleImage ? (
@@ -504,20 +634,22 @@ const EditArticle = () => {
                                               </div>
                                             )
                                           )}
-                                        <div
-                                          className="edit-article-item"
-                                          onClick={() => {
-                                            toggleDialog();
-                                            setImageType("section");
-                                            setSectionSelected(index);
-                                          }}
-                                        >
-                                          <Plus
-                                            size={32}
-                                            color="#616161"
-                                            weight="bold"
-                                          />
-                                        </div>
+                                        {sectionImages[index].length < 2 && (
+                                          <div
+                                            className="edit-article-item"
+                                            onClick={() => {
+                                              toggleDialog();
+                                              setImageType("section");
+                                              setSectionSelected(index);
+                                            }}
+                                          >
+                                            <Plus
+                                              size={32}
+                                              color="#616161"
+                                              weight="bold"
+                                            />
+                                          </div>
+                                        )}
                                       </div>
                                       <Button
                                         type="button"
@@ -532,6 +664,10 @@ const EditArticle = () => {
                                         izbriši odlomak
                                       </Button>
                                     </div>
+                                    <p>
+                                      * preporuča se 1 slika u omjeru 16:9 ili
+                                      max. 2 u omjeru 9:16
+                                    </p>
                                   </fieldset>
                                 ))
                               : null}
@@ -559,6 +695,7 @@ const EditArticle = () => {
                             onClick={() => {
                               handleDeleteImage("other", index);
                             }}
+                            key={index}
                           >
                             <div className="edit-article-image-remove-icon">
                               <X size={32} color="#e70101" weight="bold" />
@@ -592,7 +729,7 @@ const EditArticle = () => {
 
                   <div className="edit-article-buttons">
                     <Button type="submit" adminPrimary>
-                      objavi članak
+                      uredi članak
                     </Button>
                     <Button type="button" white onClick={handleCancel}>
                       Odustani

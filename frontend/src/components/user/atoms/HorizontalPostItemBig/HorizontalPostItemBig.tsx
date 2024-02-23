@@ -15,7 +15,9 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
   return (
     <a
       href={
-        type === "article" ? `/clanak/${data.id}` : `/destinacija/${data.title}`
+        type === "article"
+          ? `/clanak/${data.id}`
+          : `/destinacija/${data.name?.toLowerCase()}`
       }
     >
       <div

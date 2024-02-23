@@ -16,6 +16,7 @@ const AdvancedDropdown: FC<DropdownProps> = ({
   selectedValue,
   defaultValue = null,
   filterAttribute = "name",
+  imageAttribute = "url",
 }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
@@ -63,7 +64,13 @@ const AdvancedDropdown: FC<DropdownProps> = ({
     if (option) {
       return (
         <div className="option-item selected">
-          {images && <img alt={option.url} src={option.url} className="icon" />}
+          {images && (
+            <img
+              alt={option[imageAttribute]}
+              src={option[imageAttribute]}
+              className="icon"
+            />
+          )}
           {option[filterAttribute] && <div>{option[filterAttribute]}</div>}
         </div>
       );
@@ -75,7 +82,13 @@ const AdvancedDropdown: FC<DropdownProps> = ({
   const itemOptionTemplate: FC<{ url?: string; name?: string }> = (option) => {
     return (
       <div className="option-item">
-        {images && <img alt={option.name} src={option.url} className="icon" />}
+        {images && (
+          <img
+            alt={option.name}
+            src={option[imageAttribute]}
+            className="icon"
+          />
+        )}
         <div>{option[filterAttribute]}</div>
       </div>
     );

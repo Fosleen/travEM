@@ -1,12 +1,33 @@
 import db from "../models/index.js";
 
 class SectionImageService {
-  async addSectionImage(url, section_id) {
+  async addSectionImage(url, section_id, width, height) {
     try {
       const sectionImage = await db.models.SectionImage.create({
         url: url,
         sectionId: section_id,
+        width: width,
+        height: height,
       });
+      return sectionImage;
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+
+  async patchSectionImage(url, id, width, height) {
+    try {
+      const sectionImage = await db.models.SectionImage.update(
+        {
+          url: url,
+          width: width,
+          height: height,
+        },
+        {
+          where: { id: id },
+        }
+      );
       return sectionImage;
     } catch (error) {
       console.log(error);

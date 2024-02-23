@@ -475,20 +475,22 @@ const AddArticle = () => {
                                             </div>
                                           )
                                         )}
-                                      <div
-                                        className="add-article-item"
-                                        onClick={() => {
-                                          toggleDialog();
-                                          setImageType("section");
-                                          setSectionSelected(index);
-                                        }}
-                                      >
-                                        <Plus
-                                          size={32}
-                                          color="#616161"
-                                          weight="bold"
-                                        />
-                                      </div>
+                                      {sectionImages[index].length < 2 && (
+                                        <div
+                                          className="add-article-item"
+                                          onClick={() => {
+                                            toggleDialog();
+                                            setImageType("section");
+                                            setSectionSelected(index);
+                                          }}
+                                        >
+                                          <Plus
+                                            size={32}
+                                            color="#616161"
+                                            weight="bold"
+                                          />
+                                        </div>
+                                      )}
                                     </div>
                                     <Button
                                       type="button"
@@ -503,6 +505,10 @@ const AddArticle = () => {
                                       izbriši odlomak
                                     </Button>
                                   </div>
+                                  <p>
+                                    * preporuča se 1 slika u omjeru 16:9 ili
+                                    max. 2 u omjeru 9:16
+                                  </p>
                                 </fieldset>
                               ))
                             : null}

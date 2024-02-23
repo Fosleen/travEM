@@ -121,7 +121,7 @@ const EditPlace = () => {
     }
   };
 
-  const deletePlace = () => {
+  const handleDeletePlace = () => {
     Swal.fire({
       title: `DESTRUKTIVNA RADNJA!\nJeste li sigurni da želite izbrisati mjesto ${place?.name} i sve članke o njemu?`,
       text: "Izbrisat ćete ovo mjesto i sve članke o njemu",
@@ -187,7 +187,7 @@ const EditPlace = () => {
             red
             disabled={!place}
             onClick={() => {
-              deletePlace();
+              handleDeletePlace();
             }}
           >
             IZBRIŠI MJESTO I SVE ČLANKE O NJEMU

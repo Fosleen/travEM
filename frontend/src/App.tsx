@@ -31,6 +31,7 @@ import EditTopArticles from "./Pages/AdminViewPages/EditTopArticles/EditTopArtic
 import EditFavoriteArticles from "./Pages/AdminViewPages/EditFavoriteArticles/EditFavoriteArticles";
 import EditFooter from "./Pages/AdminViewPages/EditFooter/EditFooter";
 import EditCountry from "./Pages/AdminViewPages/EditCountry/EditCountry";
+import EditArticle from "./Pages/AdminViewPages/EditArticle/EditArticle";
 
 function App() {
   return (
@@ -64,6 +65,7 @@ function App() {
           <Route path="/admin/države/dodaj" element={<AddCountry />} />
           <Route path="/admin/države/uredi/:name" element={<EditCountry />} />
           <Route path="/admin/članci" element={<ArticlesList />} />
+          <Route path="/admin/članci/uredi/:id" element={<EditArticle />} />
           <Route path="/admin/članci/dodaj" element={<AddArticle />} />
           <Route path="/admin/uredi-hero" element={<EditHero />} />
           <Route path="/admin/uredi-banner" element={<EditBanner />} />

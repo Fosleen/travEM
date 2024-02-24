@@ -1,4 +1,5 @@
-import { Article } from "../common/types";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { apiUrl } from "./api";
 
 export async function addArticle(

@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.1.0",
     "@phosphor-icons/react": "^2.0.15",
     "@tanstack/react-table": "^8.11.8",
     "@types/mapbox-gl": "^2.7.19",

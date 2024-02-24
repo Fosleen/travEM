@@ -34,9 +34,10 @@ const Contact = () => {
         form.current,
         "Y7mSUnArGFqcm2F-o"
       );
+
       notifySuccess("Uspješno poslano!!");
     } catch (err) {
-      notifyFailure("Ups..nešto je pošlo po zlu");
+      notifyFailure("Ups... Nešto je pošlo po zlu.");
     }
   }
   return (
@@ -46,7 +47,7 @@ const Contact = () => {
           <h4>KONTAKT</h4>
           <p>
             Ako želite surađivati s nama, slobodno nam se obratite putem ove
-            forme. Radujemo se kontaktu s Vama i budućom suradnjom.
+            forme. Radujemo se Vašoj poruci i budućoj suradnji.
           </p>
         </div>
 

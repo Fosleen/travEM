@@ -416,7 +416,7 @@ const EditArticle = () => {
                       name="article_description"
                       type="text"
                       as={Textarea}
-                      defaultValue={values.article_description}
+                      value={values.article_description}
                       rows={4}
                       label="Opis članka *"
                       placeholder="Opis članka u nekoliko rečenica..."
@@ -581,7 +581,7 @@ const EditArticle = () => {
                                       type="text"
                                       as={Textarea}
                                       rows={12}
-                                      defaultValue={
+                                      value={
                                         values.sections[index].section_text
                                       }
                                       name={`sections.${index}.section_text`}

@@ -425,9 +425,10 @@ const AddArticle = () => {
                                     type="text"
                                     as={Textarea}
                                     rows={12}
-                                    name={`sections.${index}.section_text`}
+                                    name={`sections[${index}].section_text`}
                                     label="Tekst odlomka *"
                                     placeholder="Unesi tekst odlomka..."
+                                    value={sections[index].section_text}
                                   />
                                   <div className="add-article-section-bottom">
                                     <Field

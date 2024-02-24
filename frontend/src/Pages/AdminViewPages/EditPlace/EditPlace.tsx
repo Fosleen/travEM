@@ -262,7 +262,7 @@ const EditPlace = () => {
                   </div>
                   <Field
                     name="place_description"
-                    defaultValue={place.description}
+                    value={place.description}
                     type="text"
                     as={Textarea}
                     rows={3}

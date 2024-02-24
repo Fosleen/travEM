@@ -517,7 +517,7 @@ const EditCountry = () => {
                     <Field
                       name="country_description"
                       type="text"
-                      defaultValue={country.description}
+                      value={country.description}
                       as={Textarea}
                       rows={4}
                       label="Opis države *"

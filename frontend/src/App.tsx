@@ -31,6 +31,7 @@ import EditTopArticles from "./Pages/AdminViewPages/EditTopArticles/EditTopArtic
 import EditFavoriteArticles from "./Pages/AdminViewPages/EditFavoriteArticles/EditFavoriteArticles";
 import EditFooter from "./Pages/AdminViewPages/EditFooter/EditFooter";
 import EditCountry from "./Pages/AdminViewPages/EditCountry/EditCountry";
+import Contact from "./Pages/UserViewPages/Contact/Contact";
 import ReactGA from "react-ga4";
 import { useEffect } from "react";
 
@@ -52,6 +53,7 @@ function App() {
         <Route path="/" element={<UserViewLayout />}>
           <Route index element={<Homepage />} />
           <Route path="/o-nama" element={<About />} />
+          <Route path="/kontakt" element={<Contact />} />
           <Route path="/aviokarte" element={<AirplaneTickets />} />
           <Route path="/pretrazivanje" element={<SearchResults />} />
           <Route path="/savjeti/:tip" element={<TipsAndTricks />} />

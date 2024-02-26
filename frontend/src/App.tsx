@@ -41,6 +41,7 @@ function App() {
     ReactGA.send({
       hitType: "pageview",
       page: location.pathname,
+      title: `Putanja: ${location.pathname}`,
     });
   }, [location]);
 

@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import UserViewLayout from "./components/user/templates/UserViewLayout";
 import Homepage from "./Pages/UserViewPages/Homepage/Homepage";
 import About from "./Pages/UserViewPages/About/About";
@@ -31,8 +31,19 @@ import EditTopArticles from "./Pages/AdminViewPages/EditTopArticles/EditTopArtic
 import EditFavoriteArticles from "./Pages/AdminViewPages/EditFavoriteArticles/EditFavoriteArticles";
 import EditFooter from "./Pages/AdminViewPages/EditFooter/EditFooter";
 import EditCountry from "./Pages/AdminViewPages/EditCountry/EditCountry";
+import ReactGA from "react-ga4";
+import { useEffect } from "react";
 
 function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    ReactGA.send({
+      hitType: "pageview",
+      page: location.pathname,
+    });
+  }, [location]);
+
   return (
     <>
       <Routes>

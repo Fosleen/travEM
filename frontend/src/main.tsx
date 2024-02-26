@@ -9,11 +9,6 @@ import ReactGA from "react-ga4";
 
 ReactGA.initialize("G-P636ECTSKC");
 
-ReactGA.send({
-  hitType: "pageview",
-  page: window.location.pathname,
-});
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>

@@ -39,7 +39,7 @@ export interface TextareaProps {
   placeholder: string;
   error?: string;
   disabled?: boolean;
-  defaultValue?: string | null;
+  value?: string | null;
   rows?: number;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
@@ -67,6 +67,22 @@ export interface DropdownProps {
 
 export interface AirplaneTicketsMenuProps {
   setIsPlaneTicketsMenuShown?: (value: boolean) => void;
+}
+
+export interface SectionImage {
+  id?: number;
+  url: string;
+  sectionId: number;
+  width?: number;
+  height?: number;
+}
+
+export interface GalleryImage {
+  id?: number;
+  url: string;
+  sectionId: number;
+  width?: number;
+  height?: number;
 }
 
 export interface HomepageData {

@@ -28,3 +28,21 @@ export async function addGalleryImage(
   }
   return data;
 }
+
+export async function deleteGalleryImage(id: number) {
+  const response = await fetch(`${apiUrl}/gallery-images/${id}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "DELETE",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}

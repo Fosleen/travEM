@@ -68,9 +68,6 @@ const AddArticle = () => {
   });
 
   const handleSave = async (values) => {
-    console.log(values);
-    console.log("Slike koje moraju imati aspect", otherArticleImages);
-    console.log(sectionImages);
     Swal.fire({
       title: "Jeste li sigurni?",
       text: "Objavit ćete ovaj članak",
@@ -184,7 +181,6 @@ const AddArticle = () => {
 
   const handleAddImage = () => {
     if (imageType == "main") {
-      console.log("Modal input value", modalInputValue);
       setMainArticleImage(modalInputValue);
     } else if (imageType == "other") {
       setOtherArticleImages([
@@ -312,29 +308,35 @@ const AddArticle = () => {
                     />
                     {values.article_type == "1" && (
                       <>
-                        <Dropdown
-                          hardcodedValue={"Odaberi državu o kojoj se radi"}
-                          options={countries}
-                          value={values.article_country}
-                          onChange={(value) => {
-                            setFieldValue("article_country", value);
-                            setSelectedCountryId(value);
-                          }}
-                          isDisabled={false}
+                        <Field
+                          name="article_country"
+                          type="text"
+                          as={AdvancedDropdown}
                           label="Država članka (opcionalno)"
+                          hardcodedValue="Odaberi državu o kojoj se radi..."
+                          options={countries}
+                          onChange={(value) => {
+                            setFieldValue("article_country", value.id);
+                            setSelectedCountryId(value.id);
+                          }}
+                          selectedValue={values.article_country}
+                          imageAttribute="flag_image_url"
+                          filter
+                          images
                         />
                         {values.article_country != "" && places && (
-                          <Dropdown
-                            hardcodedValue={
-                              "Odaberi grad ili mjesto o kojem se radi"
-                            }
-                            value={values.article_place}
-                            onChange={(value) =>
-                              setFieldValue("article_place", value)
-                            }
-                            isDisabled={false}
+                          <Field
+                            name="article_place"
+                            type="text"
+                            as={AdvancedDropdown}
                             label="Mjesto članka (opcionalno)"
+                            hardcodedValue="Odaberi grad ili mjesto o kojem se radi"
                             options={places}
+                            onChange={(value) => {
+                              setFieldValue("article_place", value.id);
+                            }}
+                            selectedValue={values.article_place}
+                            filter
                           />
                         )}
                       </>
@@ -423,9 +425,10 @@ const AddArticle = () => {
                                     type="text"
                                     as={Textarea}
                                     rows={12}
-                                    name={`sections.${index}.section_text`}
+                                    name={`sections[${index}].section_text`}
                                     label="Tekst odlomka *"
                                     placeholder="Unesi tekst odlomka..."
+                                    value={sections[index].section_text}
                                   />
                                   <div className="add-article-section-bottom">
                                     <Field
@@ -473,20 +476,22 @@ const AddArticle = () => {
                                             </div>
                                           )
                                         )}
-                                      <div
-                                        className="add-article-item"
-                                        onClick={() => {
-                                          toggleDialog();
-                                          setImageType("section");
-                                          setSectionSelected(index);
-                                        }}
-                                      >
-                                        <Plus
-                                          size={32}
-                                          color="#616161"
-                                          weight="bold"
-                                        />
-                                      </div>
+                                      {sectionImages[index].length < 2 && (
+                                        <div
+                                          className="add-article-item"
+                                          onClick={() => {
+                                            toggleDialog();
+                                            setImageType("section");
+                                            setSectionSelected(index);
+                                          }}
+                                        >
+                                          <Plus
+                                            size={32}
+                                            color="#616161"
+                                            weight="bold"
+                                          />
+                                        </div>
+                                      )}
                                     </div>
                                     <Button
                                       type="button"
@@ -501,6 +506,10 @@ const AddArticle = () => {
                                       izbriši odlomak
                                     </Button>
                                   </div>
+                                  <p>
+                                    * preporuča se 1 slika u omjeru 16:9 ili
+                                    max. 2 u omjeru 9:16
+                                  </p>
                                 </fieldset>
                               ))
                             : null}
@@ -606,9 +615,6 @@ const AddArticle = () => {
         setImageWidthValue={setImageWidthValue}
         isAddArticle
       />
-      {modalInputValue.toString()}
-      {imageHeightValue.toString()}
-      {imageWidthValue.toString()}
     </>
   );
 };

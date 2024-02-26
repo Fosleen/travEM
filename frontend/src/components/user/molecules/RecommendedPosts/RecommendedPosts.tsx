@@ -38,13 +38,8 @@ const RecommendedPosts: FC<{ id: number; type: string }> = ({ id, type }) => {
         <div className="recommended-posts last">
           {articles.map((el, index) => {
             return (
-              <div onClick={() => handleClick(index)}>
-                <HorizontalPostItemBig
-                  thin
-                  hasDate={false}
-                  data={el}
-                  key={index}
-                />
+              <div onClick={() => handleClick(index)} key={index}>
+                <HorizontalPostItemBig thin hasDate={false} data={el} />
               </div>
             );
           })}

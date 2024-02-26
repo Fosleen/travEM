@@ -12,7 +12,7 @@ import Location from "../../../assets/images/location.png";
 import CountryPlaces from "../../../components/user/molecules/CountryPlaces";
 import { useEffect, useState } from "react";
 import { getArticleById } from "../../../api/article";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getCountryPlaces } from "../../../api/countries";
 import { ThreeDots } from "react-loader-spinner";
 import React from "react";
@@ -20,18 +20,15 @@ import RecommendedPosts from "../../../components/user/molecules/RecommendedPost
 
 const Article = () => {
   const { id } = useParams();
-
   const [articleContent, setArticleContent] = useState([]);
-
   const [countryPlaces, setCountryPlaces] = useState([]);
-
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
       const contentPromise = getArticleById(id);
       const content = await contentPromise;
-
       const placesPromise = contentPromise.then((content) =>
         getCountryPlaces(content.placeId)
       );
@@ -49,6 +46,16 @@ const Article = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleCountryClick = () => {
+    navigate(`/destinacija/${articleContent.country.name.toLowerCase()}`);
+  };
+
+  const handlePlaceClick = () => {
+    navigate(
+      `/destinacija/${articleContent.country.name.toLowerCase()}/${articleContent.place.name.toLowerCase()}`
+    );
+  };
 
   return (
     <>
@@ -68,14 +75,19 @@ const Article = () => {
             <ArticleHero article={articleContent} />
           </div>
           <div className="article-location-parent">
-            {articleContent.articleTypeId === 1 && articleContent.place && (
-              <div className="article-location">
-                <img src={Location} alt="" />
-                <h4>
-                  {articleContent.place.name}, {articleContent.country.name}
-                </h4>
-              </div>
-            )}
+            <div className="article-location-container">
+              {articleContent.articleTypeId === 1 && (
+                <div className="article-location">
+                  <img src={Location} alt="" />
+                  <h4 onClick={handlePlaceClick} className="article-location">
+                    {articleContent.place && `${articleContent.place.name}, `}
+                  </h4>
+                  <h4 onClick={handleCountryClick} className="article-location">
+                    {articleContent.country.name}
+                  </h4>
+                </div>
+              )}
+            </div>
           </div>
           <ArticleTableOfContents
             article={articleContent}
@@ -97,11 +109,14 @@ const Article = () => {
               <h3>Slika govori 1000 riječi</h3>
             )}
 
-            {articleContent.articleTypeId === 1 && articleContent.place && (
-              <div className="article-location">
+            {articleContent.articleTypeId === 1 && (
+              <div className="article-location-container">
                 <img src={Location} alt="" />
-                <h4>
-                  {articleContent.place.name}, {articleContent.country.name}
+                <h4 onClick={handlePlaceClick} className="article-location">
+                  {articleContent.place && `${articleContent.place.name}, `}
+                </h4>
+                <h4 onClick={handleCountryClick} className="article-location">
+                  {articleContent.country.name}
                 </h4>
               </div>
             )}

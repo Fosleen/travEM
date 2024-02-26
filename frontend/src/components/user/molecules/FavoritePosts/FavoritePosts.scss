@@ -18,9 +18,10 @@
 @media screen and ($desktop) {
   .favorite-posts-container {
     max-width: 1300px;
+    width: 100%;
     margin: 0 auto;
     flex-direction: row;
-    gap: 0px;
+    gap: 16px;
   }
 }
 

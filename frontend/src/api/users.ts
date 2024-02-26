@@ -5,7 +5,7 @@ import { apiUrl } from "./api";
 // @ts-ignoreS
 // eslint-disable-next-line
 
-export const handleLogin = async (values, { setSubmitting }) => {
+export const loginUser = async (values, { setSubmitting }) => {
   try {
     const response = await fetch(`${apiUrl}/login`, {
       method: "POST",
@@ -20,6 +20,11 @@ export const handleLogin = async (values, { setSubmitting }) => {
 
     if (data.success) {
       console.log("Authentication succeeded");
+      //console.log("Podaci su", data);
+      localStorage.setItem("jwt", data.token);
+      // sessionStorage.setItem("first_name",data.first_name)
+      // sessionStorage.setItem("last_name",data.first_name)
+
       notifySuccess("Uspjesna prijava!");
     } else {
       console.log("Authentication failed");

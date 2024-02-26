@@ -31,6 +31,7 @@ import { addGalleryImage } from "../../../api/galleryImages";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 import Textarea from "../../../components/admin/atoms/Textarea";
 import { ThreeDots } from "react-loader-spinner";
+import jwt from "jsonwebtoken";
 
 const AddArticle = () => {
   const navigate = useNavigate();
@@ -67,6 +68,16 @@ const AddArticle = () => {
       .max(100, "Naslov smije imati max 100 znakova!"),
   });
 
+  const jwtToken = localStorage.getItem("jwt");
+
+  const tokenParts = jwtToken.split(".");
+
+  const base64Url = tokenParts[1];
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  const decodedPayload = JSON.parse(atob(base64));
+
+  const user_id = decodedPayload.id;
+
   const handleSave = async (values) => {
     console.log(values);
     console.log("Slike koje moraju imati aspect", otherArticleImages);
@@ -94,7 +105,7 @@ const AddArticle = () => {
           parseInt(values.article_country),
           parseInt(values.article_place),
           mainArticleImage,
-          1, // TODO connect with the ID of logged user
+          user_id,
           todaysDate
         );
 

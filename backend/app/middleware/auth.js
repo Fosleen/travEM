@@ -9,6 +9,8 @@ const jwtOptions = {
   secretOrKey: "1234", // Replace with your secret key for JWT
 };
 
+const secretKey = "1234";
+
 passport.use(
   new JwtStrategy(jwtOptions, async (jwtPayload, done) => {
     try {
@@ -36,15 +38,26 @@ passport.deserializeUser((id, done) => {
 
 export const authenticateJwt = passport.authenticate("jwt", { session: false });
 
-export const generateJwtToken = (user) => {
-  return jwt.sign({ id: user.id }, "1234"); // Replace with your secret key for JWT
+const generateJwtToken = (user) => {
+  const payload = {
+    id: user.id,
+    username: user.username,
+    first_name: user.first_name,
+    last_name: user.last_name,
+  };
+
+  const token = jwt.sign(payload, secretKey, { expiresIn: "1h" });
+  return token;
 };
 
 export const login = async (req, res, next) => {
+  console.log("Poziv");
   try {
     const { username, password } = req.body;
 
     const user = await db.models.User.findOne({ where: { username } });
+
+    console.log("Tu je user", user);
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
@@ -61,6 +74,8 @@ export const login = async (req, res, next) => {
       success: true,
       message: "Authentication succeeded.",
       token,
+      first_name: user.first_name,
+      last_name: user.last_name,
     });
   } catch (error) {
     return next(error);

@@ -12,7 +12,6 @@ ReactGA.initialize("G-P636ECTSKC");
 ReactGA.send({
   hitType: "pageview",
   page: window.location.pathname,
-  title: "Page views count",
 });
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

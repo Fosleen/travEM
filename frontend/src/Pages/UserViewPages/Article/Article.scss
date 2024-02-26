@@ -46,9 +46,13 @@
   padding: 16px;
   max-width: 1300px;
   margin: 0 auto;
+
   h2 {
     font-weight: bold;
-    font-size: 40px;
+  }
+
+  @media screen and ($desktopLarge) {
+    padding: 16px 0;
   }
 }
 
@@ -68,24 +72,27 @@
   gap: 12px;
   text-decoration: underline;
   max-width: 1300px;
-  padding: 16px;
-
-  @media screen and ($desktopLarge) {
-    padding: 0;
-  }
+  padding: 0 16px;
 
   h2 {
     font-weight: bold;
+  }
+
+  @media screen and ($desktopLarge) {
+    padding: 0;
   }
 }
 
 .article-gallery-text-wrapper {
   max-width: 1300px;
   margin: 0 auto;
-  padding: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media screen and ($desktopLarge) {
+    padding: 16px 0;
+  }
 }
 
 .article-location-parent {

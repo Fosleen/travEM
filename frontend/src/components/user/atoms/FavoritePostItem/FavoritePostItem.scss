@@ -94,6 +94,8 @@ a {
 
 @media screen and ($desktop) {
   .favorite-post-item-container {
+    padding-right: 0;
+
     .favorite-post-item-icon-container {
       left: 0px;
       top: 32px;

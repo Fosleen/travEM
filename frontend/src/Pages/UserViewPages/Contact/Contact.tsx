@@ -35,6 +35,10 @@ const Contact = () => {
         "Y7mSUnArGFqcm2F-o"
       );
       notifySuccess("Uspješno poslano!!");
+      setFirstName("");
+      setLastName("");
+      setMail("");
+      setMessage("");
     } catch (err) {
       notifyFailure("Ups..nešto je pošlo po zlu");
     }

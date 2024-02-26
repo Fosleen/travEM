@@ -54,7 +54,14 @@ export const createAssociations = () => {
   db.models.Article.hasMany(db.models.GalleryImage, {
     foreignKey: { allowNull: false },
   });
+
   db.models.GalleryImage.belongsTo(db.models.Article);
+
+  db.models.AirportCity.hasMany(db.models.Article, {
+    foreignKey: { allowNull: true },
+  });
+
+  db.models.Article.belongsTo(db.models.AirportCity);
 
   db.models.Article.hasMany(db.models.Section, {
     foreignKey: { allowNull: false },

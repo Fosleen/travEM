@@ -71,8 +71,14 @@ export async function getArticles(
   return data;
 }
 
-export async function getFavoriteArticleByCountry(id: number) {
-  const response = await fetch(`${apiUrl}/articles/country/top/${id}`);
+export async function getArticlesByType(
+  page = 1,
+  pageSize = 8,
+  article_type: number
+) {
+  const response = await fetch(
+    `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${article_type}`
+  );
   const data = await response.json();
 
   if (!response.ok) {
@@ -130,6 +136,17 @@ export async function updateOrCreateTopHomepageArticles(
 }
 
 export async function getArticleById(id: number) {
+  const response = await fetch(`${apiUrl}/articles/${id}`);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function getArticleByType(id: number) {
   const response = await fetch(`${apiUrl}/articles/${id}`);
   const data = await response.json();
 

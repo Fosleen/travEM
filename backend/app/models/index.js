@@ -23,6 +23,7 @@ import article_articleSpecialType from "./article_articleSpecialType.js";
 import SectionIcon from "./sectionIcon.js";
 import VisaInfo from "./visaInfo.js";
 import sequelizeConnection from "../sequelize.js";
+import AirportCity from "./airportCity.js";
 
 const db = {};
 
@@ -65,6 +66,8 @@ db.models.ArticleSpecialType = ArticleSpecialType(
   sequelizeConnection,
   Sequelize.DataTypes
 );
+
+db.models.AirportCity = AirportCity(sequelizeConnection, Sequelize.DataTypes);
 
 db.models.Article_ArticleSpecialType =
   article_articleSpecialType(sequelizeConnection);

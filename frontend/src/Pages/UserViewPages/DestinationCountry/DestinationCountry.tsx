@@ -54,7 +54,7 @@ const DestinationCountry = () => {
         <div className="destination-country-page-container">
           {country.color && (
             <DestinationHero
-              name={countryName}
+              name={country.name}
               main_image_url={country.main_image_url}
               description={country.description}
               color={country.color.hex_value}

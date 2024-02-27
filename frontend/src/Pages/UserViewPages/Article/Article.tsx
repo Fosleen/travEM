@@ -1,6 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import HorizontalPostItemBig from "../../../components/user/atoms/HorizontalPostItemBig";
 import ArticleFragment from "../../../components/user/molecules/ArticleFragment/ArticleFragment";
 import ArticleHero from "../../../components/user/molecules/ArticleHero";
 import ArticleTableOfContents from "../../../components/user/molecules/ArticleTableOfContents/ArticleTableOfContents";
@@ -11,40 +11,30 @@ import ArticleReadMore from "../../../components/user/atoms/ArticleReadMore/Arti
 import Location from "../../../assets/images/location.png";
 import CountryPlaces from "../../../components/user/molecules/CountryPlaces";
 import { useEffect, useState } from "react";
-import { getArticleById, getRecommendedArticles } from "../../../api/article";
-import { useParams } from "react-router-dom";
+import { getArticleById } from "../../../api/article";
+import { useNavigate, useParams } from "react-router-dom";
 import { getCountryPlaces } from "../../../api/countries";
 import { ThreeDots } from "react-loader-spinner";
 import React from "react";
+import RecommendedPosts from "../../../components/user/molecules/RecommendedPosts";
 
 const Article = () => {
   const { id } = useParams();
-
   const [articleContent, setArticleContent] = useState([]);
-
-  const [recommendedArticles, setRecommendedArticles] = useState([]);
-
   const [countryPlaces, setCountryPlaces] = useState([]);
-
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   const fetchData = async () => {
     try {
       const contentPromise = getArticleById(id);
       const content = await contentPromise;
-
-      const recommendedArticlesPromise = contentPromise.then((content) =>
-        getRecommendedArticles(id, content.articleTypeId)
-      );
-      const recommendedArticles = await recommendedArticlesPromise;
-
       const placesPromise = contentPromise.then((content) =>
         getCountryPlaces(content.placeId)
       );
       const places = await placesPromise;
 
       setArticleContent(content);
-      setRecommendedArticles(recommendedArticles);
       setCountryPlaces(places);
       setIsLoading(false);
     } catch (error) {
@@ -56,6 +46,16 @@ const Article = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleCountryClick = () => {
+    navigate(`/destinacija/${articleContent.country.name.toLowerCase()}`);
+  };
+
+  const handlePlaceClick = () => {
+    navigate(
+      `/destinacija/${articleContent.country.name.toLowerCase()}/${articleContent.place.name.toLowerCase()}`
+    );
+  };
 
   return (
     <>
@@ -75,14 +75,19 @@ const Article = () => {
             <ArticleHero article={articleContent} />
           </div>
           <div className="article-location-parent">
-            {articleContent.articleTypeId === 1 && articleContent.place && (
-              <div className="article-location">
-                <img src={Location} alt="" />
-                <h4>
-                  {articleContent.place.name}, {articleContent.country.name}
-                </h4>
-              </div>
-            )}
+            <div className="article-location-container">
+              {articleContent.articleTypeId === 1 && (
+                <div className="article-location">
+                  <img src={Location} alt="" />
+                  <h4 onClick={handlePlaceClick} className="article-location">
+                    {articleContent.place && `${articleContent.place.name}, `}
+                  </h4>
+                  <h4 onClick={handleCountryClick} className="article-location">
+                    {articleContent.country.name}
+                  </h4>
+                </div>
+              )}
+            </div>
           </div>
           <ArticleTableOfContents
             article={articleContent}
@@ -104,11 +109,14 @@ const Article = () => {
               <h3>Slika govori 1000 riječi</h3>
             )}
 
-            {articleContent.articleTypeId === 1 && articleContent.place && (
-              <div className="article-location">
+            {articleContent.articleTypeId === 1 && (
+              <div className="article-location-container">
                 <img src={Location} alt="" />
-                <h4>
-                  {articleContent.place.name}, {articleContent.country.name}
+                <h4 onClick={handlePlaceClick} className="article-location">
+                  {articleContent.place && `${articleContent.place.name}, `}
+                </h4>
+                <h4 onClick={handleCountryClick} className="article-location">
+                  {articleContent.country.name}
                 </h4>
               </div>
             )}
@@ -127,13 +135,8 @@ const Article = () => {
           {countryPlaces.length !== 0 && (
             <CountryPlaces hasPadding={false} places={countryPlaces} />
           )}
-          <div className="article-text-articles-wrapper">
-            <h2>Povezani članci</h2>
-          </div>
           <div className="article-connected-articles-wrapper">
-            {recommendedArticles.map((article) => (
-              <HorizontalPostItemBig key={article.id} data={article} />
-            ))}
+            <RecommendedPosts id={id} type={articleContent.articleTypeId} />
           </div>
         </div>
       )}

@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import UserViewLayout from "./components/user/templates/UserViewLayout";
 import Homepage from "./Pages/UserViewPages/Homepage/Homepage";
 import About from "./Pages/UserViewPages/About/About";
@@ -31,8 +31,23 @@ import EditTopArticles from "./Pages/AdminViewPages/EditTopArticles/EditTopArtic
 import EditFavoriteArticles from "./Pages/AdminViewPages/EditFavoriteArticles/EditFavoriteArticles";
 import EditFooter from "./Pages/AdminViewPages/EditFooter/EditFooter";
 import EditCountry from "./Pages/AdminViewPages/EditCountry/EditCountry";
+import EditArticle from "./Pages/AdminViewPages/EditArticle/EditArticle";
+import Contact from "./Pages/UserViewPages/Contact/Contact";
+import ReactGA from "react-ga4";
+import { useEffect } from "react";
+
 
 function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    ReactGA.send({
+      hitType: "pageview",
+      page: location.pathname,
+      title: `Putanja: ${location.pathname}`,
+    });
+  }, [location]);
+
   return (
     <>
       <Routes>
@@ -41,6 +56,7 @@ function App() {
           <Route index element={<Homepage />} />
           <Route path="/o-nama" element={<About />} />
           <Route path="/aviokarte/:name" element={<AirplaneTickets />} />
+          <Route path="/kontakt" element={<Contact />} />
           <Route path="/pretrazivanje" element={<SearchResults />} />
           <Route path="/savjeti/:tip" element={<TipsAndTricks />} />
           <Route path="/clanak/:id" element={<Article />} />
@@ -64,6 +80,7 @@ function App() {
           <Route path="/admin/države/dodaj" element={<AddCountry />} />
           <Route path="/admin/države/uredi/:name" element={<EditCountry />} />
           <Route path="/admin/članci" element={<ArticlesList />} />
+          <Route path="/admin/članci/uredi/:id" element={<EditArticle />} />
           <Route path="/admin/članci/dodaj" element={<AddArticle />} />
           <Route path="/admin/uredi-hero" element={<EditHero />} />
           <Route path="/admin/uredi-banner" element={<EditBanner />} />

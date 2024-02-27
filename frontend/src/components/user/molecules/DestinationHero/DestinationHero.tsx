@@ -11,9 +11,9 @@ const DestinationHero = ({
     <div className="destination-hero-container">
       <div className="destination-hero-left">
         <div className="destination-hero-titles">
-          <h2 className="bold-grey">{name}</h2>
+          <h2 className="bold-grey">{name.toUpperCase()}</h2>
           <h2 className="bold-color" style={{ color: `#${color}` }}>
-            {name}
+            {name.toUpperCase()}
           </h2>
           <h2 className="cursive-black">{name}</h2>
         </div>

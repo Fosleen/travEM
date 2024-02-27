@@ -34,3 +34,55 @@ export async function addSection(
   }
   return data;
 }
+
+export async function updateSection(
+  id: number,
+  text: string,
+  subtitle: string,
+  order: number,
+  link_title: string,
+  link_url: string,
+  icon_id: number
+) {
+  const response = await fetch(`${apiUrl}/sections/${id}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "PATCH",
+    body: JSON.stringify({
+      text: text,
+      subtitle: subtitle,
+      order: order,
+      link_title: link_title,
+      link_url: link_url,
+      section_icon_id: icon_id,
+    }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function deleteSection(id: number) {
+  const response = await fetch(`${apiUrl}/sections/${id}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "DELETE",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}

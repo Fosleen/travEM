@@ -99,8 +99,7 @@ const Footer = ({
             {/* TODO add link to about us article */}
             <div className="footer-list-item-content">Priča o nama</div>
           </Link>
-          <Link to="">
-            {/* TODO add link to work with us page */}
+          <Link to="/kontakt">
             <div className="footer-list-item-content">Radite s nama</div>
           </Link>
         </div>

@@ -1,6 +1,6 @@
 @import "../../../utils/theme.scss";
 
-.edit-place-container {
+.edit-article-container {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -12,55 +12,50 @@
     margin-bottom: 4px;
   }
 
-  .edit-place-header {
+  .edit-article-header {
     display: flex;
     justify-content: space-between;
     max-width: 1024px;
   }
 
-  .edit-place-form {
+  .edit-article-form {
     display: flex;
     flex-direction: column;
     gap: 16px;
 
-    .edit-place-inputs {
+    .edit-article-inputs {
       border-radius: 8px;
+      // border: 2px solid $greyMiddle;
+      // padding: 16px;
       max-width: 1024px;
       display: flex;
       flex-direction: column;
       gap: 16px;
 
-      .edit-place-input {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+      .edit-article-button {
+        margin-top: 16px;
       }
 
-      .edit-place-row {
+      .edit-article-dropdowns {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 16px;
-
-        .edit-place-row-item {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
       }
     }
 
-    .edit-place-images-container {
+    .edit-article-images-container {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
 
-      .edit-place-image {
+      .edit-article-image {
         height: 72px;
+        // width: 108px;
         position: relative;
         cursor: pointer;
         display: inline-block;
 
-        .edit-place-image-remove-icon {
+        .edit-article-image-remove-icon {
           display: none;
           position: absolute;
           left: 50%;
@@ -76,7 +71,7 @@
         }
 
         &:hover {
-          .edit-place-image-remove-icon {
+          .edit-article-image-remove-icon {
             display: block;
           }
 
@@ -87,7 +82,7 @@
         }
       }
 
-      .edit-place-item {
+      .edit-article-item {
         width: 108px;
         background-color: $greyMiddle;
         height: 72px;
@@ -98,53 +93,69 @@
       }
     }
 
-    .edit-place-videos-wrapper {
-      padding: 24px 0;
+    .edit-article-sections-container {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-width: 1024px;
 
-      .edit-place-video-outer-container {
-        .edit-place-videos-container {
+      .edit-article-section {
+        border-radius: 8px;
+        border: 2px solid $greyMiddle;
+        padding: 16px;
+        max-width: 1024px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        legend {
+          padding: 0 4px;
+          font-size: 14px;
+        }
+
+        .edit-article-section-top {
           display: flex;
-          flex-direction: column;
-          gap: 8px;
+          gap: 16px;
 
-          .edit-place-header {
-            height: 48px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-          }
+          .edit-article-section-top-item {
+            width: 100%;
 
-          .edit-place-video-row {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-
-            * > svg {
-              width: 52px;
-              cursor: pointer;
+            &:last-of-type {
+              max-width: 120px;
             }
           }
+        }
+
+        .edit-article-section-bottom {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 16px;
+        }
+
+        .edit-article-bottom-container {
+          display: flex;
+          gap: 16px;
+          justify-content: space-between;
+          align-items: center;
         }
       }
     }
 
-    .edit-place-toggle-container {
+    .edit-article-gallery-container {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      gap: 8px;
+      max-width: 1024px;
+    }
+
+    .edit-article-toggle-container {
       padding: 24px 0;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      max-width: 1024px;
-
-      .edit-place-toggle-input {
-        margin-top: 8px;
-      }
     }
 
-    .edit-place-buttons {
+    .edit-article-buttons {
       display: flex;
       gap: 8px;
       margin-bottom: 64px;

@@ -12,7 +12,7 @@ const Textarea: FC<TextareaProps> = ({
   disabled = false,
   onChange,
   rows,
-  defaultValue = null,
+  value = null,
 }) => {
   return (
     <div className="textarea-parent-wrapper">
@@ -25,7 +25,7 @@ const Textarea: FC<TextareaProps> = ({
           onChange={onChange}
           disabled={disabled}
           rows={rows}
-          defaultValue={defaultValue}
+          value={value}
         />
       </div>
 

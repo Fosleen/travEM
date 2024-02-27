@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { apiUrl } from "./api";
 
 export async function addArticle(
@@ -148,6 +150,54 @@ export async function getArticleById(id: number) {
 
 export async function getArticleByType(id: number) {
   const response = await fetch(`${apiUrl}/articles/${id}`);
+
+export async function updateArticle(
+  id: number,
+  title: string,
+  subtitle: string,
+  description: string,
+  main_image_url: string,
+  article_type_id: number,
+  country_id: number | null | string,
+  place_id: number | null | string
+) {
+  const requestBody = {
+    title: title,
+    subtitle: subtitle,
+    description: description,
+    main_image_url: main_image_url,
+    article_type_id: article_type_id,
+  };
+
+  if (country_id != "") {
+    requestBody.country_id = country_id;
+  }
+
+  if (place_id != "") {
+    requestBody.place_id = place_id;
+  }
+
+  const response = await fetch(`${apiUrl}/articles/${id}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "PATCH",
+    body: JSON.stringify(requestBody),
+  });
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function deleteArticleById(id: number) {
+  const response = await fetch(`${apiUrl}/articles/${id}`, {
+    method: "DELETE",
+  });
   const data = await response.json();
 
   if (!response.ok) {

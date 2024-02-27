@@ -13,7 +13,6 @@ import RecommendedPosts from "../../../components/user/molecules/RecommendedPost
 const AirplaneTickets = () => {
   const [airplaneTickets, setAirplaneTickets] = useState([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [recommendedArticles, setRecommendedArticles] = useState([]);
   const [idForRecommended, setIdForRecommended] = useState(null);
 
   const { name } = useParams();
@@ -26,9 +25,6 @@ const AirplaneTickets = () => {
     try {
       const data = await getArticlesByType(1, 12, 2);
 
-      // Filter articles based on the name from the URL
-      console.log("Articles su", data);
-
       const filteredTickets = data.data.filter(
         (article) => article.airport_city.name.toLowerCase() == name
       );
@@ -36,8 +32,6 @@ const AirplaneTickets = () => {
       setAirplaneTickets(filteredTickets);
 
       const recommendedArticlesData = await getRecommendedArticles(1, 2);
-
-      setRecommendedArticles(recommendedArticlesData);
 
       const idForRecommended = recommendedArticlesData[0].id;
       setIdForRecommended(idForRecommended);
@@ -62,10 +56,9 @@ const AirplaneTickets = () => {
           <h2>Trenutno nema aviokarti za ovo mjesto</h2>
         )}
       </div>
-      <div className="airplane-tickets-text-articles-wrapper">
-        <h2>Povezani članci</h2>
-      </div>
-      {idForRecommended && <RecommendedPosts type="2" id={idForRecommended} />}{" "}
+      {idForRecommended && (
+        <RecommendedPosts type="article" id={idForRecommended} />
+      )}{" "}
     </div>
   );
 };

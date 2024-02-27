@@ -35,7 +35,7 @@ import EditArticle from "./Pages/AdminViewPages/EditArticle/EditArticle";
 import Contact from "./Pages/UserViewPages/Contact/Contact";
 import ReactGA from "react-ga4";
 import { useEffect } from "react";
-
+import Ad from "./components/atoms/Ad";
 
 function App() {
   const location = useLocation();
@@ -95,6 +95,7 @@ function App() {
           <Route path="/admin/uredi-footer" element={<EditFooter />} />
         </Route>
       </Routes>
+      <Ad />
     </>
   );
 }

@@ -30,7 +30,7 @@ app.set("view engine", "ejs");
 app.use(cors(corsOptions));
 app.use(
   session({
-    secret: process.env.VITE_SECRET_KEY,
+    secret: process.env.JWT_SECRET_KEY,
     resave: false,
     saveUninitialized: false,
   })

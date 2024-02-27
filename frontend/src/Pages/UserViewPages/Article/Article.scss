@@ -65,21 +65,31 @@
     padding: 16px 0;
   }
 }
-
-.article-location {
+.article-location-container {
   display: flex;
   align-items: center;
-  gap: 12px;
-  text-decoration: underline;
-  max-width: 1300px;
-  padding: 0 16px;
+  gap: 8px;
+  margin-left: 16px;
 
-  h2 {
-    font-weight: bold;
-  }
+  .article-location {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: underline;
+    max-width: 1300px;
+    cursor: pointer;
 
-  @media screen and ($desktopLarge) {
-    padding: 0;
+    h2 {
+      font-weight: bold;
+    }
+
+    @media screen and ($desktop) {
+      margin-left: 0px;
+    }
+
+    @media screen and ($desktopLarge) {
+      padding: 0;
+    }
   }
 }
 

@@ -1,4 +1,4 @@
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import UserViewLayout from "./components/user/templates/UserViewLayout";
 import Homepage from "./Pages/UserViewPages/Homepage/Homepage";
 import About from "./Pages/UserViewPages/About/About";
@@ -43,7 +43,19 @@ import { useEffect } from "react";
 function App() {
   const location = useLocation();
 
+  const navigate = useNavigate();
+
   const isLoggedIn = localStorage.getItem("jwt");
+
+  function isTokenExpired(token) {
+    if (!token) {
+      return true;
+    }
+
+    const decodedToken = JSON.parse(atob(token.split(".")[1]));
+    const expirationTime = decodedToken.exp * 1000;
+    return Date.now() >= expirationTime;
+  }
 
   useEffect(() => {
     ReactGA.send({
@@ -52,6 +64,12 @@ function App() {
       title: `Putanja: ${location.pathname}`,
     });
   }, [location]);
+
+  useEffect(() => {
+    if (isTokenExpired(isLoggedIn)) {
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
 
   return (
     <>

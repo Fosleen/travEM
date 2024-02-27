@@ -57,7 +57,8 @@ class ArticleController {
       req.body.user_id,
       req.body.article_type_id,
       req.body.country_id,
-      req.body.place_id
+      req.body.place_id,
+      req.body.airport_city_id
     );
 
     console.log(response.toJSON());
@@ -171,7 +172,8 @@ class ArticleController {
       req.body.article_type_id,
       req.body.user_id,
       req.body.country_id,
-      req.body.place_id
+      req.body.place_id,
+      req.body.airport_city_id
     );
     if (response.length == 0) {
       res.status(500).json({ error: `Error updating article ${id}` });

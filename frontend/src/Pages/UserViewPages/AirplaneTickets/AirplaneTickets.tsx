@@ -24,14 +24,16 @@ const AirplaneTickets = () => {
   const fetchData = async () => {
     try {
       const data = await getArticlesByType(1, 12, 2);
-
       const filteredTickets = data.data.filter(
         (article) => article.airport_city.name.toLowerCase() == name
       );
 
       setAirplaneTickets(filteredTickets);
 
-      const recommendedArticlesData = await getRecommendedArticles(1, 2);
+      const recommendedArticlesData = await getRecommendedArticles(
+        data.data[0].id,
+        "article"
+      );
 
       const idForRecommended = recommendedArticlesData[0].id;
       setIdForRecommended(idForRecommended);
@@ -58,7 +60,7 @@ const AirplaneTickets = () => {
       </div>
       {idForRecommended && (
         <RecommendedPosts type="article" id={idForRecommended} />
-      )}{" "}
+      )}
     </div>
   );
 };

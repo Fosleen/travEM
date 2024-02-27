@@ -40,7 +40,7 @@ function App() {
         <Route path="/" element={<UserViewLayout />}>
           <Route index element={<Homepage />} />
           <Route path="/o-nama" element={<About />} />
-          <Route path="/aviokarte" element={<AirplaneTickets />} />
+          <Route path="/aviokarte/:name" element={<AirplaneTickets />} />
           <Route path="/pretrazivanje" element={<SearchResults />} />
           <Route path="/savjeti/:tip" element={<TipsAndTricks />} />
           <Route path="/clanak/:id" element={<Article />} />

@@ -29,8 +29,8 @@ const Contact = () => {
 
     try {
       await emailjs.sendForm(
-        "service_otdu5yl",
-        "template_9wvm89b",
+        import.meta.env.VITE_EMAILJS_SERVICE,
+        import.meta.env.VITE_EMAILJS_TEMPLATE,
         form.current,
         "Y7mSUnArGFqcm2F-o"
       );

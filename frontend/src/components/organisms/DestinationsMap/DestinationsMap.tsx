@@ -152,7 +152,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
           pitch: 0,
         }}
         mapStyle="mapbox://styles/mapbox/navigation-day-v1"
-        mapboxAccessToken="pk.eyJ1IjoidHJhdmVtIiwiYSI6ImNscjN6b21hZzFwYzYyaW15NHR1MGF2c3YifQ.i0zgKxn9bundlWQQasv_rA"
+        mapboxAccessToken={import.meta.env.VITE_MAPBOX_TOKEN}
         scrollZoom={false}
         onClick={onClick}
         onMouseMove={onHover}

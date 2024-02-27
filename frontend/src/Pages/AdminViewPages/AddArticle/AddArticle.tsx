@@ -32,12 +32,14 @@ import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 import Textarea from "../../../components/admin/atoms/Textarea";
 import { ThreeDots } from "react-loader-spinner";
 import jwt from "jsonwebtoken";
+import { getAirportCities } from "../../../api/airportCities";
 
 const AddArticle = () => {
   const navigate = useNavigate();
   const [articleTypes, setArticleTypes] = useState<ArticleType | string>("");
   const [countries, setCountries] = useState<CountriesData | string>("");
   const [places, setPlaces] = useState<PlacesData | string>("");
+  const [airportCities, setAirportCities] = useState("");
   const [sectionIcons, setSectionIcons] = useState<SectionIconsData | string>(
     ""
   );
@@ -69,13 +71,10 @@ const AddArticle = () => {
   });
 
   const jwtToken = localStorage.getItem("jwt");
-
   const tokenParts = jwtToken.split(".");
-
   const base64Url = tokenParts[1];
   const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
   const decodedPayload = JSON.parse(atob(base64));
-
   const user_id = decodedPayload.id;
 
   const handleSave = async (values) => {
@@ -103,7 +102,8 @@ const AddArticle = () => {
           parseInt(values.article_place),
           mainArticleImage,
           user_id,
-          todaysDate
+          todaysDate,
+          parseInt(values.article_airport_city_id)
         );
 
         values.sections.map(async (section, index) => {
@@ -226,10 +226,12 @@ const AddArticle = () => {
       const articleTypesData = await getArticleTypes();
       const countriesData = await getVisitedCountries();
       const sectionIconsData = await getSectionIcons();
+      const airportsData = await getAirportCities();
 
       setArticleTypes(articleTypesData);
       setCountries(countriesData);
       setSectionIcons(sectionIconsData);
+      setAirportCities(airportsData);
     } catch (error) {
       console.error("Error occured while fetching data:", error);
     }
@@ -260,8 +262,9 @@ const AddArticle = () => {
               article_description: "",
               article_video: "",
               article_type: "",
-              article_country: "",
-              article_place: "",
+              article_country: null,
+              article_place: null,
+              article_airport_city_id: null,
               sections: [
                 {
                   section_subtitle: "",
@@ -307,7 +310,12 @@ const AddArticle = () => {
                       hardcodedValue={"Odaberi u kojem će se meniju prikazivat"}
                       options={articleTypes}
                       value={values.article_type}
-                      onChange={(value) => setFieldValue("article_type", value)}
+                      onChange={(value) => {
+                        setFieldValue("article_type", value);
+                        setFieldValue("article_airport_city_id", null);
+                        setFieldValue("article_place", null);
+                        setFieldValue("article_country", null);
+                      }}
                       label="Vrsta članka *"
                     />
                     <ErrorMessage name="article_type" component="div" />
@@ -350,6 +358,24 @@ const AddArticle = () => {
                             filter
                           />
                         )}
+                      </>
+                    )}
+                    {values.article_type == "2" && airportCities && (
+                      <>
+                        <Field
+                          name="article_airport_city_id"
+                          type="text"
+                          as={AdvancedDropdown}
+                          label="Aerodrom *"
+                          hardcodedValue="Odaberi aerodrom iz kojeg se kreće..."
+                          options={airportCities}
+                          onChange={(value) => {
+                            setFieldValue("article_airport_city_id", value.id);
+                          }}
+                          selectedValue={values.article_airport_city_id}
+                          imageAttribute="flag_url"
+                          images
+                        />
                       </>
                     )}
                   </div>

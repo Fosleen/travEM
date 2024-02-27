@@ -248,7 +248,7 @@ class ArticleService {
     article_type_id,
     country_id,
     place_id,
-    url
+    airport_city_id
   ) {
     try {
       const article = await db.models.Article.create({
@@ -261,6 +261,7 @@ class ArticleService {
         articleTypeId: article_type_id,
         countryId: country_id,
         placeId: place_id,
+        airportCityId: airport_city_id,
       });
 
       return article;
@@ -491,10 +492,9 @@ class ArticleService {
     article_type_id,
     user_id,
     country_id,
-    place_id
+    place_id,
+    airport_city_id
   ) {
-    console.log(id);
-
     try {
       await db.models.Article.update(
         {
@@ -507,6 +507,7 @@ class ArticleService {
           userId: user_id,
           countryId: country_id,
           placeId: place_id,
+          airportCityId: airport_city_id,
         },
         {
           where: { id: id },

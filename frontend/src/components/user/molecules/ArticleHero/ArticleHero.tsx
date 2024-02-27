@@ -13,7 +13,8 @@ const ArticleHero = ({ article }) => {
           <h2 className="top">{article.title}</h2>
         </div>
         <h5>
-          {formatDate(article.date_written)} {article.user?.first_name}
+          {formatDate(article.date_written)} {article.user?.first_name}{" "}
+          {article.user?.last_name}
         </h5>
         <p>{article.description}</p>
       </div>

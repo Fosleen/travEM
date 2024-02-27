@@ -3,7 +3,7 @@ import Input from "../../../components/atoms/Input";
 import Button from "../../../components/atoms/Button";
 import Logo from "../../../assets/images/travem-logo-grey.png";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { handleLogin } from "../../../api/users";
+import { loginUser } from "../../../api/users";
 
 const Login = () => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -33,7 +33,7 @@ const Login = () => {
 
           return errors;
         }}
-        onSubmit={handleLogin}
+        onSubmit={loginUser}
       >
         <Form className="login-form-wrapper-form">
           <div className="login-form-title-wrapper">

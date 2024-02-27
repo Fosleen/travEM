@@ -17,8 +17,8 @@ const AirplaneTicketsMenu: FC<AirplaneTicketsMenuProps> = ({
       className="airplane-tickets-menu-container"
       onMouseLeave={handleMouseLeave}
     >
-      <AirplaneTicketsMenuItem title={"Iz Hrvatske"} />
-      <AirplaneTicketsMenuItem title={"Ostalo"} />
+      <AirplaneTicketsMenuItem title={"Iz Hrvatske"} isCroatia={true} />
+      <AirplaneTicketsMenuItem title={"Ostalo"} isCroatia={false} />
     </div>
   );
 };

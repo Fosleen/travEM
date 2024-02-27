@@ -19,6 +19,7 @@ import characteristicIcon from "./characteristicIconRoute.js";
 import specificityImage from "./specificityImageRoute.js";
 import specificityItem from "./specificityItemRoute.js";
 import video from "./videoRoute.js";
+import airportCity from "./airportCityRoute.js";
 
 const router = new Router();
 
@@ -44,5 +45,6 @@ router.use("/places", place);
 router.use("/countries", country);
 router.use("/continents", continent);
 router.use("/videos", video);
+router.use("/airport-cities", airportCity);
 
 export default router;

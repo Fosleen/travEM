@@ -16,7 +16,7 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
     <a
       href={
         type === "article"
-          ? `/clanak/${data.id}`
+          ? `/clanak/${data?.id}`
           : `/destinacija/${data.name?.toLowerCase()}`
       }
     >
@@ -26,14 +26,14 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
         }${thin ? "thin" : ""}`}
       >
         <div className="horizontal-post-item-big-image-container">
-          <img src={data.main_image_url} alt="post-image" />
+          <img src={data?.main_image_url} alt="post-image" />
         </div>
         <div className="horizontal-post-item-big-text-container">
-          <h4>{type == "article" ? data.title : data.name}</h4>
+          <h4>{type == "article" ? data?.title : data?.name}</h4>
           <div className="horizontal-post-item-big-inner-text-container">
-            <p>{data.subtitle} </p>
-            {!stretched && hasDate && data.date_written && (
-              <p>{formatDate(data.date_written)}</p>
+            <p>{data?.subtitle} </p>
+            {!stretched && hasDate && data?.date_written && (
+              <p>{formatDate(data?.date_written)}</p>
             )}
           </div>
         </div>

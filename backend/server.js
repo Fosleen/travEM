@@ -16,8 +16,10 @@ const app = express();
 createAssociations();
 
 const corsOptions = {
-  origin: "*",
+  origin: "https://putujemstravem.com", //change this to localhost:5173 for testing
   credentials: true,
+  methods: "GET, POST, PATCH, DELETE, PUT",
+  allowedHeaders: "Content-Type, Authorization",
 };
 
 app.use(express.json());

@@ -18,6 +18,9 @@ class ArticleService {
             model: db.models.ArticleType,
           },
           {
+            model: db.models.AirportCity,
+          },
+          {
             model: db.models.Country,
           },
           {

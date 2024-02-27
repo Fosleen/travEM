@@ -148,9 +148,6 @@ export async function getArticleById(id: number) {
   return data;
 }
 
-export async function getArticleByType(id: number) {
-  const response = await fetch(`${apiUrl}/articles/${id}`);
-
 export async function updateArticle(
   id: number,
   title: string,
@@ -198,6 +195,17 @@ export async function deleteArticleById(id: number) {
   const response = await fetch(`${apiUrl}/articles/${id}`, {
     method: "DELETE",
   });
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function getFavoriteArticleByCountry(id: number) {
+  const response = await fetch($`{apiUrl}/articles/country/top/${id}`);
   const data = await response.json();
 
   if (!response.ok) {

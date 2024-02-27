@@ -34,11 +34,16 @@ import EditCountry from "./Pages/AdminViewPages/EditCountry/EditCountry";
 import EditArticle from "./Pages/AdminViewPages/EditArticle/EditArticle";
 import Contact from "./Pages/UserViewPages/Contact/Contact";
 import ReactGA from "react-ga4";
+
+import ProtectedRoute from "./components/atoms/ProtectedRoute";
 import { useEffect } from "react";
 
+// Import your ProtectedRoute component here
 
 function App() {
   const location = useLocation();
+
+  const isLoggedIn = localStorage.getItem("jwt");
 
   useEffect(() => {
     ReactGA.send({
@@ -71,29 +76,36 @@ function App() {
             element={<DestinationPlace />}
           />
         </Route>
-        <Route path="/admin" element={<AdminViewLayout />}>
-          <Route path="/admin/sadržaj" element={<EditHomepageMenu />} />
-          <Route path="/admin/mjesta" element={<PlacesList />} />
-          <Route path="/admin/mjesta/dodaj" element={<AddPlace />} />
-          <Route path="/admin/mjesta/uredi/:name" element={<EditPlace />} />
-          <Route path="/admin/države" element={<CountriesList />} />
-          <Route path="/admin/države/dodaj" element={<AddCountry />} />
-          <Route path="/admin/države/uredi/:name" element={<EditCountry />} />
-          <Route path="/admin/članci" element={<ArticlesList />} />
-          <Route path="/admin/članci/uredi/:id" element={<EditArticle />} />
-          <Route path="/admin/članci/dodaj" element={<AddArticle />} />
-          <Route path="/admin/uredi-hero" element={<EditHero />} />
-          <Route path="/admin/uredi-banner" element={<EditBanner />} />
-          <Route path="/admin/uredi-statistiku" element={<EditStats />} />
-          <Route path="/admin/uredi-top-tri" element={<EditTopArticles />} />
-          <Route
-            path="/admin/uredi-omiljene-clanke"
-            element={<EditFavoriteArticles />}
-          />
-          <Route path="/admin/uredi-vize" element={<EditVisaInfo />} />
-          <Route path="/admin/uredi-kartu" element={<EditMap />} />
-          <Route path="/admin/uredi-footer" element={<EditFooter />} />
-        </Route>
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute redirectPath="/login" isAllowed={isLoggedIn}>
+              <AdminViewLayout />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/admin/sadržaj" element={<EditHomepageMenu />} />
+        <Route path="/admin/mjesta" element={<PlacesList />} />
+        <Route path="/admin/mjesta/dodaj" element={<AddPlace />} />
+        <Route path="/admin/mjesta/uredi/:name" element={<EditPlace />} />
+        <Route path="/admin/države" element={<CountriesList />} />
+        <Route path="/admin/države/dodaj" element={<AddCountry />} />
+        <Route path="/admin/države/uredi/:name" element={<EditCountry />} />
+        <Route path="/admin/članci" element={<ArticlesList />} />
+        <Route path="/admin/članci/uredi/:id" element={<EditArticle />} />
+        <Route path="/admin/članci/dodaj" element={<AddArticle />} />
+        <Route path="/admin/uredi-hero" element={<EditHero />} />
+        <Route path="/admin/uredi-banner" element={<EditBanner />} />
+        <Route path="/admin/uredi-statistiku" element={<EditStats />} />
+        <Route path="/admin/uredi-top-tri" element={<EditTopArticles />} />
+        <Route
+          path="/admin/uredi-omiljene-clanke"
+          element={<EditFavoriteArticles />}
+        />
+        <Route path="/admin/uredi-vize" element={<EditVisaInfo />} />
+        <Route path="/admin/uredi-kartu" element={<EditMap />} />
+        <Route path="/admin/uredi-footer" element={<EditFooter />} />
       </Routes>
     </>
   );

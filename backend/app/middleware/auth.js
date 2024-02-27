@@ -6,10 +6,10 @@ import bcrypt from "bcrypt";
 
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: "1234", // Replace with your secret key for JWT
+  secretOrKey: process.env.JWT_SECRET_KEY,
 };
 
-const secretKey = "1234";
+const secretKey = process.env.JWT_SECRET_KEY;
 
 passport.use(
   new JwtStrategy(jwtOptions, async (jwtPayload, done) => {

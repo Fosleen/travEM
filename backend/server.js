@@ -1,4 +1,3 @@
-import { Sequelize } from "sequelize";
 import express from "express";
 import cors from "cors";
 import logger from "morgan";
@@ -9,6 +8,7 @@ import session from "express-session";
 import { authenticateJwt } from "./app/middleware/auth.js";
 import { exec } from "child_process";
 import { createAssociations } from "./database_management.js";
+import helmet from "helmet";
 
 const app = express();
 
@@ -25,12 +25,12 @@ const corsOptions = {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(logger("dev"));
-//app.use(helmet());
+app.use(helmet());
 app.set("view engine", "ejs");
 app.use(cors(corsOptions));
 app.use(
   session({
-    secret: "1234",
+    secret: process.env.VITE_SECRET_KEY,
     resave: false,
     saveUninitialized: false,
   })

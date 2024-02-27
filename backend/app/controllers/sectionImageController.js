@@ -4,10 +4,27 @@ class SectionImagesController {
   async addSectionImage(req, res) {
     const response = await service.addSectionImage(
       req.body.url,
-      req.body.section_id
+      req.body.section_id,
+      req.body.width,
+      req.body.height
     );
+
     if (response.length == 0) {
       res.status(500).json({ error: "Error inserting section image" });
+    } else {
+      res.status(200).json(response);
+    }
+  }
+
+  async patchSectionImage(req, res) {
+    const response = await service.patchSectionImage(
+      req.body.url,
+      req.params.id,
+      req.body.width,
+      req.body.height
+    );
+    if (response.length == 0) {
+      res.status(500).json({ error: "Error updating section image" });
     } else {
       res.status(200).json(response);
     }

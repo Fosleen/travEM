@@ -19,7 +19,9 @@
       position: relative;
 
       .bold-grey {
-        font-family: "TheBoldFont";
+        font-family: "Archivo Black", sans-serif;
+        font-weight: 400;
+        font-style: normal;
         color: $greyMiddle;
         font-size: 64px;
         position: absolute;
@@ -30,7 +32,9 @@
       }
 
       .bold-color {
-        font-family: "TheBoldFont";
+        font-family: "Archivo Black", sans-serif;
+        font-weight: 400;
+        font-style: normal;
         color: $limeGreen;
         font-size: 64px;
         position: absolute;
@@ -42,11 +46,13 @@
 
       .cursive-black {
         position: relative;
-        font-family: "Testimonia";
+        font-family: "Sacramento", cursive;
+        font-weight: 400;
+        font-style: normal;
         color: $grey;
-        font-size: 76px;
+        font-size: 64px;
         z-index: 1;
-        line-height: 90%;
+        line-height: 130%;
         padding-top: 12px;
         max-width: 500px;
         word-spacing: 32px;
@@ -54,7 +60,7 @@
     }
 
     .destination-hero-description {
-      margin-top: 8px;
+      margin-top: 48px;
       font-size: 16px;
       margin-bottom: 16px;
       z-index: 1;
@@ -111,7 +117,7 @@
 
         .cursive-black {
           font-size: 96px;
-          line-height: 90%;
+          line-height: 110%;
         }
       }
 
@@ -156,7 +162,7 @@
         .cursive-black {
           font-size: 144px;
           width: 1024px;
-          line-height: 110%;
+          line-height: 130%;
         }
       }
 
@@ -177,19 +183,19 @@
     .destination-hero-left {
       .destination-hero-titles {
         .bold-grey {
-          font-size: 196px;
+          font-size: 156px;
           max-width: 760px;
         }
 
         .bold-color {
-          font-size: 196px;
+          font-size: 156px;
           max-width: 760px;
         }
 
         .cursive-black {
-          font-size: 196px;
+          font-size: 156px;
           max-width: 760px;
-          line-height: 110%;
+          line-height: 135%;
         }
       }
 

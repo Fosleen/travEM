@@ -1,4 +1,5 @@
 import db from "../models/index.js";
+import { Op, Sequelize } from "sequelize";
 
 class ArticleService {
   async getArticles(page, pageSize, articleType) {
@@ -17,6 +18,9 @@ class ArticleService {
             model: db.models.ArticleType,
           },
           {
+            model: db.models.AirportCity,
+          },
+          {
             model: db.models.Country,
           },
           {
@@ -24,6 +28,7 @@ class ArticleService {
           },
         ],
         where: optionalArticleTypeWhere,
+        order: [["date_written", "DESC"]],
       });
 
       return {
@@ -31,7 +36,7 @@ class ArticleService {
         totalPages: Math.ceil(articles.count / pageSize),
         currentPage: page,
         pageSize: pageSize,
-        articles: articles.rows,
+        data: articles.rows,
       };
     } catch (error) {
       return [];
@@ -66,6 +71,9 @@ class ArticleService {
               {
                 model: db.models.SectionImage,
               },
+              {
+                model: db.models.SectionIcon,
+              },
             ],
           },
           {
@@ -80,6 +88,154 @@ class ArticleService {
       console.log(error);
       return `not found article with PK ${id}`;
     }
+  }
+
+  async getRecommendedArticles(id, type) {
+    const recommendedArticles = [];
+    let nmbrSameType = 0;
+    let nmbrSamePlace = 0;
+    let nmbrSameCountry = 0;
+
+    if (type == "article") {
+      const startingArticle = await db.models.Article.findByPk(id); // id = article id
+      if (startingArticle.articleTypeId == 1) {
+        // destinacija
+        {
+          startingArticle.placeId && (nmbrSamePlace = 2);
+        }
+        {
+          startingArticle.placeId
+            ? (nmbrSameCountry = 2)
+            : (nmbrSameCountry = 4);
+        }
+      } else if (
+        startingArticle.articleTypeId == 2 ||
+        startingArticle.articleTypeId == 3 ||
+        startingArticle.articleTypeId == 4 ||
+        startingArticle.articleTypeId == 5 ||
+        startingArticle.articleTypeId == 6 ||
+        startingArticle.articleTypeId == 7 ||
+        startingArticle.articleTypeId == 8
+      ) {
+        // aviokarte ili savjeti
+        nmbrSameType = 4;
+      }
+
+      if (nmbrSameType > 0) {
+        let articlesSameType;
+        if (
+          startingArticle.articleTypeId == 3 ||
+          startingArticle.articleTypeId == 4 ||
+          startingArticle.articleTypeId == 5 ||
+          startingArticle.articleTypeId == 6 ||
+          startingArticle.articleTypeId == 7 ||
+          startingArticle.articleTypeId == 8
+        ) {
+          // savjeti
+          articlesSameType = await db.models.Article.findAll({
+            where: {
+              articleTypeId: startingArticle.articleTypeId,
+              id: { [Op.notIn]: [id] }, // don't return that article in result
+            },
+            order: Sequelize.literal("rand()"), // return random items, mysql dialect = rand function
+            limit: nmbrSameType,
+          });
+        } else if (startingArticle.articleTypeId == 2) {
+          // aviokarte
+          articlesSameType = await db.models.Article.findAll({
+            where: {
+              articleTypeId: startingArticle.articleTypeId,
+              id: { [Op.notIn]: [id] },
+            },
+            order: [["date_written", "DESC"]], // return 4 newest articles
+            limit: nmbrSameType,
+          });
+        }
+        articlesSameType.forEach((el) => {
+          recommendedArticles.push(el);
+        });
+      }
+
+      if (nmbrSamePlace > 0) {
+        const articlesSamePlace = await db.models.Article.findAll({
+          where: {
+            placeId: startingArticle.placeId,
+            id: { [Op.notIn]: [id] },
+          },
+          order: Sequelize.literal("rand()"),
+          limit: nmbrSamePlace,
+        });
+        articlesSamePlace.forEach((el) => {
+          recommendedArticles.push(el);
+        });
+      }
+
+      if (nmbrSameCountry > 0) {
+        const articlesSameCountry = await db.models.Article.findAll({
+          where: {
+            countryId: startingArticle.countryId,
+            id: {
+              [Op.notIn]: [
+                id, // don't return that article in result
+                ...recommendedArticles.map((article) => article.id), // don't return already recommended articles
+              ],
+            },
+          },
+          order: Sequelize.literal("rand()"),
+          limit: nmbrSameCountry,
+        });
+        articlesSameCountry.forEach((el) => {
+          recommendedArticles.push(el);
+        });
+      }
+    } else if (type == "country-page" || type == "place-page") {
+      // nije clanak, nego page
+      let startingDestination = null;
+      if (type == "place-page") {
+        startingDestination = await db.models.Place.findByPk(id); // id = place id
+      } else {
+        startingDestination = await db.models.Country.findByPk(id); // id = country id
+      }
+
+      const articlesSelectedCountry = await db.models.Article.findAll({
+        where: {
+          countryId:
+            type == "place-page"
+              ? startingDestination.countryId
+              : startingDestination.id,
+          id: {
+            [Op.notIn]: [id, ...recommendedArticles.map((el) => el.id)],
+          },
+        },
+        order: Sequelize.literal("rand()"),
+        limit: 2,
+      });
+      articlesSelectedCountry.forEach((element) => {
+        recommendedArticles.push(element);
+      });
+    }
+
+    if (recommendedArticles.length != 4) {
+      // add random destination articles if total number of articles is not 4
+      const randomArticles = await db.models.Article.findAll({
+        where: {
+          articleTypeId: 1,
+          id: {
+            [Op.notIn]: [
+              id,
+              ...recommendedArticles.map((article) => article.id),
+            ],
+          },
+        },
+        order: Sequelize.literal("rand()"),
+        limit: 4 - recommendedArticles.length,
+      });
+      randomArticles.forEach((el) => {
+        recommendedArticles.push(el);
+      });
+    }
+
+    return recommendedArticles;
   }
 
   async addArticle(
@@ -126,6 +282,9 @@ class ArticleService {
               id: [1, 3, 4, 5],
             },
           },
+          {
+            model: db.models.Country,
+          },
         ],
       });
       return articles;
@@ -136,7 +295,7 @@ class ArticleService {
 
   async getTopCountryArticle(id) {
     try {
-      const articles = await db.models.Article.findAll({
+      const articles = await db.models.Article.findOne({
         where: {
           countryId: id,
         },
@@ -179,6 +338,38 @@ class ArticleService {
       return articles;
     } catch (error) {
       return [];
+    }
+  }
+
+  async getArticleByName(name, page, pageSize) {
+    const limit = pageSize;
+    const offset = (page - 1) * pageSize;
+
+    try {
+      const articles = await db.models.Article.findAndCountAll({
+        limit: limit,
+        offset: offset,
+        include: [
+          {
+            model: db.models.Country,
+          },
+        ],
+        where: {
+          title: {
+            [Op.startsWith]: name,
+          },
+        },
+      });
+      return {
+        total: articles.count,
+        totalPages: Math.ceil(articles.count / pageSize),
+        currentPage: page,
+        pageSize: pageSize,
+        data: articles.rows,
+      };
+    } catch (error) {
+      console.log(error);
+      return `not found places starting with name ${name}`;
     }
   }
 

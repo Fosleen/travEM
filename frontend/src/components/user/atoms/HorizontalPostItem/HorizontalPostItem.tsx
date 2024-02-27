@@ -1,24 +1,32 @@
 import { Link } from "react-router-dom";
-import postImage from "../../../../assets/images/post-image.jpg";
 import "./HorizontalPostItem.scss";
+import { FC } from "react";
+import { Article } from "../../../../common/types";
 
-const HorizontalPostItem = ({ isSmall = false }) => {
+const HorizontalPostItem: FC<{ isSmall?: boolean; article: Article }> = ({
+  isSmall = false,
+  article,
+}) => {
   return (
-    <Link
-      to="/"
-      className={`horizontal-post-item-container ${isSmall && "small"}`}
-    >
-      <div
-        className={`horizontal-post-item-image-container ${isSmall && "small"}`}
-      >
-        <img src={postImage} alt="post-image" />
-      </div>
-      <div className="horizontal-post-item-text-container">
-        <p className={`${isSmall && "small"}`}>
-          Ciparske avanture s morskim psima za đ
-        </p>
-      </div>
-    </Link>
+    <>
+      {article && (
+        <Link
+          to={`/clanak/${article.id}`}
+          className={`horizontal-post-item-container ${isSmall && "small"}`}
+        >
+          <div
+            className={`horizontal-post-item-image-container ${
+              isSmall && "small"
+            }`}
+          >
+            <img src={article.main_image_url} alt="post-image" />
+          </div>
+          <div className="horizontal-post-item-text-container">
+            <p className={`${isSmall && "small"}`}>{article.title}</p>
+          </div>
+        </Link>
+      )}
+    </>
   );
 };
 

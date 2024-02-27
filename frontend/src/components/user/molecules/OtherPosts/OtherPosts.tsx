@@ -1,22 +1,26 @@
+import { FC } from "react";
 import HorizontalPostItem from "../../atoms/HorizontalPostItem";
 import VerticalPostItem from "../../atoms/VerticalPostItem";
 import "./OtherPosts.scss";
+import { Article } from "../../../../common/types";
 
-const OtherPosts = () => {
+const OtherPosts: FC<{
+  verticalArticles: Array<Article>;
+  horizontalArticles: Array<Article>;
+}> = ({ verticalArticles, horizontalArticles }) => {
   return (
     <div className="other-posts-container">
       <h2>Omiljeni putopisi</h2>
       <div className="other-posts-wrapper">
         <div className="other-posts-left">
-          <HorizontalPostItem isSmall={true} />
-          <HorizontalPostItem isSmall={true} />
-          <HorizontalPostItem isSmall={true} />
-          <HorizontalPostItem isSmall={true} />
+          {horizontalArticles.map((el) => (
+            <HorizontalPostItem isSmall={true} article={el} />
+          ))}
         </div>
         <div className="other-posts-right">
-          <VerticalPostItem />
-          <VerticalPostItem />
-          <VerticalPostItem />
+          {verticalArticles.map((el) => (
+            <VerticalPostItem article={el} />
+          ))}
         </div>
       </div>
     </div>

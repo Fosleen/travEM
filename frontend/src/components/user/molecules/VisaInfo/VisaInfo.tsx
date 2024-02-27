@@ -1,46 +1,82 @@
-import { useState } from "react";
+// @ts-nocheck
+
+import { FC, useEffect, useState } from "react";
 import passportImage from "../../../../assets/images/passport-icon.png";
 import "./VisaInfo.scss";
 import Button from "../../../atoms/Button";
-import Dropdown from "../../../atoms/Dropdown";
+import AdvancedDropdown from "../../../admin/atoms/AdvancedDropdown";
+import { getVisitedCountries } from "../../../../api/map";
+import { checkIfInfoExists } from "../../../../api/visaInfo";
 
-const VisaInfo = () => {
+const VisaInfo: FC<{ countryId: number }> = ({ countryId }) => {
   const [isInfoShown, setInfoShown] = useState(false);
+  const [visaInfo, setVisaInfo] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState("");
+  const [visaCountries, setVisaCountries] = useState([
+    "Hrvatska",
+    "Bosna i Hercegovina",
+    "Srbija",
+    "Slovenija",
+    "Crna Gora",
+  ]);
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
-
-  const handleCountryChange = (selectedValue) => {
-    console.log("nekaj");
-
-    setSelectedCountry(selectedValue);
+  const handleClick = async () => {
+    const response = await checkIfInfoExists(countryId, selectedCountry.id);
+    console.log(response);
+    if (response === true) {
+      setVisaInfo({
+        documentation: "-",
+        visa_needed: "-",
+        additional_info: "-",
+      });
+    } else {
+      setVisaInfo(response);
+    }
+    setInfoShown(true);
   };
 
-  const countries = [
-    { id: 1, name: "Hrvatska" },
-    { id: 2, name: "Slovenija" },
-    { id: 3, name: "Bosna i Hercegovina" },
-    { id: 4, name: "Srbija" },
-    { id: 5, name: "Crna Gora" },
-  ];
+  const fetchData = async () => {
+    try {
+      const countriesData = await getVisitedCountries();
+      const filteredAllCountries = countriesData.map(
+        (el: { id: number; flag_image_url: string; name: string }) => ({
+          id: el.id,
+          url: el.flag_image_url,
+          name: el.name,
+        })
+      );
+
+      const filteredVisaCountries = filteredAllCountries.filter((i) =>
+        visaCountries.includes(i.name)
+      );
+
+      setVisaCountries(filteredVisaCountries);
+    } catch (error) {
+      console.error("Error occured while fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div className="visa-info-container">
       <img src={passportImage} alt="passport-image" />
       <div className="visa-info-text">
         <h2>Provjerite putne isprave</h2>
-        <Dropdown
-          hardcodedValue={"--odaberite--"}
-          options={countries}
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignoreS
-          value={selectedCountry}
-          onChange={handleCountryChange}
-        />
+        <div className="dropdown-container">
+          <AdvancedDropdown
+            images
+            hardcodedValue={"Odaberi državu..."}
+            options={visaCountries}
+            value={selectedCountry}
+            onChange={(value) => setSelectedCountry(value)}
+          />
+        </div>
         <Button
           onClick={() => {
-            setInfoShown(true);
+            handleClick();
           }}
           primary
           fitText={false}
@@ -48,19 +84,25 @@ const VisaInfo = () => {
           provjeri
         </Button>
       </div>
-      {isInfoShown && (
+      {isInfoShown && visaInfo && (
         <div className="visa-info-results">
           <div className="visa-info-result">
             <h4>Putna isprava:</h4>
-            <p>Potrebna putovnica</p>
+            <p>{visaInfo.documentation}</p>
           </div>
           <div className="visa-info-result">
             <h4>Putna viza:</h4>
-            <p>Ne.</p>
+            <p>
+              {visaInfo.visa_needed == "-"
+                ? "-"
+                : visaInfo.visa_needed
+                ? "Da."
+                : "Ne."}
+            </p>
           </div>
           <div className="visa-info-result">
             <h4>Napomena:</h4>
-            <p>Ovo je skupo i dugo se čeka</p>
+            <p>{visaInfo.additional_info}</p>
           </div>
         </div>
       )}

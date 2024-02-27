@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import "./AddArticle.scss";
 import * as Yup from "yup";
@@ -13,7 +16,7 @@ import { Plus, X } from "@phosphor-icons/react";
 import Swal from "sweetalert2";
 import {
   ArticleType,
-  MapCountriesData,
+  CountriesData,
   PlacesData,
   SectionIconsData,
 } from "../../../common/types";
@@ -27,11 +30,13 @@ import { addSectionImage } from "../../../api/sectionImages";
 import { addGalleryImage } from "../../../api/galleryImages";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 import Textarea from "../../../components/admin/atoms/Textarea";
+import { ThreeDots } from "react-loader-spinner";
+import jwt from "jsonwebtoken";
 
 const AddArticle = () => {
   const navigate = useNavigate();
   const [articleTypes, setArticleTypes] = useState<ArticleType | string>("");
-  const [countries, setCountries] = useState<MapCountriesData | string>("");
+  const [countries, setCountries] = useState<CountriesData | string>("");
   const [places, setPlaces] = useState<PlacesData | string>("");
   const [sectionIcons, setSectionIcons] = useState<SectionIconsData | string>(
     ""
@@ -40,6 +45,8 @@ const AddArticle = () => {
   const [selectedCountryId, setSelectedCountryId] = useState("");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [modalInputValue, setModalInputValue] = useState("");
+  const [imageHeightValue, setImageHeightValue] = useState("");
+  const [imageWidthValue, setImageWidthValue] = useState("");
 
   // images
   const [imageType, setImageType] = useState<string | null>(null);
@@ -61,9 +68,17 @@ const AddArticle = () => {
       .max(100, "Naslov smije imati max 100 znakova!"),
   });
 
-  const handleSave = async (values) => {
-    console.log(values);
+  const jwtToken = localStorage.getItem("jwt");
 
+  const tokenParts = jwtToken.split(".");
+
+  const base64Url = tokenParts[1];
+  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  const decodedPayload = JSON.parse(atob(base64));
+
+  const user_id = decodedPayload.id;
+
+  const handleSave = async (values) => {
     Swal.fire({
       title: "Jeste li sigurni?",
       text: "Objavit ćete ovaj članak",
@@ -87,11 +102,9 @@ const AddArticle = () => {
           parseInt(values.article_country),
           parseInt(values.article_place),
           mainArticleImage,
-          1, // TODO connect with the ID of logged user
+          user_id,
           todaysDate
         );
-
-        console.log(isMainCountryPostChecked); // TODO connect with backend to set as the main post for selected country (create backend)
 
         values.sections.map(async (section, index) => {
           const sectionResponse = await addSection(
@@ -103,14 +116,19 @@ const AddArticle = () => {
             section.section_icon,
             articleResponse.id
           );
-          sectionImages[index].map(
-            async (el) => await addSectionImage(el, sectionResponse.id)
-          );
+          sectionImages[index].map(async (el) => {
+            await addSectionImage(el.url, sectionResponse.id);
+          });
         });
 
-        otherArticleImages.map(
-          async (image) => await addGalleryImage(image, articleResponse.id)
-        );
+        otherArticleImages.map(async (image) => {
+          return await addGalleryImage(
+            image.url,
+            image.height,
+            image.width,
+            articleResponse.id
+          );
+        });
         navigate("/admin/članci");
         notifySuccess("Uspješno predano!");
       }
@@ -148,6 +166,7 @@ const AddArticle = () => {
     if (type == "main") {
       setMainArticleImage(null);
     } else if (type == "other") {
+      //ovo tu su gallery slike
       setOtherArticleImages(
         otherArticleImages.filter((_el, index) => index !== itemIndex)
       );
@@ -175,15 +194,31 @@ const AddArticle = () => {
     if (imageType == "main") {
       setMainArticleImage(modalInputValue);
     } else if (imageType == "other") {
-      setOtherArticleImages([...otherArticleImages, modalInputValue]);
+      setOtherArticleImages([
+        ...otherArticleImages,
+        {
+          url: modalInputValue,
+          width: imageWidthValue,
+          height: imageHeightValue,
+        },
+      ]);
     } else if (imageType == "section") {
       setSectionImages((prevSectionImages) => [
         ...prevSectionImages.slice(0, sectionSelected), // kopija polja prije indexa odabrane sekcije
-        [...prevSectionImages[sectionSelected], modalInputValue], // dodavanje slike na kraj odabrane sekcije
+        [
+          ...prevSectionImages[sectionSelected],
+          {
+            url: modalInputValue,
+            width: imageWidthValue,
+            height: imageHeightValue,
+          },
+        ], // dodavanje slike na kraj odabrane sekcije...tu moram neki objekt dodavati
         ...prevSectionImages.slice(sectionSelected + 1), // kopija polja nakon indexa odabrane sekcije
       ]);
     }
     setModalInputValue("");
+    setImageHeightValue("");
+    setImageWidthValue("");
   };
 
   const fetchData = async () => {
@@ -217,7 +252,7 @@ const AddArticle = () => {
     <>
       <div className="add-article-container">
         <h2>Unesi novi članak</h2>
-        {articleTypes && countries && (
+        {articleTypes && countries ? (
           <Formik
             initialValues={{
               article_title: "",
@@ -284,29 +319,35 @@ const AddArticle = () => {
                     />
                     {values.article_type == "1" && (
                       <>
-                        <Dropdown
-                          hardcodedValue={"Odaberi državu o kojoj se radi"}
-                          options={countries}
-                          value={values.article_country}
-                          onChange={(value) => {
-                            setFieldValue("article_country", value);
-                            setSelectedCountryId(value);
-                          }}
-                          isDisabled={false}
+                        <Field
+                          name="article_country"
+                          type="text"
+                          as={AdvancedDropdown}
                           label="Država članka (opcionalno)"
+                          hardcodedValue="Odaberi državu o kojoj se radi..."
+                          options={countries}
+                          onChange={(value) => {
+                            setFieldValue("article_country", value.id);
+                            setSelectedCountryId(value.id);
+                          }}
+                          selectedValue={values.article_country}
+                          imageAttribute="flag_image_url"
+                          filter
+                          images
                         />
                         {values.article_country != "" && places && (
-                          <Dropdown
-                            hardcodedValue={
-                              "Odaberi grad ili mjesto o kojem se radi"
-                            }
-                            value={values.article_place}
-                            onChange={(value) =>
-                              setFieldValue("article_place", value)
-                            }
-                            isDisabled={false}
+                          <Field
+                            name="article_place"
+                            type="text"
+                            as={AdvancedDropdown}
                             label="Mjesto članka (opcionalno)"
+                            hardcodedValue="Odaberi grad ili mjesto o kojem se radi"
                             options={places}
+                            onChange={(value) => {
+                              setFieldValue("article_place", value.id);
+                            }}
+                            selectedValue={values.article_place}
+                            filter
                           />
                         )}
                       </>
@@ -395,9 +436,10 @@ const AddArticle = () => {
                                     type="text"
                                     as={Textarea}
                                     rows={12}
-                                    name={`sections.${index}.section_text`}
+                                    name={`sections[${index}].section_text`}
                                     label="Tekst odlomka *"
                                     placeholder="Unesi tekst odlomka..."
+                                    value={sections[index].section_text}
                                   />
                                   <div className="add-article-section-bottom">
                                     <Field
@@ -438,24 +480,29 @@ const AddArticle = () => {
                                                   weight="bold"
                                                 />
                                               </div>
-                                              <img src={el} alt="img-error" />
+                                              <img
+                                                src={el.url}
+                                                alt="img-error"
+                                              />
                                             </div>
                                           )
                                         )}
-                                      <div
-                                        className="add-article-item"
-                                        onClick={() => {
-                                          toggleDialog();
-                                          setImageType("section");
-                                          setSectionSelected(index);
-                                        }}
-                                      >
-                                        <Plus
-                                          size={32}
-                                          color="#616161"
-                                          weight="bold"
-                                        />
-                                      </div>
+                                      {sectionImages[index].length < 2 && (
+                                        <div
+                                          className="add-article-item"
+                                          onClick={() => {
+                                            toggleDialog();
+                                            setImageType("section");
+                                            setSectionSelected(index);
+                                          }}
+                                        >
+                                          <Plus
+                                            size={32}
+                                            color="#616161"
+                                            weight="bold"
+                                          />
+                                        </div>
+                                      )}
                                     </div>
                                     <Button
                                       type="button"
@@ -470,6 +517,10 @@ const AddArticle = () => {
                                       izbriši odlomak
                                     </Button>
                                   </div>
+                                  <p>
+                                    * preporuča se 1 slika u omjeru 16:9 ili
+                                    max. 2 u omjeru 9:16
+                                  </p>
                                 </fieldset>
                               ))
                             : null}
@@ -501,7 +552,7 @@ const AddArticle = () => {
                           <div className="add-article-image-remove-icon">
                             <X size={32} color="#e70101" weight="bold" />
                           </div>
-                          <img src={el} alt="img-error" />
+                          <img src={el.url} alt="img-error" />
                         </div>
                       ))}
                     <div
@@ -551,6 +602,16 @@ const AddArticle = () => {
               </Form>
             )}
           </Formik>
+        ) : (
+          <ThreeDots
+            height="80"
+            width="80"
+            radius="8"
+            color="#2BAC82"
+            ariaLabel="three-dots-loading"
+            wrapperStyle={{ justifyContent: "center" }}
+            visible={true}
+          />
         )}
       </div>
       <Modal
@@ -558,9 +619,13 @@ const AddArticle = () => {
         toggleDialog={toggleDialog}
         onClick={handleAddImage}
         modalInputValue={modalInputValue}
+        modalImageHeightValue={imageHeightValue}
+        modalImageWidthValue={imageWidthValue}
         setModalInputValue={setModalInputValue}
+        setImageHeightValue={setImageHeightValue}
+        setImageWidthValue={setImageWidthValue}
+        isAddArticle
       />
-      {modalInputValue.toString()}
     </>
   );
 };

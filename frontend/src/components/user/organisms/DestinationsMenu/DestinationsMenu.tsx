@@ -1,19 +1,36 @@
+import { ThreeDots } from "react-loader-spinner";
+import { getContinents } from "../../../../api/continents";
+import {
+  ContinentsData,
+  DestinationsMenuProps,
+} from "../../../../common/types";
 import DestinationsMenuItem from "../../molecules/DestinationsMenuItem";
 import "./DestinationsMenu.scss";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 
-interface DestinationsMenuProps {
-  setIsDestinationsMenuShown?: (isShown: boolean) => void;
-}
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignoreS
 const DestinationsMenu: FC<DestinationsMenuProps> = ({
   setIsDestinationsMenuShown,
 }) => {
+  const [continents, setContinents] = useState<Array<ContinentsData> | null>(
+    null
+  );
+
   const handleMouseLeave = () => {
     if (setIsDestinationsMenuShown) {
       setIsDestinationsMenuShown(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const continentsData = await getContinents();
+      setContinents(continentsData);
+    } catch (error) {
+      console.error("error while fetching:", error);
     }
   };
 
@@ -22,10 +39,23 @@ const DestinationsMenu: FC<DestinationsMenuProps> = ({
       className="destinations-menu-container"
       onMouseLeave={handleMouseLeave}
     >
-      <DestinationsMenuItem title={"Europa"} />
-      <DestinationsMenuItem title={"Afrika"} />
-      <DestinationsMenuItem title={"Azija"} />
-      <DestinationsMenuItem title={"Amerika"} />
+      {continents ? (
+        <>
+          {continents.map((el, index) => (
+            <DestinationsMenuItem title={el.name} id={el.id} key={index} />
+          ))}
+        </>
+      ) : (
+        <ThreeDots
+          height="80"
+          width="80"
+          radius="8"
+          color="#2BAC82"
+          ariaLabel="three-dots-loading"
+          wrapperStyle={{ justifyContent: "center" }}
+          visible={true}
+        />
+      )}
     </div>
   );
 };

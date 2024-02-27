@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { FC } from "react";
 import "./Textarea.scss";
 import { TextareaProps } from "../../../../common/types";
@@ -10,6 +12,7 @@ const Textarea: FC<TextareaProps> = ({
   disabled = false,
   onChange,
   rows,
+  value = null,
 }) => {
   return (
     <div className="textarea-parent-wrapper">
@@ -22,6 +25,7 @@ const Textarea: FC<TextareaProps> = ({
           onChange={onChange}
           disabled={disabled}
           rows={rows}
+          value={value}
         />
       </div>
 

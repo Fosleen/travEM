@@ -95,10 +95,11 @@ const Footer = ({
         </div>
         <div className="footer-list-item">
           <div className="footer-list-item-title">O NAMA</div>
-          <Link to="">
+          <Link to="/clanak/100">
+            {/* TODO add link to about us article */}
             <div className="footer-list-item-content">Priča o nama</div>
           </Link>
-          <Link to="">
+          <Link to="/kontakt">
             <div className="footer-list-item-content">Radite s nama</div>
           </Link>
         </div>

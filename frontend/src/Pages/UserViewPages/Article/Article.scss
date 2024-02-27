@@ -40,30 +40,19 @@
 .article-connected-articles-wrapper {
   max-width: 1300px;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  margin-bottom: 24px;
-  padding: 16px;
-
-  @media screen and ($tabletMedium) {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media screen and ($desktopLarge) {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-  }
 }
 
 .article-text-articles-wrapper {
   padding: 16px;
   max-width: 1300px;
   margin: 0 auto;
+
   h2 {
     font-weight: bold;
-    font-size: 40px;
+  }
+
+  @media screen and ($desktopLarge) {
+    padding: 16px 0;
   }
 }
 
@@ -76,31 +65,44 @@
     padding: 16px 0;
   }
 }
-
-.article-location {
+.article-location-container {
   display: flex;
   align-items: center;
-  gap: 12px;
-  text-decoration: underline;
-  max-width: 1300px;
-  padding: 16px;
+  gap: 8px;
+  margin-left: 16px;
 
-  @media screen and ($desktopLarge) {
-    padding: 0;
-  }
+  .article-location {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: underline;
+    max-width: 1300px;
+    cursor: pointer;
 
-  h2 {
-    font-weight: bold;
+    h2 {
+      font-weight: bold;
+    }
+
+    @media screen and ($desktop) {
+      margin-left: 0px;
+    }
+
+    @media screen and ($desktopLarge) {
+      padding: 0;
+    }
   }
 }
 
 .article-gallery-text-wrapper {
   max-width: 1300px;
   margin: 0 auto;
-  padding: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media screen and ($desktopLarge) {
+    padding: 16px 0;
+  }
 }
 
 .article-location-parent {

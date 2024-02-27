@@ -1,23 +1,40 @@
 import { Link } from "react-router-dom";
-import icon from "../../../../assets/images/building-icon.png";
-import flag from "../../../../assets/images/croatian-flag.png";
 import "./DestinationItem.scss";
+import { FC } from "react";
 
-const DestinationItem = ({
+const DestinationItem: FC<{
+  mapItem?: boolean;
+  filterMenuItem?: boolean;
+  name?: string;
+  iconUrl?: string;
+  countryName?: string;
+  planeTickets?: boolean;
+}> = ({
   mapItem = false,
   filterMenuItem = false,
-  name = "London",
+  name = "",
+  iconUrl,
+  countryName = null,
+  planeTickets = false,
 }) => {
+  const destinationPath = planeTickets
+    ? `/aviokarte/${name.toLowerCase()}`
+    : countryName
+    ? `/destinacija/${countryName.toLowerCase()}/${name.toLowerCase()}`
+    : `/destinacija/${name.toLowerCase()}`;
+
   return (
     <Link
-      to={`/destinacija/${name.toLowerCase()}`}
+      to={destinationPath}
       className={`destination-item-container ${
         (mapItem || filterMenuItem) && "has-icon full-width"
       } ${filterMenuItem && "flag"} ${mapItem && "sights"}`}
     >
-      {filterMenuItem && <img src={flag} alt="destination-image" />}
+      {filterMenuItem && (
+        <img className="flag-icon" src={iconUrl} alt="destination-image" />
+      )}
       <p>{name}</p>
-      {mapItem && <img src={icon} alt="destination-image" />}
+      {mapItem && <img src={iconUrl} alt="destination-image" />}
     </Link>
   );
 };

@@ -12,6 +12,8 @@ class CountriesService {
         offset: offset,
       });
 
+      console.log("Izlazim van");
+
       const countriesWithArticleCount = await Promise.all(
         visitedCountries.rows.map(async (country) => {
           const articleCount = await db.models.Article.count({
@@ -30,7 +32,7 @@ class CountriesService {
         totalPages: Math.ceil(visitedCountries.count / pageSize),
         currentPage: page,
         pageSize: pageSize,
-        countries: countriesWithArticleCount,
+        data: countriesWithArticleCount,
       };
     } catch (error) {
       return [];
@@ -77,6 +79,7 @@ class CountriesService {
           },
           {
             model: db.models.Article,
+            limit: 8,
           },
         ],
       });
@@ -87,17 +90,51 @@ class CountriesService {
     }
   }
 
-  async getCountryByName(name) {
+  async getCountryByName(name, page, pageSize, isCount) {
+    const limit = pageSize;
+    const offset = (page - 1) * pageSize;
+
     try {
-      const country = await db.models.Country.findAll({
-        limit: 5,
+      const countries = await db.models.Country.findAndCountAll({
+        limit: limit,
+        offset: offset,
         where: {
           name: {
             [Op.startsWith]: name,
           },
         },
       });
-      return country;
+
+      // return total number of articles - slows query down
+      if (isCount) {
+        const countriesWithArticleCount = await Promise.all(
+          countries.rows.map(async (country) => {
+            const articleCount = await db.models.Article.count({
+              where: { countryId: country.id },
+            });
+
+            return {
+              ...country.toJSON(),
+              articleCount,
+            };
+          })
+        );
+        return {
+          total: countries.count,
+          totalPages: Math.ceil(countries.count / pageSize),
+          currentPage: page,
+          pageSize: pageSize,
+          data: countriesWithArticleCount,
+        };
+      } else {
+        return {
+          total: countries.count,
+          totalPages: Math.ceil(countries.count / pageSize),
+          currentPage: page,
+          pageSize: pageSize,
+          data: countries.rows,
+        };
+      }
     } catch (error) {
       console.log(error);
       return `not found countries starting with name ${name}`;
@@ -122,6 +159,7 @@ class CountriesService {
     main_image_url,
     flag_image_url,
     user_id,
+    color_id,
     continent_id
   ) {
     console.log(id);

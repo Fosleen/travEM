@@ -11,6 +11,17 @@ export async function getHomepage() {
   return data;
 }
 
+export async function getHomepageStats() {
+  const response = await fetch(`${apiUrl}/homepage/stats`);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
 export async function updateHeroImage(url: string) {
   const response = await fetch(`${apiUrl}/homepage`, {
     headers: {
@@ -89,4 +100,3 @@ export async function updateStats(
   }
   return data;
 }
-

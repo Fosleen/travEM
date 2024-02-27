@@ -18,18 +18,17 @@ import "./DestinationsMap.scss";
 
 import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
-import { countries } from "./visited_countries.ts";
+import { countries } from "../../../utils/all_countries.ts";
 import { FC } from "react";
 import { getVisitedCountries, getVisitedPlaces } from "../../../api/map.ts";
-import { PlacesData } from "../../../common/types.ts";
+import { DestinationsMapProps, PlacesData } from "../../../common/types.ts";
+import { getPlaces } from "../../../api/places.ts";
 
-interface DestinationsMapProps {
-  initialLongitude: number;
-  initialLatitude: number;
-}
 const DestinationsMap: FC<DestinationsMapProps> = ({
   initialLongitude,
   initialLatitude,
+  initialZoom = 3,
+  showOnlyFeatured = true,
 }) => {
   const geojsonUrl =
     "https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_admin_0_countries.geojson";
@@ -47,9 +46,15 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
   const fetchData = async () => {
     try {
       const content = await getVisitedCountries();
-      const visitedPlaces = await getVisitedPlaces();
-      setVisitedPlaces(visitedPlaces);
-      // console.log("Posjecena mjesta su", visitedPlaces);
+
+      let visitedPlaces;
+      if (showOnlyFeatured) {
+        visitedPlaces = await getVisitedPlaces();
+        setVisitedPlaces(visitedPlaces);
+      } else {
+        visitedPlaces = await getPlaces(1, 1000);
+        setVisitedPlaces(visitedPlaces.data);
+      }
 
       const visitedCountries = content.map((country) => {
         const eng_name =
@@ -66,8 +71,6 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
           (visitedCountry) => visitedCountry.cro_name === country.cro_name
         )
       );
-
-      // console.log(matchingCountries);
 
       setMatchingCountries(matchingCountries);
     } catch (error) {
@@ -111,8 +114,6 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
 
     if (features.length > 0) {
       const hovered = features[0].properties.name;
-      //console.log(`hoverano na ${hovered}`);
-
       setHoveredCountry(hovered);
       setCursor("pointer");
     }
@@ -139,8 +140,6 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
 
   const [popupInfo, setPopupInfo] = useState(null);
 
-  // console.log("Matching Countries Array:", matchingCountries);
-
   return (
     <div className="map-parent-wrapper">
       <Map
@@ -148,7 +147,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
         initialViewState={{
           latitude: Number(initialLatitude),
           longitude: Number(initialLongitude),
-          zoom: 3,
+          zoom: Number(initialZoom),
           bearing: 0,
           pitch: 0,
         }}

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { Dispatch, SetStateAction, forwardRef } from "react";
 import upload from "../../../assets/images/upload_image.svg";
 import Button from "../Button";
@@ -8,11 +10,30 @@ type ModalProps = {
   toggleDialog: () => void;
   onClick: () => void;
   modalInputValue: string;
+  modalImageHeightValue?: string;
+  modalImageWidthValue?: string;
+
   setModalInputValue: Dispatch<SetStateAction<string>>;
+  setImageHeightValue?: Dispatch<SetStateAction<string>>;
+  setImageWidthValue?: Dispatch<SetStateAction<string>>;
+  isAddArticle?: boolean;
 };
 
 const Modal = forwardRef<HTMLDialogElement, ModalProps>(
-  ({ toggleDialog, setModalInputValue, onClick, modalInputValue }, ref) => {
+  (
+    {
+      toggleDialog,
+      setModalInputValue,
+      setImageHeightValue = {},
+      setImageWidthValue = {},
+      onClick,
+      modalInputValue,
+      modalImageHeightValue,
+      modalImageWidthValue,
+      isAddArticle,
+    },
+    ref
+  ) => {
     return (
       <>
         <dialog
@@ -36,6 +57,33 @@ const Modal = forwardRef<HTMLDialogElement, ModalProps>(
                   setModalInputValue(e.target.value);
                 }}
               />
+
+              {isAddArticle && (
+                <div className="modal-input-container">
+                  <Input
+                    name="width"
+                    placeholder="Unesi aspect ratio vrijednost za width"
+                    label="Aspect ratio za width"
+                    value={modalImageWidthValue}
+                    onChange={(e) => {
+                      if (setImageWidthValue) {
+                        setImageWidthValue(e.target.value);
+                      }
+                    }}
+                  />
+                  <Input
+                    name="height"
+                    placeholder="Unesi aspect ratio vrijednost za height"
+                    label="Aspect ratio za height"
+                    value={modalImageHeightValue}
+                    onChange={(e) => {
+                      if (setImageHeightValue) {
+                        setImageHeightValue(e.target.value);
+                      }
+                    }}
+                  />
+                </div>
+              )}
             </div>
             <div className="modal-buttons">
               <Button

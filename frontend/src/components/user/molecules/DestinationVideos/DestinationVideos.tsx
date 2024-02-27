@@ -1,18 +1,26 @@
+// @ts-nocheck
+
 import VideoItem from "../../atoms/VideoItem";
 import vlogIcon from "../../../../assets/images/vlog-icon.png";
 import "./DestinationVideos.scss";
+import { VideoProps } from "../../../../common/types";
 
-const DestinationVideos = () => {
+const DestinationVideos = ({ data }) => {
   return (
     <div className="destination-videos-container">
-      <div className="destination-videos-image">
-        <img src={vlogIcon} alt="vlogging-camera-icon" />
-      </div>
-      <div className="destination-videos">
-        <VideoItem />
-        <VideoItem />
-        <VideoItem />
-      </div>
+      {data && (
+        <>
+          <div className="destination-videos-image">
+            <img src={vlogIcon} alt="vlogging-camera-icon" />
+          </div>
+          <div className="destination-videos">
+            {data.map(
+              (el: VideoProps, index: number) =>
+                el.url && <VideoItem key={index} url={el.url} />
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };

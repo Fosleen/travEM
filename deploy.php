@@ -1,11 +1,9 @@
 <?php
 
-/**
- * GIT DEPLOYMENT SCRIPT
- *
- * Used for automatically deploying websites via GitHub
- *
- */
+echo "Current directory: " . getcwd() . "<br>";
+
+chdir(__DIR__);
+
 
 // array of commands
 $commands = array(
@@ -16,8 +14,17 @@ $commands = array(
     'git submodule sync',
     'git submodule update',
     'git submodule status',
+    'echo $PWD',
+    'pm2 start server.js',
+    'echo $PWD'
 );
 
+// Change directory using PHP
+
+
+// Add remaining commands
+// $commands[] = 'echo $PWD';
+// $commands[] = 'pm2 start server.js';
 // exec commands
 $output = '';
 foreach ($commands as $command) {
@@ -25,6 +32,11 @@ foreach ($commands as $command) {
 
     $output .= "<span style=\"color: #6BE234;\">\$</span><span style=\"color: #729FCF;\">{$command}\n</span><br />";
     $output .= htmlentities(trim($tmp)) . "\n<br /><br />";
+
+    if ($tmp === false) {
+        echo "Error executing command: $command";
+        break;
+    }
 }
 ?>
 

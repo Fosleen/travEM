@@ -1,12 +1,8 @@
+import { BlogStatsItemProps } from "../../../../common/types";
 import "./BlogStatsItem.scss";
 import { FC } from "react";
 
-interface BlogStatsItemProps {
-  icon: string;
-  value?: string;
-}
-
-const BlogStatsItem: FC<BlogStatsItemProps> = ({ icon, value }) => {
+const BlogStatsItem: FC<BlogStatsItemProps> = ({ icon, value, text }) => {
   return (
     <div className="blog-stats-item-container">
       <div className="blog-stats-item-wrapper">
@@ -14,10 +10,10 @@ const BlogStatsItem: FC<BlogStatsItemProps> = ({ icon, value }) => {
           <img src={icon} alt="icon" />
         </div>
         <div className="blog-stats-item-value">
-          <p>{value ? value : "0"}</p>
+          <p>{value}</p>
         </div>
       </div>
-      <p>prijeđenih kilometara</p>
+      <p>{text}</p>
     </div>
   );
 };

@@ -1,13 +1,16 @@
+// @ts-nocheck
+
 import "./ArticleReadMore.scss";
 import ReadMore from "../../../../assets/images/read_more.png";
-import { Link } from "react-router-dom";
 
-const ArticleReadMore = () => {
+const ArticleReadMore = ({ section }) => {
   return (
     <div className="article-read-more-wrapper">
       <img src={ReadMore} alt="" />
       {/* <h2>Pročitaj:</h2> */}
-      <Link to="/">Kako smo išli na Mjesec i natrag?</Link>
+      <a href={section.link_url} target="blank">
+        {section.link_title}
+      </a>
     </div>
   );
 };

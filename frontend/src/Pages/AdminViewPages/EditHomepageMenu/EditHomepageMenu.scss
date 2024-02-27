@@ -10,7 +10,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-auto-rows: 1fr; // same height of all grid items
-    max-width: 960px;
+    max-width: 1024px;
     gap: 16px;
   }
 }

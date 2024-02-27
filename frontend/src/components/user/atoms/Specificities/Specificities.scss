@@ -1,0 +1,143 @@
+@import "../../../../utils/theme.scss";
+
+.country-highligth-container {
+  display: flex;
+  flex-direction: column;
+  background-color: #f1f1f1;
+
+  .country-highligth-left {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+
+    .country-highlight-left-bg-image {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+
+      img {
+        z-index: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .country-highligth-left-content {
+      padding: 16px;
+
+      .country-highligth-titles {
+        position: relative;
+
+        & > * {
+          text-transform: uppercase;
+          font-family: "TheBoldFont";
+          font-size: 48px;
+          letter-spacing: 8px;
+        }
+
+        .country-highligth-title-black {
+          margin-left: 2px;
+          margin-bottom: 8px;
+        }
+
+        .country-highligth-title-color {
+          color: $limeGreen;
+          position: absolute;
+          top: 5px;
+          -webkit-text-stroke-width: 2px;
+          -webkit-text-stroke-color: $grey;
+        }
+      }
+
+      .country-highligth-content {
+        .country-highligth-content-item {
+          p {
+            position: relative;
+            font-weight: 500;
+            font-size: 14px;
+            margin-left: 32px;
+          }
+
+          .country-highlights-content-item-title {
+            display: flex;
+            align-items: center;
+
+            & > * {
+              z-index: 1;
+            }
+
+            h4 {
+              text-transform: capitalize;
+              font-weight: 700;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .country-highlight-right {
+    display: grid;
+    z-index: 1;
+    grid-template-columns: 1fr 1fr 1fr;
+
+    .country-highlight-image-container {
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        max-height: 120px;
+      }
+    }
+  }
+}
+
+@media screen and ($tablet) {
+  .country-highligth-container {
+    .country-highlight-right {
+      .country-highlight-image-container {
+        img {
+          max-height: none;
+        }
+      }
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .country-highligth-container {
+    flex-direction: row;
+
+    .country-highligth-left {
+      .country-highligth-left-content {
+        padding: 32px;
+
+        .country-highligth-titles {
+          & > * {
+            font-size: 64px;
+          }
+        }
+
+        .country-highligth-content {
+          .country-highligth-content-item {
+            p {
+              font-size: 14px;
+            }
+          }
+        }
+      }
+    }
+
+    .country-highlight-right {
+      display: grid;
+      grid-template-columns: none;
+      grid-template-rows: 1fr 1fr 1fr;
+      max-width: 112px;
+
+      .country-highlight-image-container {
+        max-height: 140px;
+      }
+    }
+  }
+}

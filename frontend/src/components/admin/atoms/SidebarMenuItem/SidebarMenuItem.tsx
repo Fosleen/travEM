@@ -7,10 +7,7 @@ import {
   Info,
 } from "@phosphor-icons/react/dist/ssr";
 import { FC } from "react";
-
-interface SidebarMenuItemProps {
-  text: string;
-}
+import { SidebarMenuItemProps } from "../../../../common/types";
 
 const SidebarMenuItem: FC<SidebarMenuItemProps> = ({ text }) => {
   return (

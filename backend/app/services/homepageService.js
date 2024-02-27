@@ -9,6 +9,23 @@ class HomepageService {
     }
   }
 
+  async getHomepageStats() {
+    try {
+      const continentsNmbr = await db.models.Continent.count();
+      const countriesNmbr = await db.models.Country.count();
+      const articlesNmbr = await db.models.Article.count();
+
+      return {
+        continents_nmbr: continentsNmbr,
+        countries_nmbr: countriesNmbr,
+        articles_nmbr: articlesNmbr,
+      };
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  }
+
   async patchHomepage(
     hero_image_url,
     banner_title,

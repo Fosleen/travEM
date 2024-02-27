@@ -1,16 +1,14 @@
 import { Link } from "react-router-dom";
 import "./TipsMenuItem.scss";
+import { convertToSlug } from "../../../../utils/global";
+import { FC } from "react";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignoreS
-// eslint-disable-next-line
-const TipsMenuItem = ({ title, icon }) => {
-  function convertToSlug(sentence: string) {
-    return sentence.toLowerCase().replace(/\s+/g, "-");
-  }
-
+const TipsMenuItem: FC<{ title: string; icon: string }> = ({ title, icon }) => {
   return (
-    <Link to={convertToSlug(title)} className="tips-menu-item-container">
+    <Link
+      to={`/savjeti/${convertToSlug(title)}`}
+      className="tips-menu-item-container"
+    >
       <h2>{title}</h2>
       <img src={icon} alt="icon" className="icon-top-left" />
       <img src={icon} alt="icon" className="icon-bottom-right" />

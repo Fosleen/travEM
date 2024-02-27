@@ -28,6 +28,10 @@ const EditHomepageMenu = () => {
           text="Linkovi na mreže"
           url="/admin/uredi-mreze"
         />
+        <EditHomepageMenuItem
+          text="Informacije o vizama"
+          url="/admin/uredi-vize"
+        />
         <EditHomepageMenuItem text="Footer" url="/admin/uredi-footer" />
       </div>
     </div>

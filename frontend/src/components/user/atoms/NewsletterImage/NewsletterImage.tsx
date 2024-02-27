@@ -1,10 +1,32 @@
-import footerImage from "../../../../assets/images/footer-image.jpg";
+import { useEffect, useState } from "react";
 import "./NewsletterImage.scss";
+import { getFooter } from "../../../../api/footer";
+import { FooterData, Nullable } from "../../../../common/types";
 
 const NewsletterImage = () => {
+  const [footerContent, setFooterContent] =
+    useState<Nullable<FooterData>>(null);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const content = await getFooter();
+      setFooterContent(content);
+    } catch (error) {
+      console.error(
+        "Error occured while fetching newsletter image data:",
+        error
+      );
+    }
+  };
   return (
     <div className="newsletter-image-container">
-      <img src={footerImage} alt="footer-image" />
+      {footerContent && (
+        <img src={footerContent.image_url} alt="footer-image" />
+      )}
       <svg className="clippy">
         <defs>
           <clipPath id="clip-custom">

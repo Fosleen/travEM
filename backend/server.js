@@ -1,168 +1,36 @@
 import { Sequelize } from "sequelize";
 import express from "express";
 import cors from "cors";
-import helmet from "helmet";
 import logger from "morgan";
 import dbConfig from "./app/config/db-config.js";
-import db from "./app/models/index.js";
 import router from "./app/routes/index.js";
 import passport from "passport";
 import session from "express-session";
 import { authenticateJwt } from "./app/middleware/auth.js";
+import { exec } from "child_process";
+import { createAssociations } from "./database_management.js";
 
 const app = express();
-
-const sequelize = new Sequelize(
-  `${dbConfig.DIALECT}://${dbConfig.USER}:${dbConfig.PASSWORD}@${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DATABASE}`
-);
-
-const createAssociations = () => {
-  // 1:1
-  db.models.Article.hasOne(db.models.Video);
-  db.models.Video.belongsTo(db.models.Article);
-
-  db.models.SectionIcon.hasOne(db.models.Section);
-  db.models.Section.belongsTo(db.models.SectionIcon);
-
-  // 1:M
-  db.models.ArticleType.hasMany(db.models.Article, {
-    foreignKey: { allowNull: false },
-  }); // article_type_id u Article ne smije biti null
-  db.models.Article.belongsTo(db.models.ArticleType);
-
-  db.models.Country.hasMany(db.models.Article);
-  db.models.Article.belongsTo(db.models.Country);
-
-  db.models.Place.hasMany(db.models.Article);
-  db.models.Article.belongsTo(db.models.Place);
-
-  db.models.Place.hasMany(db.models.Video);
-  db.models.Video.belongsTo(db.models.Place);
-
-  db.models.Country.hasMany(db.models.Video);
-  db.models.Video.belongsTo(db.models.Country);
-
-  db.models.User.hasMany(db.models.Article, {
-    foreignKey: { allowNull: false },
-  });
-  db.models.Article.belongsTo(db.models.User);
-
-  db.models.Country.hasMany(db.models.Specificity, {
-    foreignKey: { allowNull: false },
-  });
-  db.models.Specificity.belongsTo(db.models.Country);
-
-  db.models.Country.hasMany(db.models.Place, {
-    foreignKey: { allowNull: false },
-  });
-  db.models.Place.belongsTo(db.models.Country);
-
-  db.models.Specificity.hasMany(db.models.SpecificityItem, {
-    foreignKey: { allowNull: false },
-  });
-  db.models.SpecificityItem.belongsTo(db.models.Specificity);
-
-  db.models.Specificity.hasMany(db.models.SpecificityImage, {
-    foreignKey: { allowNull: false },
-  });
-  db.models.SpecificityImage.belongsTo(db.models.Specificity);
-
-  db.models.Article.hasMany(db.models.GalleryImage, {
-    foreignKey: { allowNull: false },
-  });
-  db.models.GalleryImage.belongsTo(db.models.Article);
-
-  db.models.Article.hasMany(db.models.Section, {
-    foreignKey: { allowNull: false },
-  });
-  db.models.Section.belongsTo(db.models.Article);
-
-  db.models.Section.hasMany(db.models.SectionImage, {
-    foreignKey: { allowNull: false },
-  });
-  db.models.SectionImage.belongsTo(db.models.Section);
-
-  db.models.Footer.hasMany(db.models.FooterGroup, {
-    foreignKey: { allowNull: false },
-  });
-
-  db.models.FooterGroup.hasMany(db.models.FooterItem, {
-    foreignKey: { allowNull: false },
-  });
-
-  db.models.Country.belongsTo(db.models.Color, {
-    foreignKey: { allowNull: false },
-  });
-
-  db.models.Country.belongsTo(db.models.Continent, {
-    foreignKey: { allowNull: false },
-  });
-
-  db.models.Country.hasMany(db.models.VisaInfo, {
-    foreignKey: { allowNull: false },
-  });
-
-  db.models.Country.hasMany(db.models.Characteristic, {
-    foreignKey: { allowNull: false },
-  });
-
-  db.models.CharacteristicIcon.hasMany(db.models.Characteristic, {
-    foreignKey: { allowNull: false },
-  });
-  db.models.Characteristic.belongsTo(db.models.CharacteristicIcon, {
-    foreignKey: { allowNull: false },
-  });
-
-  // M:N - super many to many - da se iz many-many tablice mogu pozivat tablice od kojih se sastoji (inace se moze samo obrnuto)
-  db.models.ArticleSpecialType.belongsToMany(db.models.Article, {
-    through: db.models.Article_ArticleSpecialType,
-  });
-  db.models.Article.belongsToMany(db.models.ArticleSpecialType, {
-    through: db.models.Article_ArticleSpecialType,
-  });
-  db.models.ArticleSpecialType.hasMany(db.models.Article_ArticleSpecialType);
-  db.models.Article_ArticleSpecialType.belongsTo(db.models.ArticleSpecialType);
-  db.models.Article.hasMany(db.models.Article_ArticleSpecialType);
-  db.models.Article_ArticleSpecialType.belongsTo(db.models.Article);
-};
-
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log("Connection has been established successfully.");
-  })
-  .catch((error) => {
-    console.error("Unable to connect to the database: ", error);
-  });
 
 // Create all 1:1, 1:M and M:N
 createAssociations();
 
-/*
-// Create tables from models folder
-db.sequelize
-  .sync()
-  .then(() => {
-    console.log("Table created successfully!");
-  })
-  .catch((error) => {
-    console.error("Unable to create table : ", error);
-  });
-*/
-
 const corsOptions = {
-  origin: "http://localhost:5173", // Replace with your client's origin
+  origin: "https://putujemstravem.com", //change this to localhost:5173 for testing
   credentials: true,
+  methods: "GET, POST, PATCH, DELETE, PUT",
+  allowedHeaders: "Content-Type, Authorization",
 };
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(logger("dev"));
-app.use(helmet());
+//app.use(helmet());
 app.set("view engine", "ejs");
 app.use(cors(corsOptions));
 app.use(
   session({
-    secret: "1234", // Replace with a secret key for session encryption
+    secret: "1234",
     resave: false,
     saveUninitialized: false,
   })
@@ -172,6 +40,24 @@ app.use(passport.session());
 
 app.use("/api/v1", router);
 app.use("/api/v1/secure", authenticateJwt, router); //middleware checking for jwt validity
+
+app.post("/deploy", (req, res) => {
+  const { body } = req;
+  console.log("GitHub Webhook Payload:", body);
+
+  console.log("Current working directory:", process.cwd());
+  exec("php deploy.php", (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error executing deploy.php: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`Error executing deploy.php: ${stderr}`);
+      return;
+    }
+    console.log(`deploy.php output: ${stdout}`);
+  });
+});
 
 // Start the server
 const PORT = dbConfig.PORT;

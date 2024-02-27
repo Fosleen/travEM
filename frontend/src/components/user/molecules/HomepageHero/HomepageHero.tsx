@@ -40,7 +40,7 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
           <div className="homepage-hero-more-row">
             <p className="light-color">Mi smo</p>
             <p className="names">Ema i Matija</p>
-            <div className="arrow-icon">
+            <div className="arrow-icon" onMouseOver={handleMouseOver}>
               <ArrowDown size={32} color="#333333" weight="thin" />
             </div>
           </div>

@@ -13,8 +13,25 @@ class ArticleController {
       articleType
     );
 
-    if (response.articles.length === 0) {
-      res.status(404).json({ error: "No articles found" });
+    if (response.data.length === 0) {
+      res.status(404).json([{ error: "No articles found" }]);
+    } else {
+      res.status(200).json(response);
+    }
+  }
+
+  async getArticleByName(req, res) {
+    const { name } = req.params;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 200;
+
+    const response = await articleService.getArticleByName(
+      name,
+      page,
+      pageSize
+    );
+    if (!response || response.length == 0) {
+      res.status(404).json({ error: `No article found by name ${name}` });
     } else {
       res.status(200).json(response);
     }
@@ -44,7 +61,7 @@ class ArticleController {
     );
 
     console.log(response.toJSON());
-    
+
     let response2;
     if (req.body.video) {
       response2 = await videoService.addVideo(
@@ -57,7 +74,7 @@ class ArticleController {
       response2 = null;
     }
 
-    if (response == undefined || response2 == undefined) {
+    if (response === undefined || response2 === undefined) {
       res.status(500).json({ error: "Error inserting article" });
     } else {
       res.status(200).json(response);
@@ -76,10 +93,8 @@ class ArticleController {
   async getTopCountryArticle(req, res) {
     const { id } = req.params;
     const response = await articleService.getTopCountryArticle(id);
-    if (response.length == 0) {
-      res
-        .status(404)
-        .json({ error: `No top articles for country with id ${id} found` });
+    if (!response || response.length == 0) {
+      res.status(200).json({ error: "no top article found for country" });
     } else {
       res.status(200).json(response);
     }
@@ -104,6 +119,17 @@ class ArticleController {
       res
         .status(404)
         .json({ error: `No articles for place with id ${id} found` });
+    } else {
+      res.status(200).json(response);
+    }
+  }
+
+  async getRecommendedArticles(req, res) {
+    const { id } = req.params;
+    const { type } = req.query;
+    const response = await articleService.getRecommendedArticles(id, type);
+    if (response.length == 0) {
+      res.status(404).json({ error: `No recommended articles found` });
     } else {
       res.status(200).json(response);
     }

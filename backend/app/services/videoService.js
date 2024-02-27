@@ -25,6 +25,41 @@ class VideoService {
       return [];
     }
   }
+
+  async patchVideo(id, url, article_id, place_id, country_id) {
+    try {
+      await db.models.Video.update(
+        {
+          url: url,
+          articleId: article_id,
+          placeId: place_id,
+          countryId: country_id,
+        },
+        {
+          where: { id: id },
+        }
+      );
+
+      const updatedVideo = await db.models.Video.findByPk(id);
+      return updatedVideo;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async deleteVideo(id) {
+    try {
+      await db.models.Video.destroy({
+        where: { id: id },
+      });
+
+      return [];
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
 }
 
 export default new VideoService();

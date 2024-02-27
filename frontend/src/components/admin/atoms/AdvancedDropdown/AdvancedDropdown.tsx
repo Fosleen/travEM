@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import { FC, useEffect, useState } from "react";
 import { Dropdown } from "primereact/dropdown";
 import "./AdvancedDropdown.scss";
@@ -11,6 +14,9 @@ const AdvancedDropdown: FC<DropdownProps> = ({
   filter = false,
   images = false,
   selectedValue,
+  defaultValue = null,
+  filterAttribute = "name",
+  imageAttribute = "url",
 }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
@@ -27,8 +33,29 @@ const AdvancedDropdown: FC<DropdownProps> = ({
     setSelectedOption(option || null);
   }, [selectedValue, options]);
 
+  useEffect(() => {
+    if (defaultValue) {
+      onChange(defaultValue);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Update selectedOption with defaultValue if provided
+    if (defaultValue !== null && defaultValue !== undefined) {
+      const defaultOption = options.find(
+        (option) => option.id === defaultValue
+      );
+      console.log(defaultOption);
+
+      setSelectedOption(defaultOption);
+    }
+  }, [defaultValue, options]);
+
   const handleSelect = (option) => {
     setSelectedOption(option);
+    if (onChange) {
+      onChange(option);
+    }
   };
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -37,8 +64,14 @@ const AdvancedDropdown: FC<DropdownProps> = ({
     if (option) {
       return (
         <div className="option-item selected">
-          {images && <img alt={option.url} src={option.url} className="icon" />}
-          {option.name && <div>{option.name}</div>}
+          {images && (
+            <img
+              alt={option[imageAttribute]}
+              src={option[imageAttribute]}
+              className="icon"
+            />
+          )}
+          {option[filterAttribute] && <div>{option[filterAttribute]}</div>}
         </div>
       );
     }
@@ -49,8 +82,14 @@ const AdvancedDropdown: FC<DropdownProps> = ({
   const itemOptionTemplate: FC<{ url?: string; name?: string }> = (option) => {
     return (
       <div className="option-item">
-        {images && <img alt={option.name} src={option.url} className="icon" />}
-        <div>{option.name}</div>
+        {images && (
+          <img
+            alt={option.name}
+            src={option[imageAttribute]}
+            className="icon"
+          />
+        )}
+        <div>{option[filterAttribute]}</div>
       </div>
     );
   };
@@ -63,7 +102,7 @@ const AdvancedDropdown: FC<DropdownProps> = ({
           value={selectedOption}
           onChange={(e) => handleSelect(e.value)}
           options={options}
-          optionLabel="name"
+          optionLabel={filterAttribute}
           placeholder={hardcodedValue}
           filter={filter}
           valueTemplate={selectedOptionTemplate}

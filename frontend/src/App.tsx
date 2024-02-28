@@ -102,28 +102,29 @@ function App() {
               <AdminViewLayout />
             </ProtectedRoute>
           }
-        />
-        <Route path="/admin/sadržaj" element={<EditHomepageMenu />} />
-        <Route path="/admin/mjesta" element={<PlacesList />} />
-        <Route path="/admin/mjesta/dodaj" element={<AddPlace />} />
-        <Route path="/admin/mjesta/uredi/:name" element={<EditPlace />} />
-        <Route path="/admin/države" element={<CountriesList />} />
-        <Route path="/admin/države/dodaj" element={<AddCountry />} />
-        <Route path="/admin/države/uredi/:name" element={<EditCountry />} />
-        <Route path="/admin/članci" element={<ArticlesList />} />
-        <Route path="/admin/članci/uredi/:id" element={<EditArticle />} />
-        <Route path="/admin/članci/dodaj" element={<AddArticle />} />
-        <Route path="/admin/uredi-hero" element={<EditHero />} />
-        <Route path="/admin/uredi-banner" element={<EditBanner />} />
-        <Route path="/admin/uredi-statistiku" element={<EditStats />} />
-        <Route path="/admin/uredi-top-tri" element={<EditTopArticles />} />
-        <Route
-          path="/admin/uredi-omiljene-clanke"
-          element={<EditFavoriteArticles />}
-        />
-        <Route path="/admin/uredi-vize" element={<EditVisaInfo />} />
-        <Route path="/admin/uredi-kartu" element={<EditMap />} />
-        <Route path="/admin/uredi-footer" element={<EditFooter />} />
+        >
+          <Route path="/admin/sadržaj" element={<EditHomepageMenu />} />
+          <Route path="/admin/mjesta" element={<PlacesList />} />
+          <Route path="/admin/mjesta/dodaj" element={<AddPlace />} />
+          <Route path="/admin/mjesta/uredi/:name" element={<EditPlace />} />
+          <Route path="/admin/države" element={<CountriesList />} />
+          <Route path="/admin/države/dodaj" element={<AddCountry />} />
+          <Route path="/admin/države/uredi/:name" element={<EditCountry />} />
+          <Route path="/admin/članci" element={<ArticlesList />} />
+          <Route path="/admin/članci/uredi/:id" element={<EditArticle />} />
+          <Route path="/admin/članci/dodaj" element={<AddArticle />} />
+          <Route path="/admin/uredi-hero" element={<EditHero />} />
+          <Route path="/admin/uredi-banner" element={<EditBanner />} />
+          <Route path="/admin/uredi-statistiku" element={<EditStats />} />
+          <Route path="/admin/uredi-top-tri" element={<EditTopArticles />} />
+          <Route
+            path="/admin/uredi-omiljene-clanke"
+            element={<EditFavoriteArticles />}
+          />
+          <Route path="/admin/uredi-vize" element={<EditVisaInfo />} />
+          <Route path="/admin/uredi-kartu" element={<EditMap />} />
+          <Route path="/admin/uredi-footer" element={<EditFooter />} />
+        </Route>
       </Routes>
     </>
   );

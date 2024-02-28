@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "../../../components/atoms/Button";
 import "./AddPlace.scss";
 import { CountriesData } from "../../../common/types";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 import Swal from "sweetalert2";
@@ -141,6 +141,11 @@ const AddPlace = () => {
       ),
     place_description: Yup.string().required("Obavezno polje!"),
     place_country: Yup.number().required("Obavezno polje!").integer(),
+    videos: Yup.array().of(
+      Yup.object().shape({
+        video_url: Yup.string().required("Obavezno polje!"),
+      })
+    ),
   });
 
   const validateImages = () => {
@@ -306,25 +311,32 @@ const AddPlace = () => {
                             </div>
                             {videos && videos.length > 0
                               ? videos.map((_videos, index) => (
-                                  <div
-                                    className="add-place-video-row"
-                                    key={index}
-                                  >
-                                    <Field
-                                      name={`videos.${index}.video_url`}
-                                      type="text"
-                                      as={Input}
-                                      label=""
-                                      placeholder="Unesi URL videa..."
-                                    />
-                                    <div
-                                      onClick={() => {
-                                        handleDeleteVideo(arrayHelpers, index);
-                                      }}
-                                    >
-                                      <Trash color="#AC2B2B" size={32} />
+                                  <Fragment key={index}>
+                                    <div className="add-place-video-row">
+                                      <Field
+                                        name={`videos.${index}.video_url`}
+                                        type="text"
+                                        as={Input}
+                                        label=""
+                                        placeholder="Unesi URL videa..."
+                                      />
+                                      <div
+                                        onClick={() => {
+                                          handleDeleteVideo(
+                                            arrayHelpers,
+                                            index
+                                          );
+                                        }}
+                                      >
+                                        <Trash color="#AC2B2B" size={32} />
+                                      </div>
                                     </div>
-                                  </div>
+                                    <ErrorMessage
+                                      name={`videos.${index}.video_url`}
+                                      component="div"
+                                      className="error-message"
+                                    />
+                                  </Fragment>
                                 ))
                               : null}
                           </div>

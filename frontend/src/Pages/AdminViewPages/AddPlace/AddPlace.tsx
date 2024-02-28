@@ -32,6 +32,8 @@ const AddPlace = () => {
   const [isFeaturedChecked, setIsFeaturedChecked] = useState(false);
   const [isOnMapChecked, setIsOnMapChecked] = useState(false);
 
+  const [isSubmitClicked, setIsSubmitClicked] = useState(false);
+
   const fetchData = async () => {
     try {
       const countriesData = await getVisitedCountries();
@@ -63,37 +65,39 @@ const AddPlace = () => {
   };
 
   const handleSave = async (values) => {
-    console.log(values);
+    setIsSubmitClicked(true);
 
-    Swal.fire({
-      title: "Jeste li sigurni?",
-      text: "Dodat ćete ovo mjesto",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#2BAC82",
-      cancelButtonColor: "#AC2B2B",
-      cancelButtonText: "Odustani",
-      confirmButtonText: "Da, objavi!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const placeResponse = await addPlace(
-          values.place_name,
-          values.place_description,
-          values.place_icon_url,
-          isOnMapChecked,
-          isFeaturedChecked,
-          parseFloat(values.place_latitude),
-          parseFloat(values.place_longitude),
-          mainPlaceImage,
-          parseInt(selectedCountryId),
-          values.videos
-        );
-        console.log(placeResponse);
+    if (validateImages()) {
+      Swal.fire({
+        title: "Jeste li sigurni?",
+        text: "Dodat ćete ovo mjesto",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#2BAC82",
+        cancelButtonColor: "#AC2B2B",
+        cancelButtonText: "Odustani",
+        confirmButtonText: "Da, objavi!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const placeResponse = await addPlace(
+            values.place_name,
+            values.place_description,
+            values.place_icon_url,
+            isOnMapChecked,
+            isFeaturedChecked,
+            parseFloat(values.place_latitude.replace(",", ".")),
+            parseFloat(values.place_longitude.replace(",", ".")),
+            mainPlaceImage,
+            parseInt(selectedCountryId),
+            values.videos
+          );
+          console.log(placeResponse);
 
-        navigate("/admin/mjesta");
-        notifySuccess("Uspješno dodano mjesto!");
-      }
-    });
+          navigate("/admin/mjesta");
+          notifySuccess("Uspješno dodano mjesto!");
+        }
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -121,9 +125,27 @@ const AddPlace = () => {
     place_name: Yup.string()
       .required("Obavezno polje!")
       .max(100, "Naslov smije imati max 100 znakova!"),
-    place_latitude: Yup.string().required("Obavezno polje!"),
-    place_longitude: Yup.string().required("Obavezno polje!"),
+    place_latitude: Yup.string()
+      .required("Obavezno polje!")
+      .test(
+        "is-valid-latitude",
+        "Geografska širina mora biti validan decimalni broj!",
+        (value) => !isNaN(parseFloat(value))
+      ),
+    place_longitude: Yup.string()
+      .required("Obavezno polje!")
+      .test(
+        "is-valid-longitude",
+        "Geografska dužina mora biti validan decimalni broj!",
+        (value) => !isNaN(parseFloat(value))
+      ),
+    place_description: Yup.string().required("Obavezno polje!"),
+    place_country: Yup.number().required("Obavezno polje!").integer(),
   });
+
+  const validateImages = () => {
+    return mainPlaceImage != "" && mainPlaceImage;
+  };
 
   return (
     <>
@@ -134,7 +156,7 @@ const AddPlace = () => {
             initialValues={{
               place_name: "",
               place_description: "",
-              place_country: "",
+              place_country: null,
               place_latitude: "",
               place_longitude: "",
               place_icon_url: "",
@@ -154,22 +176,33 @@ const AddPlace = () => {
                       label="Naziv mjesta *"
                       placeholder="Unesi naziv..."
                     />
-                    <ErrorMessage name="place_name" component="div" />
+                    <ErrorMessage
+                      name="place_name"
+                      component="div"
+                      className="error-message"
+                    />
                   </div>
-                  <AdvancedDropdown
-                    filter
-                    images
-                    hardcodedValue={"Odaberi državu o kojoj se radi"}
-                    options={countries}
-                    value={values.place_country}
-                    selectedValue={values.place_country}
-                    onChange={(value) => {
-                      setFieldValue("place_country", value.id);
-                      setSelectedCountryId(value.id);
-                    }}
-                    isDisabled={false}
-                    label="Država mjesta *"
-                  />
+                  <div className="add-place-input">
+                    <AdvancedDropdown
+                      filter
+                      images
+                      hardcodedValue={"Odaberi državu o kojoj se radi"}
+                      options={countries}
+                      value={values.place_country}
+                      selectedValue={values.place_country}
+                      onChange={(value) => {
+                        setFieldValue("place_country", value.id);
+                        setSelectedCountryId(value.id);
+                      }}
+                      isDisabled={false}
+                      label="Država mjesta *"
+                    />
+                    <ErrorMessage
+                      name="place_country"
+                      component="div"
+                      className="error-message"
+                    />
+                  </div>
                   <div className="add-place-row">
                     <div className="add-place-row-item">
                       <Field
@@ -178,7 +211,11 @@ const AddPlace = () => {
                         label="Geografska širina (latitude) *"
                         placeholder="Unesi..."
                       />
-                      <ErrorMessage name="place_latitude" component="div" />
+                      <ErrorMessage
+                        name="place_latitude"
+                        component="div"
+                        className="error-message"
+                      />
                     </div>
                     <div className="add-place-row-item">
                       <Field
@@ -187,48 +224,63 @@ const AddPlace = () => {
                         label="Geografska dužina (longitude) *"
                         placeholder="Unesi..."
                       />
-                      <ErrorMessage name="place_longitude" component="div" />
-                    </div>
-                  </div>
-                  <Field
-                    name="place_description"
-                    type="text"
-                    as={Textarea}
-                    rows={3}
-                    label="Opis mjesta *"
-                    placeholder="Opis mjesta u nekoliko rečenica..."
-                  />
-                  <ErrorMessage name="place_description" component="div" />
-                </div>
-                <div className="add-place-images-container">
-                  {mainPlaceImage ? (
-                    <div
-                      className="add-place-image"
-                      onClick={() => {
-                        handleDeleteImage();
-                      }}
-                    >
-                      <div className="add-place-image-remove-icon">
-                        <X size={32} color="#e70101" weight="bold" />
-                      </div>
-                      <img
-                        src={mainPlaceImage}
-                        alt={`image-error-${mainPlaceImage}`}
+                      <ErrorMessage
+                        name="place_longitude"
+                        component="div"
+                        className="error-message"
                       />
                     </div>
-                  ) : (
-                    <div
-                      className="add-place-item"
-                      onClick={() => {
-                        toggleDialog();
-                      }}
-                    >
-                      <Plus size={32} color="#616161" weight="bold" />
-                    </div>
-                  )}
+                  </div>
+                  <div className="add-place-input">
+                    <Field
+                      name="place_description"
+                      type="text"
+                      as={Textarea}
+                      rows={3}
+                      label="Opis mjesta *"
+                      placeholder="Opis mjesta u nekoliko rečenica..."
+                    />
+                    <ErrorMessage
+                      name="place_description"
+                      component="div"
+                      className="error-message"
+                    />
+                  </div>
                 </div>
-                <p>* preporuča se slika u omjeru 16:9</p>
-
+                <div className="add-place-input">
+                  <div className="add-place-images-container">
+                    {mainPlaceImage ? (
+                      <div
+                        className="add-place-image"
+                        onClick={() => {
+                          handleDeleteImage();
+                        }}
+                      >
+                        <div className="add-place-image-remove-icon">
+                          <X size={32} color="#e70101" weight="bold" />
+                        </div>
+                        <img
+                          src={mainPlaceImage}
+                          alt={`image-error-${mainPlaceImage}`}
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        className="add-place-item"
+                        onClick={() => {
+                          toggleDialog();
+                        }}
+                      >
+                        <Plus size={32} color="#616161" weight="bold" />
+                      </div>
+                    )}
+                  </div>
+                  {isSubmitClicked &&
+                    (mainPlaceImage == "" || !mainPlaceImage) && (
+                      <p className="error-message">Obavezno polje!</p>
+                    )}
+                  <p>* preporuča se slika u omjeru 16:9</p>
+                </div>
                 <div className="add-place-videos-wrapper">
                   <div className="add-place-video-outer-container">
                     <FieldArray
@@ -281,7 +333,6 @@ const AddPlace = () => {
                     />
                   </div>
                 </div>
-
                 <div className="add-place-toggle-container">
                   <div className="add-place-toggle-item">
                     <ToggleSwitch
@@ -311,7 +362,6 @@ const AddPlace = () => {
                     </div>
                   )}
                 </div>
-
                 <div className="add-place-buttons">
                   <Button type="submit" adminPrimary>
                     dodaj mjesto

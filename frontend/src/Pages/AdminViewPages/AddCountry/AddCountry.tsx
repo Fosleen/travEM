@@ -89,10 +89,16 @@ const AddCountry = () => {
       });
     });
 
+    if (
+      mainCountryImage == "" ||
+      !mainCountryImage ||
+      flagImage == "" ||
+      !flagImage
+    ) {
+      areAllImagesFilledIn = false;
+    }
+
     return areAllImagesFilledIn;
-    return (
-      mainCountryImage != "" && mainCountryImage && flagImage && flagImage != ""
-    );
   };
 
   const handleSave = async (values) => {

@@ -14,6 +14,6 @@ router.get("/", controller.getVisaInfoByCountries);
 router.post("/", verifyToken, controller.addVisaInfo);
 
 // PATCH /api/v1/visa-info/4
-router.patch("/:id", controller.patchVisaInfo);
+router.patch("/:id", verifyToken, controller.patchVisaInfo);
 
 export default router;

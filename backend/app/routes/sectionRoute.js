@@ -8,9 +8,9 @@ const router = new Router();
 router.post("/", verifyToken, controller.addSection);
 
 // PATCH /api/v1/sections/4
-router.patch("/:id", controller.patchSection);
+router.patch("/:id", verifyToken, controller.patchSection);
 
 // DELETE /api/v1/sections/4
-router.delete("/:id", controller.deleteSection);
+router.delete("/:id", verifyToken, controller.deleteSection);
 
 export default router;

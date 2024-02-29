@@ -97,6 +97,7 @@ export async function addPlaceOnMap(id: number) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "PATCH",
     body: JSON.stringify({
@@ -178,6 +179,9 @@ export async function removePlaceAboveMap(id: number) {
 
 export async function deletePlaceById(id: number) {
   const response = await fetch(`${apiUrl}/places/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     method: "DELETE",
   });
   const data = await response.json();

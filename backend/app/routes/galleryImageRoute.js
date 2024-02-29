@@ -8,6 +8,6 @@ const router = new Router();
 router.post("/", verifyToken, controller.addGalleryImage);
 
 // DELETE /api/v1/gallery-images/4
-router.delete("/:id", controller.deleteGalleryImage);
+router.delete("/:id", verifyToken, controller.deleteGalleryImage);
 
 export default router;

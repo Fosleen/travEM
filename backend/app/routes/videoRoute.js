@@ -11,9 +11,9 @@ router.get("/", controller.getVideos);
 router.post("/", verifyToken, controller.addVideo);
 
 // PATCH /api/v1/videos/4
-router.patch("/:id", controller.patchVideo);
+router.patch("/:id", verifyToken, controller.patchVideo);
 
 // DELETE /api/v1/videos/4
-router.delete("/:id", controller.deleteVideo);
+router.delete("/:id", verifyToken, controller.deleteVideo);
 
 export default router;

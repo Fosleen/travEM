@@ -29,9 +29,9 @@ router.get("/search/:name", controller.getPlaceByName);
 router.post("/", verifyToken, controller.addPlace);
 
 // PATCH /api/v1/places/4
-router.patch("/:id", controller.patchPlace);
+router.patch("/:id", verifyToken, controller.patchPlace);
 
 // DELETE /api/v1/countries/2
-router.delete("/:id", controller.deletePlaceAndArticles);
+router.delete("/:id", verifyToken, controller.deletePlaceAndArticles);
 
 export default router;

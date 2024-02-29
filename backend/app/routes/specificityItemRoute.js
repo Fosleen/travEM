@@ -11,9 +11,9 @@ router.get("/:id", controller.getSpecificityItemById);
 router.post("/", verifyToken, controller.addSpecificityItem);
 
 // PATCH /api/v1/specificity-items/4
-router.patch("/:id", controller.patchSpecificityItem);
+router.patch("/:id", verifyToken, controller.patchSpecificityItem);
 
 // DELETE /api/v1/specificity-items/4
-router.delete("/:id", controller.deleteSpecificityItem);
+router.delete("/:id", verifyToken, controller.deleteSpecificityItem);
 
 export default router;

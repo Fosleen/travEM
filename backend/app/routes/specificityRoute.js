@@ -8,6 +8,6 @@ const router = new Router();
 router.post("/", verifyToken, controller.addSpecificities);
 
 // PATCH /api/v1/specificities/4
-router.patch("/:id", controller.patchSpecificities);
+router.patch("/:id", verifyToken, controller.patchSpecificities);
 
 export default router;

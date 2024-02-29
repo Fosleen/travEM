@@ -8,9 +8,9 @@ const router = new Router();
 router.post("/", verifyToken, controller.addSectionImage);
 
 // PATCH /api/v1/section-images/3
-router.patch("/:id", controller.patchSectionImage);
+router.patch("/:id", verifyToken, controller.patchSectionImage);
 
 // DELETE /api/v1/section-images/4
-router.delete("/:id", controller.deleteSectionImage);
+router.delete("/:id", verifyToken, controller.deleteSectionImage);
 
 export default router;

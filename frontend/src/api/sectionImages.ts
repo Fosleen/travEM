@@ -36,6 +36,7 @@ export async function updateSectionImage(url: string, id: number) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "PATCH",
     body: JSON.stringify({
@@ -57,6 +58,7 @@ export async function deleteSectionImage(id: number) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "DELETE",
   });

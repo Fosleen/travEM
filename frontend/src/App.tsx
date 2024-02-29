@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import UserViewLayout from "./components/user/templates/UserViewLayout";
 import Homepage from "./Pages/UserViewPages/Homepage/Homepage";

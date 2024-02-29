@@ -7,12 +7,15 @@ import BlogStats from "../../../components/user/molecules/BlogStats";
 import DestinationsMap from "../../../components/organisms/DestinationsMap/DestinationsMap";
 import RecommendedMapDestinations from "../../../components/user/molecules/RecommendedMapDestinations";
 import { getHomepage } from "../../../api/homepage";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import { Article, HomepageData } from "../../../common/types";
 import { getHomepageArticles } from "../../../api/article";
+import { ArticleContext } from "../../../Context/ArticleContext";
 
 const Homepage = () => {
+  const { homepageArticles, setHomepageArticles } = useContext(ArticleContext);
+
   const [homepageContent, setHomepageContent] = useState<HomepageData | null>(
     null
   );
@@ -26,13 +29,22 @@ const Homepage = () => {
   const fetchData = async () => {
     try {
       const content = await getHomepage();
-      const articles = await getHomepageArticles();
       setHomepageContent(content);
-      regroupArticles(articles);
+
+      if (!homepageArticles) {
+        const articles = await getHomepageArticles();
+        setHomepageArticles(articles);
+      }
     } catch (error) {
       console.error("Error occured while fetching homepage data:", error);
     }
   };
+
+  useEffect(() => {
+    if (homepageArticles) {
+      regroupArticles(homepageArticles);
+    }
+  }, [homepageArticles]);
 
   useEffect(() => {
     fetchData();

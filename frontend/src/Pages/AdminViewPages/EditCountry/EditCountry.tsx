@@ -2,7 +2,7 @@
 // @ts-nocheck
 import { useNavigate, useParams } from "react-router-dom";
 import "./EditCountry.scss";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
 import { countries as countryList } from "../../../utils/all_countries.ts";
 import Swal from "sweetalert2";
@@ -76,6 +76,7 @@ const EditCountry = () => {
   ]);
 
   const [selectedSpecificityImage, setSelectedSpecificityImage] = useState([]);
+  const [isSubmitClicked, setIsSubmitClicked] = useState(false);
 
   const ValidationSchema = Yup.object().shape({
     country_name: Yup.string().required("Obavezno polje!"),
@@ -83,132 +84,188 @@ const EditCountry = () => {
       .required("Obavezno polje!")
       .max(100, "Opis smije imati max 100 znakova!"),
     country_color: Yup.string().required("Obavezno polje!"),
+    characteristics: Yup.array().of(
+      Yup.object().shape({
+        icon: Yup.string().required("Obavezno polje!"),
+        title: Yup.string().required("Obavezno polje !"),
+        description: Yup.string().required("Obavezno polje!"),
+      })
+    ),
+    specificities: Yup.array().of(
+      Yup.object().shape({
+        title: Yup.string().required("Obavezno polje!"),
+        specificity_items: Yup.array().of(
+          Yup.object().shape({
+            title: Yup.string().required("Obavezno polje!"),
+            description: Yup.string().required("Obavezno polje!"),
+          })
+        ),
+      })
+    ),
+    videos: Yup.array().of(
+      Yup.object().shape({
+        video_url: Yup.string().required("Obavezno polje!"),
+      })
+    ),
   });
 
+  const validateImages = () => {
+    let areAllImagesFilledIn = true;
+
+    specificityImages.map((imageGroup) => {
+      imageGroup.map((image) => {
+        if (!image || image.url == "") {
+          areAllImagesFilledIn = false;
+        }
+      });
+    });
+
+    if (
+      mainCountryImage == "" ||
+      !mainCountryImage ||
+      flagImage == "" ||
+      !flagImage
+    ) {
+      areAllImagesFilledIn = false;
+    }
+
+    return areAllImagesFilledIn;
+  };
+
   const handleSave = async (values) => {
-    Swal.fire({
-      title: "Jeste li sigurni?",
-      text: "Uredit ćete ovu državu",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#2BAC82",
-      cancelButtonColor: "#AC2B2B",
-      cancelButtonText: "Odustani",
-      confirmButtonText: "Da, objavi promjene!",
-    }).then(async (result) => {
-      if (result.isConfirmed && country && countries) {
-        const selectedCountry = countries.find(
-          (el) => el.id == values.country_name
-        );
-        console.log(selectedCountry);
+    setIsSubmitClicked(true);
 
-        const countryResponse = await updateCountry({
-          id: country.id,
-          name: selectedCountry!.name,
-          description: values.country_description,
-          main_image_url: mainCountryImage,
-          flag_image_url: flagImage,
-          continentId: values.country_continent,
-          colorId: values.country_color,
-        });
-        console.log(countryResponse);
+    if (validateImages()) {
+      Swal.fire({
+        title: "Jeste li sigurni?",
+        text: "Uredit ćete ovu državu",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#2BAC82",
+        cancelButtonColor: "#AC2B2B",
+        cancelButtonText: "Odustani",
+        confirmButtonText: "Da, objavi promjene!",
+      }).then(async (result) => {
+        if (result.isConfirmed && country && countries) {
+          const selectedCountry = countries.find(
+            (el) => el.id == values.country_name
+          );
 
-        if (values.characteristics) {
-          values.characteristics.map(
-            async (el: CharacteristicProps) =>
+          const countryResponse = await updateCountry({
+            id: country.id,
+            name: selectedCountry!.name,
+            description: values.country_description,
+            main_image_url: mainCountryImage,
+            flag_image_url: flagImage,
+            continentId: values.country_continent,
+            colorId: values.country_color,
+          });
+          console.log(countryResponse);
+
+          if (values.characteristics) {
+            values.characteristics.map(async (el: CharacteristicProps) => {
               await updateCharacteristic(
                 el.id,
                 el.title,
                 el.description,
-                el.characteristicIconId
-              )
-          );
-        }
-
-        if (values.specificities && country.specificities) {
-          values.specificities.map(async (el: SpecificityProps) => {
-            let specificityResponse;
-            if (el.id) {
-              // update specificity
-              specificityResponse = await updateSpecificity(el.id, el.title);
-              console.log(specificityResponse);
-
-              // update specificity items
-              el.specificity_items.map(async (item) => {
-                if (item.id) {
-                  await updateSpecificityItem(
-                    item.id,
-                    item.title,
-                    item.description
-                  );
-                } else {
-                  await addSpecificityItem(item.title, item.description, el.id);
-                }
-              });
-
-              // update specificity images
-              specificityImages.map(async (imageGroup, groupIndex) => {
-                imageGroup.map(async (image, imageIndex) => {
-                  await updateSpecificityImage(
-                    image.id,
-                    specificityImages[groupIndex][imageIndex].url,
-                    el.id
-                  );
-                });
-              });
-            }
-          });
-
-          // delete removed specificities
-          const array1: (number | undefined)[] = [];
-          const array2: (number | undefined)[] = [];
-          country.specificities.map((specificity) => {
-            specificity.specificity_items.map((item) => {
-              array1.push(item.id);
+                el.icon
+              );
             });
-          });
+          }
 
-          values.specificities.map(
-            (specificity: { specificity_items: { id: number }[] }) => {
-              specificity.specificity_items.map((item: { id: number }) => {
-                array2.push(item.id);
+          if (values.specificities && country.specificities) {
+            values.specificities.map(async (el: SpecificityProps) => {
+              let specificityResponse;
+              if (el.id) {
+                // update specificity
+                specificityResponse = await updateSpecificity(el.id, el.title);
+                console.log(specificityResponse);
+
+                // update specificity items
+                el.specificity_items.map(async (item) => {
+                  if (item.id) {
+                    await updateSpecificityItem(
+                      item.id,
+                      item.title,
+                      item.description
+                    );
+                  } else {
+                    await addSpecificityItem(
+                      item.title,
+                      item.description,
+                      el.id
+                    );
+                  }
+                });
+
+                // update specificity images
+                specificityImages.map(async (imageGroup, groupIndex) => {
+                  imageGroup.map(async (image, imageIndex) => {
+                    await updateSpecificityImage(
+                      image.id,
+                      specificityImages[groupIndex][imageIndex].url,
+                      el.id
+                    );
+                  });
+                });
+              }
+            });
+
+            // delete removed specificities
+            const array1: (number | undefined)[] = [];
+            const array2: (number | undefined)[] = [];
+            country.specificities.map((specificity) => {
+              specificity.specificity_items.map((item) => {
+                array1.push(item.id);
               });
-            }
-          );
+            });
 
-          const removedValues = array1.filter((item) => !array2.includes(item));
-          removedValues.map(
-            async (el: number) => await deleteSpecificityItem(el)
-          );
-        }
+            values.specificities.map(
+              (specificity: { specificity_items: { id: number }[] }) => {
+                specificity.specificity_items.map((item: { id: number }) => {
+                  array2.push(item.id);
+                });
+              }
+            );
 
-        // add, update (if it has id attibute already) and delete videos
-        if (country.videos) {
-          const removedVideoIds = country.videos.filter(
-            (el) =>
-              !values.videos.some((video: { id: number }) => video.id === el.id)
-          );
-          removedVideoIds.map(async (el) => await deleteVideo(el.id));
-        }
-        values.videos.map(async (el: { id: number; video_url: string }) => {
-          let videoResponse;
-          if (el.id) {
-            videoResponse = await updateVideo(el.id, el.video_url);
-          } else {
-            videoResponse = await addVideo(
-              el.video_url,
-              null,
-              null,
-              country.id
+            const removedValues = array1.filter(
+              (item) => !array2.includes(item)
+            );
+            removedValues.map(
+              async (el: number) => await deleteSpecificityItem(el)
             );
           }
-          console.log(videoResponse);
-        });
 
-        navigate("/admin/države");
-        notifySuccess("Uspješno uređena država!");
-      }
-    });
+          // add, update (if it has id attibute already) and delete videos
+          if (country.videos) {
+            const removedVideoIds = country.videos.filter(
+              (el) =>
+                !values.videos.some(
+                  (video: { id: number }) => video.id === el.id
+                )
+            );
+            removedVideoIds.map(async (el) => await deleteVideo(el.id));
+          }
+          values.videos.map(async (el: { id: number; video_url: string }) => {
+            let videoResponse;
+            if (el.id) {
+              videoResponse = await updateVideo(el.id, el.video_url);
+            } else {
+              videoResponse = await addVideo(
+                el.video_url,
+                null,
+                null,
+                country.id
+              );
+            }
+            console.log(videoResponse);
+          });
+
+          navigate("/admin/države");
+          notifySuccess("Uspješno uređena država!");
+        }
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -479,7 +536,11 @@ const EditCountry = () => {
                         selectedValue={values.country_name}
                         filter
                       />
-                      <ErrorMessage name="country_name" component="div" />
+                      <ErrorMessage
+                        name="country_name"
+                        component="div"
+                        className="error-message"
+                      />
                     </div>
                     <div className="edit-country-input">
                       <Field
@@ -495,7 +556,11 @@ const EditCountry = () => {
                         selectedValue={values.country_color}
                         images
                       />
-                      <ErrorMessage name="country_color" component="div" />
+                      <ErrorMessage
+                        name="country_color"
+                        component="div"
+                        className="error-message"
+                      />
                     </div>
                     <div className="edit-country-input">
                       <Field
@@ -510,20 +575,28 @@ const EditCountry = () => {
                         }}
                         selectedValue={values.country_continent}
                       />
-                      <ErrorMessage name="country_color" component="div" />
+                      <ErrorMessage
+                        name="country_continent"
+                        component="div"
+                        className="error-message"
+                      />
                     </div>
                   </div>
                   <div className="edit-country-input">
                     <Field
                       name="country_description"
                       type="text"
-                      value={country.description}
+                      value={values.country_description}
                       as={Textarea}
                       rows={4}
                       label="Opis države *"
                       placeholder="1 ili 2 rečenice koje najbolje opisuju državu..."
                     />
-                    <ErrorMessage name="country_description" component="div" />
+                    <ErrorMessage
+                      name="country_description"
+                      component="div"
+                      className="error-message"
+                    />
                   </div>
                 </div>
                 <div className="edit-country-images-container">
@@ -551,6 +624,9 @@ const EditCountry = () => {
                       >
                         <Plus size={32} color="#616161" weight="bold" />
                       </div>
+                    )}
+                    {isSubmitClicked && (flagImage == "" || !flagImage) && (
+                      <p className="error-message">Obavezno polje!</p>
                     )}
                   </div>
                   <div className="edit-country-images-item">
@@ -581,6 +657,10 @@ const EditCountry = () => {
                         <Plus size={32} color="#616161" weight="bold" />
                       </div>
                     )}
+                    {isSubmitClicked &&
+                      (mainCountryImage == "" || !mainCountryImage) && (
+                        <p className="error-message">Obavezno polje!</p>
+                      )}
                   </div>
                 </div>
                 <p>* preporuča se okrugla slika zastave</p>
@@ -623,17 +703,32 @@ const EditCountry = () => {
                                         filter={false}
                                         images={true}
                                       />
+                                      <ErrorMessage
+                                        name={`characteristics.${index}.icon`}
+                                        component="div"
+                                        className="error-message"
+                                      />
                                       <Field
                                         type="text"
                                         name={`characteristics.${index}.title`}
                                         as={Input}
                                         placeholder="Unesi podnaslov..."
                                       />
+                                      <ErrorMessage
+                                        name={`characteristics.${index}.title`}
+                                        component="div"
+                                        className="error-message"
+                                      />
                                       <Field
                                         type="text"
                                         name={`characteristics.${index}.description`}
                                         as={Input}
                                         placeholder="Unesi opis..."
+                                      />
+                                      <ErrorMessage
+                                        name={`characteristics.${index}.description`}
+                                        component="div"
+                                        className="error-message"
                                       />
                                     </div>
                                   )
@@ -659,11 +754,18 @@ const EditCountry = () => {
                           {specificities && specificities.length > 0
                             ? specificities.map((_specificity, index) => (
                                 <div key={index}>
-                                  <Field
-                                    type="text"
+                                  <div className="add-country-specificities-inner-item">
+                                    <Field
+                                      type="text"
+                                      name={`specificities[${index}].title`}
+                                      as={Input}
+                                      placeholder="Unesi naslov..."
+                                    />
+                                  </div>
+                                  <ErrorMessage
                                     name={`specificities[${index}].title`}
-                                    as={Input}
-                                    placeholder="Unesi naslov..."
+                                    component="div"
+                                    className="error-message"
                                   />
                                   <fieldset>
                                     <legend>
@@ -702,11 +804,21 @@ const EditCountry = () => {
                                                           as={Input}
                                                           placeholder="Unesi podnaslov..."
                                                         />
+                                                        <ErrorMessage
+                                                          name={`specificities[${index}].specificity_items[${itemIndex}].title`}
+                                                          component="div"
+                                                          className="error-message"
+                                                        />
                                                         <Field
                                                           type="text"
                                                           name={`specificities[${index}].specificity_items[${itemIndex}].description`}
                                                           as={Input}
                                                           placeholder="Unesi opis..."
+                                                        />
+                                                        <ErrorMessage
+                                                          name={`specificities[${index}].specificity_items[${itemIndex}].description`}
+                                                          component="div"
+                                                          className="error-message"
                                                         />
                                                       </div>
 
@@ -802,6 +914,20 @@ const EditCountry = () => {
                                                 )
                                               )}
                                             </div>
+                                            {isSubmitClicked &&
+                                              (!specificityImages[index][0] ||
+                                                specificityImages[index][0]
+                                                  .url == "" ||
+                                                !specificityImages[index][1] ||
+                                                specificityImages[index][1]
+                                                  .url == "" ||
+                                                !specificityImages[index][2] ||
+                                                specificityImages[index][2]
+                                                  .url == "") && (
+                                                <p className="error-message">
+                                                  Obavezno unijeti 3 slike!
+                                                </p>
+                                              )}
                                           </>
                                         );
                                       }}
@@ -841,25 +967,32 @@ const EditCountry = () => {
                             </div>
                             {videos && videos.length > 0
                               ? videos.map((_videos, index) => (
-                                  <div
-                                    className="edit-country-video-row"
-                                    key={index}
-                                  >
-                                    <Field
-                                      name={`videos.${index}.video_url`}
-                                      type="text"
-                                      as={Input}
-                                      label=""
-                                      placeholder="Unesi URL videa..."
-                                    />
-                                    <div
-                                      onClick={() => {
-                                        handleDeleteVideo(arrayHelpers, index);
-                                      }}
-                                    >
-                                      <Trash color="#AC2B2B" size={32} />
+                                  <Fragment key={index}>
+                                    <div className="edit-country-video-row">
+                                      <Field
+                                        name={`videos.${index}.video_url`}
+                                        type="text"
+                                        as={Input}
+                                        label=""
+                                        placeholder="Unesi URL videa..."
+                                      />
+                                      <div
+                                        onClick={() => {
+                                          handleDeleteVideo(
+                                            arrayHelpers,
+                                            index
+                                          );
+                                        }}
+                                      >
+                                        <Trash color="#AC2B2B" size={32} />
+                                      </div>
                                     </div>
-                                  </div>
+                                    <ErrorMessage
+                                      name={`videos.${index}.video_url`}
+                                      component="div"
+                                      className="error-message"
+                                    />
+                                  </Fragment>
                                 ))
                               : null}
                           </div>

@@ -31,6 +31,12 @@
         grid-template-columns: 1fr 1fr;
         gap: 16px;
       }
+
+      .add-article-input {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
     }
 
     .add-article-images-container {

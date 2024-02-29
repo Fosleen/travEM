@@ -27,7 +27,7 @@
       .add-place-input {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 4px;
       }
 
       .add-place-row {
@@ -47,6 +47,7 @@
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
+      margin-bottom: 8px;
 
       .add-place-image {
         height: 72px;

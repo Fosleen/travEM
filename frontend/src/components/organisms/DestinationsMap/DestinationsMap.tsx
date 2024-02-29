@@ -152,7 +152,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
           pitch: 0,
         }}
         mapStyle="mapbox://styles/mapbox/navigation-day-v1"
-        mapboxAccessToken="pk.eyJ1IjoidHJhdmVtIiwiYSI6ImNsdDRkNjExYjAyOGsybmtzdHc5OTBkdDAifQ.t9dSLa4TaYcdrHjagKPFbQ"
+        mapboxAccessToken="pk.eyJ1IjoidHJhdmVtIiwiYSI6ImNsdDc4dGR1dzBnbWYyam05cDlmbjNpMTAifQ.EkCtJKiZzE-Yux0ZmCpMhg"
         scrollZoom={false}
         onClick={onClick}
         onMouseMove={onHover}

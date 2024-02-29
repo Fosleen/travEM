@@ -68,7 +68,7 @@ function App() {
   }, [location]);
 
   useEffect(() => {
-    if (isTokenExpired(isLoggedIn)) {
+    if (isLoggedIn && isTokenExpired(isLoggedIn)) {
       navigate("/login");
     }
   }, [isLoggedIn, navigate]);

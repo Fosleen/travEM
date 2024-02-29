@@ -1,3 +1,4 @@
+import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function addSection(
@@ -13,6 +14,7 @@ export async function addSection(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "POST",
     body: JSON.stringify({

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import controller from "../controllers/countryController.js";
+import { verifyToken } from "../middleware/jwt_verify.js";
 
 const router = new Router();
 
@@ -19,7 +20,7 @@ router.get("/search/:name", controller.getCountryByName);
 router.get("/places/:id", controller.getCountryPlaces);
 
 // POST /api/v1/countries/
-router.post("/", controller.addCountry);
+router.post("/", verifyToken, controller.addCountry);
 
 // PATCH /api/v1/countries/4
 router.patch("/:id", controller.patchCountry);

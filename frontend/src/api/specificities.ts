@@ -1,3 +1,4 @@
+import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function addSpecificity(
@@ -10,6 +11,7 @@ export async function addSpecificity(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "POST",
     body: JSON.stringify({

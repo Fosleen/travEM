@@ -1,4 +1,5 @@
 import { PlacesData } from "../common/types";
+import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function getPlaces(page = 1, pageSize = 12) {
@@ -65,6 +66,7 @@ export async function addPlace(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "POST",
     body: JSON.stringify({

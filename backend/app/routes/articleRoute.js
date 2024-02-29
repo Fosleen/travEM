@@ -1,5 +1,6 @@
 import { Router } from "express";
 import controller from "../controllers/articleController.js";
+import { verifyToken } from "../middleware/jwt_verify.js";
 
 const router = new Router();
 
@@ -28,7 +29,7 @@ router.get("/search/:name", controller.getArticleByName);
 router.get("/:id", controller.getArticleById);
 
 // POST /api/v1/articles
-router.post("/", controller.addArticle);
+router.post("/", verifyToken, controller.addArticle);
 
 // PATCH /api/v1/articles/4
 router.patch("/:id", controller.patchArticle);

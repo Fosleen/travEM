@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
+import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function addArticle(
@@ -19,6 +20,7 @@ export async function addArticle(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "POST",
     body: JSON.stringify({

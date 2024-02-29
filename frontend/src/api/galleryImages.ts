@@ -1,3 +1,4 @@
+import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function addGalleryImage(
@@ -10,6 +11,7 @@ export async function addGalleryImage(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "POST",
     body: JSON.stringify({

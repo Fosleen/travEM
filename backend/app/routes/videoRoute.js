@@ -1,5 +1,6 @@
 import { Router } from "express";
 import controller from "../controllers/videoController.js";
+import { verifyToken } from "../middleware/jwt_verify.js";
 
 const router = new Router();
 
@@ -7,7 +8,7 @@ const router = new Router();
 router.get("/", controller.getVideos);
 
 // POST /api/v1/videos
-router.post("/", controller.addVideo);
+router.post("/", verifyToken, controller.addVideo);
 
 // PATCH /api/v1/videos/4
 router.patch("/:id", controller.patchVideo);

@@ -1,10 +1,58 @@
 components:
   schemas:
-    GetAllContinentsResponse:
+    Continent:
+      type: object
       properties:
         id:
           type: integer
-          example: 1
+          example: 2
         name:
           type: string
-          example: Europa
+          example: Azija
+        latitude:
+          type: number
+          format: double
+          example: 39.16293665159254
+        longitude:
+          type: number
+          format: double
+          example: 94.0356791347885
+        zoom:
+          type: integer
+          example: 2
+
+    GetAllContinentsResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Continent"
+
+    GetContinentByIdResponse:
+      $ref: "#/components/schemas/Continent"
+
+    GetCountriesByContinentIdResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/CountryByContinent"
+
+    GetPlacesByContinentIdResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/PlaceByContinent"
+
+    ContinentsNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No continents found
+
+    ContinentNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No continent found
+      
+    ServerErrorResponse:
+      properties:
+        error:
+          type: string
+          example: Internal server error

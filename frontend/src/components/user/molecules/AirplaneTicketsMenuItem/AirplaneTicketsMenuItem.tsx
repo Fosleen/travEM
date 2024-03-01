@@ -1,17 +1,23 @@
 // @ts-nocheck
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import DestinationItem from "../../atoms/DestinationItem";
 import "./AirplaneTicketsMenuItem.scss";
 import { getAirportCities } from "../../../../api/airportCities";
+import { PlaneTicketsContext } from "../../../../Context/PlaneTicketsMenuContext";
 
 const AirplaneTicketsMenuItem = ({ title, isCroatia }) => {
-  const [airportCities, setAirportCities] = useState([]);
+  const {
+    homepagePlaneTicketsContextData,
+    setHomepagePlaneTicketsContextData,
+  } = useContext(PlaneTicketsContext);
 
   const fetchData = async () => {
     try {
-      const response = await getAirportCities();
-      setAirportCities(response);
+      if (!homepagePlaneTicketsContextData) {
+        const response = await getAirportCities();
+        setHomepagePlaneTicketsContextData(response);
+      }
     } catch {
       console.log("Neuspjesno fetchanje gradova s pistama");
     }
@@ -27,7 +33,7 @@ const AirplaneTicketsMenuItem = ({ title, isCroatia }) => {
       <hr />
 
       <div className="airplane-tickets-menu-items">
-        {airportCities
+        {homepagePlaneTicketsContextData
           ?.filter((airportCity) =>
             isCroatia
               ? airportCity.is_in_croatia == 1

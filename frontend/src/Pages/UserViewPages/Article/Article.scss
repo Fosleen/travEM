@@ -40,6 +40,12 @@
 .article-connected-articles-wrapper {
   max-width: 1300px;
   margin: 0 auto;
+  padding: 0 16px;
+  margin-top: 24px;
+
+  @media screen and ($desktopLarge) {
+    padding: 0;
+  }
 }
 
 .article-text-articles-wrapper {
@@ -99,9 +105,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 0 16px;
 
   @media screen and ($desktopLarge) {
-    padding: 16px 0;
+    padding: 0;
   }
 }
 

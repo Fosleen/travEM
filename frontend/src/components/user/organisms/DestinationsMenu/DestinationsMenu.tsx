@@ -6,11 +6,15 @@ import {
 } from "../../../../common/types";
 import DestinationsMenuItem from "../../molecules/DestinationsMenuItem";
 import "./DestinationsMenu.scss";
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
+import { ContinentContext } from "../../../../Context/ContinentContext";
 
 const DestinationsMenu: FC<DestinationsMenuProps> = ({
   setIsDestinationsMenuShown,
 }) => {
+  const { continentsContextData, setContinentsContextData } =
+    useContext(ContinentContext);
+
   const [continents, setContinents] = useState<Array<ContinentsData> | null>(
     null
   );
@@ -22,13 +26,18 @@ const DestinationsMenu: FC<DestinationsMenuProps> = ({
   };
 
   useEffect(() => {
-    fetchData();
+    if (!continentsContextData) {
+      fetchData();
+    } else {
+      setContinents(continentsContextData);
+    }
   }, []);
 
   const fetchData = async () => {
     try {
-      const continentsData = await getContinents();
-      setContinents(continentsData);
+      const _continentsData = await getContinents();
+      setContinents(_continentsData);
+      setContinentsContextData(_continentsData);
     } catch (error) {
       console.error("error while fetching:", error);
     }

@@ -3,6 +3,10 @@
 
 import { ChangeEvent, HTMLInputTypeAttribute } from "react";
 
+export interface Props {
+  children: ReactNode;
+}
+
 export interface ButtonProps {
   children: React.ReactNode;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
@@ -290,6 +294,13 @@ export interface ArticleProps {
   hasImage?: boolean;
   hasVideo?: boolean;
   hasImages?: boolean;
+}
+
+export interface PlaneTickets {
+  id: number;
+  name: string;
+  flag_url: string;
+  is_in_croatia: boolean;
 }
 
 export interface DestinationsMenuProps {

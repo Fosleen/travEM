@@ -50,9 +50,3 @@ components:
         error:
           type: string
           example: No continent found
-      
-    ServerErrorResponse:
-      properties:
-        error:
-          type: string
-          example: Internal server error

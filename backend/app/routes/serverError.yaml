@@ -1,0 +1,7 @@
+components:
+  schemas:
+    ServerErrorResponse:
+      properties:
+        error:
+          type: string
+          example: Internal server error

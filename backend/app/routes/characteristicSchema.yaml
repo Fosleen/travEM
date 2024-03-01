@@ -40,8 +40,3 @@ components:
         error:
           type: string
           example: "Unauthorized: Bearer token missing"
-    ServerErrorResponse:
-      properties:
-        error:
-          type: string
-          example: Error inserting characteristic

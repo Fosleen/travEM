@@ -12,7 +12,7 @@ class CharacteristicController {
     console.log(response.toJSON());
 
     if (response == undefined) {
-      res.status(500).json({ error: "Error inserting characteristic" });
+      res.status(500).json({ error: "Internal server error" });
     } else {
       res.status(200).json(response);
     }
@@ -27,9 +27,7 @@ class CharacteristicController {
       req.body.characteristic_icon_id
     );
     if (response.length == 0) {
-      res
-        .status(500)
-        .json({ error: `Error updating characteristic with id ${id}` });
+      res.status(500).json({ error: `Internal server error` });
     } else {
       res.status(200).json(response);
     }

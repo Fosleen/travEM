@@ -296,6 +296,13 @@ export interface ArticleProps {
   hasImages?: boolean;
 }
 
+export interface PlaneTickets {
+  id: number;
+  name: string;
+  flag_url: string;
+  is_in_croatia: boolean;
+}
+
 export interface DestinationsMenuProps {
   setIsDestinationsMenuShown?: (isShown: boolean) => void;
 }

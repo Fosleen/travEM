@@ -9,6 +9,7 @@ import { authenticateJwt } from "./app/middleware/auth.js";
 import { exec } from "child_process";
 import { createAssociations } from "./database_management.js";
 import helmet from "helmet";
+import swaggerDocs from "./app/utils/swagger.js";
 
 const app = express();
 
@@ -63,4 +64,5 @@ app.post("/deploy", (req, res) => {
 const PORT = dbConfig.PORT;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+  swaggerDocs(app, PORT);
 });

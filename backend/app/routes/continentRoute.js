@@ -4,6 +4,22 @@ import controller from "../controllers/continentController.js";
 const router = new Router();
 
 // GET /api/v1/continents
+/**
+ * @openapi
+ *  '/api/v1/continents':
+ *  get:
+ *      summary: Get all continents
+ *      tags:
+ *          - Continent
+ *      description: Returns an array of continent data objects with id and name
+ *      responses:
+ *          '200':
+ *              description: A JSON object with an array of continents.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/GetAllContinentsResponse'
+ */
 router.get("/", controller.getContinents);
 
 // GET /api/v1/continents/1

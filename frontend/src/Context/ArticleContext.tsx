@@ -1,28 +1,26 @@
-import { FC, ReactNode, createContext, useState } from "react";
-import { Article } from "../common/types";
+import { FC, createContext, useState } from "react";
+import { Article, Props } from "../common/types";
 
 interface ArticleContextType {
-  homepageArticles: Array<Article> | null;
-  setHomepageArticles: React.Dispatch<
+  homepageArticlesContextData: Array<Article> | null;
+  setHomepageArticlesContextData: React.Dispatch<
     React.SetStateAction<Array<Article> | null>
   >;
 }
 
-interface Props {
-  children: ReactNode;
-}
-
 const ArticleContext = createContext<ArticleContextType>({
-  homepageArticles: null,
-  setHomepageArticles: () => {},
+  homepageArticlesContextData: null,
+  setHomepageArticlesContextData: () => {},
 });
 
 const ArticleProvider: FC<Props> = ({ children }) => {
-  const [homepageArticles, setHomepageArticles] =
+  const [homepageArticlesContextData, setHomepageArticlesContextData] =
     useState<Array<Article> | null>(null);
 
   return (
-    <ArticleContext.Provider value={{ homepageArticles, setHomepageArticles }}>
+    <ArticleContext.Provider
+      value={{ homepageArticlesContextData, setHomepageArticlesContextData }}
+    >
       {children}
     </ArticleContext.Provider>
   );

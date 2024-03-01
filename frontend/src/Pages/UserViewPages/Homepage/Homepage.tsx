@@ -14,7 +14,8 @@ import { getHomepageArticles } from "../../../api/article";
 import { ArticleContext } from "../../../Context/ArticleContext";
 
 const Homepage = () => {
-  const { homepageArticles, setHomepageArticles } = useContext(ArticleContext);
+  const { homepageArticlesContextData, setHomepageArticlesContextData } =
+    useContext(ArticleContext);
 
   const [homepageContent, setHomepageContent] = useState<HomepageData | null>(
     null
@@ -31,9 +32,9 @@ const Homepage = () => {
       const content = await getHomepage();
       setHomepageContent(content);
 
-      if (!homepageArticles) {
+      if (!homepageArticlesContextData) {
         const articles = await getHomepageArticles();
-        setHomepageArticles(articles);
+        setHomepageArticlesContextData(articles);
       }
     } catch (error) {
       console.error("Error occured while fetching homepage data:", error);
@@ -41,10 +42,10 @@ const Homepage = () => {
   };
 
   useEffect(() => {
-    if (homepageArticles) {
-      regroupArticles(homepageArticles);
+    if (homepageArticlesContextData) {
+      regroupArticles(homepageArticlesContextData);
     }
-  }, [homepageArticles]);
+  }, [homepageArticlesContextData]);
 
   useEffect(() => {
     fetchData();

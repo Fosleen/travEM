@@ -3,6 +3,10 @@
 
 import { ChangeEvent, HTMLInputTypeAttribute } from "react";
 
+export interface Props {
+  children: ReactNode;
+}
+
 export interface ButtonProps {
   children: React.ReactNode;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;

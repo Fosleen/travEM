@@ -2,14 +2,19 @@ import { CaretRight } from "@phosphor-icons/react";
 import DestinationItem from "../../atoms/DestinationItem";
 import "./DestinationsMenuItem.scss";
 import { Link } from "react-router-dom";
-import { FC, useEffect, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { getCountriesByContinent } from "../../../../api/countries";
+import { CountryContext } from "../../../../Context/CountryContext";
 
 const DestinationsMenuItem: FC<{
   title: string;
   id: number;
 }> = ({ title, id }) => {
   const [countries, setCountries] = useState([]);
+  const {
+    countriesByContinentContextData,
+    setCountriesByContinentContextData,
+  } = useContext(CountryContext);
 
   useEffect(() => {
     fetchData();
@@ -17,10 +22,29 @@ const DestinationsMenuItem: FC<{
 
   const fetchData = async () => {
     try {
-      const data = await getCountriesByContinent(id);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let data: any = [];
+
+      if (!countriesByContinentContextData) {
+        data = await getCountriesByContinent(id);
+        setCountriesByContinentContextData((prevState) => [
+          ...(prevState || []),
+          {
+            id: id,
+            data: data,
+          },
+        ]);
+      } else {
+        const continentData = countriesByContinentContextData.find(
+          (el) => el.id === id
+        );
+        if (continentData) {
+          data = continentData.data;
+        }
+      }
       setCountries(data);
     } catch (error) {
-      console.error("error while fetching:", error);
+      console.error("Error while fetching:", error);
     }
   };
 

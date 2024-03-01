@@ -51,17 +51,19 @@ const generateJwtToken = (user) => {
 };
 
 export const login = async (req, res, next) => {
-  console.log("Poziv");
   try {
     const { username, password } = req.body;
-
     const user = await db.models.User.findOne({ where: { username } });
 
-    console.log("Tu je user", user);
+    if (!user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Authentication failed." });
+    }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
-    if (!user || !passwordMatch) {
+    if (!passwordMatch) {
       return res
         .status(401)
         .json({ success: false, message: "Authentication failed." });

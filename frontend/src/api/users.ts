@@ -1,11 +1,11 @@
-import { notifySuccess } from "../components/atoms/Toast/Toast";
+import { notifyFailure, notifySuccess } from "../components/atoms/Toast/Toast";
 import { apiUrl } from "./api";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignoreS
 // eslint-disable-next-line
 
-export const loginUser = async (values, { setSubmitting }) => {
+export const loginUser = async (values, navigate, { setSubmitting }) => {
   try {
     const response = await fetch(`${apiUrl}/login`, {
       method: "POST",
@@ -21,11 +21,14 @@ export const loginUser = async (values, { setSubmitting }) => {
     if (data.success) {
       console.log("Authentication succeeded");
       localStorage.setItem("jwt", data.token);
-      notifySuccess("Uspjesna prijava!");
+      notifySuccess("Uspješna prijava!");
+      navigate("/admin");
     } else {
+      notifyFailure("Neispravni podaci.");
       console.log("Authentication failed");
     }
   } catch (error) {
+    notifyFailure("Greška pri loginu.");
     console.error("Error during authentication", error);
   } finally {
     setSubmitting(false);

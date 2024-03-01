@@ -1,5 +1,6 @@
 import { Router } from "express";
 import controller from "../controllers/specificityItemController.js";
+import { verifyToken } from "../middleware/jwt_verify.js";
 
 const router = new Router();
 
@@ -7,12 +8,12 @@ const router = new Router();
 router.get("/:id", controller.getSpecificityItemById);
 
 // POST /api/v1/specificity-items
-router.post("/", controller.addSpecificityItem);
+router.post("/", verifyToken, controller.addSpecificityItem);
 
 // PATCH /api/v1/specificity-items/4
-router.patch("/:id", controller.patchSpecificityItem);
+router.patch("/:id", verifyToken, controller.patchSpecificityItem);
 
 // DELETE /api/v1/specificity-items/4
-router.delete("/:id", controller.deleteSpecificityItem);
+router.delete("/:id", verifyToken, controller.deleteSpecificityItem);
 
 export default router;

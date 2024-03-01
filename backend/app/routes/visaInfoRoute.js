@@ -1,5 +1,6 @@
 import { Router } from "express";
 import controller from "../controllers/visaInfoController.js";
+import { verifyToken } from "../middleware/jwt_verify.js";
 
 const router = new Router();
 
@@ -10,9 +11,9 @@ router.get("/:id", controller.getVisaInfoById);
 router.get("/", controller.getVisaInfoByCountries);
 
 // POST /api/v1/visa-info
-router.post("/", controller.addVisaInfo);
+router.post("/", verifyToken, controller.addVisaInfo);
 
 // PATCH /api/v1/visa-info/4
-router.patch("/:id", controller.patchVisaInfo);
+router.patch("/:id", verifyToken, controller.patchVisaInfo);
 
 export default router;

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import controller from "../controllers/placeController.js";
+import { verifyToken } from "../middleware/jwt_verify.js";
 
 const router = new Router();
 
@@ -25,12 +26,12 @@ router.get("/:name", controller.getPlaceByName);
 router.get("/search/:name", controller.getPlaceByName);
 
 // POST /api/v1/places/
-router.post("/", controller.addPlace);
+router.post("/", verifyToken, controller.addPlace);
 
 // PATCH /api/v1/places/4
-router.patch("/:id", controller.patchPlace);
+router.patch("/:id", verifyToken, controller.patchPlace);
 
 // DELETE /api/v1/countries/2
-router.delete("/:id", controller.deletePlaceAndArticles);
+router.delete("/:id", verifyToken, controller.deletePlaceAndArticles);
 
 export default router;

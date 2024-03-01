@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
+import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function addArticle(
@@ -19,6 +20,7 @@ export async function addArticle(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "POST",
     body: JSON.stringify({
@@ -124,6 +126,7 @@ export async function updateOrCreateTopHomepageArticles(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "PUT",
     body: JSON.stringify({
@@ -176,6 +179,7 @@ export async function updateArticle(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "PATCH",
     body: JSON.stringify(requestBody),
@@ -192,6 +196,7 @@ export async function updateArticle(
 export async function deleteArticleById(id: number) {
   const response = await fetch(`${apiUrl}/articles/${id}`, {
     method: "DELETE",
+    Authorization: `Bearer ${token}`,
   });
   const data = await response.json();
 

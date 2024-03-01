@@ -1,5 +1,6 @@
 import { Router } from "express";
 import controller from "../controllers/countryController.js";
+import { verifyToken } from "../middleware/jwt_verify.js";
 
 const router = new Router();
 
@@ -10,7 +11,7 @@ router.get("/", controller.getCountries);
 router.get("/:id", controller.getCountryById);
 
 // DELETE /api/v1/countries/2
-router.delete("/:id", controller.deleteCountry);
+router.delete("/:id", verifyToken, controller.deleteCountry);
 
 // GET /api/v1/countries/search/hrva?page=1&pageSize=8&isCount=1
 router.get("/search/:name", controller.getCountryByName);
@@ -19,9 +20,9 @@ router.get("/search/:name", controller.getCountryByName);
 router.get("/places/:id", controller.getCountryPlaces);
 
 // POST /api/v1/countries/
-router.post("/", controller.addCountry);
+router.post("/", verifyToken, controller.addCountry);
 
 // PATCH /api/v1/countries/4
-router.patch("/:id", controller.patchCountry);
+router.patch("/:id", verifyToken, controller.patchCountry);
 
 export default router;

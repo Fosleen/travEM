@@ -1,3 +1,4 @@
+import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function addSpecificityItem(
@@ -9,6 +10,7 @@ export async function addSpecificityItem(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "POST",
     body: JSON.stringify({
@@ -36,6 +38,7 @@ export async function updateSpecificityItem(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "PATCH",
     body: JSON.stringify({
@@ -58,6 +61,7 @@ export async function deleteSpecificityItem(id: number) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "DELETE",
   });

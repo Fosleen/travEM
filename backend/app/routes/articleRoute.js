@@ -1,5 +1,6 @@
 import { Router } from "express";
 import controller from "../controllers/articleController.js";
+import { verifyToken } from "../middleware/jwt_verify.js";
 
 const router = new Router();
 
@@ -28,21 +29,26 @@ router.get("/search/:name", controller.getArticleByName);
 router.get("/:id", controller.getArticleById);
 
 // POST /api/v1/articles
-router.post("/", controller.addArticle);
+router.post("/", verifyToken, controller.addArticle);
 
 // PATCH /api/v1/articles/4
-router.patch("/:id", controller.patchArticle);
+router.patch("/:id", verifyToken, controller.patchArticle);
 
 // PUT /api/v1/articles/country/top
-router.put("/country/top", controller.updateOrCreateTopCountryArticle);
+router.put(
+  "/country/top",
+  verifyToken,
+  controller.updateOrCreateTopCountryArticle
+);
 
 // PUT /api/v1/articles/homepage/1
 router.put(
   "/homepage/:specialTypeId",
+  verifyToken,
   controller.updateOrCreateTopHomepageArticles // update articles on any homepage part
 );
 
 // DELETE /api/v1/articles/4
-router.delete("/:id", controller.deleteArticle);
+router.delete("/:id", verifyToken, controller.deleteArticle);
 
 export default router;

@@ -1,4 +1,4 @@
-import { notifySuccess } from "../components/atoms/Toast/Toast";
+import { notifyFailure, notifySuccess } from "../components/atoms/Toast/Toast";
 import { apiUrl } from "./api";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -21,12 +21,14 @@ export const loginUser = async (values, navigate, { setSubmitting }) => {
     if (data.success) {
       console.log("Authentication succeeded");
       localStorage.setItem("jwt", data.token);
-      notifySuccess("Uspjesna prijava!");
+      notifySuccess("Uspješna prijava!");
       navigate("/admin");
     } else {
+      notifyFailure("Neispravni podaci.");
       console.log("Authentication failed");
     }
   } catch (error) {
+    notifyFailure("Greška pri loginu.");
     console.error("Error during authentication", error);
   } finally {
     setSubmitting(false);

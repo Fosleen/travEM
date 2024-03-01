@@ -11,26 +11,26 @@ const SidebarMenu = () => {
     navigate("/login");
   };
   return (
-    <div>
-      <div className="sidebar-menu-container">
-        <div>
-          <Link to="/admin" className="sidebar-menu-logo">
-            <img src={logo} alt="travem-logo-grey" />
-          </Link>
-          <div className="sidebar-menu-items">
-            <SidebarMenuItem text={"Članci"} />
-            <SidebarMenuItem text={"Države"} />
-            <SidebarMenuItem text={"Mjesta"} />
-            <SidebarMenuItem text={"Sadržaj"} />
-          </div>
+    <div className="sidebar-menu-container">
+      <div>
+        <Link to="/admin" className="sidebar-menu-logo">
+          <img src={logo} alt="travem-logo-grey" />
+        </Link>
+        <div className="sidebar-menu-items">
+          <SidebarMenuItem text={"Članci"} />
+          <SidebarMenuItem text={"Države"} />
+          <SidebarMenuItem text={"Mjesta"} />
+          <SidebarMenuItem text={"Sadržaj"} />
         </div>
       </div>
-      <div
-        className="sidebar-menu-item-container"
-        onClick={handleLogout}
-        style={{ cursor: "pointer" }}
-      >
-        <SignOut size={32} onClick={handleLogout} /> odjava
+      <div className="sidebar-menu-items">
+        <div
+          className="sidebar-menu-item-container"
+          onClick={handleLogout}
+          style={{ cursor: "pointer" }}
+        >
+          <SignOut size={32} onClick={handleLogout} /> Odjava
+        </div>
       </div>
     </div>
   );

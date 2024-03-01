@@ -16,7 +16,10 @@ const Login = () => {
   const navigate = useNavigate();
 
   const handleLogin = async (values, { setSubmitting }) => {
-    await loginUser(values, navigate, { setSubmitting, setUser });
+    await loginUser(values, navigate, {
+      setSubmitting,
+      setUser,
+    });
   };
 
   return (

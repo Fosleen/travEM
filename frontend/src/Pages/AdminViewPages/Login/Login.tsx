@@ -8,12 +8,15 @@ import Logo from "../../../assets/images/travem-logo-grey.png";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { loginUser } from "../../../api/users";
 import { AuthContext } from "../../../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const { setUser } = useContext(AuthContext); // Get setUser from context
 
+  const navigate = useNavigate();
+
   const handleLogin = async (values, { setSubmitting }) => {
-    await loginUser(values, { setSubmitting, setUser });
+    await loginUser(values, navigate, { setSubmitting, setUser });
   };
 
   return (

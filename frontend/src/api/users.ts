@@ -5,7 +5,7 @@ import { apiUrl } from "./api";
 // @ts-ignoreS
 // eslint-disable-next-line
 
-export const loginUser = async (values, { setSubmitting }) => {
+export const loginUser = async (values, navigate, { setSubmitting }) => {
   try {
     const response = await fetch(`${apiUrl}/login`, {
       method: "POST",
@@ -22,6 +22,7 @@ export const loginUser = async (values, { setSubmitting }) => {
       console.log("Authentication succeeded");
       localStorage.setItem("jwt", data.token);
       notifySuccess("Uspjesna prijava!");
+      navigate("/admin");
     } else {
       console.log("Authentication failed");
     }

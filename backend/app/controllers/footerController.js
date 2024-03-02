@@ -2,20 +2,30 @@ import service from "../services/footerService.js";
 
 class FooterController {
   async getFooter(req, res) {
-    const response = await service.getFooter();
-    if (response == undefined) {
-      res.status(404).json({ error: "No footer found" });
-    } else {
-      res.status(200).json(response);
+    try {
+      const response = await service.getFooter();
+      if (!response || response.length == 0) {
+        res.status(404).json({ error: "No footer found" });
+      } else {
+        res.status(200).json(response);
+      }
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
     }
   }
 
   async patchFooter(req, res) {
-    const response = await service.patchFooter(req.body.image_url);
-    if (response == undefined) {
-      res.status(500).json({ error: "Error updating footer" });
-    } else {
-      res.status(200).json(response);
+    try {
+      const response = await service.patchFooter(req.body.image_url);
+      if (response === "Footer not found") {
+        return res
+          .status(404)
+          .json({ error: "Footer with the provided ID doesn't exist" });
+      } else {
+        res.status(200).json(response);
+      }
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
     }
   }
 }

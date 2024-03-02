@@ -23,6 +23,11 @@ class FooterService {
       );
 
       const updatedFooter = await db.models.Footer.findByPk(1);
+
+      if (!updatedFooter) {
+        return "Footer not found";
+      }
+
       return updatedFooter;
     } catch (error) {
       console.log(error);

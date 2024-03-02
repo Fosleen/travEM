@@ -78,7 +78,7 @@ router.post("/", verifyToken, controller.addCharacteristic);
  *                      schema:
  *                          $ref: '#/components/schemas/NotAuthorisedResponse'
  *          404:
- *              description: Characteristic with the provided was not found
+ *              description: Characteristic with the provided id was not found
  *              content:
  *                  application/json:
  *                      schema:

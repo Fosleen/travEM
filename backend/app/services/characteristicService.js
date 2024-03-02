@@ -44,6 +44,11 @@ class CharacteristicService {
       );
 
       const updatedCharacteristic = await db.models.Characteristic.findByPk(id);
+      
+      if (!updatedCharacteristic) {
+        return "Characteristic not found";
+      }
+
       return updatedCharacteristic;
     } catch (error) {
       console.log(error);

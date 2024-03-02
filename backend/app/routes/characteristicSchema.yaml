@@ -1,5 +1,24 @@
 components:
   schemas:
+    Characteristic:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: utičnice
+        description:
+          type: string
+          example: engleski tip
+        countryId:
+          type: integer
+          example: 30
+        characteristicIconId:
+          type: integer
+          example: 2
+
     AddCharacteristicBody:
       properties:
         title:
@@ -15,7 +34,7 @@ components:
           type: integer
           example: 2
 
-    AddCharacteristicResponse:
+    UpdateCharacteristicBody:
       properties:
         title:
           type: string
@@ -29,3 +48,19 @@ components:
         characteristic_icon_id:
           type: integer
           example: 2
+
+    UpdateCharacteristicParams:
+      type: integer
+      example: 61
+
+    AddCharacteristicResponse:
+      $ref: "#/components/schemas/Characteristic"
+
+    UpdateCharacteristicResponse:
+      $ref: "#/components/schemas/Characteristic"
+
+    CharacteristicNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No characteristic found

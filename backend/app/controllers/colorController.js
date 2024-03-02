@@ -4,7 +4,7 @@ class ColorController {
   async getColors(req, res) {
     try {
       const response = await service.getColors();
-      if (response.length == 0) {
+      if (!response || response.length == 0) {
         res.status(404).json({ error: "No colors found" });
       } else {
         res.status(200).json(response);

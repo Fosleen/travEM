@@ -1,11 +1,4 @@
 components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-  security:
-    - bearerAuth: []
   schemas:
     AddCharacteristicBody:
       properties:
@@ -21,6 +14,7 @@ components:
         characteristic_icon_id:
           type: integer
           example: 2
+
     AddCharacteristicResponse:
       properties:
         title:
@@ -35,8 +29,3 @@ components:
         characteristic_icon_id:
           type: integer
           example: 2
-    NotAuthorisedResponse:
-      properties:
-        error:
-          type: string
-          example: "Unauthorized: Bearer token missing"

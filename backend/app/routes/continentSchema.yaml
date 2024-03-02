@@ -50,3 +50,7 @@ components:
         error:
           type: string
           example: No continent found
+ 
+    ContinentParams:
+      type: integer
+      example: 1

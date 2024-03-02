@@ -47,6 +47,8 @@ router.get("/", controller.getContinents);
  *          - in: path
  *            name: id
  *            required: true
+ *            schema:
+ *              $ref: '#/components/schemas/ContinentParams'
  *      responses:
  *          200:
  *              description: A JSON object with continent that has selected id.
@@ -82,6 +84,8 @@ router.get("/:id", controller.getContinentById);
  *          - in: path
  *            name: id
  *            required: true
+ *            schema:
+ *              $ref: '#/components/schemas/ContinentParams'
  *      responses:
  *          200:
  *              description: An array of JSON objects with data about countries that belong to selected continent.
@@ -117,6 +121,8 @@ router.get("/countries/:id", controller.getContinentCountries);
  *          - in: path
  *            name: id
  *            required: true
+ *            schema:
+ *              $ref: '#/components/schemas/ContinentParams'
  *      responses:
  *          200:
  *              description: An array of JSON objects with data about places that belong to selected continent.

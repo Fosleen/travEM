@@ -8,7 +8,7 @@ const router = new Router();
  * @openapi
  *  '/api/v1/colors':
  *  get:
- *      summary: Get colors by id
+ *      summary: Get all colors
  *      tags:
  *          - Color
  *      description: Returns an array of colors with id, hex_value, name and url.
@@ -26,7 +26,7 @@ const router = new Router();
  *                      schema:
  *                          $ref: '#/components/schemas/ColorsNotFoundErrorResponse'
  *          500:
- *              description: Error fetching continent because of server
+ *              description: Error fetching colors because of server
  *              content:
  *                  application/json:
  *                      schema:

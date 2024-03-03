@@ -65,7 +65,7 @@ router.post("/", verifyToken, controller.addGalleryImage);
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: '#/components/schemas/DeleteGalleryImageResponse'
+ *                          $ref: '#/components/schemas/DeleteResponse'
  *          401:
  *              description: Request needs authentication credential (Bearer token missing)
  *              content:
@@ -73,7 +73,7 @@ router.post("/", verifyToken, controller.addGalleryImage);
  *                      schema:
  *                          $ref: '#/components/schemas/NotAuthorisedResponse'
  *          500:
- *              description: Error fetching continent countries because of server
+ *              description: Error deleting gallery image because of server
  *              content:
  *                  application/json:
  *                      schema:

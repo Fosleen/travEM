@@ -1,6 +1,6 @@
 components:
   schemas:
-    PlaceByContinent:
+    Place:
       type: object
       properties:
         id:

@@ -1,0 +1,20 @@
+components:
+  schemas:
+    VideoResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        url:
+          type: string
+          example: 'https://www.youtube.com/embed/Eb0nkjcScX8?si=QjGwx7ByKVn18vgc'
+        articleId:
+          type: integer
+          example: 3
+        placeId:
+          type: integer
+          example: 3
+        countryId:
+          type: integer
+          example: 3

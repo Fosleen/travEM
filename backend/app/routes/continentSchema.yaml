@@ -32,12 +32,12 @@ components:
     GetCountriesByContinentIdResponse:
       type: array
       items:
-        $ref: "#/components/schemas/CountryByContinent"
+        $ref: "#/components/schemas/Country"
 
     GetPlacesByContinentIdResponse:
       type: array
       items:
-        $ref: "#/components/schemas/PlaceByContinent"
+        $ref: "#/components/schemas/Place"
 
     ContinentsNotFoundErrorResponse:
       properties:
@@ -50,7 +50,7 @@ components:
         error:
           type: string
           example: No continent found
- 
+
     ContinentParams:
       type: integer
       example: 1

@@ -1,6 +1,6 @@
 components:
   schemas:
-    CountryByContinent:
+    Country:
       type: object
       properties:
         id:

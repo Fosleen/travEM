@@ -41,9 +41,24 @@ components:
     AddGalleryImageResponse:
       $ref: "#/components/schemas/GalleryImage"
 
-    DeleteGalleryImageResponse:
+    GalleryImageResponse:
       type: object
-      items: null
+      properties:
+        id:
+          type: integer
+          example: 1
+        url:
+          type: string
+          example: https://live.staticflickr.com/65535/53458960311_b65580a136_b.jpg
+        width:
+          type: integer
+          example: 16
+        height:
+          type: integer
+          example: 9
+        articleId:
+          type: integer
+          example: 3
 
     GalleryImagesInsertingErrorResponse:
       properties:

@@ -6,6 +6,12 @@ class PlacesService {
   async getFavoritePlaces() {
     try {
       const favoritePlaces = await db.models.Place.findAll({
+        include: [
+          {
+            model: db.models.Country,
+            attributes: ["name"],
+          },
+        ],
         where: { is_on_homepage_map: 1 },
       });
       console.log("res je", favoritePlaces);

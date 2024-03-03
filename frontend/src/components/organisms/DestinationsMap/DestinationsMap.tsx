@@ -200,11 +200,16 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
             onClose={() => setPopupInfo(null)}
           >
             <div>
-              <Link to={`/destinacija/${popupInfo["name"]}`} target="_new">
+              <Link
+                to={`/destinacija/${popupInfo.country.name}/${popupInfo.name}`}
+                target="_new"
+              >
                 {popupInfo["name"]}
               </Link>
             </div>
-            <Link to={`/destinacija/${popupInfo["name"]}`} target="_new">
+            <Link
+              to={`/destinacija/${popupInfo.country.name}/${popupInfo.name}`}
+            >
               <img width="100%" src={popupInfo.main_image_url} />
             </Link>
           </Popup>

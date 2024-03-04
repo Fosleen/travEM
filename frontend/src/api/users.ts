@@ -22,7 +22,7 @@ export const loginUser = async (values, navigate, { setSubmitting }) => {
       console.log("Authentication succeeded");
       localStorage.setItem("jwt", data.token);
       notifySuccess("Uspješna prijava!");
-      navigate("/admin");
+      navigate("/admin/sadržaj");
     } else {
       notifyFailure("Neispravni podaci.");
       console.log("Authentication failed");

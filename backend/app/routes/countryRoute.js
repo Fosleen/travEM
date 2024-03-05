@@ -52,8 +52,6 @@ router.get("/", controller.getCountries);
 
 // GET /api/v1/countries/5
 
-//tu nije dodano example data jer je preogromno
-
 /**
  * @openapi
  *  /api/v1/countries/{id}:

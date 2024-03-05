@@ -35,3 +35,47 @@ components:
         countryId:
           type: integer
           example: 1
+    PlacesNotFoundResponse:
+      properties:
+        error:
+          type: string
+          example: No places found
+    AddPlace:
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Zagreb
+        description:
+          type: string
+          example: glavni grad Republike Hrvatske
+        main_image_url:
+          type: string
+          example: https://a.cdn-hotels.com/gdcs/production187/d784/2d753dbd-da86-489d-abc0-4d9bf4d1054b.jpg
+        latitude:
+          type: number
+          format: double
+          example: 45.81449891048385
+        longitude:
+          type: number
+          format: double
+          example: 15.977385126527096
+        is_on_homepage_map:
+          type: boolean
+          example: true
+        is_above_homepage_map:
+          type: boolean
+          example: true
+        map_icon:
+          type: string
+          example: https://live.staticflickr.com/65535/53499754361_9520fee018_o.png
+        country_id:
+          type: integer
+          example: 1
+        videos:
+          type: array
+          items:
+            type: string
+            example: "https://www.youtube.com/embed/2kGvvQYyEwo?si=g7lu_JQ7kOozUblV"

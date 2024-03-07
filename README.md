@@ -102,6 +102,11 @@ Web blog is securely hosted and accessible to all users, employing top-tier secu
 ### ER model
 <img src="https://github.com/Fosleen/travEM/blob/develop/Documents/ERA%20TRAVEM.svg" height="700" width="700">
 
+## Architecture diagram
+
+<img src="https://github.com/Fosleen/travEM/blob/develop/Documents/architecture%20diagram%20travEM.svg" height="700" width="700">
+
+As it is visible, we are using MVC on backend and backend is hosted on DigitalOcean droplet while frontend is hosted on Netlify.
 
 ## TravEM UI
 

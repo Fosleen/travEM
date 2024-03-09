@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { FC, useEffect } from "react";
 
-const Ad = () => {
+const Ad: FC<{ dataAdSlot: string }> = ({ dataAdSlot }) => {
   useEffect(() => {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
@@ -14,9 +14,9 @@ const Ad = () => {
       <ins
         className="adsbygoogle"
         style={{ display: "block" }}
-        data-ad-client="ca-pub-8905232732489410"
-        data-ad-slot="5730606240"
+        data-ad-client="ca-pub-3489990178681903"
         data-ad-format="auto"
+        data-ad-slot={dataAdSlot}
         data-full-width-responsive="true"
       ></ins>
     </>

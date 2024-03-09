@@ -377,44 +377,50 @@ class ArticleService {
   async updateOrCreateTopCountryArticle(article_id) {
     try {
       const article = await db.models.Article.findByPk(article_id);
-      const countryId = article.toJSON().countryId;
-
-      const existingArticle =
-        await db.models.Article_ArticleSpecialType.findOne({
-          where: {
-            articleSpecialTypeId: 2,
-          },
-          include: {
-            model: db.models.Article, // ovo se moze zbog super many to many veze
-            where: {
-              countryId: countryId,
-            },
-          },
-        });
-
-      console.log(existingArticle);
-
-      if (existingArticle) {
-        //vec postoji top clanak za ovu drzavu - update
-        const oldTopArticleId = existingArticle.toJSON().article.id;
-        await db.models.Article_ArticleSpecialType.update(
-          {
-            articleId: article_id,
-            articleSpecialTypeId: 2,
-          },
-          { where: { articleId: oldTopArticleId } }
-        );
+      if (!article) {
+        return "Article not found";
       } else {
-        // jos ne postoji top clanak za ovu drzavu - insert
-        await db.models.Article_ArticleSpecialType.create({
-          articleId: article_id,
-          articleSpecialTypeId: 2, // 2 = top country article
-        });
-      }
+        const countryId = article.toJSON().countryId;
+        console.log(countryId);
+        if (!countryId) {
+          return "Article country not found";
+        } else {
+          const existingArticle =
+            await db.models.Article_ArticleSpecialType.findOne({
+              where: {
+                articleSpecialTypeId: 2,
+              },
+              include: {
+                model: db.models.Article, // ovo se moze zbog super many to many veze
+                where: {
+                  countryId: countryId,
+                },
+              },
+            });
 
-      return article;
+          let response = null;
+          if (existingArticle) {
+            //vec postoji top clanak za ovu drzavu - update
+            const oldTopArticleId = existingArticle.toJSON().article.id;
+
+            response = await db.models.Article_ArticleSpecialType.update(
+              { articleId: article_id },
+              { where: { articleId: oldTopArticleId, articleSpecialTypeId: 2 } }
+            );
+          } else {
+            console.log("ne postoji");
+            // jos ne postoji top clanak za ovu drzavu - insert
+            response = await db.models.Article_ArticleSpecialType.create({
+              articleId: article_id,
+              articleSpecialTypeId: 2, // 2 = top country article
+            });
+          }
+          console.log(response);
+          return article;
+        }
+      }
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
       return [];
     }
   }

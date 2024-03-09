@@ -1,0 +1,28 @@
+components:
+  schemas:
+    Color:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        hex_value:
+          type: string
+          example: "#D2EB64"
+        name:
+          type: string
+          example: tamno zelena
+        url:
+          type: string
+          example: https://live.staticflickr.com/65535/53514858223_a82d13615c_o.png
+
+    GetAllColorsResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Color"
+
+    ColorsNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No colors found

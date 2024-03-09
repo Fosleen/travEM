@@ -1,0 +1,22 @@
+components:
+  securitySchemes: # so on whole docs can be inserted bearer token
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  security:
+    - bearerAuth: []
+  schemas:
+    ServerErrorResponse: # general error response for status code 500
+      properties:
+        error:
+          type: string
+          example: Internal server error
+    NotAuthorisedResponse: # general error response for status code 401
+      properties:
+        error:
+          type: string
+          example: "Unauthorized: Bearer token missing"
+    DeleteResponse:
+      type: object
+      items: null

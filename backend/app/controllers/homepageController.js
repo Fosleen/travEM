@@ -2,20 +2,28 @@ import service from "../services/homepageService.js";
 
 class HomepageController {
   async getHomepage(req, res) {
-    const response = await service.getHomepage();
-    if (response == undefined) {
-      res.status(404).json({ error: "No homepage found" });
-    } else {
-      res.status(200).json(response);
+    try {
+      const response = await service.getHomepage();
+      if (response == undefined) {
+        res.status(404).json({ error: "No homepage found" });
+      } else {
+        res.status(200).json(response);
+      }
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
     }
   }
 
   async getHomepageStats(req, res) {
-    const response = await service.getHomepageStats();
-    if (response == undefined) {
-      res.status(404).json({ error: "No homepage stats found" });
-    } else {
-      res.status(200).json(response);
+    try {
+      const response = await service.getHomepageStats();
+      if (response == undefined) {
+        res.status(404).json({ error: "No homepage stats found" });
+      } else {
+        res.status(200).json(response);
+      }
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
     }
   }
 

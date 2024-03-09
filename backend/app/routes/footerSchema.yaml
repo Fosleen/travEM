@@ -1,0 +1,29 @@
+components:
+  schemas:
+    Footer:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        image_url:
+          type: string
+          example: https://live.staticflickr.com/65535/53459370055_b26d27f7e5_b.jpg
+
+    GetFooterResponse:
+      $ref: "#/components/schemas/Footer"
+
+    UpdateFooterResponse:
+      $ref: "#/components/schemas/Footer"
+
+    UpdateFooterBody:
+      properties:
+        image_url:
+          type: string
+          example: https://live.staticflickr.com/65535/53458957236_6556d0f717_b.jpg
+
+    FooterNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No footer found

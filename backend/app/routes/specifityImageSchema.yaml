@@ -1,0 +1,37 @@
+components:
+  schemas:
+    SpecificityImage:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        url:
+          type: string
+          example: https://live.staticflickr.com/65535/53514858223_a82d13615c_o.png
+        specificityId:
+          type: integer
+          example: 1
+
+    AddSpecificityImageBody:
+      properties:
+        id:
+          type: integer
+          example: 1
+        url:
+          type: string
+          example: https://live.staticflickr.com/65535/53514858223_a82d13615c_o.png
+        specificity_id:
+          type: integer
+          example: 1
+
+    GetspecificityImageResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/specificityImage"
+
+    specificityImageNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No specificity image found

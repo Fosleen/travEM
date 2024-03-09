@@ -95,7 +95,7 @@ function App() {
           <Route path="/admin/uredi-footer" element={<EditFooter />} />
         </Route>
       </Routes>
-      <Ad />
+      <Ad dataAdSlot="11111111" />
     </>
   );
 }

@@ -88,6 +88,12 @@ Web blog is securely hosted and accessible to all users, employing top-tier secu
 
 ### DevOps (and database) 🔨
 
+For database, we are using MySQL database. For database manipulation, we use Sequelize ORM to write more complex queries easier.
+
+As of devops, deployment script is written for PHP- it is used for webhook on Github. What it does? It pulls the changes from Github automatically on push and restarts the server so we don't have to do it manually.
+Backend is hosted on Ubuntu server.
+
+
 ### Other 📈
 - **Google Analytics** - Tracks website traffic & provides insights.
 - **Google AdSense** - Monetizes web content via targeted ads.

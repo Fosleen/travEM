@@ -1,0 +1,23 @@
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: username
+        password:
+          type: string
+          example: "$2b$10$uKUUPAEzmMFL2Djww7Yxy.1wpM4lt6mWowGJC1AnQsdaNccd0C.72"
+        first_name:
+          type: string
+          example: Mirko
+        last_name:
+          type: string
+          example: Filipovic
+        is_admin:
+          type: boolean
+          example: 1

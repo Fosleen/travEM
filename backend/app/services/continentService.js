@@ -16,23 +16,33 @@ class ContinentsService {
       return continent;
     } catch (error) {
       console.log(error);
-      return `not found continent with PK ${id}`;
+      return "Continent not found";
     }
   }
 
   async getContinentCountries(id) {
     try {
+      const continent = await db.models.Continent.findByPk(id);
+      if (!continent) {
+        return "Continent not found";
+      }
+
       const continentCountries = await db.models.Country.findAll({
         where: { continentId: id },
       });
       return continentCountries;
     } catch (error) {
-      return [];
+      return error;
     }
   }
 
   async getContinentPlaces(id) {
     try {
+      const continent = await db.models.Continent.findByPk(id);
+      if (!continent) {
+        return "Continent not found";
+      }
+
       const continentPlaces = await db.models.Place.findAll({
         include: [
           {
@@ -44,7 +54,7 @@ class ContinentsService {
       });
       return continentPlaces;
     } catch (error) {
-      return [];
+      return error;
     }
   }
 }

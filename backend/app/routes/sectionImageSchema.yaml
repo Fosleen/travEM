@@ -1,0 +1,37 @@
+components:
+  schemas:
+    SectionImage:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        url:
+          type: string
+          example: "https://www.patterns.dev/img/reactjs/react-logo@3x.svg"
+        width:
+          type: integer
+          example: 16
+        height:
+          type: integer
+          example: 9
+        section_id:
+          type: integer
+          example: 17
+
+    UpdateSectionImageBody:
+      type: object
+      properties:
+        url:
+          type: string
+          example: "https://www.patterns.dev/img/reactjs/react-logo@3x.svg"
+
+    SectionNotFoundErrorResponse:
+      properties:
+      error:
+        type: string
+        example: Section with the provided ID doesn't exist
+
+      UpdateSectionImageParams:
+        type: integer
+        example: 110

@@ -1,0 +1,20 @@
+components:
+  schemas:
+    ArticleSpecialType:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        name:
+          type: string
+          example: top_country_article
+        article_has_article_special_type:
+          type: object
+          properties:
+            articleSpecialTypeId:
+              type: integer
+              example: 2
+            articleId:
+              type: integer
+              example: 2

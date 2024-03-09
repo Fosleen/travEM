@@ -111,6 +111,11 @@ const Footer = ({
           <Link to="">
             <div className="footer-list-item-content">Zaštita privatnosti</div>
           </Link>
+          <Link to="https://www.flaticon.com" target="_blank">
+            <div className="footer-list-item-content flaticon">
+              Icons by Freepik - Flaticon
+            </div>
+          </Link>
         </div>
         <div className="footer-list-item">
           <div className="footer-list-item-title">KONTAKT</div>

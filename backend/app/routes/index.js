@@ -20,6 +20,7 @@ import specificityImage from "./specificityImageRoute.js";
 import specificityItem from "./specificityItemRoute.js";
 import video from "./videoRoute.js";
 import airportCity from "./airportCityRoute.js";
+import { verifyToken } from "../middleware/jwt_verify.js";
 
 const router = new Router();
 
@@ -39,7 +40,7 @@ router.use("/characteristic-icons", characteristicIcon);
 router.use("/specificity-items", specificityItem);
 router.use("/specificity-images", specificityImage);
 
-router.use("/register", register);
+router.use("/register", verifyToken, register);
 router.use("/login", login);
 router.use("/places", place);
 router.use("/countries", country);

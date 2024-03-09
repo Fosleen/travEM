@@ -7,7 +7,7 @@ import { ToastContainer } from "react-toastify";
 import { PrimeReactProvider } from "primereact/api";
 import ReactGA from "react-ga4";
 
-ReactGA.initialize("G-P636ECTSKC");
+ReactGA.initialize("G-L09ZLTCLHW");
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

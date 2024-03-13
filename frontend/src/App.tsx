@@ -36,6 +36,7 @@ import Contact from "./Pages/UserViewPages/Contact/Contact";
 import ReactGA from "react-ga4";
 import { useEffect } from "react";
 import Ad from "./components/atoms/Ad";
+import PrivacyPolicy from "./Pages/UserViewPages/PrivacyPolicy/PrivacyPolicy";
 
 function App() {
   const location = useLocation();
@@ -57,6 +58,7 @@ function App() {
           <Route path="/o-nama" element={<About />} />
           <Route path="/aviokarte/:name" element={<AirplaneTickets />} />
           <Route path="/kontakt" element={<Contact />} />
+          <Route path="/pravila-o-privatnosti" element={<PrivacyPolicy />} />
           <Route path="/pretrazivanje" element={<SearchResults />} />
           <Route path="/savjeti/:tip" element={<TipsAndTricks />} />
           <Route path="/clanak/:id" element={<Article />} />

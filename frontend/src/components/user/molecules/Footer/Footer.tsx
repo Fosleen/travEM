@@ -108,8 +108,10 @@ const Footer = ({
           <Link to="">
             <div className="footer-list-item-content">Uvjeti korištenja</div>
           </Link>
-          <Link to="">
-            <div className="footer-list-item-content">Zaštita privatnosti</div>
+          <Link to="/pravila-o-privatnosti">
+            <div className="footer-list-item-content">
+              Pravila o privatnosti
+            </div>
           </Link>
         </div>
         <div className="footer-list-item">

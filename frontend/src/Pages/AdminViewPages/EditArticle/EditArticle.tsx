@@ -27,7 +27,7 @@ import Dropdown from "../../../components/atoms/Dropdown";
 import { Plus, X } from "@phosphor-icons/react";
 import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
 import Button from "../../../components/atoms/Button";
-import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch/ToggleSwitch";
+import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch";
 import Swal from "sweetalert2";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 import {

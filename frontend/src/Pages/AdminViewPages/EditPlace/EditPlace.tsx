@@ -21,7 +21,7 @@ import {
 import * as Yup from "yup";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 import { Plus, Trash, X } from "@phosphor-icons/react";
-import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch/ToggleSwitch";
+import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch";
 import { addVideo, deleteVideo, updateVideo } from "../../../api/videos";
 
 const EditPlace = () => {

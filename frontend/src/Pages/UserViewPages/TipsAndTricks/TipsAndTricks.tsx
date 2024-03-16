@@ -6,7 +6,7 @@ import { convertFromSlug } from "../../../utils/global";
 import { getArticleTypes } from "../../../api/articleTypes";
 import { Article, ArticleType, Nullable } from "../../../common/types";
 import { getArticles, getRecommendedArticles } from "../../../api/article";
-import Pagination from "../../../components/atoms/Pagination/Pagination";
+import Pagination from "../../../components/atoms/Pagination";
 import { ThreeDots } from "react-loader-spinner";
 
 const TipsAndTricks = () => {

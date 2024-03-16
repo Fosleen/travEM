@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import Pagination from "../../../components/atoms/Pagination/Pagination";
+import Pagination from "../../../components/atoms/Pagination";
 import HorizontalPostItemBig from "../../../components/user/atoms/HorizontalPostItemBig/HorizontalPostItemBig";
 import "./SearchResults.scss";
 import { useEffect, useState } from "react";

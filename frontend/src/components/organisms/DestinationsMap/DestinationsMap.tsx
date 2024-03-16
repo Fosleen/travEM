@@ -13,7 +13,7 @@ import Map, {
   Popup,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import Pin from "../../atoms/Pin/Pin";
+import Pin from "../../atoms/Pin";
 import "./DestinationsMap.scss";
 
 import { useNavigate } from "react-router";

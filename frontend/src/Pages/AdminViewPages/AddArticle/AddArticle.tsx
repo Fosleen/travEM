@@ -20,7 +20,7 @@ import {
   PlacesData,
   SectionIconsData,
 } from "../../../common/types";
-import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch/ToggleSwitch";
+import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch";
 import { getPlacesByCountry } from "../../../api/places";
 import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
 import { addArticle } from "../../../api/article";

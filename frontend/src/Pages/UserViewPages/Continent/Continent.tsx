@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import DestinationsMap from "../../../components/organisms/DestinationsMap/DestinationsMap";
+import DestinationsMap from "../../../components/organisms/DestinationsMap";
 import HorizontalPostItemBig from "../../../components/user/atoms/HorizontalPostItemBig";
 
 import "./Continent.scss";

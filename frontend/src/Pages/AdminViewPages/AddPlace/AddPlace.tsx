@@ -12,7 +12,7 @@ import * as Yup from "yup";
 import Input from "../../../components/atoms/Input";
 import Textarea from "../../../components/admin/atoms/Textarea";
 import { Plus, Trash, X } from "@phosphor-icons/react";
-import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch/ToggleSwitch";
+import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch";
 import { getVisitedCountries } from "../../../api/map";
 import Modal from "../../../components/atoms/Modal";
 import { ThreeDots } from "react-loader-spinner";

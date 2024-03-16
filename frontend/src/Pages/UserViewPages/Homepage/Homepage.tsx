@@ -4,7 +4,7 @@ import FavoritePosts from "../../../components/user/molecules/FavoritePosts";
 import HomepageBanner from "../../../components/user/molecules/HomepageBanner";
 import OtherPosts from "../../../components/user/molecules/OtherPosts";
 import BlogStats from "../../../components/user/molecules/BlogStats";
-import DestinationsMap from "../../../components/organisms/DestinationsMap/DestinationsMap";
+import DestinationsMap from "../../../components/organisms/DestinationsMap";
 import RecommendedMapDestinations from "../../../components/user/molecules/RecommendedMapDestinations";
 import { getHomepage } from "../../../api/homepage";
 import { useContext, useEffect, useState } from "react";

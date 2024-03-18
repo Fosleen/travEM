@@ -11,7 +11,7 @@ const PageCount: FC<PageCountProps> = ({ total, page, pageSize, type }) => {
           {page * pageSize < total ? page * pageSize : total} od {total}{" "}
           {type === "country" && "država"}
           {type === "place" && "mjesta"}
-          {type === "article" && "postova"}
+          {type === "article" && "članaka"}
         </p>
       )}
     </>

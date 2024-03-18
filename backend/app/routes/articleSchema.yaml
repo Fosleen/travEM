@@ -1,0 +1,317 @@
+components:
+  schemas:
+    Article:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 90
+        title:
+          type: string
+          example: Kupa
+        subtitle:
+          type: string
+          example: rijeka zivota
+        description:
+          type: string
+          example: Kako se odmoriti na rijeci?
+        main_image_url:
+          type: string
+          example: https://live.staticflickr.com/65535/53458955581_b974e4603f_b.jpg
+        date_written:
+          type: date
+          example: "2024-02-23"
+        articleTypeId:
+          type: integer
+          example: 1
+        countryId:
+          type: integer
+          example: 1
+        placeId:
+          type: integer
+          example: 1
+        userId:
+          type: integer
+          example: 1
+        airportCityId:
+          type: integer
+          example: null
+        article_type:
+          $ref: "#/components/schemas/ArticleType"
+        airport_city:
+          type: object
+          example: null
+        country:
+          $ref: "#/components/schemas/Country"
+        place:
+          $ref: "#/components/schemas/Place"
+
+    ArticleBasic:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 90
+        title:
+          type: string
+          example: Kupa
+        subtitle:
+          type: string
+          example: rijeka zivota
+        description:
+          type: string
+          example: Kako se odmoriti na rijeci?
+        main_image_url:
+          type: string
+          example: https://live.staticflickr.com/65535/53458955581_b974e4603f_b.jpg
+        date_written:
+          type: date
+          example: "2024-02-23"
+        articleTypeId:
+          type: integer
+          example: 1
+        countryId:
+          type: integer
+          example: 1
+        placeId:
+          type: integer
+          example: 1
+        userId:
+          type: integer
+          example: 1
+        airportCityId:
+          type: integer
+          example: null
+
+    GetAllArticlesResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          example: 79
+        totalPages:
+          type: integer
+          example: 7
+        currentPage:
+          type: integer
+          example: 1
+        pageSize:
+          type: integer
+          example: 12
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Article"
+
+    GetArticlesResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Article"
+
+    GetArticleByIdResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 90
+        title:
+          type: string
+          example: Kupa
+        subtitle:
+          type: string
+          example: rijeka zivota
+        description:
+          type: string
+          example: Kako se odmoriti na rijeci?
+        main_image_url:
+          type: string
+          example: https://live.staticflickr.com/65535/53458955581_b974e4603f_b.jpg
+        date_written:
+          type: date
+          example: "2024-02-23"
+        articleTypeId:
+          type: integer
+          example: 1
+        countryId:
+          type: integer
+          example: 1
+        placeId:
+          type: integer
+          example: 1
+        userId:
+          type: integer
+          example: 1
+        airportCityId:
+          type: integer
+          example: null
+        user:
+          $ref: "#/components/schemas/User"
+        gallery_images:
+          type: array
+          items:
+            $ref: "#/components/schemas/GalleryImageResponse"
+        video:
+          $ref: "#/components/schemas/VideoResponse"
+        country:
+          $ref: "#/components/schemas/Country"
+        place:
+          $ref: "#/components/schemas/Place"
+        article_type:
+          $ref: "#/components/schemas/ArticleType"
+        sections:
+          type: array
+          items:
+            $ref: "#/components/schemas/SectionByArticleResponse"
+        article_special_types:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArticleSpecialType"
+
+    GetTopCountryArticleResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        title:
+          type: string
+          example: post o hrv glavni
+        subtitle:
+          type: string
+          example: glavni clanak o Hr
+        description:
+          type: string
+          example: Kako se odmoriti na rijeci?
+        main_image_url:
+          type: string
+          example: https://live.staticflickr.com/65535/53458955581_b974e4603f_b.jpg
+        date_written:
+          type: date
+          example: "2024-02-23"
+        articleTypeId:
+          type: integer
+          example: 1
+        countryId:
+          type: integer
+          example: 1
+        placeId:
+          type: integer
+          example: null
+        userId:
+          type: integer
+          example: 1
+        airportCityId:
+          type: integer
+          example: null
+        article_special_types:
+          type: array
+          items:
+            $ref: "#/components/schemas/ArticleSpecialType"
+
+    GetArticlesByDestinationResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/ArticleBasic"
+
+    ArticlesNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No articles found
+
+    RecommendedArticlesNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No recommended articles found
+
+    ArticlesNotFoundSearchedErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No articles found by name test
+
+    TopCountryArticleNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No top article found for country
+
+    CountryArticlesNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No articles for country with id 1 found
+
+    PlaceArticlesNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No articles for place with id 1 found
+
+    ArticleNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: Article with the provided ID doesn't exist
+
+    AddArticleBody:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Kupa
+        subtitle:
+          type: string
+          example: rijeka zivota
+        description:
+          type: string
+          example: Kako se odmoriti na rijeci?
+        main_image_url:
+          type: string
+          example: https://live.staticflickr.com/65535/53458955581_b974e4603f_b.jpg
+        date_written:
+          type: date
+          example: "2024-02-23"
+        article_type_id:
+          type: integer
+          example: 1
+        country_id:
+          type: integer
+          example: 1
+        place_id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        airport_city_id:
+          type: integer
+          example: null
+
+    AddArticleResponse:
+      $ref: "#/components/schemas/ArticleBasic"
+
+    UpdateTopCountryArticleResponse:
+      $ref: "#/components/schemas/ArticleBasic"
+
+    ArticleInsertingErrorResponse:
+      properties:
+        error:
+          type: string
+          example: Error inserting article
+
+    DeleteArticleParams:
+      type: integer
+      example: 110
+
+    UpdateArticleParams:
+      type: integer
+      example: 110
+
+    UpdateTopCountryArticleBody:
+      type: object
+      properties:
+        article_id:
+          type: integer
+          example: 9

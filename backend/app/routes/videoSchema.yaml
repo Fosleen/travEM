@@ -1,0 +1,26 @@
+components:
+  schemas:
+    VideoResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        url:
+          type: string
+          example: "https://www.youtube.com/embed/Eb0nkjcScX8?si=QjGwx7ByKVn18vgc"
+        article_id:
+          type: integer
+          example: 3
+        place_id:
+          type: integer
+          example: 3
+        country_id:
+          type: integer
+          example: 3
+
+    VideosNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No videos found

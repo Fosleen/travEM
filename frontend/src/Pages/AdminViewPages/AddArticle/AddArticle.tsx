@@ -20,7 +20,7 @@ import {
   PlacesData,
   SectionIconsData,
 } from "../../../common/types";
-import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch/ToggleSwitch";
+import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch";
 import { getPlacesByCountry } from "../../../api/places";
 import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
 import { addArticle } from "../../../api/article";
@@ -31,13 +31,14 @@ import { addGalleryImage } from "../../../api/galleryImages";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 import Textarea from "../../../components/admin/atoms/Textarea";
 import { ThreeDots } from "react-loader-spinner";
-import jwt from "jsonwebtoken";
+import { getAirportCities } from "../../../api/airportCities";
 
 const AddArticle = () => {
   const navigate = useNavigate();
   const [articleTypes, setArticleTypes] = useState<ArticleType | string>("");
   const [countries, setCountries] = useState<CountriesData | string>("");
   const [places, setPlaces] = useState<PlacesData | string>("");
+  const [airportCities, setAirportCities] = useState("");
   const [sectionIcons, setSectionIcons] = useState<SectionIconsData | string>(
     ""
   );
@@ -56,6 +57,7 @@ const AddArticle = () => {
     [],
   ]);
   const [otherArticleImages, setOtherArticleImages] = useState([]);
+  const [isSubmitClicked, setIsSubmitClicked] = useState(false);
 
   const [isMainCountryPostChecked, setIsMainCountryPostChecked] =
     useState(false);
@@ -66,73 +68,109 @@ const AddArticle = () => {
     article_title: Yup.string()
       .required("Obavezno polje!")
       .max(100, "Naslov smije imati max 100 znakova!"),
+    article_subtitle: Yup.string()
+      .required("Obavezno polje!")
+      .max(100, "Podnaslov smije imati max 100 znakova!"),
+    article_description: Yup.string()
+      .required("Obavezno polje!")
+      .max(100, "Opis smije imati max 100 znakova!"),
+    article_type: Yup.number().required("Obavezno polje!").integer(),
+    article_airport_city_id: Yup.number().when("article_type", {
+      is: 2,
+      then: () => Yup.number().required("Obavezno polje!").integer(),
+      otherwise: () => Yup.number().notRequired(),
+    }),
+    article_country: Yup.number().when("article_type", {
+      is: 1,
+      then: () => Yup.number().required("Obavezno polje!").integer(),
+      otherwise: () => Yup.number().notRequired(),
+    }),
+    sections: Yup.array().of(
+      Yup.object().shape({
+        section_subtitle: Yup.string().max(
+          100,
+          "Podnaslov smije imati max 100 znakova!"
+        ),
+        section_url_title: Yup.string().max(
+          100,
+          "Naslov linka smije imati max 100 znakova!"
+        ),
+        section_text: Yup.string().required("Obavezno polje!"),
+      })
+    ),
   });
 
   const jwtToken = localStorage.getItem("jwt");
-
   const tokenParts = jwtToken.split(".");
-
   const base64Url = tokenParts[1];
   const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
   const decodedPayload = JSON.parse(atob(base64));
-
   const user_id = decodedPayload.id;
 
+  const validateImages = () => {
+    return mainArticleImage != "" && mainArticleImage;
+  };
+
   const handleSave = async (values) => {
-    Swal.fire({
-      title: "Jeste li sigurni?",
-      text: "Objavit ćete ovaj članak",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#2BAC82",
-      cancelButtonColor: "#AC2B2B",
-      cancelButtonText: "Odustani",
-      confirmButtonText: "Da, objavi!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const dateString = new Date().toJSON().slice(0, 10);
-        const todaysDate = new Date(dateString);
+    setIsSubmitClicked(true);
 
-        const articleResponse = await addArticle(
-          values.article_title,
-          values.article_subtitle,
-          values.article_description,
-          values.article_video,
-          parseInt(values.article_type),
-          parseInt(values.article_country),
-          parseInt(values.article_place),
-          mainArticleImage,
-          user_id,
-          todaysDate
-        );
+    if (validateImages()) {
+      Swal.fire({
+        title: "Jeste li sigurni?",
+        text: "Objavit ćete ovaj članak",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#2BAC82",
+        cancelButtonColor: "#AC2B2B",
+        cancelButtonText: "Odustani",
+        confirmButtonText: "Da, objavi!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const dateString = new Date().toJSON().slice(0, 10);
+          const todaysDate = new Date(dateString);
 
-        values.sections.map(async (section, index) => {
-          const sectionResponse = await addSection(
-            section.section_text,
-            section.section_subtitle,
-            index + 1,
-            section.section_url_title,
-            section.section_url_link,
-            section.section_icon,
-            articleResponse.id
+          const articleResponse = await addArticle(
+            values.article_title,
+            values.article_subtitle,
+            values.article_description,
+            values.article_video,
+            parseInt(values.article_type),
+            parseInt(values.article_country),
+            parseInt(values.article_place),
+            mainArticleImage,
+            user_id,
+            todaysDate,
+            parseInt(values.article_airport_city_id)
           );
-          sectionImages[index].map(async (el) => {
-            await addSectionImage(el.url, sectionResponse.id);
+
+          values.sections.map(async (section, index) => {
+            const sectionResponse = await addSection(
+              section.section_text,
+              section.section_subtitle,
+              index + 1,
+              section.section_url_title,
+              section.section_url_link,
+              section.section_icon,
+              articleResponse.id
+            );
+            sectionImages[index].map(async (el) => {
+              await addSectionImage(el.url, sectionResponse.id);
+            });
           });
-        });
 
-        otherArticleImages.map(async (image) => {
-          return await addGalleryImage(
-            image.url,
-            image.height,
-            image.width,
-            articleResponse.id
-          );
-        });
-        navigate("/admin/članci");
-        notifySuccess("Uspješno predano!");
-      }
-    });
+          otherArticleImages.map(async (image) => {
+            return await addGalleryImage(
+              image.url,
+              image.height,
+              image.width,
+              articleResponse.id
+            );
+          });
+          navigate("/admin/članci");
+          notifySuccess("Uspješno predano!");
+        }
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -152,7 +190,7 @@ const AddArticle = () => {
       section_text: "",
       section_url_title: "",
       section_url_link: "",
-      section_icon: "",
+      section_icon: null,
       order: 1,
     });
     setSectionImages([...sectionImages, []]);
@@ -226,10 +264,12 @@ const AddArticle = () => {
       const articleTypesData = await getArticleTypes();
       const countriesData = await getVisitedCountries();
       const sectionIconsData = await getSectionIcons();
+      const airportsData = await getAirportCities();
 
       setArticleTypes(articleTypesData);
       setCountries(countriesData);
       setSectionIcons(sectionIconsData);
+      setAirportCities(airportsData);
     } catch (error) {
       console.error("Error occured while fetching data:", error);
     }
@@ -260,8 +300,9 @@ const AddArticle = () => {
               article_description: "",
               article_video: "",
               article_type: "",
-              article_country: "",
-              article_place: "",
+              article_country: null,
+              article_place: null,
+              article_airport_city_id: null,
               sections: [
                 {
                   section_subtitle: "",
@@ -278,39 +319,70 @@ const AddArticle = () => {
             {({ values, setFieldValue }) => (
               <Form className="add-article-form">
                 <div className="add-article-inputs">
-                  <Field
-                    name="article_title"
-                    type="text"
-                    as={Input}
-                    label="Naslov članka *"
-                    placeholder="Unesi naslov..."
-                  />
-                  <ErrorMessage name="article_title" component="div" />
-                  <Field
-                    name="article_subtitle"
-                    as={Input}
-                    label="Podnaslov članka *"
-                    placeholder="Opis članka u par riječi..."
-                  />
-                  <ErrorMessage name="article_subtitle" component="div" />
-                  <Field
-                    name="article_description"
-                    type="text"
-                    as={Textarea}
-                    rows={4}
-                    label="Opis članka *"
-                    placeholder="Opis članka u nekoliko rečenica..."
-                  />
-                  <ErrorMessage name="article_description" component="div" />
-                  <div className="add-article-dropdowns">
-                    <Dropdown
-                      hardcodedValue={"Odaberi u kojem će se meniju prikazivat"}
-                      options={articleTypes}
-                      value={values.article_type}
-                      onChange={(value) => setFieldValue("article_type", value)}
-                      label="Vrsta članka *"
+                  <div className="add-article-input">
+                    <Field
+                      name="article_title"
+                      type="text"
+                      as={Input}
+                      label="Naslov članka *"
+                      placeholder="Unesi naslov..."
                     />
-                    <ErrorMessage name="article_type" component="div" />
+                    <ErrorMessage
+                      name="article_title"
+                      component="div"
+                      className="error-message"
+                    />
+                  </div>
+                  <div className="add-article-input">
+                    <Field
+                      name="article_subtitle"
+                      as={Input}
+                      label="Podnaslov članka *"
+                      placeholder="Opis članka u par riječi..."
+                    />
+                    <ErrorMessage
+                      name="article_subtitle"
+                      component="div"
+                      className="error-message"
+                    />
+                  </div>
+                  <div className="add-article-input">
+                    <Field
+                      name="article_description"
+                      type="text"
+                      as={Textarea}
+                      rows={4}
+                      label="Opis članka *"
+                      placeholder="Opis članka u nekoliko rečenica..."
+                    />
+                    <ErrorMessage
+                      name="article_description"
+                      component="div"
+                      className="error-message"
+                    />
+                  </div>
+                  <div className="add-article-dropdowns">
+                    <div className="add-article-input">
+                      <Dropdown
+                        hardcodedValue={
+                          "Odaberi u kojem će se meniju prikazivat"
+                        }
+                        options={articleTypes}
+                        value={values.article_type}
+                        onChange={(value) => {
+                          setFieldValue("article_type", value);
+                          setFieldValue("article_airport_city_id", null);
+                          setFieldValue("article_place", null);
+                          setFieldValue("article_country", null);
+                        }}
+                        label="Vrsta članka *"
+                      />
+                      <ErrorMessage
+                        name="article_type"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
                     <Field
                       name="article_video"
                       as={Input}
@@ -319,22 +391,29 @@ const AddArticle = () => {
                     />
                     {values.article_type == "1" && (
                       <>
-                        <Field
-                          name="article_country"
-                          type="text"
-                          as={AdvancedDropdown}
-                          label="Država članka (opcionalno)"
-                          hardcodedValue="Odaberi državu o kojoj se radi..."
-                          options={countries}
-                          onChange={(value) => {
-                            setFieldValue("article_country", value.id);
-                            setSelectedCountryId(value.id);
-                          }}
-                          selectedValue={values.article_country}
-                          imageAttribute="flag_image_url"
-                          filter
-                          images
-                        />
+                        <div className="add-article-input">
+                          <Field
+                            name="article_country"
+                            type="text"
+                            as={AdvancedDropdown}
+                            label="Država članka *"
+                            hardcodedValue="Odaberi državu o kojoj se radi..."
+                            options={countries}
+                            onChange={(value) => {
+                              setFieldValue("article_country", value.id);
+                              setSelectedCountryId(value.id);
+                            }}
+                            selectedValue={values.article_country}
+                            imageAttribute="flag_image_url"
+                            filter
+                            images
+                          />
+                          <ErrorMessage
+                            name="article_country"
+                            component="div"
+                            className="error-message"
+                          />
+                        </div>
                         {values.article_country != "" && places && (
                           <Field
                             name="article_place"
@@ -351,6 +430,29 @@ const AddArticle = () => {
                           />
                         )}
                       </>
+                    )}
+                    {values.article_type == "2" && airportCities && (
+                      <div className="add-article-input">
+                        <Field
+                          name="article_airport_city_id"
+                          type="text"
+                          as={AdvancedDropdown}
+                          label="Aerodrom *"
+                          hardcodedValue="Odaberi aerodrom iz kojeg se kreće..."
+                          options={airportCities}
+                          onChange={(value) => {
+                            setFieldValue("article_airport_city_id", value.id);
+                          }}
+                          selectedValue={values.article_airport_city_id}
+                          imageAttribute="flag_url"
+                          images
+                        />
+                        <ErrorMessage
+                          name="article_airport_city_id"
+                          component="div"
+                          className="error-message"
+                        />
+                      </div>
                     )}
                   </div>
                 </div>
@@ -382,6 +484,10 @@ const AddArticle = () => {
                     </div>
                   )}
                 </div>
+                {isSubmitClicked &&
+                  (mainArticleImage == "" || !mainArticleImage) && (
+                    <p className="error-message">Obavezno polje!</p>
+                  )}
                 <p>* preporuča se slika u omjeru 16:9</p>
 
                 <div>
@@ -415,7 +521,7 @@ const AddArticle = () => {
                                         type="text"
                                         as={AdvancedDropdown}
                                         hardcodedValue="Odaberi..."
-                                        label="Vrsta ikone *"
+                                        label="Vrsta ikone"
                                         name={`sections.${index}.section_icon`}
                                         options={sectionIcons}
                                         onChange={(value: SectionIconsData) => {
@@ -432,15 +538,23 @@ const AddArticle = () => {
                                       />
                                     </div>
                                   </div>
-                                  <Field
-                                    type="text"
-                                    as={Textarea}
-                                    rows={12}
-                                    name={`sections[${index}].section_text`}
-                                    label="Tekst odlomka *"
-                                    placeholder="Unesi tekst odlomka..."
-                                    value={sections[index].section_text}
-                                  />
+                                  <div className="add-article-input">
+                                    <Field
+                                      type="text"
+                                      as={Textarea}
+                                      rows={12}
+                                      name={`sections[${index}].section_text`}
+                                      label="Tekst odlomka *"
+                                      placeholder="Unesi tekst odlomka..."
+                                      value={sections[index].section_text}
+                                    />
+                                    <ErrorMessage
+                                      name={`sections[${index}].section_text`}
+                                      component="div"
+                                      className="error-message"
+                                    />
+                                  </div>
+
                                   <div className="add-article-section-bottom">
                                     <Field
                                       type="text"

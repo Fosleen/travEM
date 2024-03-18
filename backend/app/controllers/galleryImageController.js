@@ -9,7 +9,7 @@ class GalleryImagesController {
       req.body.height
     );
     if (response.length == 0) {
-      res.status(500).json({ error: "Error inserting gallery image" });
+      res.status(400).json({ error: "Error inserting gallery image" });
     } else {
       res.status(200).json(response);
     }
@@ -21,9 +21,7 @@ class GalleryImagesController {
     if (response) {
       res.status(200).json({});
     } else {
-      res
-        .status(500)
-        .json({ error: `Error while deleting gallery image with id ${id}` });
+      return res.status(500).json({ error: "Internal server error" });
     }
   }
 }

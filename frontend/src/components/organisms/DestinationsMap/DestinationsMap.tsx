@@ -13,7 +13,7 @@ import Map, {
   Popup,
 } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import Pin from "../../atoms/Pin/Pin";
+import Pin from "../../atoms/Pin";
 import "./DestinationsMap.scss";
 
 import { useNavigate } from "react-router";
@@ -152,7 +152,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
           pitch: 0,
         }}
         mapStyle="mapbox://styles/mapbox/navigation-day-v1"
-        mapboxAccessToken="pk.eyJ1IjoidHJhdmVtIiwiYSI6ImNscjN6b21hZzFwYzYyaW15NHR1MGF2c3YifQ.i0zgKxn9bundlWQQasv_rA"
+        mapboxAccessToken="pk.eyJ1IjoidHJhdmVtIiwiYSI6ImNsdDc4dGR1dzBnbWYyam05cDlmbjNpMTAifQ.EkCtJKiZzE-Yux0ZmCpMhg"
         scrollZoom={false}
         onClick={onClick}
         onMouseMove={onHover}
@@ -200,11 +200,16 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
             onClose={() => setPopupInfo(null)}
           >
             <div>
-              <Link to={`/destinacija/${popupInfo["name"]}`} target="_new">
+              <Link
+                to={`/destinacija/${popupInfo.country.name}/${popupInfo.name}`}
+                target="_new"
+              >
                 {popupInfo["name"]}
               </Link>
             </div>
-            <Link to={`/destinacija/${popupInfo["name"]}`} target="_new">
+            <Link
+              to={`/destinacija/${popupInfo.country.name}/${popupInfo.name}`}
+            >
               <img width="100%" src={popupInfo.main_image_url} />
             </Link>
           </Popup>

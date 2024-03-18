@@ -1,0 +1,82 @@
+components:
+  schemas:
+    Country:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Hrvatska
+        description:
+          type: string
+          example: Viceprvaci 2018
+        main_image_url:
+          type: string
+          example: https://live.staticflickr.com/65535/53540931006_6d4dd64529_b.jpg
+        flag_image_url:
+          type: string
+          example: https://live.staticflickr.com/65535/53499754431_6632e3c5c0_o.png
+        colorId:
+          type: integer
+          example: 2
+        continentId:
+          type: integer
+          example: 1
+
+    AddCountryBody:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Hrvatska
+        description:
+          type: string
+          example: Viceprvaci 2018
+        main_image_url:
+          type: string
+          example: https://live.staticflickr.com/65535/53540931006_6d4dd64529_b.jpg
+        flag_image_url:
+          type: string
+          example: https://live.staticflickr.com/65535/53499754431_6632e3c5c0_o.png
+        color_id:
+          type: integer
+          example: 2
+        continent_id:
+          type: integer
+          example: 1
+
+    CountriesNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No countries found
+
+    CountryPlaceResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Hrvatska
+        description:
+          type: string
+          example: Viceprvaci 2018
+        main_image_url:
+          type: string
+          example: https://live.staticflickr.com/65535/53540931006_6d4dd64529_b.jpg
+        flag_image_url:
+          type: string
+          example: https://live.staticflickr.com/65535/53499754431_6632e3c5c0_o.png
+        colorId:
+          type: integer
+          example: 2
+        continentId:
+          type: integer
+          example: 1

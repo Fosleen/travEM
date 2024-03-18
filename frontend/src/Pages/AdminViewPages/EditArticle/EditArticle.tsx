@@ -27,7 +27,7 @@ import Dropdown from "../../../components/atoms/Dropdown";
 import { Plus, X } from "@phosphor-icons/react";
 import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
 import Button from "../../../components/atoms/Button";
-import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch/ToggleSwitch";
+import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch";
 import Swal from "sweetalert2";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 import {
@@ -49,11 +49,13 @@ import {
   addGalleryImage,
   deleteGalleryImage,
 } from "../../../api/galleryImages";
+import { getAirportCities } from "../../../api/airportCities";
 
 const EditArticle = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [articleTypes, setArticleTypes] = useState<ArticleType | string>("");
+  const [airportCities, setAirportCities] = useState("");
   const [article, setArticle] = useState<Article | string>("");
   const [countries, setCountries] = useState<CountriesData | string>("");
   const [places, setPlaces] = useState<PlacesData | string>("");
@@ -73,6 +75,7 @@ const EditArticle = () => {
     [],
   ]);
   const [otherArticleImages, setOtherArticleImages] = useState([]);
+  const [isSubmitClicked, setIsSubmitClicked] = useState(false);
 
   const [isMainCountryPostChecked, setIsMainCountryPostChecked] =
     useState(false);
@@ -81,131 +84,169 @@ const EditArticle = () => {
     article_title: Yup.string()
       .required("Obavezno polje!")
       .max(100, "Naslov smije imati max 100 znakova!"),
+    article_subtitle: Yup.string()
+      .required("Obavezno polje!")
+      .max(100, "Podnaslov smije imati max 100 znakova!"),
+    article_description: Yup.string()
+      .required("Obavezno polje!")
+      .max(100, "Opis smije imati max 100 znakova!"),
+    article_type: Yup.number().required("Obavezno polje!").integer(),
+    article_airport_city_id: Yup.number().when("article_type", {
+      is: 2,
+      then: () => Yup.number().required("Obavezno polje!").integer(),
+      otherwise: () => Yup.number().notRequired(),
+    }),
+    article_country: Yup.number().when("article_type", {
+      is: 1,
+      then: () => Yup.number().required("Obavezno polje!").integer(),
+      otherwise: () => Yup.number().notRequired(),
+    }),
+    sections: Yup.array().of(
+      Yup.object().shape({
+        section_subtitle: Yup.string().max(
+          100,
+          "Podnaslov smije imati max 100 znakova!"
+        ),
+        section_url_title: Yup.string().max(
+          100,
+          "Naslov linka smije imati max 100 znakova!"
+        ),
+        section_text: Yup.string().required("Obavezno polje!"),
+      })
+    ),
   });
 
+  const validateImages = () => {
+    return mainArticleImage != "" && mainArticleImage;
+  };
+
   const handleSave = async (values) => {
-    console.log(values);
-    Swal.fire({
-      title: "Jeste li sigurni?",
-      text: "Objavit ćete ovaj uređeni članak",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#2BAC82",
-      cancelButtonColor: "#AC2B2B",
-      cancelButtonText: "Odustani",
-      confirmButtonText: "Da, objavi!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const countryResponse = await updateArticle(
-          article.id,
-          values.article_title,
-          values.article_subtitle,
-          values.article_description,
-          mainArticleImage,
-          values.article_type,
-          values.article_country,
-          values.article_place
-        );
-        console.log(countryResponse);
+    setIsSubmitClicked(true);
 
-        values.sections.map(async (el, index) => {
-          if (el.section_id) {
-            await updateSection(
-              el.section_id,
-              el.section_text,
-              el.section_subtitle,
-              index + 1,
-              el.section_url_title,
-              el.section_url_link,
-              el.section_icon
+    if (validateImages()) {
+      Swal.fire({
+        title: "Jeste li sigurni?",
+        text: "Objavit ćete ovaj uređeni članak",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#2BAC82",
+        cancelButtonColor: "#AC2B2B",
+        cancelButtonText: "Odustani",
+        confirmButtonText: "Da, objavi!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const countryResponse = await updateArticle(
+            article.id,
+            values.article_title,
+            values.article_subtitle,
+            values.article_description,
+            mainArticleImage,
+            values.article_type,
+            values.article_country,
+            values.article_place,
+            values.article_airport_city_id
+          );
+          console.log(countryResponse);
+
+          values.sections.map(async (el, index) => {
+            if (el.section_id) {
+              await updateSection(
+                el.section_id,
+                el.section_text,
+                el.section_subtitle,
+                index + 1,
+                el.section_url_title,
+                el.section_url_link,
+                el.section_icon
+              );
+
+              sectionImages[index].map(async (image: SectionImage) => {
+                if (!image.id) {
+                  await addSectionImage(
+                    image.url,
+                    el.section_id,
+                    image.width,
+                    image.height
+                  );
+                }
+              });
+            } else {
+              const response = await addSection(
+                el.section_text,
+                el.section_subtitle,
+                index + 1,
+                el.section_url_title,
+                el.section_url_link,
+                el.section_icon,
+                article.id
+              );
+
+              sectionImages[index].map(async (image: SectionImage) => {
+                if (!image.id) {
+                  await addSectionImage(
+                    image.url,
+                    response.section_id,
+                    image.height,
+                    image.width
+                  );
+                }
+              });
+            }
+          });
+
+          // delete removed sections (and images in that section automatically)
+          const removedSections = article.sections
+            .map((section) => section.id) // take only id (later sectionId)
+            .filter(
+              (sectionId) =>
+                !values.sections.some(
+                  (section) => section.section_id === sectionId // and check if any section_id (of any section in values.sections) has same id as current section (if yes, don't include it in removedSections array = ! in front)
+                )
             );
+          removedSections.map(async (el: number) => await deleteSection(el));
 
-            sectionImages[index].map(async (image: SectionImage) => {
-              if (!image.id) {
-                await addSectionImage(
-                  image.url,
-                  el.section_id,
-                  image.width,
-                  image.height
-                );
-              }
-            });
-          } else {
-            const response = await addSection(
-              el.section_text,
-              el.section_subtitle,
-              index + 1,
-              el.section_url_title,
-              el.section_url_link,
-              el.section_icon,
-              article.id
-            );
-
-            sectionImages[index].map(async (image: SectionImage) => {
-              if (!image.id) {
-                await addSectionImage(
-                  image.url,
-                  response.section_id,
-                  image.height,
-                  image.width
-                );
-              }
-            });
-          }
-        });
-
-        // delete removed sections (and images in that section automatically)
-        const removedSections = article.sections
-          .map((section) => section.id) // take only id (later sectionId)
-          .filter(
-            (sectionId) =>
-              !values.sections.some(
-                (section) => section.section_id === sectionId // and check if any section_id (of any section in values.sections) has same id as current section (if yes, don't include it in removedSections array = ! in front)
+          // delete removed section images
+          const removedSectionImages = article.sections.map((section, index) =>
+            section.section_images
+              .map((image: SectionImage) => image.id)
+              .filter(
+                (imageId: number) =>
+                  !sectionImages[index].some((img) => img.id === imageId)
               )
           );
-        removedSections.map(async (el: number) => await deleteSection(el));
 
-        // delete removed section images
-        const removedSectionImages = article.sections.map((section, index) =>
-          section.section_images
-            .map((image: SectionImage) => image.id)
-            .filter(
-              (imageId: number) =>
-                !sectionImages[index].some((img) => img.id === imageId)
-            )
-        );
-
-        removedSectionImages.map(async (el: Array<number>) => {
-          el.map(async (item: number) => {
-            await deleteSectionImage(item);
+          removedSectionImages.map(async (el: Array<number>) => {
+            el.map(async (item: number) => {
+              await deleteSectionImage(item);
+            });
           });
-        });
 
-        otherArticleImages.map(async (image: GalleryImage) => {
-          if (!image.id) {
-            return await addGalleryImage(
-              image.url,
-              image.height,
-              image.width,
-              article.id
+          otherArticleImages.map(async (image: GalleryImage) => {
+            if (!image.id) {
+              return await addGalleryImage(
+                image.url,
+                image.height,
+                image.width,
+                article.id
+              );
+            }
+          });
+
+          const removedGalleryImages = article.gallery_images
+            .map((image: GalleryImage) => image.id)
+            .filter(
+              (imageId) => !otherArticleImages.some((img) => img.id === imageId)
             );
-          }
-        });
 
-        const removedGalleryImages = article.gallery_images
-          .map((image: GalleryImage) => image.id)
-          .filter(
-            (imageId) => !otherArticleImages.some((img) => img.id === imageId)
-          );
+          removedGalleryImages.map(async (id: number) => {
+            await deleteGalleryImage(id);
+          });
 
-        removedGalleryImages.map(async (id: number) => {
-          await deleteGalleryImage(id);
-        });
-
-        navigate("/admin/članci");
-        notifySuccess("Uspješno uređen članak!");
-      }
-    });
+          navigate("/admin/članci");
+          notifySuccess("Uspješno uređen članak!");
+        }
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -226,7 +267,7 @@ const EditArticle = () => {
       section_text: "",
       section_url_title: "",
       section_url_link: "",
-      section_icon: "",
+      section_icon: null,
       order: 1,
     });
     setSectionImages([...sectionImages, []]);
@@ -305,6 +346,7 @@ const EditArticle = () => {
         const isSetAsMainCountryPost = await getFavoriteArticleByCountry(
           articleData.countryId
         );
+        const airportsData = await getAirportCities();
 
         setArticleTypes(articleTypesData);
         setCountries(countriesData);
@@ -316,6 +358,7 @@ const EditArticle = () => {
           articleData.sections.map((section) => section.section_images)
         );
         setOtherArticleImages(articleData.gallery_images);
+        setAirportCities(airportsData);
       }
     } catch (error) {
       console.error("Error occured while fetching data:", error);
@@ -379,8 +422,9 @@ const EditArticle = () => {
                 article_description: article.description,
                 article_video: article.video ? article.video.url : "",
                 article_type: article.articleTypeId,
-                article_country: article.countryId || "",
-                article_place: article.placeId || "",
+                article_country: article.countryId || null,
+                article_place: article.placeId || null,
+                article_airport_city_id: article.airportCityId || null,
                 sections: article.sections
                   ? article.sections.map((el) => ({
                       section_id: el.id,
@@ -399,44 +443,71 @@ const EditArticle = () => {
               {({ values, setFieldValue }) => (
                 <Form className="edit-article-form">
                   <div className="edit-article-inputs">
-                    <Field
-                      name="article_title"
-                      type="text"
-                      as={Input}
-                      label="Naslov članka *"
-                      placeholder="Unesi naslov..."
-                    />
-                    <ErrorMessage name="article_title" component="div" />
-                    <Field
-                      name="article_subtitle"
-                      as={Input}
-                      label="Podnaslov članka *"
-                      placeholder="Opis članka u par riječi..."
-                    />
-                    <ErrorMessage name="article_subtitle" component="div" />
-                    <Field
-                      name="article_description"
-                      type="text"
-                      as={Textarea}
-                      value={values.article_description}
-                      rows={4}
-                      label="Opis članka *"
-                      placeholder="Opis članka u nekoliko rečenica..."
-                    />
-                    <ErrorMessage name="article_description" component="div" />
-                    <div className="edit-article-dropdowns">
-                      <Dropdown
-                        hardcodedValue={
-                          "Odaberi u kojem će se meniju prikazivat"
-                        }
-                        options={articleTypes}
-                        value={values.article_type}
-                        onChange={(value) =>
-                          setFieldValue("article_type", value)
-                        }
-                        label="Vrsta članka *"
+                    <div className="edit-article-input">
+                      <Field
+                        name="article_title"
+                        type="text"
+                        as={Input}
+                        label="Naslov članka *"
+                        placeholder="Unesi naslov..."
                       />
-                      <ErrorMessage name="article_type" component="div" />
+                      <ErrorMessage
+                        name="article_title"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
+                    <div className="edit-article-input">
+                      <Field
+                        name="article_subtitle"
+                        as={Input}
+                        label="Podnaslov članka *"
+                        placeholder="Opis članka u par riječi..."
+                      />
+                      <ErrorMessage
+                        name="article_subtitle"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
+                    <div className="add-article-input">
+                      <Field
+                        name="article_description"
+                        type="text"
+                        as={Textarea}
+                        value={values.article_description}
+                        rows={4}
+                        label="Opis članka *"
+                        placeholder="Opis članka u nekoliko rečenica..."
+                      />
+                      <ErrorMessage
+                        name="article_description"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
+                    <div className="edit-article-dropdowns">
+                      <div className="add-article-input">
+                        <Dropdown
+                          hardcodedValue={
+                            "Odaberi u kojem će se meniju prikazivat"
+                          }
+                          options={articleTypes}
+                          value={values.article_type}
+                          onChange={(value) => {
+                            setFieldValue("article_type", value);
+                            setFieldValue("article_airport_city_id", null);
+                            setFieldValue("article_place", null);
+                            setFieldValue("article_country", null);
+                          }}
+                          label="Vrsta članka *"
+                        />
+                        <ErrorMessage
+                          name="article_type"
+                          component="div"
+                          className="error-message"
+                        />
+                      </div>
                       <Field
                         name="article_video"
                         as={Input}
@@ -445,7 +516,7 @@ const EditArticle = () => {
                       />
                       {values.article_type == "1" && (
                         <>
-                          <>
+                          <div className="add-article-input">
                             <Field
                               name="article_country"
                               type="text"
@@ -462,26 +533,57 @@ const EditArticle = () => {
                               filter
                               images
                             />
+                            <ErrorMessage
+                              name="article_country"
+                              component="div"
+                              className="error-message"
+                            />
+                          </div>
 
-                            {values.article_country != "" &&
-                              values.article_country &&
-                              places && (
-                                <Field
-                                  name="article_place"
-                                  type="text"
-                                  as={AdvancedDropdown}
-                                  label="Mjesto članka (opcionalno)"
-                                  hardcodedValue="Odaberi grad ili mjesto o kojem se radi"
-                                  options={places}
-                                  onChange={(value) => {
-                                    setFieldValue("article_place", value.id);
-                                  }}
-                                  selectedValue={values.article_place}
-                                  filter
-                                />
-                              )}
-                          </>
+                          {values.article_country != "" &&
+                            values.article_country &&
+                            places && (
+                              <Field
+                                name="article_place"
+                                type="text"
+                                as={AdvancedDropdown}
+                                label="Mjesto članka (opcionalno)"
+                                hardcodedValue="Odaberi grad ili mjesto o kojem se radi"
+                                options={places}
+                                onChange={(value) => {
+                                  setFieldValue("article_place", value.id);
+                                }}
+                                selectedValue={values.article_place}
+                                filter
+                              />
+                            )}
                         </>
+                      )}
+                      {values.article_type == "2" && airportCities && (
+                        <div className="add-article-input">
+                          <Field
+                            name="article_airport_city_id"
+                            type="text"
+                            as={AdvancedDropdown}
+                            label="Aerodrom *"
+                            hardcodedValue="Odaberi aerodrom iz kojeg se kreće..."
+                            options={airportCities}
+                            onChange={(value) => {
+                              setFieldValue(
+                                "article_airport_city_id",
+                                value.id
+                              );
+                            }}
+                            selectedValue={values.article_airport_city_id}
+                            imageAttribute="flag_url"
+                            images
+                          />
+                          <ErrorMessage
+                            name="article_airport_city_id"
+                            component="div"
+                            className="error-message"
+                          />
+                        </div>
                       )}
                     </div>
                     {values.article_type == "1" &&
@@ -527,6 +629,10 @@ const EditArticle = () => {
                       </div>
                     )}
                   </div>
+                  {isSubmitClicked &&
+                    (mainArticleImage == "" || !mainArticleImage) && (
+                      <p className="error-message">Obavezno polje!</p>
+                    )}
                   <p>* preporuča se slika u omjeru 16:9</p>
 
                   <div>
@@ -560,7 +666,7 @@ const EditArticle = () => {
                                           type="text"
                                           as={AdvancedDropdown}
                                           hardcodedValue="Odaberi..."
-                                          label="Vrsta ikone *"
+                                          label="Vrsta ikone"
                                           name={`sections.${index}.section_icon`}
                                           options={sectionIcons}
                                           onChange={(
@@ -579,17 +685,24 @@ const EditArticle = () => {
                                         />
                                       </div>
                                     </div>
-                                    <Field
-                                      type="text"
-                                      as={Textarea}
-                                      rows={12}
-                                      value={
-                                        values.sections[index].section_text
-                                      }
-                                      name={`sections.${index}.section_text`}
-                                      label="Tekst odlomka *"
-                                      placeholder="Unesi tekst odlomka..."
-                                    />
+                                    <div className="add-article-input">
+                                      <Field
+                                        type="text"
+                                        as={Textarea}
+                                        rows={12}
+                                        value={
+                                          values.sections[index].section_text
+                                        }
+                                        name={`sections.${index}.section_text`}
+                                        label="Tekst odlomka *"
+                                        placeholder="Unesi tekst odlomka..."
+                                      />
+                                      <ErrorMessage
+                                        name={`sections[${index}].section_text`}
+                                        component="div"
+                                        className="error-message"
+                                      />
+                                    </div>
                                     <div className="edit-article-section-bottom">
                                       <Field
                                         type="text"

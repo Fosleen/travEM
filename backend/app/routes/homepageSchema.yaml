@@ -1,0 +1,66 @@
+components:
+  schemas:
+    Homepage:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        hero_image_url:
+          type: string
+          example: https://live.staticflickr.com/65535/53459370055_b26d27f7e5_b.jpg
+        banner_image_url:
+          type: string
+          example: https://live.staticflickr.com/65535/53459370055_b26d27f7e5_b.jpg
+        banner_title:
+          type: string
+          example: Neki naslov
+        banner_small_text:
+          type: string
+          example: Neki mali tekst
+        banner_description:
+          type: string
+          example: Neki opis na banneru
+        button_text:
+          type: string
+          example: Istraži više
+        flights_nmbr:
+          type: integer
+          example: 4
+        videos_nmbr:
+          type: integer
+          example: 4
+        distance_nmbr:
+          type: integer
+          example: 4
+
+    HomepageStats:
+      type: object
+      properties:
+        continents_nmbr:
+          type: integer
+          example: 4
+        countries_nmbr:
+          type: integer
+          example: 34
+        articles_nmbr:
+          type: integer
+          example: 86
+
+    GetHomepageResponse:
+      $ref: "#/components/schemas/Homepage"
+
+    GetHomepageStatsResponse:
+      $ref: "#/components/schemas/HomepageStats"
+
+    HomepageNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No Homepage data found
+
+    HomepageStatsNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No Homepage stats data found

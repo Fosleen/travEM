@@ -1,4 +1,5 @@
 import { PlacesData } from "../common/types";
+import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function getPlaces(page = 1, pageSize = 12) {
@@ -65,6 +66,7 @@ export async function addPlace(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "POST",
     body: JSON.stringify({
@@ -95,6 +97,7 @@ export async function addPlaceOnMap(id: number) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "PATCH",
     body: JSON.stringify({
@@ -176,6 +179,9 @@ export async function removePlaceAboveMap(id: number) {
 
 export async function deletePlaceById(id: number) {
   const response = await fetch(`${apiUrl}/places/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     method: "DELETE",
   });
   const data = await response.json();

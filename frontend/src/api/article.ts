@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
+import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function addArticle(
@@ -8,16 +9,18 @@ export async function addArticle(
   description: string,
   video: string,
   article_type_id: number,
-  country_id: number,
-  place_id: number,
+  country_id: numberr | null,
+  place_id: numberr | null,
   main_image_url: string,
   user_id: number,
-  date_written: Date
+  date_written: Date,
+  airport_city_id: numberr | null
 ) {
   const response = await fetch(`${apiUrl}/articles`, {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "POST",
     body: JSON.stringify({
@@ -31,6 +34,7 @@ export async function addArticle(
       user_id: user_id,
       main_image_url: main_image_url,
       date_written: date_written,
+      airport_city_id: airport_city_id,
     }),
   });
 
@@ -122,6 +126,7 @@ export async function updateOrCreateTopHomepageArticles(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "PUT",
     body: JSON.stringify({
@@ -156,7 +161,8 @@ export async function updateArticle(
   main_image_url: string,
   article_type_id: number,
   country_id: number | null | string,
-  place_id: number | null | string
+  place_id: number | null | string,
+  airport_city_id: number | null
 ) {
   const requestBody = {
     title: title,
@@ -164,20 +170,16 @@ export async function updateArticle(
     description: description,
     main_image_url: main_image_url,
     article_type_id: article_type_id,
+    airport_city_id: airport_city_id,
+    country_id: country_id,
+    place_id: place_id,
   };
-
-  if (country_id != "") {
-    requestBody.country_id = country_id;
-  }
-
-  if (place_id != "") {
-    requestBody.place_id = place_id;
-  }
 
   const response = await fetch(`${apiUrl}/articles/${id}`, {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "PATCH",
     body: JSON.stringify(requestBody),
@@ -194,6 +196,7 @@ export async function updateArticle(
 export async function deleteArticleById(id: number) {
   const response = await fetch(`${apiUrl}/articles/${id}`, {
     method: "DELETE",
+    Authorization: `Bearer ${token}`,
   });
   const data = await response.json();
 
@@ -205,7 +208,7 @@ export async function deleteArticleById(id: number) {
 }
 
 export async function getFavoriteArticleByCountry(id: number) {
-  const response = await fetch($`{apiUrl}/articles/country/top/${id}`);
+  const response = await fetch(`${apiUrl}/articles/country/top/${id}`);
   const data = await response.json();
 
   if (!response.ok) {

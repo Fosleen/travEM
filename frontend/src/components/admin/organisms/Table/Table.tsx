@@ -1,6 +1,6 @@
 import "./Table.scss";
 import TableContent from "../../molecules/TableContent/TableContent";
-import Pagination from "../../../atoms/Pagination/Pagination";
+import Pagination from "../../../atoms/Pagination";
 import PageCount from "../../atoms/PageCount";
 import ItemsPerPageSelector from "../../molecules/ItemsPerPageSelector";
 import Search from "../../../atoms/Search";
@@ -9,7 +9,6 @@ import { FC, SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import { TableProps } from "../../../../common/types";
-
 
 const Table: FC<TableProps> = ({
   data,

@@ -1,4 +1,5 @@
 import { CountriesData } from "../common/types";
+import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function getCountries(page = 1, pageSize = 12) {
@@ -70,6 +71,7 @@ export async function addCountry(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "POST",
     body: JSON.stringify({
@@ -109,6 +111,7 @@ export async function updateCountry(country: CountriesData) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "PATCH",
     body: JSON.stringify({

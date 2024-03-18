@@ -1,3 +1,4 @@
+import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function updateSpecificityImage(
@@ -9,6 +10,7 @@ export async function updateSpecificityImage(
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "PATCH",
     body: JSON.stringify({

@@ -1,13 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import ArticleFragment from "../../../components/user/molecules/ArticleFragment/ArticleFragment";
+import ArticleFragment from "../../../components/user/molecules/ArticleFragment";
 import ArticleHero from "../../../components/user/molecules/ArticleHero";
-import ArticleTableOfContents from "../../../components/user/molecules/ArticleTableOfContents/ArticleTableOfContents";
+import ArticleTableOfContents from "../../../components/user/molecules/ArticleTableOfContents";
 
 import "./Article.scss";
 import Gallery from "react-photo-gallery";
-import ArticleReadMore from "../../../components/user/atoms/ArticleReadMore/ArticleReadMore";
+import ArticleReadMore from "../../../components/user/atoms/ArticleReadMore";
 import Location from "../../../assets/images/location.png";
 import CountryPlaces from "../../../components/user/molecules/CountryPlaces";
 import { useEffect, useState } from "react";

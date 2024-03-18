@@ -4,7 +4,7 @@ import Header from "../organisms/Header";
 import Footer from "../molecules/Footer";
 import Newsletter from "../molecules/Newsletter";
 import "./UserViewLayout.scss";
-import ScrollToTop from "../../atoms/ScrollToTop/ScrollToTop";
+import ScrollToTop from "../../atoms/ScrollToTop";
 import { useState } from "react";
 
 const UserViewLayout = () => {

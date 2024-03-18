@@ -4,17 +4,21 @@ import FavoritePosts from "../../../components/user/molecules/FavoritePosts";
 import HomepageBanner from "../../../components/user/molecules/HomepageBanner";
 import OtherPosts from "../../../components/user/molecules/OtherPosts";
 import BlogStats from "../../../components/user/molecules/BlogStats";
-import DestinationsMap from "../../../components/organisms/DestinationsMap/DestinationsMap";
+import DestinationsMap from "../../../components/organisms/DestinationsMap";
 import RecommendedMapDestinations from "../../../components/user/molecules/RecommendedMapDestinations";
 import { getHomepage } from "../../../api/homepage";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import { Article, HomepageData } from "../../../common/types";
 import { getHomepageArticles } from "../../../api/article";
 import Ad from "../../../components/atoms/Ad";
 import { Adsense } from "@ctrl/react-adsense";
+import { ArticleContext } from "../../../Context/ArticleContext";
 
 const Homepage = () => {
+  const { homepageArticlesContextData, setHomepageArticlesContextData } =
+    useContext(ArticleContext);
+
   const [homepageContent, setHomepageContent] = useState<HomepageData | null>(
     null
   );
@@ -28,13 +32,22 @@ const Homepage = () => {
   const fetchData = async () => {
     try {
       const content = await getHomepage();
-      const articles = await getHomepageArticles();
       setHomepageContent(content);
-      regroupArticles(articles);
+
+      if (!homepageArticlesContextData) {
+        const articles = await getHomepageArticles();
+        setHomepageArticlesContextData(articles);
+      }
     } catch (error) {
       console.error("Error occured while fetching homepage data:", error);
     }
   };
+
+  useEffect(() => {
+    if (homepageArticlesContextData) {
+      regroupArticles(homepageArticlesContextData);
+    }
+  }, [homepageArticlesContextData]);
 
   useEffect(() => {
     fetchData();

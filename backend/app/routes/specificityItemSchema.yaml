@@ -1,0 +1,43 @@
+components:
+  schemas:
+    SpecificityItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Kebabčina
+        description:
+          type: string
+          example: ova je hrana tijesto s umakom od paradajza i jako je fino njam njam
+        specificityId:
+          type: integer
+          example: 1
+
+    AddSpecificityItemBody:
+      properties:
+        id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: Kebabčina
+        description:
+          type: string
+          example: jako masni
+        specificity_id:
+          type: integer
+          example: 1
+
+    GetSpecificityItemResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/SpecificityItem"
+
+    SpecificityItemNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No specificity item found

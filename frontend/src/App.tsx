@@ -13,7 +13,6 @@ import Login from "./Pages/AdminViewPages/Login/Login";
 import Article from "./Pages/UserViewPages/Article/Article";
 import DestinationPlace from "./Pages/UserViewPages/DestinationPlace";
 import NotFound from "./Pages/UserViewPages/NotFound/NotFound";
-
 import AdminViewLayout from "./components/admin/templates/AdminViewLayout";
 import Continent from "./Pages/UserViewPages/Continent/Continent";
 import EditHomepageMenu from "./Pages/AdminViewPages/EditHomepageMenu/EditHomepageMenu";
@@ -36,11 +35,10 @@ import EditCountry from "./Pages/AdminViewPages/EditCountry/EditCountry";
 import EditArticle from "./Pages/AdminViewPages/EditArticle/EditArticle";
 import Contact from "./Pages/UserViewPages/Contact/Contact";
 import ReactGA from "react-ga4";
-
 import ProtectedRoute from "./components/atoms/ProtectedRoute";
 import { useEffect } from "react";
-
-// Import your ProtectedRoute component here
+import Ad from "./components/atoms/Ad";
+import PrivacyPolicy from "./Pages/UserViewPages/PrivacyPolicy/PrivacyPolicy";
 
 function App() {
   const location = useLocation();
@@ -82,6 +80,7 @@ function App() {
           <Route path="/o-nama" element={<About />} />
           <Route path="/aviokarte/:name" element={<AirplaneTickets />} />
           <Route path="/kontakt" element={<Contact />} />
+          <Route path="/pravila-o-privatnosti" element={<PrivacyPolicy />} />
           <Route path="/pretrazivanje" element={<SearchResults />} />
           <Route path="/savjeti/:tip" element={<TipsAndTricks />} />
           <Route path="/clanak/:id" element={<Article />} />
@@ -128,6 +127,7 @@ function App() {
           <Route path="/admin/uredi-footer" element={<EditFooter />} />
         </Route>
       </Routes>
+      <Ad dataAdSlot="11111111" />
     </>
   );
 }

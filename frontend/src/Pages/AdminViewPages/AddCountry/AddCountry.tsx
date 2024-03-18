@@ -2,7 +2,7 @@
 
 import { useNavigate } from "react-router-dom";
 import "./AddCountry.scss";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 import Swal from "sweetalert2";
 import Modal from "../../../components/atoms/Modal";
@@ -45,6 +45,7 @@ const AddCountry = () => {
     [null, null, null],
   ]);
   const [selectedSpecificityImage, setSelectedSpecificityImage] = useState([]);
+  const [isSubmitClicked, setIsSubmitClicked] = useState(false);
 
   const ValidationSchema = Yup.object().shape({
     country_name: Yup.string().required("Obavezno polje!"),
@@ -52,61 +53,111 @@ const AddCountry = () => {
       .required("Obavezno polje!")
       .max(100, "Opis smije imati max 100 znakova!"),
     country_color: Yup.string().required("Obavezno polje!"),
+    characteristics: Yup.array().of(
+      Yup.object().shape({
+        characteristic_icon: Yup.string().required("Obavezno polje!"),
+        characteristic_title: Yup.string().required("Obavezno polje !"),
+        characteristic_description: Yup.string().required("Obavezno polje!"),
+      })
+    ),
+    specificities: Yup.array().of(
+      Yup.object().shape({
+        title: Yup.string().required("Obavezno polje!"),
+        items: Yup.array().of(
+          Yup.object().shape({
+            title: Yup.string().required("Obavezno polje!"),
+            description: Yup.string().required("Obavezno polje!"),
+          })
+        ),
+      })
+    ),
+    videos: Yup.array().of(
+      Yup.object().shape({
+        video_url: Yup.string().required("Obavezno polje!"),
+      })
+    ),
   });
 
-  const handleSave = async (values) => {
-    Swal.fire({
-      title: "Jeste li sigurni?",
-      text: "Objavit ćete ovu državu",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#2BAC82",
-      cancelButtonColor: "#AC2B2B",
-      cancelButtonText: "Odustani",
-      confirmButtonText: "Da, objavi!",
-    }).then(async (result) => {
-      const selectedCountry = countries.find(
-        (el) => el.id == values.country_name
-      );
+  const validateImages = () => {
+    let areAllImagesFilledIn = true;
 
-      if (result.isConfirmed) {
-        const countryResponse = await addCountry(
-          selectedCountry.name,
-          values.country_description,
-          mainCountryImage,
-          flagImage,
-          values.country_continent,
-          values.country_color
-        );
-
-        values.specificities.map(async (el, index) => {
-          return await addSpecificity(
-            el.title,
-            countryResponse.id,
-            el.items,
-            specificityImages[index]
-          );
-        });
-
-        values.characteristics.map(
-          async (el) =>
-            await addCharacteristic(
-              el.characteristic_title,
-              el.characteristic_description,
-              countryResponse.id,
-              el.characteristic_icon
-            )
-        );
-
-        values.videos.map(
-          async (el) =>
-            await addVideo(el.video_url, null, null, countryResponse.id)
-        );
-
-        navigate("/admin/države");
-        notifySuccess("Uspješno dodana država!");
-      }
+    specificityImages.map((imageGroup) => {
+      imageGroup.map((image) => {
+        if (!image || image == "") {
+          areAllImagesFilledIn = false;
+        }
+      });
     });
+
+    if (
+      mainCountryImage == "" ||
+      !mainCountryImage ||
+      flagImage == "" ||
+      !flagImage
+    ) {
+      areAllImagesFilledIn = false;
+    }
+
+    return areAllImagesFilledIn;
+  };
+
+  const handleSave = async (values) => {
+    setIsSubmitClicked(true);
+
+    if (validateImages()) {
+      Swal.fire({
+        title: "Jeste li sigurni?",
+        text: "Objavit ćete ovu državu",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#2BAC82",
+        cancelButtonColor: "#AC2B2B",
+        cancelButtonText: "Odustani",
+        confirmButtonText: "Da, objavi!",
+      }).then(async (result) => {
+        const selectedCountry = countries.find(
+          (el) => el.id == values.country_name
+        );
+
+        if (result.isConfirmed) {
+          const countryResponse = await addCountry(
+            selectedCountry.name,
+            values.country_description,
+            mainCountryImage,
+            flagImage,
+            values.country_continent,
+            values.country_color
+          );
+
+          values.specificities.map(async (el, index) => {
+            return await addSpecificity(
+              el.title,
+              countryResponse.id,
+              el.items,
+              specificityImages[index]
+            );
+          });
+
+          values.characteristics.map(
+            async (el) =>
+              await addCharacteristic(
+                el.characteristic_title,
+                el.characteristic_description,
+                countryResponse.id,
+                el.characteristic_icon
+              )
+          );
+
+          values.videos.map(
+            async (el) =>
+              await addVideo(el.video_url, null, null, countryResponse.id)
+          );
+
+          navigate("/admin/države");
+          notifySuccess("Uspješno dodana država!");
+        }
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -312,7 +363,11 @@ const AddCountry = () => {
                         selectedValue={values.country_name}
                         filter
                       />
-                      <ErrorMessage name="country_name" component="div" />
+                      <ErrorMessage
+                        name="country_name"
+                        component="div"
+                        className="error-message"
+                      />
                     </div>
                     <div className="add-country-input">
                       <Field
@@ -328,7 +383,11 @@ const AddCountry = () => {
                         selectedValue={values.country_color}
                         images
                       />
-                      <ErrorMessage name="country_color" component="div" />
+                      <ErrorMessage
+                        name="country_color"
+                        component="div"
+                        className="error-message"
+                      />
                     </div>
                     <div className="add-country-input">
                       <Field
@@ -343,7 +402,11 @@ const AddCountry = () => {
                         }}
                         selectedValue={values.country_continent}
                       />
-                      <ErrorMessage name="country_color" component="div" />
+                      <ErrorMessage
+                        name="country_continent"
+                        component="div"
+                        className="error-message"
+                      />
                     </div>
                   </div>
                   <div className="add-country-input">
@@ -355,7 +418,11 @@ const AddCountry = () => {
                       label="Opis države *"
                       placeholder="1 ili 2 rečenice koje najbolje opisuju državu..."
                     />
-                    <ErrorMessage name="country_description" component="div" />
+                    <ErrorMessage
+                      name="country_description"
+                      component="div"
+                      className="error-message"
+                    />
                   </div>
                 </div>
                 <div className="add-country-images-container">
@@ -383,6 +450,9 @@ const AddCountry = () => {
                       >
                         <Plus size={32} color="#616161" weight="bold" />
                       </div>
+                    )}
+                    {isSubmitClicked && (flagImage == "" || !flagImage) && (
+                      <p className="error-message">Obavezno polje!</p>
                     )}
                   </div>
                   <div className="add-country-images-item">
@@ -413,6 +483,10 @@ const AddCountry = () => {
                         <Plus size={32} color="#616161" weight="bold" />
                       </div>
                     )}
+                    {isSubmitClicked &&
+                      (mainCountryImage == "" || !mainCountryImage) && (
+                        <p className="error-message">Obavezno polje!</p>
+                      )}
                   </div>
                 </div>
                 <p>* preporuča se okrugla slika zastave</p>
@@ -425,7 +499,7 @@ const AddCountry = () => {
 
                     <FieldArray
                       name="characteristics"
-                      render={(arrayHelpers) => {
+                      render={() => {
                         const characteristics = values.characteristics;
 
                         return (
@@ -456,17 +530,32 @@ const AddCountry = () => {
                                         filter={false}
                                         images={true}
                                       />
+                                      <ErrorMessage
+                                        name={`characteristics.${index}.characteristic_icon`}
+                                        component="div"
+                                        className="error-message"
+                                      />
                                       <Field
                                         type="text"
                                         name={`characteristics.${index}.characteristic_title`}
                                         as={Input}
                                         placeholder="Unesi podnaslov..."
                                       />
+                                      <ErrorMessage
+                                        name={`characteristics.${index}.characteristic_title`}
+                                        component="div"
+                                        className="error-message"
+                                      />
                                       <Field
                                         type="text"
                                         name={`characteristics.${index}.characteristic_description`}
                                         as={Input}
                                         placeholder="Unesi opis..."
+                                      />
+                                      <ErrorMessage
+                                        name={`characteristics.${index}.characteristic_description`}
+                                        component="div"
+                                        className="error-message"
                                       />
                                     </div>
                                   )
@@ -484,7 +573,7 @@ const AddCountry = () => {
                   {/* array of specificities (2) */}
                   <FieldArray
                     name="specificities"
-                    render={(arrayHelpers) => {
+                    render={() => {
                       const specificities = values.specificities;
 
                       return (
@@ -492,11 +581,18 @@ const AddCountry = () => {
                           {specificities && specificities.length > 0
                             ? specificities.map((_specificity, index) => (
                                 <div key={index}>
-                                  <Field
-                                    type="text"
+                                  <div className="add-country-specificities-inner-item">
+                                    <Field
+                                      type="text"
+                                      name={`specificities[${index}].title`}
+                                      as={Input}
+                                      placeholder="Unesi naslov..."
+                                    />
+                                  </div>
+                                  <ErrorMessage
                                     name={`specificities[${index}].title`}
-                                    as={Input}
-                                    placeholder="Unesi naslov..."
+                                    component="div"
+                                    className="error-message"
                                   />
                                   <fieldset>
                                     <legend>
@@ -534,11 +630,21 @@ const AddCountry = () => {
                                                           as={Input}
                                                           placeholder="Unesi podnaslov..."
                                                         />
+                                                        <ErrorMessage
+                                                          name={`specificities[${index}].items[${itemIndex}].title`}
+                                                          component="div"
+                                                          className="error-message"
+                                                        />
                                                         <Field
                                                           type="text"
                                                           name={`specificities[${index}].items[${itemIndex}].description`}
                                                           as={Input}
                                                           placeholder="Unesi opis..."
+                                                        />
+                                                        <ErrorMessage
+                                                          name={`specificities[${index}].items[${itemIndex}].description`}
+                                                          component="div"
+                                                          className="error-message"
                                                         />
                                                       </div>
 
@@ -559,7 +665,6 @@ const AddCountry = () => {
                                                   )
                                                 )
                                               : null}
-
                                             {specificityItems.length < 4 && (
                                               <Button
                                                 type="button"
@@ -634,6 +739,16 @@ const AddCountry = () => {
                                                 )
                                               )}
                                             </div>
+                                            {isSubmitClicked &&
+                                              (!specificityImages[index][0] ||
+                                                !specificityImages[index][1] ||
+                                                !specificityImages[
+                                                  index
+                                                ][2]) && (
+                                                <p className="error-message">
+                                                  Obavezno unijeti 3 slike!
+                                                </p>
+                                              )}
                                           </>
                                         );
                                       }}
@@ -673,25 +788,32 @@ const AddCountry = () => {
                             </div>
                             {videos && videos.length > 0
                               ? videos.map((_videos, index) => (
-                                  <div
-                                    className="add-country-video-row"
-                                    key={index}
-                                  >
-                                    <Field
-                                      name={`videos.${index}.video_url`}
-                                      type="text"
-                                      as={Input}
-                                      label=""
-                                      placeholder="Unesi URL videa..."
-                                    />
-                                    <div
-                                      onClick={() => {
-                                        handleDeleteVideo(arrayHelpers, index);
-                                      }}
-                                    >
-                                      <Trash color="#AC2B2B" size={32} />
+                                  <Fragment key={index}>
+                                    <div className="add-country-video-row">
+                                      <Field
+                                        name={`videos.${index}.video_url`}
+                                        type="text"
+                                        as={Input}
+                                        label=""
+                                        placeholder="Unesi URL videa..."
+                                      />
+                                      <div
+                                        onClick={() => {
+                                          handleDeleteVideo(
+                                            arrayHelpers,
+                                            index
+                                          );
+                                        }}
+                                      >
+                                        <Trash color="#AC2B2B" size={32} />
+                                      </div>
                                     </div>
-                                  </div>
+                                    <ErrorMessage
+                                      name={`videos.${index}.video_url`}
+                                      component="div"
+                                      className="error-message"
+                                    />
+                                  </Fragment>
                                 ))
                               : null}
                           </div>

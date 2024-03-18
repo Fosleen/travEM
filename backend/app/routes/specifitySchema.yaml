@@ -1,0 +1,56 @@
+components:
+  schemas:
+    Specifity:
+      type: object
+      properties:
+        title:
+          type: string
+          example: hrana
+        country_id:
+          type: integer
+          example: 7
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                example: gyros
+              description:
+                type: string
+                example: masni
+        images:
+          type: array
+          items:
+            type: string
+            example:
+              - https://laurenslatest.com/wp-content/uploads/2023/06/homemade-gyros-31.jpg
+              - https://www.twopeasandtheirpod.com/wp-content/uploads/2023/07/Chicken-Gyros-0666.jpg
+              - https://www.onceuponachef.com/images/2023/07/gyros.jpg
+
+    UpdateSpecifityBody:
+      type: object
+      properties:
+        title:
+          type: string
+          example: editano
+        country_id:
+          type: integer
+          example: 7
+
+    AddSpecifityResponse:
+      $ref: "#/components/schemas/Specifity"
+
+    AddSpecifityBody:
+      $ref: "#/components/schemas/Specifity"
+
+    UpdateSpecifityResponse:
+      $ref: "#/components/schemas/UpdateSpecifityBody"
+
+    SpecifityNotFoundErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: No Specifity found

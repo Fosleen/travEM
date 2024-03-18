@@ -108,8 +108,15 @@ const Footer = ({
           <Link to="">
             <div className="footer-list-item-content">Uvjeti korištenja</div>
           </Link>
-          <Link to="">
-            <div className="footer-list-item-content">Zaštita privatnosti</div>
+          <Link to="/pravila-o-privatnosti">
+            <div className="footer-list-item-content">
+              Pravila o privatnosti
+            </div>
+          </Link>
+          <Link to="https://www.flaticon.com" target="_blank">
+            <div className="footer-list-item-content flaticon">
+              Icons by Freepik - Flaticon
+            </div>
           </Link>
         </div>
         <div className="footer-list-item">
@@ -121,7 +128,9 @@ const Footer = ({
         </div>
       </div>
       <div className="footer-logo">
-        <img src={logo} alt="fosleen-logo" />
+        <a href="https://fosleen.netlify.app/" target="blank">
+          <img src={logo} alt="fosleen-logo" />
+        </a>
       </div>
     </div>
   );

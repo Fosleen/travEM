@@ -1,13 +1,26 @@
+//@ts-nocheck
+
+import { useContext } from "react";
 import "./Login.scss";
 import Input from "../../../components/atoms/Input";
 import Button from "../../../components/atoms/Button";
 import Logo from "../../../assets/images/travem-logo-grey.png";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { loginUser } from "../../../api/users";
+import { AuthContext } from "../../../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
+  const { setUser } = useContext(AuthContext); // Get setUser from context
+
+  const navigate = useNavigate();
+
+  const handleLogin = async (values, { setSubmitting }) => {
+    await loginUser(values, navigate, {
+      setSubmitting,
+      setUser,
+    });
+  };
 
   return (
     <div className="login-form-wrapper">
@@ -20,20 +33,16 @@ const Login = () => {
         validate={(values) => {
           const errors = {};
           if (!values.username) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignoreS
             errors.username = "Unesi korisničko ime";
           }
 
           if (!values.password) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignoreS
             errors.password = "Unesi lozinku";
           }
 
           return errors;
         }}
-        onSubmit={loginUser}
+        onSubmit={handleLogin} // Pass the wrapper function
       >
         <Form className="login-form-wrapper-form">
           <div className="login-form-title-wrapper">

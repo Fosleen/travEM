@@ -13,7 +13,7 @@ import { useParams } from "react-router-dom";
 import { getCountriesByName, getCountryById } from "../../../api/countries";
 import { useEffect, useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
-import { getArticlesByType } from "../../../api/article";
+import { getFavoriteArticleByCountry } from "../../../api/article";
 import Characteristics from "../../../components/user/atoms/Characteristics";
 import Specificities from "../../../components/user/atoms/Specificities";
 import { CountriesData } from "../../../common/types";
@@ -28,7 +28,7 @@ const DestinationCountry = () => {
       const tempData = await getCountriesByName(countryName!, 1, 1);
       const countryId = tempData.data[0].id;
       const countryData = await getCountryById(countryId);
-      const favoriteArticleData = await getArticlesByType(countryId);
+      const favoriteArticleData = await getFavoriteArticleByCountry(countryId);
 
       setCountry(countryData);
       if ("id" in favoriteArticleData) {

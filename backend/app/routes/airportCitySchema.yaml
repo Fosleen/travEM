@@ -1,0 +1,28 @@
+components:
+  schemas:
+    AirportCitySchema:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        name:
+          type: string
+          example: vukovar
+        flag_url:
+          type: string
+          example: https://live.staticflickr.com/65535/53499754431_6632e3c5c0_o.png
+        is_in_croatia:
+          type: boolean
+          example: true
+
+    GetAllAirportCitiesResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/AirportCitySchema"
+
+    AirportCitiesNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No airport cities found

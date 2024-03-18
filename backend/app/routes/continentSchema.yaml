@@ -1,0 +1,56 @@
+components:
+  schemas:
+    Continent:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        name:
+          type: string
+          example: Azija
+        latitude:
+          type: number
+          format: double
+          example: 39.16293665159254
+        longitude:
+          type: number
+          format: double
+          example: 94.0356791347885
+        zoom:
+          type: integer
+          example: 2
+
+    GetAllContinentsResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Continent"
+
+    GetContinentByIdResponse:
+      $ref: "#/components/schemas/Continent"
+
+    GetCountriesByContinentIdResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Country"
+
+    GetPlacesByContinentIdResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Place"
+
+    ContinentsNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No continents found
+
+    ContinentNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No continent found
+
+    ContinentParams:
+      type: integer
+      example: 1

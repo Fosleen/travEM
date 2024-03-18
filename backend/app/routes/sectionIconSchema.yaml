@@ -1,0 +1,22 @@
+components:
+  schemas:
+    SectionIcon:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        url:
+          type: string
+          example: https://live.staticflickr.com/65535/53465493739_e703742bd1_o.png
+
+    GetAllSectionIconsResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/SectionIcon"
+
+    SectionIconsNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No section icons found

@@ -31,7 +31,7 @@ const ItemsPerPageSelector: FC<ItemsPerPageSelectorProps> = ({
       />
       {type === "country" && <p>država</p>}
       {type === "place" && <p>mjesta</p>}
-      {type === "article" && <p>postova</p>}
+      {type === "article" && <p> članaka</p>}
     </div>
   );
 };

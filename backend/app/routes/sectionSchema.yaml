@@ -1,0 +1,71 @@
+components:
+  schemas:
+    SectionByArticleResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        text:
+          type: string
+          example: pin ikonica i opis
+        order:
+          type: integer
+          example: 1
+        subtitle:
+          type: string
+          example: podnaslov
+        link_title:
+          type: string
+          example: Saznajte vise
+        link_url:
+          type: string
+          example: https://www.wikipedia.org/
+        sectionIconId:
+          type: integer
+          example: 1
+        articleId:
+          type: integer
+          example: 1
+        section_images:
+          type: array
+          items:
+            $ref: "#/components/schemas/SectionImage"
+        section_icon:
+          $ref: "#/components/schemas/SectionIcon"
+
+    SectionBody:
+      properties:
+        id:
+          type: integer
+          example: 1
+        text:
+          type: string
+          example: pin ikonica i opis
+        order:
+          type: integer
+          example: 1
+        subtitle:
+          type: string
+          example: podnaslov
+        link_title:
+          type: string
+          example: Saznajte vise
+        link_url:
+          type: string
+          example: https://www.wikipedia.org/
+        sectionIconId:
+          type: integer
+          example: 1
+        article_id:
+          type: integer
+          example: 1
+
+    UpdateSectionBody:
+      properties:
+        text:
+          type: string
+          example: "di si je"
+        order:
+          type: integer
+          example: 2

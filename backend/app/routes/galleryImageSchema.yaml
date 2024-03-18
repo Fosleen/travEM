@@ -1,0 +1,67 @@
+components:
+  schemas:
+    GalleryImage:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        url:
+          type: string
+          example: https://live.staticflickr.com/65535/53458960311_b65580a136_b.jpg
+        article_id:
+          type: integer
+          example: 3
+        width:
+          type: integer
+          example: 16
+        height:
+          type: integer
+          example: 9
+
+    AddGalleryImageBody:
+      properties:
+        url:
+          type: string
+          example: https://live.staticflickr.com/65535/53458960311_b65580a136_b.jpg
+        article_id:
+          type: integer
+          example: 3
+        width:
+          type: integer
+          example: 16
+        height:
+          type: integer
+          example: 9
+
+    DeleteGalleryImageParams:
+      type: integer
+      example: 87
+
+    AddGalleryImageResponse:
+      $ref: "#/components/schemas/GalleryImage"
+
+    GalleryImageResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        url:
+          type: string
+          example: https://live.staticflickr.com/65535/53458960311_b65580a136_b.jpg
+        width:
+          type: integer
+          example: 16
+        height:
+          type: integer
+          example: 9
+        articleId:
+          type: integer
+          example: 3
+
+    GalleryImagesInsertingErrorResponse:
+      properties:
+        error:
+          type: string
+          example: Error inserting gallery image

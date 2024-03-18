@@ -25,10 +25,6 @@ const EditHomepageMenu = () => {
           url="/admin/uredi-omiljene-clanke"
         />
         <EditHomepageMenuItem
-          text="Linkovi na mreže"
-          url="/admin/uredi-mreze"
-        />
-        <EditHomepageMenuItem
           text="Informacije o vizama"
           url="/admin/uredi-vize"
         />

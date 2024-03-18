@@ -6,10 +6,10 @@ import bcrypt from "bcrypt";
 
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: "1234", // Replace with your secret key for JWT
+  secretOrKey: process.env.JWT_SECRET_KEY,
 };
 
-const secretKey = "1234";
+const secretKey = process.env.JWT_SECRET_KEY;
 
 passport.use(
   new JwtStrategy(jwtOptions, async (jwtPayload, done) => {
@@ -51,17 +51,19 @@ const generateJwtToken = (user) => {
 };
 
 export const login = async (req, res, next) => {
-  console.log("Poziv");
   try {
     const { username, password } = req.body;
-
     const user = await db.models.User.findOne({ where: { username } });
 
-    console.log("Tu je user", user);
+    if (!user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Authentication failed." });
+    }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
-    if (!user || !passwordMatch) {
+    if (!passwordMatch) {
       return res
         .status(401)
         .json({ success: false, message: "Authentication failed." });

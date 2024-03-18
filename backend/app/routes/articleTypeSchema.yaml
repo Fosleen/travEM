@@ -1,0 +1,25 @@
+components:
+  schemas:
+    ArticleType:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 3
+        name:
+          type: string
+          example: pakiranje
+        description:
+          type: string
+          example: Kako se efikasno pakirati za put
+
+    GetAllArticleTypesResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/ArticleType"
+
+    ArticleTypesNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No article types found

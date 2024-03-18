@@ -1,0 +1,76 @@
+components:
+  schemas:
+    VisaInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 5
+        documentation:
+          type: string
+          example: osobna
+        additional_info:
+          type: string
+          example: iz hr za srb
+        visa_needed:
+          type: boolean
+          example: false
+        id_country_info:
+          type: integer
+          example: 1
+        countryId:
+          type: integer
+          example: 2
+
+    AddVisaInfoBody:
+      properties:
+        id:
+          type: integer
+          example: 5
+        documentation:
+          type: string
+          example: osobna
+        additional_info:
+          type: string
+          example: iz hr za srb
+        visa_needed:
+          type: boolean
+          example: false
+        id_country_info:
+          type: integer
+          example: 1
+        country_id:
+          type: integer
+          example: 2
+
+    GetVisaInfoForCountriesBody:
+      properties:
+        id:
+          type: integer
+          example: 8
+        documentation:
+          type: string
+          example: putovnica ili osobna
+        additional_info:
+          type: string
+          example: slovenci na cipar
+        visa_needed:
+          type: boolean
+          example: false
+        id_country_info:
+          type: integer
+          example: 3
+        countryId:
+          type: integer
+          example: 7
+
+    GetVisaInfoResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/VisaInfo"
+
+    VisaInfoNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No visa item found

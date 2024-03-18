@@ -1,4 +1,6 @@
-import { Route, Routes, useLocation } from "react-router-dom";
+//@ts-nocheck
+
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import UserViewLayout from "./components/user/templates/UserViewLayout";
 import Homepage from "./Pages/UserViewPages/Homepage/Homepage";
 import About from "./Pages/UserViewPages/About/About";
@@ -11,7 +13,6 @@ import Login from "./Pages/AdminViewPages/Login/Login";
 import Article from "./Pages/UserViewPages/Article/Article";
 import DestinationPlace from "./Pages/UserViewPages/DestinationPlace";
 import NotFound from "./Pages/UserViewPages/NotFound/NotFound";
-
 import AdminViewLayout from "./components/admin/templates/AdminViewLayout";
 import Continent from "./Pages/UserViewPages/Continent/Continent";
 import EditHomepageMenu from "./Pages/AdminViewPages/EditHomepageMenu/EditHomepageMenu";
@@ -34,11 +35,27 @@ import EditCountry from "./Pages/AdminViewPages/EditCountry/EditCountry";
 import EditArticle from "./Pages/AdminViewPages/EditArticle/EditArticle";
 import Contact from "./Pages/UserViewPages/Contact/Contact";
 import ReactGA from "react-ga4";
+import ProtectedRoute from "./components/atoms/ProtectedRoute";
 import { useEffect } from "react";
-
+import Ad from "./components/atoms/Ad";
+import PrivacyPolicy from "./Pages/UserViewPages/PrivacyPolicy/PrivacyPolicy";
 
 function App() {
   const location = useLocation();
+
+  const navigate = useNavigate();
+
+  const isLoggedIn = localStorage.getItem("jwt");
+
+  function isTokenExpired(token) {
+    if (!token) {
+      return true;
+    }
+
+    const decodedToken = JSON.parse(atob(token.split(".")[1]));
+    const expirationTime = decodedToken.exp * 1000;
+    return Date.now() >= expirationTime;
+  }
 
   useEffect(() => {
     ReactGA.send({
@@ -47,6 +64,12 @@ function App() {
       title: `Putanja: ${location.pathname}`,
     });
   }, [location]);
+
+  useEffect(() => {
+    if (isLoggedIn && isTokenExpired(isLoggedIn)) {
+      navigate("/login");
+    }
+  }, [isLoggedIn, navigate]);
 
   return (
     <>
@@ -57,6 +80,7 @@ function App() {
           <Route path="/o-nama" element={<About />} />
           <Route path="/aviokarte/:name" element={<AirplaneTickets />} />
           <Route path="/kontakt" element={<Contact />} />
+          <Route path="/pravila-o-privatnosti" element={<PrivacyPolicy />} />
           <Route path="/pretrazivanje" element={<SearchResults />} />
           <Route path="/savjeti/:tip" element={<TipsAndTricks />} />
           <Route path="/clanak/:id" element={<Article />} />
@@ -71,7 +95,15 @@ function App() {
             element={<DestinationPlace />}
           />
         </Route>
-        <Route path="/admin" element={<AdminViewLayout />}>
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute redirectPath="/login" isAllowed={isLoggedIn}>
+              <AdminViewLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route path="/admin/sadržaj" element={<EditHomepageMenu />} />
           <Route path="/admin/mjesta" element={<PlacesList />} />
           <Route path="/admin/mjesta/dodaj" element={<AddPlace />} />
@@ -95,6 +127,7 @@ function App() {
           <Route path="/admin/uredi-footer" element={<EditFooter />} />
         </Route>
       </Routes>
+      <Ad dataAdSlot="11111111" />
     </>
   );
 }

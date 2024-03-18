@@ -1,0 +1,22 @@
+components:
+  schemas:
+    CharacteristicIcon:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        url:
+          type: string
+          example: https://live.staticflickr.com/65535/53499906823_e464fae1cc_o.png
+
+    GetAllCharacteristicIconsResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/CharacteristicIcon"
+
+    CharacteristicIconsNotFoundErrorResponse:
+      properties:
+        error:
+          type: string
+          example: No characteristic icons found

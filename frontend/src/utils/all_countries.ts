@@ -174,4 +174,8 @@ export const countries = [
   { eng_name: "Suriname", cro_name: "Surinam" },
   { eng_name: "Uruguay", cro_name: "Urugvaj" },
   { eng_name: "Venezuela", cro_name: "Venezuela" },
+
+  // sjeverna amerika
+  { eng_name: "United States", cro_name: "SAD" },
+  { eng_name: "Canada", cro_name: "Kanada" },
 ];

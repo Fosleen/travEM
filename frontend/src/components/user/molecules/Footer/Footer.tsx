@@ -121,7 +121,7 @@ const Footer = ({
         </div>
         <div className="footer-list-item">
           <div className="footer-list-item-title">KONTAKT</div>
-          <div className="footer-list-item-content">travem@gmail.com</div>
+          <div className="footer-list-item-content">travem.hr@gmail.com</div>
           <span className="footer-list-item-links">
             <SocialMediaLinks />
           </span>

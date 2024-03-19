@@ -29,7 +29,7 @@ const SocialMediaLinks = () => {
           <InstagramLogo color="#FFFFFF" />
         </div>
       </a>
-      <a href="https://www.tiktok.com/@travel_paradox" target="_blank">
+      <a href="https://www.tiktok.com/@ema_only_" target="_blank">
         <div className="socials-item blue">
           <TiktokLogo color="#FFFFFF" />
         </div>

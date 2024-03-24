@@ -9,7 +9,7 @@ import "./SocialMediaLinks.scss";
 const SocialMediaLinks = () => {
   return (
     <div className="socials-container">
-      <a href="https://www.youtube.com/@travem" target="_blank">
+      <a href="https://www.youtube.com/@travem?sub_confirmation=1" target="_blank">
         <div className="socials-item green">
           <YoutubeLogo color="#2F2936" />
         </div>

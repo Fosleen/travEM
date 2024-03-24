@@ -62,7 +62,7 @@ const AddArticle = () => {
   const [isMainCountryPostChecked, setIsMainCountryPostChecked] =
     useState(false);
   const [isNotifySubscribersChecked, setIsNotifySubscribersChecked] =
-    useState(false);
+    useState(true);
 
   const ValidationSchema = Yup.object().shape({
     article_title: Yup.string()

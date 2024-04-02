@@ -17,6 +17,8 @@ import { getCountryPlaces } from "../../../api/countries";
 import { ThreeDots } from "react-loader-spinner";
 import React from "react";
 import RecommendedPosts from "../../../components/user/molecules/RecommendedPosts";
+import { Adsense } from "@ctrl/react-adsense";
+import Ad from "../../../components/atoms/Ad";
 
 const Article = () => {
   const { id } = useParams();
@@ -93,6 +95,7 @@ const Article = () => {
             article={articleContent}
             key={articleContent}
           />
+          <Adsense client="ca-pub-3489990178681903" slot="7259870550" />
           <div className="article-content">
             {articleContent?.sections?.map((section, index) => (
               <React.Fragment key={index}>
@@ -104,6 +107,12 @@ const Article = () => {
             ))}
             <ArticleFragment article={articleContent} />
           </div>
+          <Adsense
+            client="ca-pub-3489990178681903"
+            slot="7259870551"
+            style={{ width: 500, height: 300 }}
+            format=""
+          />
           <div className="article-gallery-text-wrapper">
             {articleContent?.gallery_images.length > 0 && (
               <h3>Slika govori 1000 riječi</h3>
@@ -121,6 +130,7 @@ const Article = () => {
               </div>
             )}
           </div>
+          <Ad dataAdSlot="12345678" />
           <div className="article-gallery-wrapper">
             {articleContent?.gallery_images && (
               <Gallery
@@ -132,6 +142,13 @@ const Article = () => {
               />
             )}
           </div>
+          <Adsense
+            client="ca-pub-3489990178681903"
+            slot="7259870552"
+            style={{ display: "block" }}
+            layout="in-article"
+            format="fluid"
+          />
           {countryPlaces.length !== 0 && (
             <CountryPlaces hasPadding={false} places={countryPlaces} />
           )}

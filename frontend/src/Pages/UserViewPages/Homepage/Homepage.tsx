@@ -11,8 +11,6 @@ import { useContext, useEffect, useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import { Article, HomepageData } from "../../../common/types";
 import { getHomepageArticles } from "../../../api/article";
-import Ad from "../../../components/atoms/Ad";
-import { Adsense } from "@ctrl/react-adsense";
 import { ArticleContext } from "../../../Context/ArticleContext";
 
 const Homepage = () => {
@@ -102,30 +100,15 @@ const Homepage = () => {
             homepageContent={homepageContent}
             homepageArticles={bannerArticles}
           />
-          <Adsense client="ca-pub-3489990178681903" slot="7259870550" />
           <RecommendedMapDestinations />
           <DestinationsMap
             initialLatitude={51.1657}
             initialLongitude={10.4515}
           />
-          <Adsense
-            client="ca-pub-3489990178681903"
-            slot="7259870551"
-            style={{ width: 500, height: 300 }}
-            format=""
-          />
           <BlogStats homepageContent={homepageContent} />
-          <Ad dataAdSlot="12345678" />
           <OtherPosts
             verticalArticles={verticalArticles}
             horizontalArticles={horizontalArticles}
-          />
-          <Adsense
-            client="ca-pub-3489990178681903"
-            slot="7259870552"
-            style={{ display: "block" }}
-            layout="in-article"
-            format="fluid"
           />
         </>
       ) : (

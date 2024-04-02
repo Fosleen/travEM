@@ -188,6 +188,16 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
               "fill-opacity": 0.5,
             }}
           />
+
+          <Layer
+            id={`${layerId}-outline`}
+            type="line"
+            source={sourceId}
+            paint={{
+              "line-color": "#817c7c",
+              "line-width": 1.5,
+            }}
+          />
         </Source>
 
         {pins}

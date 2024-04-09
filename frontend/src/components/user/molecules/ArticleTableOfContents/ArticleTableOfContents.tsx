@@ -14,12 +14,14 @@ const ArticleTableOfContents = ({ article }) => {
           {article?.sections?.map((section, index) => {
             const sectionId = `odlomak-${index}`;
             return (
-              <TableOfContentsItem
-                key={index}
-                icon={section?.section_icon?.url}
-                text={section?.subtitle}
-                href={`#${sectionId}`} // Use sectionId here
-              />
+              section.section_icon?.url && (
+                <TableOfContentsItem
+                  key={index}
+                  icon={section?.section_icon?.url}
+                  text={section?.subtitle}
+                  href={`#${sectionId}`}
+                />
+              )
             );
           })}
         </ul>

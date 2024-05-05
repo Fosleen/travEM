@@ -10,10 +10,10 @@ const router = new Router();
  * @openapi
  *  '/api/v1/specificity-items/{id}':
  *  get:
- *      summary: Get specifity item with provided id
+ *      summary: Get specificity item with provided id
  *      tags:
  *          - Specificity item
- *      description: Returns specifity item with provided id.
+ *      description: Returns specificity item with provided id.
  *
  *      parameters:
  *          - in: path
@@ -23,13 +23,13 @@ const router = new Router();
  *              $ref: '#/components/schemas/UpdateSpecificityitemParams'
  *      responses:
  *          200:
- *              description: Details of specifity item with given id.
+ *              description: Details of specificity item with given id.
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: '#/components/schemas/Specifityitem'
+ *                          $ref: '#/components/schemas/specificityitem'
  *          404:
- *              description: Specifity item with provided id was not found.
+ *              description: Specificity item with provided id was not found.
  *              content:
  *                  application/json:
  *                      schema:
@@ -49,7 +49,7 @@ router.get("/:id", controller.getSpecificityItemById);
  * @openapi
  *  '/api/v1/specificity-items':
  *  post:
- *      summary: Add a new specifity item
+ *      summary: Add a new specificity item
  *      tags:
  *          - Specificity item
  *      security:
@@ -84,10 +84,10 @@ router.post("/", verifyToken, controller.addSpecificityItem);
  * @openapi
  *  '/api/v1/specificity-items/{id}':
  *  patch:
- *      summary: Edit specifity item with given id
+ *      summary: Edit specificity item with given id
  *      tags:
  *          - Specificity item
- *      description: Change data of specifity item.
+ *      description: Change data of specificity item.
  *      security:
  *          - bearerAuth: []
  *      requestBody:
@@ -104,7 +104,7 @@ router.post("/", verifyToken, controller.addSpecificityItem);
  *              $ref: '#/components/schemas/UpdateSpecificityitemParams'
  *      responses:
  *          200:
- *              description: An object with updated specifity item data.
+ *              description: An object with updated specificity item data.
  *              content:
  *                  application/json:
  *                      schema:
@@ -138,10 +138,10 @@ router.patch("/:id", verifyToken, controller.patchSpecificityItem);
  * @openapi
  *  '/api/v1/specificity-items/{id}':
  *  delete:
- *      summary: Delete specifity item with given id
+ *      summary: Delete specificity item with given id
  *      tags:
  *          - Specificity item
- *      description: Delete specifity item.
+ *      description: Delete specificity item.
  *      security:
  *          - bearerAuth: []
  *      parameters:

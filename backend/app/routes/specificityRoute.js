@@ -8,41 +8,34 @@ const router = new Router();
 
 /**
  * @openapi
- *  /api/v1/specificities/{id}:
+ *  /api/v1/specificities:
  *    post:
- *      summary: Add specifity for some country
+ *      summary: Add specificity for some country
  *      tags:
  *        - Specifities
  *      security:
  *        - bearerAuth: []
- *      parameters:
- *        - in: path
- *          name: id
- *          schema:
- *            type: integer
- *          required: true
- *          description: "Id of article for which are recommended articles being fetched"
  *      requestBody:
  *        required: true
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/AddSpecifityBody'
+ *              $ref: '#/components/schemas/AddSpecificityBody'
  *      responses:
  *        '200':
- *          description: An object with added specifity data.
+ *          description: An object with added specificity data.
  *          content:
  *            application/json:
  *              schema:
- *                $ref: '#/components/schemas/AddSpecifityResponse'
+ *                $ref: '#/components/schemas/AddSpecificityResponse'
  *        '500':
- *          description: Error fetching specifity because of server
+ *          description: Error fetching specificity because of server
  *          content:
  *            application/json:
  *              schema:
  *                $ref: '#/components/schemas/ServerErrorResponse'
  */
-router.post("/:id", verifyToken, controller.addSpecificities);
+router.post("/", verifyToken, controller.addSpecificities);
 
 // PATCH /api/v1/specificities/4
 
@@ -50,7 +43,7 @@ router.post("/:id", verifyToken, controller.addSpecificities);
  * @openapi
  *  /api/v1/specificities/{id}:
  *    patch:
- *      summary: Edit specifity for some country
+ *      summary: Edit specificity for some country
  *      tags:
  *        - Specifities
  *      security:
@@ -61,22 +54,22 @@ router.post("/:id", verifyToken, controller.addSpecificities);
  *          schema:
  *            type: integer
  *          required: true
- *          description: "Id of the specifity to be updated"
+ *          description: "Id of the specificity to be updated"
  *      requestBody:
  *        required: true
  *        content:
  *          application/json:
  *            schema:
- *              $ref: '#/components/schemas/UpdateSpecifityBody'
+ *              $ref: '#/components/schemas/UpdateSpecificityBody'
  *      responses:
  *        '200':
- *          description: An object with updated specifity data.
+ *          description: An object with updated specificity data.
  *          content:
  *            application/json:
  *              schema:
- *                $ref: '#/components/schemas/UpdateSpecifityResponse'
+ *                $ref: '#/components/schemas/UpdateSpecificityResponse'
  *        '500':
- *          description: Error fetching specifity because of server
+ *          description: Error fetching specificity because of server
  *          content:
  *            application/json:
  *              schema:

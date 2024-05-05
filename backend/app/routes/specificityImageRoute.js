@@ -10,10 +10,10 @@ const router = new Router();
  * @openapi
  *  '/api/v1/specificity-images/{id}':
  *  get:
- *      summary: Get specifity image with provided id
+ *      summary: Get specificity image with provided id
  *      tags:
  *          - Specificity image
- *      description: Returns specifity image with provided id.
+ *      description: Returns specificity image with provided id.
  *
  *      parameters:
  *          - in: path
@@ -23,17 +23,17 @@ const router = new Router();
  *              $ref: '#/components/schemas/UpdateSectionImageParams'
  *      responses:
  *          200:
- *              description: Details of specifity image with given id.
+ *              description: Details of specificity image with given id.
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: '#/components/schemas/SpecifityImage'
+ *                          $ref: '#/components/schemas/SpecificityImage'
  *          404:
- *              description: Specifity image with provided id was not found.
+ *              description: Specificity image with provided id was not found.
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: '#/components/schemas/SpecifityImageNotFoundErrorResponse'
+ *                          $ref: '#/components/schemas/SpecificityImageNotFoundErrorResponse'
  *          500:
  *              description: Error fetching colors because of server
  *              content:
@@ -49,7 +49,7 @@ router.get("/:id", controller.getSpecificityImageById);
  * @openapi
  *  '/api/v1/specificity-images':
  *  post:
- *      summary: Add a new specifity image
+ *      summary: Add a new specificity image
  *      tags:
  *          - Specificity image
  *      security:
@@ -84,10 +84,10 @@ router.post("/", verifyToken, controller.addSpecificityImage);
  * @openapi
  *  '/api/v1/specificity-images/{id}':
  *  patch:
- *      summary: Edit specifity image with given id
+ *      summary: Edit specificity image with given id
  *      tags:
  *          - Specificity image
- *      description: Change data of specifity image.
+ *      description: Change data of specificity image.
  *      security:
  *          - bearerAuth: []
  *      requestBody:
@@ -104,7 +104,7 @@ router.post("/", verifyToken, controller.addSpecificityImage);
  *              $ref: '#/components/schemas/UpdateSectionImageParams'
  *      responses:
  *          200:
- *              description: An object with updated specifity image data.
+ *              description: An object with updated specificity image data.
  *              content:
  *                  application/json:
  *                      schema:
@@ -138,10 +138,10 @@ router.patch("/:id", verifyToken, controller.patchSpecificityImage);
  * @openapi
  *  '/api/v1/specificity-images/{id}':
  *  delete:
- *      summary: Delete specifity image with given id
+ *      summary: Delete specificity image with given id
  *      tags:
  *          - Specificity image
- *      description: Delete specifity image.
+ *      description: Delete specificity image.
  *      security:
  *          - bearerAuth: []
  *      parameters:
@@ -152,7 +152,7 @@ router.patch("/:id", verifyToken, controller.patchSpecificityImage);
  *              $ref: '#/components/schemas/UpdateSectionImageParams'
  *      responses:
  *          200:
- *              description: Specifity image was successfully deleted
+ *              description: Specificity image was successfully deleted
  *              content:
  *                  application/json:
  *                      schema:

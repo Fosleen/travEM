@@ -1,6 +1,6 @@
 components:
   schemas:
-    Specifity:
+    Specificity:
       type: object
       properties:
         title:
@@ -29,7 +29,7 @@ components:
               - https://www.twopeasandtheirpod.com/wp-content/uploads/2023/07/Chicken-Gyros-0666.jpg
               - https://www.onceuponachef.com/images/2023/07/gyros.jpg
 
-    UpdateSpecifityBody:
+    UpdateSpecificityBody:
       type: object
       properties:
         title:
@@ -39,18 +39,18 @@ components:
           type: integer
           example: 7
 
-    AddSpecifityResponse:
-      $ref: "#/components/schemas/Specifity"
+    AddSpecificityResponse:
+      $ref: "#/components/schemas/Specificity"
 
-    AddSpecifityBody:
-      $ref: "#/components/schemas/Specifity"
+    AddSpecificityBody:
+      $ref: "#/components/schemas/Specificity"
 
-    UpdateSpecifityResponse:
-      $ref: "#/components/schemas/UpdateSpecifityBody"
+    UpdateSpecificityResponse:
+      $ref: "#/components/schemas/UpdateSpecificityBody"
 
-    SpecifityNotFoundErrorResponse:
+    SpecificityNotFoundErrorResponse:
       type: object
       properties:
         error:
           type: string
-          example: No Specifity found
+          example: No specificity found

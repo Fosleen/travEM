@@ -20,6 +20,8 @@ export const loginUser = async (values, navigate, { setSubmitting }) => {
 
     if (data.success) {
       console.log("Authentication succeeded");
+
+      console.log("Data je", data);
       localStorage.setItem("jwt", data.token);
       localStorage.setItem("jwtExpiration", data.expirationTime);
       notifySuccess("Uspješna prijava!");

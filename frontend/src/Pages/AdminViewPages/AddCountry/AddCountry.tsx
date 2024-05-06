@@ -56,17 +56,27 @@ const AddCountry = () => {
     characteristics: Yup.array().of(
       Yup.object().shape({
         characteristic_icon: Yup.string().required("Obavezno polje!"),
-        characteristic_title: Yup.string().required("Obavezno polje !"),
-        characteristic_description: Yup.string().required("Obavezno polje!"),
+        characteristic_title: Yup.string()
+          .required("Obavezno polje !")
+          .max(80, "Naslov smije imati max 80 znakova!"),
+        characteristic_description: Yup.string()
+          .required("Obavezno polje!")
+          .max(80, "Opis smije imati max 80 znakova!"),
       })
     ),
     specificities: Yup.array().of(
       Yup.object().shape({
-        title: Yup.string().required("Obavezno polje!"),
+        title: Yup.string()
+          .required("Obavezno polje!")
+          .max(45, "Naslov smije imati max 100 znakova!"),
         items: Yup.array().of(
           Yup.object().shape({
-            title: Yup.string().required("Obavezno polje!"),
-            description: Yup.string().required("Obavezno polje!"),
+            title: Yup.string()
+              .required("Obavezno polje!")
+              .max(30, "Naslov smije imati max 30 znakova!"),
+            description: Yup.string()
+              .required("Obavezno polje!")
+              .max(100, "Opis smije imati max 100 znakova!"),
           })
         ),
       })

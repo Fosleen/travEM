@@ -31,6 +31,8 @@ export const loginUser = async (values, navigate, { setSubmitting }) => {
       const base64Url = tokenParts[1];
       const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
       const decodedPayload = JSON.parse(atob(base64));
+
+      console.log("Decoded payload je", decodedPayload);
       const exp_time = decodedPayload.exp;
       localStorage.setItem("jwtExpiration", exp_time);
       console.log("exp_time", exp_time);

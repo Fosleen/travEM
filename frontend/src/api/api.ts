@@ -1,1 +1,1 @@
-export const apiUrl: string = `https://travem-backend.com/api/v1`;
+export const apiUrl: string = `http://localhost:25060/api/v1`;

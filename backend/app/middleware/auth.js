@@ -123,6 +123,7 @@ export const register = async (req, res, next) => {
       success: true,
       message: "Registration succeeded.",
       token,
+      expirationTime,
     });
   } catch (error) {
     return next(error);

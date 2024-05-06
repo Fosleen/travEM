@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import db from "../models/index.js";
 import bcrypt from "bcrypt";
+import ms from "ms";
 
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -46,8 +47,11 @@ const generateJwtToken = (user) => {
     last_name: user.last_name,
   };
 
-  const token = jwt.sign(payload, secretKey, { expiresIn: "1h" });
-  return token;
+  const expiresIn = "12h";
+
+  const token = jwt.sign(payload, secretKey, { expiresIn: expiresIn });
+  const expirationTime = Math.floor(Date.now() / 1000) + ms(expiresIn) / 1000;
+  return { token, expirationTime };
 };
 
 export const login = async (req, res, next) => {
@@ -70,12 +74,13 @@ export const login = async (req, res, next) => {
     }
 
     // Generate a new JWT token for the authenticated user
-    const token = generateJwtToken(user);
+    const { token, expirationTime } = generateJwtToken(user);
 
     return res.json({
       success: true,
       message: "Authentication succeeded.",
       token,
+      expirationTime,
       first_name: user.first_name,
       last_name: user.last_name,
     });

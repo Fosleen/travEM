@@ -51,6 +51,7 @@ const generateJwtToken = (user) => {
 
   const token = jwt.sign(payload, secretKey, { expiresIn: expiresIn });
   const expirationTime = Math.floor(Date.now() / 1000) + ms(expiresIn) / 1000;
+  console.log("Expiration time:", expirationTime);
   return { token, expirationTime };
 };
 
@@ -75,6 +76,8 @@ export const login = async (req, res, next) => {
 
     // Generate a new JWT token for the authenticated user
     const { token, expirationTime } = generateJwtToken(user);
+
+    console.log("Expiration time jest:", expirationTime);
 
     return res.json({
       success: true,
@@ -118,6 +121,7 @@ export const register = async (req, res, next) => {
 
     // Generate a new JWT token for the registered user
     const { token, expirationTime } = generateJwtToken(newUser);
+    console.log("Expiration Time:", expirationTime); // Add this line
 
     return res.json({
       success: true,

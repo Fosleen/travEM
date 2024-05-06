@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import { notifyFailure, notifySuccess } from "../components/atoms/Toast/Toast";
 import { apiUrl } from "./api";
 
@@ -23,7 +25,15 @@ export const loginUser = async (values, navigate, { setSubmitting }) => {
 
       console.log("Data je", data);
       localStorage.setItem("jwt", data.token);
-      localStorage.setItem("jwtExpiration", data.expirationTime);
+
+      const jwtToken = localStorage.getItem("jwt");
+      const tokenParts = jwtToken?.split(".");
+      const base64Url = tokenParts[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const decodedPayload = JSON.parse(atob(base64));
+      const exp_time = decodedPayload.exp;
+      localStorage.setItem("jwtExpiration", exp_time);
+      console.log("exp_time", exp_time);
       notifySuccess("Uspješna prijava!");
       navigate("/admin/sadržaj");
     } else {

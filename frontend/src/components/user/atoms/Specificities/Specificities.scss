@@ -32,7 +32,8 @@
         & > * {
           text-transform: uppercase;
           font-family: "TheBoldFont";
-          font-size: 48px;
+          font-size: 40px;
+          max-width: 100%;
           letter-spacing: 8px;
         }
 
@@ -87,7 +88,7 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        max-height: 120px;
+        // max-height: 120px;
       }
     }
   }
@@ -95,6 +96,8 @@
 
 @media screen and ($tablet) {
   .country-highligth-container {
+    max-width: 50%;
+
     .country-highlight-right {
       .country-highlight-image-container {
         img {
@@ -108,16 +111,13 @@
 @media screen and ($desktop) {
   .country-highligth-container {
     flex-direction: row;
+    flex: 1 1 0%;
 
     .country-highligth-left {
+      flex: 1 1 0%;
+
       .country-highligth-left-content {
         padding: 32px;
-
-        .country-highligth-titles {
-          & > * {
-            font-size: 64px;
-          }
-        }
 
         .country-highligth-content {
           .country-highligth-content-item {
@@ -133,10 +133,27 @@
       display: grid;
       grid-template-columns: none;
       grid-template-rows: 1fr 1fr 1fr;
-      max-width: 112px;
+      //   max-width: 112px;
+      gap: 0;
 
       .country-highlight-image-container {
         max-height: 140px;
+      }
+    }
+  }
+}
+
+@media screen and ($desktopLarge) {
+  .country-highligth-container {
+    .country-highligth-left {
+      .country-highligth-left-content {
+        .country-highligth-titles {
+          margin-bottom: 24px;
+
+          & > * {
+            font-size: 64px;
+          }
+        }
       }
     }
   }

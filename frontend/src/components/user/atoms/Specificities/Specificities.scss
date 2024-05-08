@@ -135,6 +135,7 @@
       grid-template-rows: 1fr 1fr 1fr;
       //   max-width: 112px;
       gap: 0;
+      max-width: 116px; // firefox crashes without this
 
       .country-highlight-image-container {
         max-height: 140px;

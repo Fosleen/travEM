@@ -31,10 +31,10 @@
 
         & > * {
           text-transform: uppercase;
-          font-family: "TheBoldFont";
+          font-family: "Archivo Black", sans-serif;
           font-size: 40px;
           max-width: 100%;
-          letter-spacing: 8px;
+          letter-spacing: 0px;
         }
 
         .country-highligth-title-black {
@@ -135,10 +135,10 @@
       grid-template-rows: 1fr 1fr 1fr;
       //   max-width: 112px;
       gap: 0;
-      max-width: 116px; // firefox crashes without this
+      max-width: 132px; // firefox crashes without this
 
       .country-highlight-image-container {
-        max-height: 140px;
+        max-height: 172px;
       }
     }
   }
@@ -152,7 +152,7 @@
           margin-bottom: 24px;
 
           & > * {
-            font-size: 64px;
+            font-size: 56px;
           }
         }
       }

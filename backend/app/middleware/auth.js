@@ -47,8 +47,10 @@ const generateJwtToken = (user) => {
     last_name: user.last_name,
   };
 
-  const token = jwt.sign(payload, secretKey, { expiresIn: 43200 });
-  const expirationTime = Math.floor(Date.now() / 1000) + ms(43200) / 1000;
+  const expiresIn = "12h";
+
+  const token = jwt.sign(payload, secretKey, { expiresIn: expiresIn });
+  const expirationTime = Math.floor(Date.now() / 1000) + ms(expiresIn) / 1000;
   console.log("Expiration time:", expirationTime);
   return { token, expirationTime };
 };

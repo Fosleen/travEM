@@ -5,6 +5,7 @@
   min-height: 100vh;
   height: 100%;
   position: relative;
+  z-index: 2; // google ads hovering above logout button
 
   .admin-view-sidebar {
     height: 100%;

@@ -71,8 +71,12 @@ const EditPlace = () => {
             name: values.place_name,
             country_id: parseInt(selectedCountryId),
             map_icon: values.place_icon_url,
-            latitude: parseFloat(values.place_latitude.replace(",", ".")),
-            longitude: parseFloat(values.place_longitude.replace(",", ".")),
+            latitude: parseFloat(
+              values.place_latitude.toString().replace(",", ".")
+            ),
+            longitude: parseFloat(
+              values.place_longitude.toString().replace(",", ".")
+            ),
             main_image_url: mainPlaceImage,
             is_on_homepage_map: isOnMapChecked,
             is_above_homepage_map: isFeaturedChecked,

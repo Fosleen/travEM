@@ -19,8 +19,17 @@
     display: grid;
     grid-template-columns: none;
     grid-template-rows: 1fr;
-    gap: 40px;
+    gap: 64px;
     padding: 16px 0;
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .destination-videos-container {
+    .destination-videos {
+      gap: 256px;
+      height: fit-content;
+    }
   }
 }
 

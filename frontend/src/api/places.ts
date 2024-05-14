@@ -119,6 +119,7 @@ export async function removePlaceOnMap(id: number) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "PATCH",
     body: JSON.stringify({
@@ -140,6 +141,7 @@ export async function addPlaceAboveMap(id: number) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "PATCH",
     body: JSON.stringify({
@@ -161,6 +163,7 @@ export async function removePlaceAboveMap(id: number) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "PATCH",
     body: JSON.stringify({
@@ -198,6 +201,7 @@ export async function updatePlace(place: PlacesData) {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     method: "PATCH",
     body: JSON.stringify({

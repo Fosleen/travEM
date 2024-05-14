@@ -38,8 +38,13 @@ import ReactGA from "react-ga4";
 import ProtectedRoute from "./components/atoms/ProtectedRoute";
 import { useEffect } from "react";
 import PrivacyPolicy from "./Pages/UserViewPages/PrivacyPolicy/PrivacyPolicy";
+import { useCookies } from "react-cookie";
+import CookieConsent from "./components/atoms/CookieConsent/CookieConsent";
 
 function App() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [cookies, setCookie] = useCookies<any>(["cookie_consent"]);
+
   const location = useLocation();
 
   const navigate = useNavigate();
@@ -57,11 +62,13 @@ function App() {
   }
 
   useEffect(() => {
-    ReactGA.send({
-      hitType: "pageview",
-      page: location.pathname,
-      title: `Putanja: ${location.pathname}`,
-    });
+    if (cookies.cookie_consent === "accepted") {
+      ReactGA.send({
+        hitType: "pageview",
+        page: location.pathname,
+        title: `Putanja: ${location.pathname}`,
+      });
+    }
   }, [location]);
 
   useEffect(() => {
@@ -72,6 +79,7 @@ function App() {
 
   return (
     <>
+      <CookieConsent cookies={cookies} setCookie={setCookie} />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<UserViewLayout />}>

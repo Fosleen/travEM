@@ -35,6 +35,7 @@ import {
   deleteArticleById,
   getArticleById,
   getFavoriteArticleByCountry,
+  removeTopCountryArticle,
   updateArticle,
 } from "../../../api/article";
 import {
@@ -80,6 +81,7 @@ const EditArticle = () => {
 
   const [isMainCountryPostChecked, setIsMainCountryPostChecked] =
     useState(false);
+  const [isMainCountryPost, setIsMainCountryPost] = useState(false);
 
   const ValidationSchema = Yup.object().shape({
     article_title: Yup.string()
@@ -245,6 +247,8 @@ const EditArticle = () => {
 
           if (isMainCountryPostChecked) {
             await createTopCountryArticle(id);
+          } else if (isMainCountryPost) {
+            await removeTopCountryArticle(id);
           }
 
           navigate("/admin/članci");
@@ -359,6 +363,7 @@ const EditArticle = () => {
         setArticle(articleData);
         setMainArticleImage(articleData.main_image_url);
         setIsMainCountryPostChecked(isSetAsMainCountryPost.id == id);
+        setIsMainCountryPost(isSetAsMainCountryPost.id == id);
         setSectionImages(
           articleData.sections.map((section) => section.section_images)
         );

@@ -195,8 +195,10 @@ export async function updateArticle(
 
 export async function deleteArticleById(id: number) {
   const response = await fetch(`${apiUrl}/articles/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     method: "DELETE",
-    Authorization: `Bearer ${token}`,
   });
   const data = await response.json();
 
@@ -209,6 +211,45 @@ export async function deleteArticleById(id: number) {
 
 export async function getFavoriteArticleByCountry(id: number) {
   const response = await fetch(`${apiUrl}/articles/country/top/${id}`);
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function createTopCountryArticle(articleId: number) {
+  const response = await fetch(`${apiUrl}/articles/country/top`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    method: "PUT",
+    body: JSON.stringify({
+      article_id: articleId,
+    }),
+  });
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
+export async function removeTopCountryArticle(articleId: number) {
+  const response = await fetch(`${apiUrl}/articles/country/top/${articleId}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    method: "DELETE",
+  });
   const data = await response.json();
 
   if (!response.ok) {

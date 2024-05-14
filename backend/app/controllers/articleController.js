@@ -118,7 +118,7 @@ class ArticleController {
       const { id } = req.params;
       const response = await articleService.getTopCountryArticle(id);
       if (!response || response.length == 0) {
-        res.status(404).json({ error: "No top article found for country" });
+        res.status(200).json({ error: "No top article found for country" });
       } else {
         res.status(200).json(response);
       }
@@ -244,6 +244,20 @@ class ArticleController {
     try {
       const { id } = req.params;
       const response = await articleService.deleteArticle(id);
+      if (response) {
+        res.status(200).json({});
+      } else {
+        return res.status(500).json({ error: "Internal server error" });
+      }
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
+  async deleteTopCountryArticle(req, res) {
+    try {
+      const { id } = req.params;
+      const response = await articleService.deleteTopCountryArticle(id);
       if (response) {
         res.status(200).json({});
       } else {

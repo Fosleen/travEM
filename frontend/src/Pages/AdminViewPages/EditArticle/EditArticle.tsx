@@ -31,6 +31,7 @@ import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch";
 import Swal from "sweetalert2";
 import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 import {
+  createTopCountryArticle,
   deleteArticleById,
   getArticleById,
   getFavoriteArticleByCountry,
@@ -242,6 +243,10 @@ const EditArticle = () => {
             await deleteGalleryImage(id);
           });
 
+          if (isMainCountryPostChecked) {
+            await createTopCountryArticle(id);
+          }
+
           navigate("/admin/članci");
           notifySuccess("Uspješno uređen članak!");
         }
@@ -392,7 +397,7 @@ const EditArticle = () => {
       if (result.isConfirmed && article) {
         await deleteArticleById(article.id);
 
-        navigate("/admin/mjesta");
+        navigate("/admin/članci");
         notifySuccess("Uspješno izbrisan članak!");
       }
     });

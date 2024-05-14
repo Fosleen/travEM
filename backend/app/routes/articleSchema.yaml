@@ -231,12 +231,6 @@ components:
           type: string
           example: No articles found by name test
 
-    TopCountryArticleNotFoundErrorResponse:
-      properties:
-        error:
-          type: string
-          example: No top article found for country
-
     CountryArticlesNotFoundErrorResponse:
       properties:
         error:

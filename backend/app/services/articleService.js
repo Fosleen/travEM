@@ -540,6 +540,20 @@ class ArticleService {
       return null;
     }
   }
+
+  async deleteTopCountryArticle(id) {
+    try {
+      await db.models.Article_ArticleSpecialType.destroy({
+        where: { article_id: id },
+        where: { article_special_type_id: 2 },
+      });
+
+      return [];
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
 }
 
 export default new ArticleService();

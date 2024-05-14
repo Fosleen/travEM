@@ -23,7 +23,7 @@ import {
 import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch";
 import { getPlacesByCountry } from "../../../api/places";
 import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
-import { addArticle } from "../../../api/article";
+import { addArticle, createTopCountryArticle } from "../../../api/article";
 import { addSection } from "../../../api/sections";
 import Modal from "../../../components/atoms/Modal";
 import { addSectionImage } from "../../../api/sectionImages";
@@ -166,6 +166,10 @@ const AddArticle = () => {
               articleResponse.id
             );
           });
+          if (isMainCountryPostChecked) {
+            await createTopCountryArticle(articleResponse.id);
+          }
+
           navigate("/admin/članci");
           notifySuccess("Uspješno predano!");
         }

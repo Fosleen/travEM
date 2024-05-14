@@ -119,17 +119,11 @@ router.get("/recommended/:id", controller.getRecommendedArticles);
  *          description: "Id of country for which is top article being fetched"
  *      responses:
  *          200:
- *              description: A JSON object with article data.
+ *              description: A JSON object with article data or top country article for that country was not found (does not exist yet).
  *              content:
  *                  application/json:
  *                      schema:
  *                          $ref: '#/components/schemas/GetTopCountryArticleResponse'
- *          404:
- *              description: Top country article for that country was not found.
- *              content:
- *                  application/json:
- *                      schema:
- *                          $ref: '#/components/schemas/TopCountryArticleNotFoundErrorResponse'
  *          500:
  *              description: Error fetching articles because of server
  *              content:
@@ -492,5 +486,35 @@ router.put(
  *
  */
 router.delete("/:id", verifyToken, controller.deleteArticle);
+
+// DELETE /api/v1/articles/country/top
+/**
+ * @openapi
+ *  '/api/v1/articles/country/top/:id':
+ *  delete:
+ *      summary: Remove article from being top article for some country by article id
+ *      tags:
+ *          - Article
+ *      security:
+ *          - bearerAuth: []
+ *      parameters:
+ *          - in: path
+ *            name: id
+ *            required: true
+ *            schema:
+ *              $ref: '#/components/schemas/DeleteArticleParams'
+ *      responses:
+ *          200:
+ *              description: The article as top country article was successfully removed.
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          $ref: '#/components/schemas/DeleteResponse'
+ */
+router.delete(
+  "/country/top/:id",
+  verifyToken,
+  controller.deleteTopCountryArticle
+);
 
 export default router;

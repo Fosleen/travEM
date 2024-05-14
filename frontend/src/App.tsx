@@ -37,7 +37,6 @@ import Contact from "./Pages/UserViewPages/Contact/Contact";
 import ReactGA from "react-ga4";
 import ProtectedRoute from "./components/atoms/ProtectedRoute";
 import { useEffect } from "react";
-import Ad from "./components/atoms/Ad";
 import PrivacyPolicy from "./Pages/UserViewPages/PrivacyPolicy/PrivacyPolicy";
 
 function App() {
@@ -127,7 +126,6 @@ function App() {
           <Route path="/admin/uredi-footer" element={<EditFooter />} />
         </Route>
       </Routes>
-      <Ad dataAdSlot="11111111" />
     </>
   );
 }

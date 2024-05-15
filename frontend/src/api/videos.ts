@@ -1,4 +1,3 @@
-import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function addVideo(
@@ -7,6 +6,7 @@ export async function addVideo(
   place_id?: number | null,
   country_id?: number | null
 ) {
+  const token = localStorage.getItem("jwt");
   const response = await fetch(`${apiUrl}/videos`, {
     headers: {
       Accept: "application/json",
@@ -32,6 +32,8 @@ export async function addVideo(
 }
 
 export async function updateVideo(id: number, url: string) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/videos/${id}`, {
     headers: {
       Accept: "application/json",
@@ -54,6 +56,8 @@ export async function updateVideo(id: number, url: string) {
 }
 
 export async function deleteVideo(id: number) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/videos/${id}`, {
     headers: {
       Accept: "application/json",

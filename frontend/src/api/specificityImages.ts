@@ -1,4 +1,3 @@
-import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function updateSpecificityImage(
@@ -6,6 +5,8 @@ export async function updateSpecificityImage(
   url: string,
   specificity_id: number
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/specificity-images/${id}`, {
     headers: {
       Accept: "application/json",

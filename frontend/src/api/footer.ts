@@ -1,4 +1,3 @@
-import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function getFooter() {
@@ -13,6 +12,8 @@ export async function getFooter() {
 }
 
 export async function updateFooter(image_url: string) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/footer`, {
     headers: {
       Accept: "application/json",

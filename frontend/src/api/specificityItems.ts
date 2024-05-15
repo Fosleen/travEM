@@ -1,4 +1,3 @@
-import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function addSpecificityItem(
@@ -6,6 +5,8 @@ export async function addSpecificityItem(
   description: string,
   specificity_id: number
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/specificity-items`, {
     headers: {
       Accept: "application/json",
@@ -34,6 +35,8 @@ export async function updateSpecificityItem(
   title: string,
   description: string
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/specificity-items/${id}`, {
     headers: {
       Accept: "application/json",
@@ -57,6 +60,8 @@ export async function updateSpecificityItem(
 }
 
 export async function deleteSpecificityItem(id: number) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/specificity-items/${id}`, {
     headers: {
       Accept: "application/json",

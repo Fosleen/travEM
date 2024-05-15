@@ -13,5 +13,3 @@ export const convertToSlug = (sentence: string) => {
 export const convertFromSlug = (slug: string) => {
   return slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, " ");
 };
-
-export const token = localStorage.getItem("jwt");

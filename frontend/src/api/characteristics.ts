@@ -1,4 +1,3 @@
-import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function addCharacteristic(
@@ -7,6 +6,8 @@ export async function addCharacteristic(
   country_id: number,
   characteristic_icon_id: number
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/characteristics`, {
     headers: {
       Accept: "application/json",
@@ -37,6 +38,8 @@ export async function updateCharacteristic(
   description: string,
   characteristic_icon_id: number
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/characteristics/${id}`, {
     headers: {
       Accept: "application/json",

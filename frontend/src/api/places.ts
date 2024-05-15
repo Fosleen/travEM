@@ -1,5 +1,5 @@
 import { PlacesData } from "../common/types";
-import { token } from "../utils/global";
+
 import { apiUrl } from "./api";
 
 export async function getPlaces(page = 1, pageSize = 12) {
@@ -62,6 +62,8 @@ export async function addPlace(
   country_id: number,
   videos: Array<string>
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/places`, {
     headers: {
       Accept: "application/json",
@@ -93,6 +95,8 @@ export async function addPlace(
 }
 
 export async function addPlaceOnMap(id: number) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/places/${id}`, {
     headers: {
       Accept: "application/json",
@@ -115,6 +119,8 @@ export async function addPlaceOnMap(id: number) {
 }
 
 export async function removePlaceOnMap(id: number) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/places/${id}`, {
     headers: {
       Accept: "application/json",
@@ -137,6 +143,8 @@ export async function removePlaceOnMap(id: number) {
 }
 
 export async function addPlaceAboveMap(id: number) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/places/${id}`, {
     headers: {
       Accept: "application/json",
@@ -159,6 +167,8 @@ export async function addPlaceAboveMap(id: number) {
 }
 
 export async function removePlaceAboveMap(id: number) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/places/${id}`, {
     headers: {
       Accept: "application/json",
@@ -181,6 +191,8 @@ export async function removePlaceAboveMap(id: number) {
 }
 
 export async function deletePlaceById(id: number) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/places/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -197,6 +209,8 @@ export async function deletePlaceById(id: number) {
 }
 
 export async function updatePlace(place: PlacesData) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/places/${place.id}`, {
     headers: {
       Accept: "application/json",

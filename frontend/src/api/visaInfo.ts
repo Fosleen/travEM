@@ -1,4 +1,3 @@
-import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function checkIfInfoExists(
@@ -24,6 +23,8 @@ export async function addVisaInfo(
   additional_info: string,
   country_id: number
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/visa-info`, {
     headers: {
       Accept: "application/json",
@@ -57,6 +58,8 @@ export async function patchVisaInfo(
   additional_info: string,
   country_id: number
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/visa-info/${id}`, {
     headers: {
       Accept: "application/json",

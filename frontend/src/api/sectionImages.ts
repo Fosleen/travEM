@@ -1,4 +1,3 @@
-import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function addSectionImage(
@@ -7,6 +6,8 @@ export async function addSectionImage(
   height: number,
   width: number
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/section-images`, {
     headers: {
       Accept: "application/json",
@@ -32,6 +33,8 @@ export async function addSectionImage(
 }
 
 export async function updateSectionImage(url: string, id: number) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/section-images/${id}`, {
     headers: {
       Accept: "application/json",
@@ -54,6 +57,8 @@ export async function updateSectionImage(url: string, id: number) {
 }
 
 export async function deleteSectionImage(id: number) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/section-images/${id}`, {
     headers: {
       Accept: "application/json",

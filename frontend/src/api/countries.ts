@@ -1,5 +1,4 @@
 import { CountriesData } from "../common/types";
-import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function getCountries(page = 1, pageSize = 12) {
@@ -67,6 +66,8 @@ export async function addCountry(
   continent_id: number,
   color_id: number
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/countries`, {
     headers: {
       Accept: "application/json",
@@ -106,6 +107,8 @@ export async function getCountryPlaces(id: number) {
 
 export async function updateCountry(country: CountriesData) {
   console.log(country);
+
+  const token = localStorage.getItem("jwt");
 
   const response = await fetch(`${apiUrl}/countries/${country.id}`, {
     headers: {

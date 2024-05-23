@@ -4,6 +4,7 @@ import "./ArticleFragment.scss";
 
 import { FC } from "react";
 import { ArticleProps } from "../../../../common/types";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const ArticleFragment: FC<ArticleProps> = ({
   section = {},
@@ -17,14 +18,22 @@ const ArticleFragment: FC<ArticleProps> = ({
       <p>{section?.text}</p>
       {section?.section_images?.length === 1 && (
         <div className="article-fragment-image-wrapper">
-          {" "}
-          <img src={section?.section_images[0].url} alt="" />
+          <LazyLoadImage
+            alt={section?.section_images[0].url}
+            src={section?.section_images[0].url}
+          />
         </div>
       )}
       {section?.section_images?.length === 2 && (
         <div className="article-fragment-images-wrapper">
-          <img src={section?.section_images[0].url} alt="" />
-          <img src={section?.section_images[1].url} alt="" />
+          <LazyLoadImage
+            alt={section?.section_images[0].url}
+            src={section?.section_images[0].url}
+          />
+          <LazyLoadImage
+            alt={section?.section_images[1].url}
+            src={section?.section_images[1].url}
+          />
         </div>
       )}
 

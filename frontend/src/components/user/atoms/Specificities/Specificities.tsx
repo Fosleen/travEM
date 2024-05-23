@@ -4,6 +4,7 @@ import icon1 from "../../../../assets/images/menu-icon.png";
 import icon2 from "../../../../assets/images/teamwork-icon.png";
 import { FC } from "react";
 import { SpecificityProps } from "../../../../common/types";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const Specificities: FC<{
   iconNmbr: string;
@@ -53,7 +54,7 @@ const Specificities: FC<{
               specificities.specificity_images &&
               specificities.specificity_images.map((el, index) => (
                 <div className="country-highlight-image-container" key={index}>
-                  <img src={el.url} alt="country-highlight" />
+                  <LazyLoadImage alt={el.url} src={el.url} />
                 </div>
               ))}
           </div>

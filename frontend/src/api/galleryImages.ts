@@ -1,4 +1,3 @@
-import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function addGalleryImage(
@@ -7,6 +6,8 @@ export async function addGalleryImage(
   width: string,
   article_id: number
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/gallery-images`, {
     headers: {
       Accept: "application/json",
@@ -32,6 +33,8 @@ export async function addGalleryImage(
 }
 
 export async function deleteGalleryImage(id: number) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/gallery-images/${id}`, {
     headers: {
       Accept: "application/json",

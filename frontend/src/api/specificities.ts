@@ -1,4 +1,3 @@
-import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function addSpecificity(
@@ -7,6 +6,8 @@ export async function addSpecificity(
   items: Array<{ title: string; description: string }>,
   images: Array<string>
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/specificities`, {
     headers: {
       Accept: "application/json",
@@ -32,6 +33,8 @@ export async function addSpecificity(
 }
 
 export async function updateSpecificity(id: number, title: string) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/specificities/${id}`, {
     headers: {
       Accept: "application/json",

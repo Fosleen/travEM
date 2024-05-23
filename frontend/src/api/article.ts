@@ -1,6 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function addArticle(
@@ -16,6 +15,8 @@ export async function addArticle(
   date_written: Date,
   airport_city_id: numberr | null
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/articles`, {
     headers: {
       Accept: "application/json",
@@ -48,6 +49,8 @@ export async function addArticle(
 }
 
 export async function getArticlesByName(name: string, page = 1, pageSize = 12) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(
     `${apiUrl}/articles/search/${name}?page=${page}&pageSize=${pageSize}`
   );
@@ -65,6 +68,8 @@ export async function getArticles(
   pageSize = 12,
   articleType: number | null = null
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(
     `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${articleType}`
   );
@@ -82,6 +87,8 @@ export async function getArticlesByType(
   pageSize = 8,
   article_type: number
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(
     `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${article_type}`
   );
@@ -95,6 +102,8 @@ export async function getArticlesByType(
 }
 
 export async function getHomepageArticles() {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/articles/homepage`);
   const data = await response.json();
 
@@ -106,6 +115,8 @@ export async function getHomepageArticles() {
 }
 
 export async function getRecommendedArticles(id: number, type: string) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(
     `${apiUrl}/articles/recommended/${id}?type=${type}`
   );
@@ -122,6 +133,8 @@ export async function updateOrCreateTopHomepageArticles(
   articleIds: Array<number>,
   specialTypeId: number
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/articles/homepage/${specialTypeId}`, {
     headers: {
       Accept: "application/json",
@@ -143,6 +156,8 @@ export async function updateOrCreateTopHomepageArticles(
 }
 
 export async function getArticleById(id: number) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/articles/${id}`);
   const data = await response.json();
 
@@ -175,6 +190,8 @@ export async function updateArticle(
     place_id: place_id,
   };
 
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/articles/${id}`, {
     headers: {
       Accept: "application/json",
@@ -194,6 +211,8 @@ export async function updateArticle(
 }
 
 export async function deleteArticleById(id: number) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/articles/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -210,6 +229,8 @@ export async function deleteArticleById(id: number) {
 }
 
 export async function getFavoriteArticleByCountry(id: number) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/articles/country/top/${id}`);
   const data = await response.json();
 
@@ -221,6 +242,8 @@ export async function getFavoriteArticleByCountry(id: number) {
 }
 
 export async function createTopCountryArticle(articleId: number) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/articles/country/top`, {
     headers: {
       Accept: "application/json",
@@ -242,6 +265,8 @@ export async function createTopCountryArticle(articleId: number) {
 }
 
 export async function removeTopCountryArticle(articleId: number) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/articles/country/top/${articleId}`, {
     headers: {
       Accept: "application/json",

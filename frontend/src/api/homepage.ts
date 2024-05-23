@@ -1,4 +1,3 @@
-import { token } from "../utils/global";
 import { apiUrl } from "./api";
 
 export async function getHomepage() {
@@ -24,6 +23,8 @@ export async function getHomepageStats() {
 }
 
 export async function updateHeroImage(url: string) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/homepage`, {
     headers: {
       Accept: "application/json",
@@ -52,6 +53,8 @@ export async function updateBanner(
   button_text: string,
   banner_image_url: string
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/homepage`, {
     headers: {
       Accept: "application/json",
@@ -82,6 +85,8 @@ export async function updateStats(
   videos_nmbr: string,
   distance_nmbr: string
 ) {
+  const token = localStorage.getItem("jwt");
+
   const response = await fetch(`${apiUrl}/homepage`, {
     headers: {
       Accept: "application/json",

@@ -95,7 +95,6 @@ const AddArticle = () => {
           100,
           "Naslov linka smije imati max 100 znakova!"
         ),
-        section_text: Yup.string().required("Obavezno polje!"),
       })
     ),
   });
@@ -548,7 +547,7 @@ const AddArticle = () => {
                                       as={Textarea}
                                       rows={12}
                                       name={`sections[${index}].section_text`}
-                                      label="Tekst odlomka *"
+                                      label="Tekst odlomka"
                                       placeholder="Unesi tekst odlomka..."
                                       value={sections[index].section_text}
                                     />

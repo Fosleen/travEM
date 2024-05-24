@@ -128,7 +128,7 @@ const Footer = ({
         </div>
       </div>
       <div className="footer-logo">
-        <a href="https://fosleen.netlify.app/" target="blank">
+        <a href="https://fosleen.com/" target="blank">
           <img src={logo} alt="fosleen-logo" />
         </a>
       </div>

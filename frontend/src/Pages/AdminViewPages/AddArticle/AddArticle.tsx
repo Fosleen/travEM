@@ -32,6 +32,7 @@ import { notifySuccess } from "../../../components/atoms/Toast/Toast";
 import Textarea from "../../../components/admin/atoms/Textarea";
 import { ThreeDots } from "react-loader-spinner";
 import { getAirportCities } from "../../../api/airportCities";
+import pLimit from "p-limit";
 
 const AddArticle = () => {
   const navigate = useNavigate();
@@ -105,6 +106,7 @@ const AddArticle = () => {
   const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
   const decodedPayload = JSON.parse(atob(base64));
   const user_id = decodedPayload.id;
+  const limit = pLimit(5);
 
   const validateImages = () => {
     return mainArticleImage != "" && mainArticleImage;
@@ -142,21 +144,6 @@ const AddArticle = () => {
             parseInt(values.article_airport_city_id)
           );
 
-          values.sections.map(async (section, index) => {
-            const sectionResponse = await addSection(
-              section.section_text,
-              section.section_subtitle,
-              index + 1,
-              section.section_url_title,
-              section.section_url_link,
-              section.section_icon,
-              articleResponse.id
-            );
-            sectionImages[index].map(async (el) => {
-              await addSectionImage(el.url, sectionResponse.id);
-            });
-          });
-
           otherArticleImages.map(async (image) => {
             return await addGalleryImage(
               image.url,
@@ -168,6 +155,27 @@ const AddArticle = () => {
           if (isMainCountryPostChecked) {
             await createTopCountryArticle(articleResponse.id);
           }
+
+          await Promise.all(
+            // koristi pLimit da onemoguci previse requestova odjednom
+            values.sections.map(async (section, index) => {
+              const sectionResponse = await addSection(
+                section.section_text,
+                section.section_subtitle,
+                index + 1,
+                section.section_url_title,
+                section.section_url_link,
+                section.section_icon,
+                articleResponse.id
+              );
+
+              await Promise.all(
+                sectionImages[index].map((el) =>
+                  limit(() => addSectionImage(el.url, sectionResponse.id))
+                )
+              );
+            })
+          );
 
           navigate("/admin/članci");
           notifySuccess("Uspješno predano!");

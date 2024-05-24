@@ -7,12 +7,12 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import Input from "../../../components/atoms/Input";
 import Button from "../../../components/atoms/Button";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { getArticleTypes } from "../../../api/articleTypes";
 import Dropdown from "../../../components/atoms/Dropdown";
 import { getVisitedCountries } from "../../../api/map";
 import { getSectionIcons } from "../../../api/sectionIcons";
-import { Plus, X } from "@phosphor-icons/react";
+import { Plus, Trash, X } from "@phosphor-icons/react";
 import Swal from "sweetalert2";
 import {
   ArticleType,
@@ -86,6 +86,11 @@ const AddArticle = () => {
       then: () => Yup.number().required("Obavezno polje!").integer(),
       otherwise: () => Yup.number().notRequired(),
     }),
+    metatags: Yup.array().of(
+      Yup.object().shape({
+        metatag_text: Yup.string().required("Obavezno polje!"),
+      })
+    ),
     sections: Yup.array().of(
       Yup.object().shape({
         section_subtitle: Yup.string().max(
@@ -130,11 +135,18 @@ const AddArticle = () => {
           const dateString = new Date().toJSON().slice(0, 10);
           const todaysDate = new Date(dateString);
 
+          let metatagsString = "";
+          values.metatags.map(
+            (el, index) =>
+              (metatagsString += `${index !== 0 ? ", " : ""}${el.metatag_text}`)
+          );
+
           const articleResponse = await addArticle(
             values.article_title,
             values.article_subtitle,
             values.article_description,
             values.article_video,
+            metatagsString,
             parseInt(values.article_type),
             parseInt(values.article_country),
             parseInt(values.article_place),
@@ -205,6 +217,16 @@ const AddArticle = () => {
       order: 1,
     });
     setSectionImages([...sectionImages, []]);
+  };
+
+  const handleAddMetatag = (arrayHelpers) => {
+    arrayHelpers.push({
+      metatag_text: "",
+    });
+  };
+
+  const handleDeleteMetatag = (arrayHelpers, tagIndex) => {
+    arrayHelpers.remove(tagIndex);
   };
 
   const handleDeleteImage = (
@@ -314,6 +336,7 @@ const AddArticle = () => {
               article_country: null,
               article_place: null,
               article_airport_city_id: null,
+              metatags: [{ metatag_text: "" }],
               sections: [
                 {
                   section_subtitle: "",
@@ -691,6 +714,64 @@ const AddArticle = () => {
                     </div>
                   </div>
                 </div>
+                <div className="add-metatags-wrapper">
+                  <div className="add-metatag-outer-container">
+                    <FieldArray
+                      name="metatags"
+                      render={(arrayHelpersMetatag) => {
+                        const metatags = values.metatags;
+
+                        return (
+                          <div className="add-metatags-container">
+                            <div className="add-metatag-header">
+                              <h6>Meta oznake</h6>
+                              <Button
+                                type="button"
+                                circle
+                                onClick={() => {
+                                  handleAddMetatag(arrayHelpersMetatag);
+                                }}
+                              >
+                                +
+                              </Button>
+                            </div>
+                            {metatags && metatags.length > 0
+                              ? metatags.map((_metatags, index) => (
+                                  <Fragment key={index}>
+                                    <div className="add-metatag-row">
+                                      <Field
+                                        name={`metatags.${index}.metatag_text`}
+                                        type="text"
+                                        as={Input}
+                                        label=""
+                                        placeholder="Unesi meta oznaku..."
+                                      />
+                                      <div
+                                        onClick={() => {
+                                          handleDeleteMetatag(
+                                            arrayHelpersMetatag,
+                                            index
+                                          );
+                                        }}
+                                      >
+                                        <Trash color="#AC2B2B" size={32} />
+                                      </div>
+                                    </div>
+                                    <ErrorMessage
+                                      name={`metatags.${index}.metatag_text`}
+                                      component="div"
+                                      className="error-message"
+                                    />
+                                  </Fragment>
+                                ))
+                              : null}
+                          </div>
+                        );
+                      }}
+                    />
+                  </div>
+                </div>
+
                 <div className="add-article-toggle-container">
                   {selectedCountryId && values.article_type == "1" && (
                     <div className="add-article-toggle-item">

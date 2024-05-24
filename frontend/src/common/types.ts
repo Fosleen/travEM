@@ -177,8 +177,6 @@ export interface SectionIconsData {
   url: string;
 }
 
-
-
 export interface Article {
   [x: string]: number;
   id: number;
@@ -187,6 +185,7 @@ export interface Article {
   description: string;
   video: string;
   article_type_id: number;
+  metatags: string | Array<string>;
   country_id: number;
   place_id: number;
   main_image_url: string;

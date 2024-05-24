@@ -12,6 +12,7 @@ export default (sequelize, DataTypes) => {
       subtitle: { type: DataTypes.STRING(100) },
       description: { type: DataTypes.STRING(100) },
       main_image_url: { type: DataTypes.STRING },
+      metatags: { type: DataTypes.STRING },
       date_written: { type: DataTypes.DATEONLY, allowNull: false },
     },
     {

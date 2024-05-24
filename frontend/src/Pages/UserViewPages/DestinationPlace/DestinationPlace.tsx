@@ -7,6 +7,7 @@ import "./DestinationPlace.scss";
 import { getPlacesByName } from "../../../api/places";
 import { useParams } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
+import { Helmet } from "react-helmet";
 
 const DestinationPlace = () => {
   const [place, setPlace] = useState<{
@@ -18,6 +19,8 @@ const DestinationPlace = () => {
     videos: Array<string>;
   }>();
   const { placeName } = useParams();
+  const [metaKeywords, setMetaKeywords] = useState("");
+  const [title, setTitle] = useState("");
 
   const fetchData = async () => {
     try {
@@ -25,6 +28,14 @@ const DestinationPlace = () => {
       console.log(data);
 
       setPlace(data.data[0]);
+      console.log(data.data[0]);
+
+      setMetaKeywords(
+        `${data.data[0].name}, ${data.data[0].country.name}, ${data.data[0].name} ${data.data[0].country.name}, ${data.data[0].name} putovanje`
+      );
+      setTitle(
+        `Putujem s TravEM - ${data.data[0].name}, ${data.data[0].country.name}`
+      );
     } catch (error) {
       console.error("error while fetching:", error);
     }
@@ -36,6 +47,10 @@ const DestinationPlace = () => {
 
   return place ? (
     <>
+      <Helmet>
+        <meta name="keywords" content={metaKeywords} />
+        <title>{title}</title>
+      </Helmet>
       <div className="destination-place-page-container">
         <DestinationHero
           name={place.name}

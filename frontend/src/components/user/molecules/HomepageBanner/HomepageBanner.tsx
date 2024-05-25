@@ -25,8 +25,8 @@ const HomepageBanner: FC<{
         </div>
         <div className="homepage-banner-right">
           <div className="homepage-banner-right-content">
-            {homepageArticles.map((el) => (
-              <HorizontalPostItem article={el} />
+            {homepageArticles.map((el, index) => (
+              <HorizontalPostItem article={el} key={index} />
             ))}
           </div>
         </div>

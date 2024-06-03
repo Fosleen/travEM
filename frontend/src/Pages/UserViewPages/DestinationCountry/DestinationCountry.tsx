@@ -17,11 +17,14 @@ import { getFavoriteArticleByCountry } from "../../../api/article";
 import Characteristics from "../../../components/user/atoms/Characteristics";
 import Specificities from "../../../components/user/atoms/Specificities";
 import { CountriesData } from "../../../common/types";
+import { Helmet } from "react-helmet";
 
 const DestinationCountry = () => {
   const [country, setCountry] = useState<CountriesData | null>();
   const [favoriteArticle, setFavoriteArticle] = useState(null);
   const { countryName } = useParams();
+  const [metaKeywords, setMetaKeywords] = useState("");
+  const [title, setTitle] = useState("");
 
   const fetchData = async () => {
     try {
@@ -31,6 +34,12 @@ const DestinationCountry = () => {
       const favoriteArticleData = await getFavoriteArticleByCountry(countryId);
 
       setCountry(countryData);
+
+      setMetaKeywords(
+        `${countryData.name}, ${countryData.name} putovanje, ${countryData.name} putopis, ${countryData.name} travem, ${countryData.name} top 10 lokacija, putovanje u ${countryData.name}, ${countryData.name} što posjetiti`
+      );
+      setTitle(`Putujem s TravEM - ${countryData.name}`);
+
       if ("id" in favoriteArticleData) {
         setFavoriteArticle(favoriteArticleData);
       }
@@ -45,11 +54,16 @@ const DestinationCountry = () => {
 
   useEffect(() => {
     setCountry(null);
+
     fetchData();
   }, [countryName]);
 
   return (
     <>
+      <Helmet>
+        <meta name="keywords" content={metaKeywords} />
+        <title>{title}</title>
+      </Helmet>
       {country ? (
         <div className="destination-country-page-container">
           {country.color && (

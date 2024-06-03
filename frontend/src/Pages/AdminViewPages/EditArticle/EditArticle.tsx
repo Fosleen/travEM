@@ -3,7 +3,7 @@
 
 import { useNavigate, useParams } from "react-router-dom";
 import "./EditArticle.scss";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import {
   Article,
   ArticleType,
@@ -24,7 +24,7 @@ import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import Input from "../../../components/atoms/Input";
 import Textarea from "../../../components/admin/atoms/Textarea";
 import Dropdown from "../../../components/atoms/Dropdown";
-import { Plus, X } from "@phosphor-icons/react";
+import { Plus, Trash, X } from "@phosphor-icons/react";
 import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
 import Button from "../../../components/atoms/Button";
 import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch";
@@ -104,6 +104,11 @@ const EditArticle = () => {
       then: () => Yup.number().required("Obavezno polje!").integer(),
       otherwise: () => Yup.number().notRequired(),
     }),
+    metatags: Yup.array().of(
+      Yup.object().shape({
+        metatag_text: Yup.string().required("Obavezno polje!"),
+      })
+    ),
     sections: Yup.array().of(
       Yup.object().shape({
         section_subtitle: Yup.string().max(
@@ -136,19 +141,26 @@ const EditArticle = () => {
         cancelButtonText: "Odustani",
         confirmButtonText: "Da, objavi!",
       }).then(async (result) => {
+        let metatagsString = "";
+        values.metatags.map(
+          (el, index) =>
+            (metatagsString += `${index !== 0 ? ", " : ""}${el.metatag_text}`)
+        );
+
         if (result.isConfirmed) {
-          const countryResponse = await updateArticle(
+          const articleResponse = await updateArticle(
             article.id,
             values.article_title,
             values.article_subtitle,
             values.article_description,
+            metatagsString,
             mainArticleImage,
             values.article_type,
             values.article_country,
             values.article_place,
             values.article_airport_city_id
           );
-          console.log(countryResponse);
+          console.log(articleResponse);
 
           values.sections.map(async (el, index) => {
             if (el.section_id) {
@@ -187,7 +199,7 @@ const EditArticle = () => {
                 if (!image.id) {
                   await addSectionImage(
                     image.url,
-                    response.section_id,
+                    response.id,
                     image.height,
                     image.width
                   );
@@ -279,6 +291,16 @@ const EditArticle = () => {
       order: 1,
     });
     setSectionImages([...sectionImages, []]);
+  };
+
+  const handleAddMetatag = (arrayHelpers) => {
+    arrayHelpers.push({
+      metatag_text: "",
+    });
+  };
+
+  const handleDeleteMetatag = (arrayHelpers, tagIndex) => {
+    arrayHelpers.remove(tagIndex);
   };
 
   const handleDeleteImage = (
@@ -434,6 +456,9 @@ const EditArticle = () => {
                 article_country: article.countryId || null,
                 article_place: article.placeId || null,
                 article_airport_city_id: article.airportCityId || null,
+                metatags: article.metatags.split(",").map((tag) => ({
+                  metatag_text: tag.trim(),
+                })),
                 sections: article.sections
                   ? article.sections.map((el) => ({
                       section_id: el.id,
@@ -836,6 +861,63 @@ const EditArticle = () => {
                       >
                         <Plus size={32} color="#616161" weight="bold" />
                       </div>
+                    </div>
+                  </div>
+                  <div className="edit-metatags-wrapper">
+                    <div className="edit-metatag-outer-container">
+                      <FieldArray
+                        name="metatags"
+                        render={(arrayHelpersMetatag) => {
+                          const metatags = values.metatags;
+
+                          return (
+                            <div className="edit-metatags-container">
+                              <div className="edit-metatag-header">
+                                <h6>Meta oznake</h6>
+                                <Button
+                                  type="button"
+                                  circle
+                                  onClick={() => {
+                                    handleAddMetatag(arrayHelpersMetatag);
+                                  }}
+                                >
+                                  +
+                                </Button>
+                              </div>
+                              {metatags && metatags.length > 0
+                                ? metatags.map((_metatags, index) => (
+                                    <Fragment key={index}>
+                                      <div className="edit-metatag-row">
+                                        <Field
+                                          name={`metatags.${index}.metatag_text`}
+                                          type="text"
+                                          as={Input}
+                                          label=""
+                                          placeholder="Unesi meta oznaku..."
+                                        />
+                                        <div
+                                          onClick={() => {
+                                            handleDeleteMetatag(
+                                              arrayHelpersMetatag,
+                                              index
+                                            );
+                                          }}
+                                        >
+                                          <Trash color="#AC2B2B" size={32} />
+                                        </div>
+                                      </div>
+                                      <ErrorMessage
+                                        name={`metatags.${index}.metatag_text`}
+                                        component="div"
+                                        className="error-message"
+                                      />
+                                    </Fragment>
+                                  ))
+                                : null}
+                            </div>
+                          );
+                        }}
+                      />
                     </div>
                   </div>
                   <div className="edit-article-toggle-container">

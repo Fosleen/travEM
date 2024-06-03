@@ -13,13 +13,13 @@ const OtherPosts: FC<{
       <h2>Omiljeni putopisi</h2>
       <div className="other-posts-wrapper">
         <div className="other-posts-left">
-          {horizontalArticles.map((el) => (
-            <HorizontalPostItem isSmall={true} article={el} />
+          {horizontalArticles.map((el, index) => (
+            <HorizontalPostItem isSmall={true} article={el} key={index} />
           ))}
         </div>
         <div className="other-posts-right">
-          {verticalArticles.map((el) => (
-            <VerticalPostItem article={el} />
+          {verticalArticles.map((el, index) => (
+            <VerticalPostItem article={el} key={index} />
           ))}
         </div>
       </div>

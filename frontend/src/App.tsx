@@ -40,6 +40,7 @@ import { useEffect } from "react";
 import PrivacyPolicy from "./Pages/UserViewPages/PrivacyPolicy/PrivacyPolicy";
 import { useCookies } from "react-cookie";
 import CookieConsent from "./components/atoms/CookieConsent/CookieConsent";
+import { Helmet } from "react-helmet";
 
 function App() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -79,6 +80,13 @@ function App() {
 
   return (
     <>
+      <Helmet>
+        <title>Putujem s TravEM</title>
+        <meta
+          name="keywords"
+          content="putujem s travem, putujemstravem, travem, putujem travem, travem putovanja, putovanja, putovanja iz hrvatske, travel blog, studentska putovanja, budget putovanja, jeftina putovanja, putovanja po europi, hrvatska putovanje, croatian travel blog, travel bloggers, croatian blog, hrvatska blog, studentska putovanja blog, jeftina studentska putovanja, travem youtube, matija dokmanović, ema pavrlišak, putovanje travem, balkanska jeftina putovanja, hrvatska jeftina putovanja, putovanje iz hrvatske, kako organizirati putovanje, savjeti za putovanja"
+        />
+      </Helmet>
       <CookieConsent cookies={cookies} setCookie={setCookie} />
       <Routes>
         <Route path="/login" element={<Login />} />

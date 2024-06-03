@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, Fragment } from "react";
 import FavoritePostItem from "../../atoms/FavoritePostItem";
 import "./FavoritePosts.scss";
 import { Article } from "../../../../common/types";
@@ -8,10 +8,10 @@ const FavoritePosts: FC<{ homepageArticles: Array<Article> }> = ({
 }) => {
   return (
     <div className="favorite-posts-container">
-      {homepageArticles.map((el) => (
-        <>
+      {homepageArticles.map((el, index) => (
+        <Fragment key={index}>
           <FavoritePostItem article={el} />
-        </>
+        </Fragment>
       ))}
     </div>
   );

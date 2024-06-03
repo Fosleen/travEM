@@ -7,13 +7,14 @@ export async function addArticle(
   subtitle: string,
   description: string,
   video: string,
+  metatags: string,
   article_type_id: number,
-  country_id: numberr | null,
-  place_id: numberr | null,
+  country_id: number | null,
+  place_id: number | null,
   main_image_url: string,
   user_id: number,
   date_written: Date,
-  airport_city_id: numberr | null
+  airport_city_id: number | null
 ) {
   const token = localStorage.getItem("jwt");
 
@@ -29,6 +30,7 @@ export async function addArticle(
       subtitle: subtitle,
       description: description,
       video: video,
+      metatags: metatags,
       article_type_id: article_type_id,
       country_id: country_id,
       place_id: place_id,
@@ -173,6 +175,7 @@ export async function updateArticle(
   title: string,
   subtitle: string,
   description: string,
+  metatags: string,
   main_image_url: string,
   article_type_id: number,
   country_id: number | null | string,
@@ -183,6 +186,7 @@ export async function updateArticle(
     title: title,
     subtitle: subtitle,
     description: description,
+    metatags: metatags,
     main_image_url: main_image_url,
     article_type_id: article_type_id,
     airport_city_id: airport_city_id,

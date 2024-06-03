@@ -4,7 +4,7 @@
 import ArticleFragment from "../../../components/user/molecules/ArticleFragment";
 import ArticleHero from "../../../components/user/molecules/ArticleHero";
 import ArticleTableOfContents from "../../../components/user/molecules/ArticleTableOfContents";
-
+import { Helmet } from "react-helmet";
 import "./Article.scss";
 import Gallery from "react-photo-gallery";
 import ArticleReadMore from "../../../components/user/atoms/ArticleReadMore";
@@ -25,6 +25,8 @@ const Article = () => {
   const [articleContent, setArticleContent] = useState([]);
   const [countryPlaces, setCountryPlaces] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [metaKeywords, setMetaKeywords] = useState("");
+  const [title, setTitle] = useState("");
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -39,6 +41,8 @@ const Article = () => {
       setArticleContent(content);
       setCountryPlaces(places);
       setIsLoading(false);
+      setMetaKeywords(`putujem s travem, ${content.metatags}`);
+      setTitle(content.title);
     } catch (error) {
       console.error("Error occurred while fetching homepage data:", error);
       setIsLoading(false);
@@ -73,6 +77,10 @@ const Article = () => {
         />
       ) : (
         <div>
+          <Helmet>
+            <meta name="keywords" content={metaKeywords} />
+            <title>{title}</title>
+          </Helmet>
           <div className="article-container">
             <ArticleHero article={articleContent} />
           </div>

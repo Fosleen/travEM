@@ -25,11 +25,7 @@ const DestinationPlace = () => {
   const fetchData = async () => {
     try {
       const data = await getPlacesByName(placeName!, 1, 1);
-      console.log(data);
-
       setPlace(data.data[0]);
-      console.log(data.data[0]);
-
       setMetaKeywords(
         `${data.data[0].name}, ${data.data[0].country.name}, ${data.data[0].name} ${data.data[0].country.name}, ${data.data[0].name} putovanje, ${data.data[0].name} putopis, ${data.data[0].name} što posjetiti, ${data.data[0].name} travem`
       );

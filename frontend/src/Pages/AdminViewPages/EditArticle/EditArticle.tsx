@@ -199,7 +199,7 @@ const EditArticle = () => {
                 if (!image.id) {
                   await addSectionImage(
                     image.url,
-                    response.section_id,
+                    response.id,
                     image.height,
                     image.width
                   );
@@ -434,7 +434,6 @@ const EditArticle = () => {
       <>
         <div className="edit-article-container">
           <div className="edit-article-header">
-            {article.metatags}
             <h2>Uredi članak</h2>
             <Button
               red

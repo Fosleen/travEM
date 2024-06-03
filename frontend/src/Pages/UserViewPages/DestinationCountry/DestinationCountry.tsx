@@ -35,7 +35,9 @@ const DestinationCountry = () => {
 
       setCountry(countryData);
 
-      setMetaKeywords(`država, ${countryData.name}`);
+      setMetaKeywords(
+        `${countryData.name}, ${countryData.name} putovanje, ${countryData.name} putopis, ${countryData.name} travem, ${countryData.name} top 10 lokacija, putovanje u ${countryData.name}, ${countryData.name} što posjetiti`
+      );
       setTitle(`Putujem s TravEM - ${countryData.name}`);
 
       if ("id" in favoriteArticleData) {

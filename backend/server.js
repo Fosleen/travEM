@@ -10,7 +10,7 @@ import { exec } from "child_process";
 import { createAssociations } from "./database_management.js";
 import helmet from "helmet";
 import swaggerDocs from "./app/utils/swagger.js";
-
+import prerender from "prerender-node";
 const app = express();
 
 // Create all 1:1, 1:M and M:N
@@ -27,6 +27,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(logger("dev"));
 app.use(helmet());
+app.use(prerender.set("prerenderToken", process.env.PRERENDER_TOKEN));
 app.set("view engine", "ejs");
 app.use(cors(corsOptions));
 app.use(

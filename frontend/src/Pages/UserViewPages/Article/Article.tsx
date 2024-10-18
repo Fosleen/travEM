@@ -26,7 +26,6 @@ const Article = () => {
   const [countryPlaces, setCountryPlaces] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [metaKeywords, setMetaKeywords] = useState("");
-  const [title, setTitle] = useState("");
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -42,7 +41,6 @@ const Article = () => {
       setCountryPlaces(places);
       setIsLoading(false);
       setMetaKeywords(`putujem s travem, ${content.metatags}`);
-      setTitle(content.title);
     } catch (error) {
       console.error("Error occurred while fetching homepage data:", error);
       setIsLoading(false);
@@ -79,7 +77,16 @@ const Article = () => {
         <div>
           <Helmet>
             <meta name="keywords" content={metaKeywords} />
-            <title>{title}</title>
+            <title>{articleContent.title}</title>
+            <meta property="og:title" content={articleContent.title} />
+            <meta property="og:type" content="article" />
+            <meta property="og:image" content={articleContent.main_image_url} />
+            <meta property="og:url" content={window.location.href} />
+            <meta name="twitter:card" content={articleContent.main_image_url} />
+            <meta
+              property="og:description"
+              content={articleContent.description}
+            />
           </Helmet>
           <div className="article-container">
             <ArticleHero article={articleContent} />

@@ -23,13 +23,14 @@ const corsOptions = {
   allowedHeaders: "Content-Type, Authorization",
 };
 
+app.use(cors(corsOptions));
+app.use(helmet());
+app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(logger("dev"));
-app.use(helmet());
+
 app.use(prerender.set("prerenderToken", process.env.PRERENDER_TOKEN));
-app.set("view engine", "ejs");
-app.use(cors(corsOptions));
+
 app.use(
   session({
     secret: process.env.JWT_SECRET_KEY,
@@ -39,6 +40,8 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.set("view engine", "ejs");
 
 app.use("/api/v1", router);
 app.use("/api/v1/secure", authenticateJwt, router); //middleware checking for jwt validity

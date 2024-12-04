@@ -49,8 +49,11 @@
       .homepage-hero-welcome-box {
         background-color: $bg;
         box-shadow: 1px 4px 6px rgba($color: #000000, $alpha: 0.25);
+        height: fit-content;
 
         img {
+          height: 100%;
+          padding: 8px;
           width: 280px;
         }
       }
@@ -190,14 +193,15 @@
           &:first-child {
             width: 100%;
             margin-top: 80px;
-            max-width: 520px;
+            max-width: 640px;
             text-align: center;
           }
         }
 
         .homepage-hero-welcome-box {
           img {
-            width: 520px;
+            padding: 20px;
+            width: 640px;
           }
         }
       }

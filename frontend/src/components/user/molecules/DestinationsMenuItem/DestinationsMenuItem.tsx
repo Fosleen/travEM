@@ -59,16 +59,21 @@ const DestinationsMenuItem: FC<{
       <hr />
       {countries && (
         <div className="destinations-menu-items">
-          {countries.map(
-            (el: { name: string; flag_image_url: string }, index) => (
+          {countries
+            .sort(
+              (
+                a: { name: string; flag_image_url: string },
+                b: { name: string; flag_image_url: string }
+              ) => a.name.localeCompare(b.name)
+            )
+            .map((el: { name: string; flag_image_url: string }, index) => (
               <DestinationItem
                 key={index}
                 filterMenuItem
                 name={el.name}
                 iconUrl={el.flag_image_url}
               />
-            )
-          )}
+            ))}
         </div>
       )}
     </div>

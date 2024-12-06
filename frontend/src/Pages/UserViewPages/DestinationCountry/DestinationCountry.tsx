@@ -102,7 +102,7 @@ const DestinationCountry = () => {
             </div>
           )}
           <div className="destination-country-places-container">
-            {country && country.places && (
+            {country && country.places && country.places.length > 0 && (
               <CountryPlaces
                 places={country.places}
                 countryName={countryName}

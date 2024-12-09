@@ -7,8 +7,12 @@ import Button from "../../../atoms/Button";
 import AdvancedDropdown from "../../../admin/atoms/AdvancedDropdown";
 import { getVisitedCountries } from "../../../../api/map";
 import { checkIfInfoExists } from "../../../../api/visaInfo";
+import { Info } from "@phosphor-icons/react";
 
-const VisaInfo: FC<{ countryId: number }> = ({ countryId }) => {
+const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
+  countryId,
+  countryName,
+}) => {
   const [isInfoShown, setInfoShown] = useState(false);
   const [visaInfo, setVisaInfo] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState("");
@@ -19,6 +23,11 @@ const VisaInfo: FC<{ countryId: number }> = ({ countryId }) => {
     "Slovenija",
     "Crna Gora",
   ]);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+
+  const toggleTooltip = () => {
+    setTooltipVisible(!tooltipVisible);
+  };
 
   const handleClick = async () => {
     const response = await checkIfInfoExists(countryId, selectedCountry.id);
@@ -64,7 +73,23 @@ const VisaInfo: FC<{ countryId: number }> = ({ countryId }) => {
     <div className="visa-info-container">
       <img src={passportImage} alt="passport-image" />
       <div className="visa-info-text">
-        <h2>Provjerite putne isprave</h2>
+        <div className="visa-info-title-container">
+          <h2>Provjerite putne isprave</h2>
+          <span
+            className="icon-wrapper"
+            onClick={toggleTooltip}
+            onMouseEnter={() => setTooltipVisible(true)}
+            onMouseLeave={() => setTooltipVisible(false)}
+          >
+            <Info size={24} weight="duotone" />
+            {tooltipVisible && (
+              <span className="tooltip">
+                Odaberite državu čije dokumente/putne isprave posjedujete kako
+                biste provjerili što Vam treba za ulazak u državu {countryName}.
+              </span>
+            )}
+          </span>
+        </div>
         <div className="dropdown-container">
           <AdvancedDropdown
             images

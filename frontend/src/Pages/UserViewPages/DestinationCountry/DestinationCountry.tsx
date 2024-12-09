@@ -123,7 +123,7 @@ const DestinationCountry = () => {
           )}
 
           <div className="destination-country-visa-info-container">
-            <VisaInfo countryId={country.id} />
+            <VisaInfo countryId={country.id} countryName={country.name} />
           </div>
           {country.videos.length > 0 && (
             <div className="destination-country-videos-container">

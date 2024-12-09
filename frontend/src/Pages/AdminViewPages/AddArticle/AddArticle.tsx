@@ -33,6 +33,7 @@ import Textarea from "../../../components/admin/atoms/Textarea";
 import { ThreeDots } from "react-loader-spinner";
 import { getAirportCities } from "../../../api/airportCities";
 import pLimit from "p-limit";
+import AdvancedEditor from "../../../components/atoms/AdvancedEditor";
 
 const AddArticle = () => {
   const navigate = useNavigate();
@@ -119,6 +120,8 @@ const AddArticle = () => {
 
   const handleSave = async (values) => {
     setIsSubmitClicked(true);
+
+    console.log(values);
 
     if (validateImages()) {
       Swal.fire({
@@ -574,13 +577,9 @@ const AddArticle = () => {
                                   </div>
                                   <div className="add-article-input">
                                     <Field
-                                      type="text"
-                                      as={Textarea}
-                                      rows={12}
                                       name={`sections[${index}].section_text`}
-                                      label="Tekst odlomka"
-                                      placeholder="Unesi tekst odlomka..."
-                                      value={sections[index].section_text}
+                                      label="Tekst odlomka *"
+                                      as={AdvancedEditor}
                                     />
                                     <ErrorMessage
                                       name={`sections[${index}].section_text`}

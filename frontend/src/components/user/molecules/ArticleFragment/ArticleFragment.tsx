@@ -5,6 +5,7 @@ import "./ArticleFragment.scss";
 import { FC } from "react";
 import { ArticleProps } from "../../../../common/types";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import DOMPurify from "dompurify";
 
 const ArticleFragment: FC<ArticleProps> = ({
   section = {},
@@ -15,7 +16,10 @@ const ArticleFragment: FC<ArticleProps> = ({
   return (
     <div className="article-wrapper" id={sectionId}>
       <h3>{section?.subtitle}</h3>
-      <p>{section?.text}</p>
+      <div
+        className="article-html-content"
+        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(section?.text) }}
+      />
       {section?.section_images?.length === 1 && (
         <div className="article-fragment-image-wrapper">
           <LazyLoadImage

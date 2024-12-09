@@ -52,6 +52,7 @@ import {
   deleteGalleryImage,
 } from "../../../api/galleryImages";
 import { getAirportCities } from "../../../api/airportCities";
+import AdvancedEditor from "../../../components/atoms/AdvancedEditor";
 
 const EditArticle = () => {
   const { id } = useParams();
@@ -721,15 +722,9 @@ const EditArticle = () => {
                                     </div>
                                     <div className="add-article-input">
                                       <Field
-                                        type="text"
-                                        as={Textarea}
-                                        rows={12}
-                                        value={
-                                          values.sections[index].section_text
-                                        }
-                                        name={`sections.${index}.section_text`}
-                                        label="Tekst odlomka"
-                                        placeholder="Unesi tekst odlomka..."
+                                        name={`sections[${index}].section_text`}
+                                        label="Tekst odlomka *"
+                                        as={AdvancedEditor}
                                       />
                                       <ErrorMessage
                                         name={`sections[${index}].section_text`}

@@ -69,6 +69,15 @@ export interface DropdownProps {
   images?: boolean;
 }
 
+export interface AdvancedEditorProps {
+  label?: string;
+  error?: string;
+  name?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onChange?: (e: any) => void;
+  value?: string;
+}
+
 export interface AirplaneTicketsMenuProps {
   setIsPlaneTicketsMenuShown?: (value: boolean) => void;
 }

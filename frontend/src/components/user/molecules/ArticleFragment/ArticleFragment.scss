@@ -1,5 +1,113 @@
 @import "../../../../utils/theme.scss";
 
+.article-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 24px;
+  max-width: 900px;
+
+  h3 {
+    font-weight: 800;
+    font-size: 24px;
+    color: $grey;
+  }
+
+  .article-html-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    p {
+      font-size: 16px;
+      line-height: 1.5;
+      margin: 0;
+
+      @media screen and ($desktop) {
+        font-size: 20px;
+      }
+    }
+
+    ol {
+      margin: 0;
+      padding-left: 1.5rem;
+      list-style: none;
+
+      li {
+        font-size: 16px;
+        line-height: 1.5;
+        margin-bottom: 8px;
+        position: relative;
+
+        @media screen and ($desktop) {
+          font-size: 20px;
+        }
+
+        &[data-list="bullet"] {
+          &::before {
+            content: "•";
+            position: absolute;
+            left: -1.2rem;
+            font-size: 1.2em;
+          }
+        }
+
+        &[data-list="unchecked"] {
+          &::before {
+            content: "☐";
+            position: absolute;
+            left: -1.5rem;
+            font-size: 1.2em;
+          }
+        }
+
+        &[data-list="checked"] {
+          &::before {
+            content: "☑";
+            position: absolute;
+            left: -1.5rem;
+            font-size: 1.2em;
+          }
+        }
+
+        // numbered lists - only show numbers when data-list is not set
+        &:not([data-list]) {
+          list-style: decimal;
+        }
+      }
+    }
+
+    .ql-ui {
+      display: none;
+    }
+
+    strong {
+      font-weight: 800;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    u {
+      text-decoration: underline;
+    }
+
+    s {
+      text-decoration: line-through;
+    }
+
+    a {
+      color: blue;
+      text-decoration: underline;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+}
+
 .article-fragment-images-wrapper {
   flex-direction: row;
   gap: 12px;
@@ -8,7 +116,6 @@
   img {
     border-radius: 8px;
     width: 300px;
-
     @media screen and ($desktop) {
       width: 400px;
     }
@@ -24,6 +131,7 @@
   display: flex;
   justify-content: space-between;
   gap: 24px;
+
   img {
     border-radius: 8px;
     height: 100%;
@@ -52,29 +160,6 @@
     @media screen and ($desktop) {
       width: 900px;
       height: 500px;
-    }
-  }
-}
-
-.article-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  margin-bottom: 24px;
-  max-width: 900px;
-
-  h3 {
-    font-weight: 800;
-    font-size: 24px;
-    color: $grey;
-  }
-
-  p {
-    font-size: 16px;
-    line-height: 1.5;
-
-    @media screen and ($desktop) {
-      font-size: 20px;
     }
   }
 }

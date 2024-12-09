@@ -51,7 +51,8 @@ export async function updateBanner(
   banner_small_text: string,
   banner_description: string,
   button_text: string,
-  banner_image_url: string
+  banner_image_url: string,
+  button_url: string
 ) {
   const token = localStorage.getItem("jwt");
 
@@ -68,6 +69,7 @@ export async function updateBanner(
       banner_description: banner_description,
       button_text: button_text,
       banner_image_url: banner_image_url,
+      button_url: button_url,
     }),
   });
 

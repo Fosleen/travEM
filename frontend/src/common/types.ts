@@ -100,6 +100,7 @@ export interface HomepageData {
   flights_nmbr: string;
   videos_nmbr: string;
   distance_nmbr: string;
+  button_url: string;
 }
 
 export interface FooterData {
@@ -113,6 +114,7 @@ export interface EditBannerData {
   banner_description: string;
   button_text: string;
   banner_image_url: string;
+  button_url: string;
   recommended_post_1: number;
   recommended_post_2: number;
   recommended_post_3: number;

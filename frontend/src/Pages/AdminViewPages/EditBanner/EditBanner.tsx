@@ -74,7 +74,8 @@ const EditBanner = () => {
             values.banner_small_text,
             values.banner_description,
             values.button_text,
-            values.banner_image_url
+            values.banner_image_url,
+            values.button_url
           );
           await updateOrCreateTopHomepageArticles(
             [
@@ -109,6 +110,7 @@ const EditBanner = () => {
     banner_description: Yup.string()
       .required("Obavezno polje!")
       .max(200, "Tekst smije imati max 200 znakova!"),
+    button_url: Yup.string().required("Obavezno polje!"),
     button_text: Yup.string()
       .required("Obavezno polje!")
       .max(45, "Gumb smije imati max 45 znakova!"),
@@ -124,6 +126,7 @@ const EditBanner = () => {
             banner_title: homepageContent.banner_title,
             banner_small_text: homepageContent.banner_small_text,
             banner_description: homepageContent.banner_description,
+            button_url: homepageContent.button_url,
             button_text: homepageContent.button_text,
             banner_image_url: homepageContent.banner_image_url,
             recommended_post_1: favoriteArticles[0].id,
@@ -215,6 +218,13 @@ const EditBanner = () => {
                   }}
                 />
                 <ErrorMessage name="recommended_post_3" component="div" />
+                <Field
+                  name="button_url"
+                  type="text"
+                  as={Input}
+                  label="Klik na gumb vodi na: *"
+                />
+                <ErrorMessage name="button_url" component="div" />
               </div>
               <div className="edit-banner-image-container">
                 <img

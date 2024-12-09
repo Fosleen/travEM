@@ -33,6 +33,9 @@ components:
         distance_nmbr:
           type: integer
           example: 4
+        button_url:
+          type: string
+          example: "https://fosleen.com/"
 
     HomepageStats:
       type: object

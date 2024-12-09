@@ -35,7 +35,8 @@ class HomepageService {
     flights_nmbr,
     videos_nmbr,
     distance_nmbr,
-    banner_image_url
+    banner_image_url,
+    button_url
   ) {
     try {
       await db.models.Homepage.update(
@@ -49,6 +50,7 @@ class HomepageService {
           videos_nmbr: videos_nmbr,
           distance_nmbr: distance_nmbr,
           banner_image_url: banner_image_url,
+          button_url: button_url,
         },
         {
           returning: true,

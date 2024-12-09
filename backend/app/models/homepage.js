@@ -11,6 +11,7 @@ export default (sequelize, DataTypes) => {
       flights_nmbr: { type: DataTypes.STRING(4), allowNull: false },
       videos_nmbr: { type: DataTypes.STRING(4), allowNull: false },
       distance_nmbr: { type: DataTypes.STRING(4), allowNull: false },
+      button_url: { type: DataTypes.STRING(255), allowNull: false },
     },
     {
       underscored: true,

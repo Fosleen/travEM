@@ -30,7 +30,7 @@ const DestinationPlace = () => {
         `${data.data[0].name}, ${data.data[0].country.name}, ${data.data[0].name} ${data.data[0].country.name}, ${data.data[0].name} putovanje, ${data.data[0].name} putopis, ${data.data[0].name} što posjetiti, ${data.data[0].name} travem`
       );
       setTitle(
-        `Putujem s TravEM - ${data.data[0].name}, ${data.data[0].country.name}`
+        `putujEM s travEM - ${data.data[0].name}, ${data.data[0].country.name}`
       );
     } catch (error) {
       console.error("error while fetching:", error);

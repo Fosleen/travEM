@@ -81,7 +81,7 @@ function App() {
   return (
     <>
       <Helmet>
-        <title>Putujem s TravEM</title>
+        <title>putujEM s travEM</title>
         <meta
           name="keywords"
           content="putujem s travem, putujemstravem, travem, putujem travem, travem putovanja, putovanja, putovanja iz hrvatske, travel blog, studentska putovanja, budget putovanja, jeftina putovanja, putovanja po europi, hrvatska putovanje, croatian travel blog, travel bloggers, croatian blog, hrvatska blog, studentska putovanja blog, jeftina studentska putovanja, travem youtube, matija dokmanović, ema pavrlišak, putovanje travem, balkanska jeftina putovanja, hrvatska jeftina putovanja, putovanje iz hrvatske, kako organizirati putovanje, savjeti za putovanja"

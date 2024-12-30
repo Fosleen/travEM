@@ -19,6 +19,7 @@ import React from "react";
 import RecommendedPosts from "../../../components/user/molecules/RecommendedPosts";
 import { Adsense } from "@ctrl/react-adsense";
 import Ad from "../../../components/atoms/Ad";
+import { LazyLoadComponent } from "react-lazy-load-image-component";
 
 const Article = () => {
   const { id } = useParams();
@@ -146,17 +147,19 @@ const Article = () => {
             )}
           </div>
           <Ad dataAdSlot="12345678" />
-          <div className="article-gallery-wrapper">
-            {articleContent?.gallery_images && (
-              <Gallery
-                photos={articleContent.gallery_images.map((image) => ({
-                  src: image.url,
-                  width: image.width,
-                  height: image.height,
-                }))}
-              />
-            )}
-          </div>
+          <LazyLoadComponent>
+            <div className="article-gallery-wrapper">
+              {articleContent?.gallery_images && (
+                <Gallery
+                  photos={articleContent.gallery_images.map((image) => ({
+                    src: image.url,
+                    width: image.width,
+                    height: image.height,
+                  }))}
+                />
+              )}
+            </div>
+          </LazyLoadComponent>
           <Adsense
             client="ca-pub-3489990178681903"
             slot="7259870552"

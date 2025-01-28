@@ -28,12 +28,19 @@ import { addSection } from "../../../api/sections";
 import Modal from "../../../components/atoms/Modal";
 import { addSectionImage } from "../../../api/sectionImages";
 import { addGalleryImage } from "../../../api/galleryImages";
-import { notifySuccess } from "../../../components/atoms/Toast/Toast";
+import {
+  notifyFailure,
+  notifySuccess,
+} from "../../../components/atoms/Toast/Toast";
 import Textarea from "../../../components/admin/atoms/Textarea";
 import { ThreeDots } from "react-loader-spinner";
 import { getAirportCities } from "../../../api/airportCities";
 import pLimit from "p-limit";
 import AdvancedEditor from "../../../components/atoms/AdvancedEditor";
+import {
+  getSubscribers,
+  sendNewsletterToSubscribers,
+} from "../../../api/subscribers";
 
 const AddArticle = () => {
   const navigate = useNavigate();
@@ -135,65 +142,108 @@ const AddArticle = () => {
         confirmButtonText: "Da, objavi!",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          const dateString = new Date().toJSON().slice(0, 10);
-          const todaysDate = new Date(dateString);
+          try {
+            const dateString = new Date().toJSON().slice(0, 10);
+            const todaysDate = new Date(dateString);
 
-          let metatagsString = "";
-          values.metatags.map(
-            (el, index) =>
-              (metatagsString += `${index !== 0 ? ", " : ""}${el.metatag_text}`)
-          );
-
-          const articleResponse = await addArticle(
-            values.article_title,
-            values.article_subtitle,
-            values.article_description,
-            values.article_video,
-            metatagsString,
-            parseInt(values.article_type),
-            parseInt(values.article_country),
-            parseInt(values.article_place),
-            mainArticleImage,
-            user_id,
-            todaysDate,
-            parseInt(values.article_airport_city_id)
-          );
-
-          otherArticleImages.map(async (image) => {
-            return await addGalleryImage(
-              image.url,
-              image.height,
-              image.width,
-              articleResponse.id
+            let metatagsString = "";
+            values.metatags.map(
+              (el, index) =>
+                (metatagsString += `${index !== 0 ? ", " : ""}${
+                  el.metatag_text
+                }`)
             );
-          });
-          if (isMainCountryPostChecked) {
-            await createTopCountryArticle(articleResponse.id);
-          }
 
-          await Promise.all(
-            // koristi pLimit da onemoguci previse requestova odjednom
-            values.sections.map(async (section, index) => {
-              const sectionResponse = await addSection(
-                section.section_text,
-                section.section_subtitle,
-                index + 1,
-                section.section_url_title,
-                section.section_url_link,
-                section.section_icon,
-                articleResponse.id
-              );
+            const articleResponse = await addArticle(
+              values.article_title,
+              values.article_subtitle,
+              values.article_description,
+              values.article_video,
+              metatagsString,
+              parseInt(values.article_type),
+              parseInt(values.article_country),
+              parseInt(values.article_place),
+              mainArticleImage,
+              user_id,
+              todaysDate,
+              parseInt(values.article_airport_city_id)
+            );
 
-              await Promise.all(
-                sectionImages[index].map((el) =>
-                  limit(() => addSectionImage(el.url, sectionResponse.id))
+            await Promise.all([
+              // Handle gallery images
+              ...otherArticleImages.map((image) =>
+                addGalleryImage(
+                  image.url,
+                  image.height,
+                  image.width,
+                  articleResponse.id
                 )
-              );
-            })
-          );
+              ),
 
-          navigate("/admin/članci");
-          notifySuccess("Uspješno predano!");
+              isMainCountryPostChecked
+                ? createTopCountryArticle(articleResponse.id)
+                : Promise.resolve(),
+
+              Promise.all(
+                values.sections.map(async (section, index) => {
+                  const sectionResponse = await addSection(
+                    section.section_text,
+                    section.section_subtitle,
+                    index + 1,
+                    section.section_url_title,
+                    section.section_url_link,
+                    section.section_icon,
+                    articleResponse.id
+                  );
+
+                  return Promise.all(
+                    sectionImages[index].map((el) =>
+                      limit(() => addSectionImage(el.url, sectionResponse.id))
+                    )
+                  );
+                })
+              ),
+
+              isNotifySubscribersChecked
+                ? (async () => {
+                    try {
+                      const subscribers = await getSubscribers();
+
+                      if (subscribers && subscribers.length > 0) {
+                        const articleData = {
+                          id: articleResponse.id,
+                          article_title: values.article_title,
+                          article_subtitle: values.article_subtitle,
+                          article_description: values.article_description,
+                          mainArticleImage: mainArticleImage,
+                        };
+
+                        await sendNewsletterToSubscribers(
+                          subscribers,
+                          articleData
+                        );
+                      }
+                    } catch (error) {
+                      console.error("Error sending newsletter:", error);
+                      notifyFailure(
+                        "Članak je objavljen, ali slanje newslettera nije uspjelo!"
+                      );
+                    }
+                  })()
+                : Promise.resolve(),
+            ]);
+
+            navigate("/admin/članci");
+            notifySuccess("Uspješno objavljen članak i poslan newsletter!");
+          } catch (error) {
+            console.error("Error publishing article:", error);
+            Swal.fire({
+              title: "Greška",
+              text: "Došlo je do greške prilikom objave članka",
+              icon: "error",
+              confirmButtonColor: "#2BAC82",
+            });
+          }
         }
       });
     }

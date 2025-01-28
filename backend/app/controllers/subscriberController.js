@@ -22,6 +22,17 @@ class SubscriberController {
       res.status(200).json(response);
     }
   }
+
+  async sendNewsletter(req, res) {
+    try {
+      const { subscribers, article } = req.body;
+      await service.sendNewsletter(subscribers, article);
+      res.status(200).json({ message: "Newsletter sent successfully" });
+    } catch (error) {
+      console.error("Error sending newsletter:", error);
+      res.status(500).json({ error: "Failed to send newsletter" });
+    }
+  }
 }
 
 export default new SubscriberController();

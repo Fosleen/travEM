@@ -25,11 +25,8 @@ class SubscriberService {
   }
 
   async sendNewsletter(subscribers, article) {
-    console.log("Poruka dolazi do backend servisa");
     try {
-      console.log("Service: Starting newsletter send");
       const result = await sendNewsletterToSubscribers(subscribers, article);
-      console.log("Service: Newsletter sent successfully");
       return result;
     } catch (error) {
       console.error("Error in sendNewsletter service:", error);

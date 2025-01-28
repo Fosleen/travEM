@@ -4,6 +4,8 @@ import envelope from "../../../../assets/images/envelope.png";
 import "./Newsletter.scss";
 import NewsletterImage from "../../atoms/NewsletterImage";
 import { useState } from "react";
+import { notifyFailure, notifyInfo } from "../../../atoms/Toast/Toast";
+import { addSubscriber } from "../../../../api/subscribers";
 
 const Newsletter = () => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -11,9 +13,27 @@ const Newsletter = () => {
   // eslint-disable-next-line
   const [email, setEmail] = useState("");
 
-  const handleSubscriptionClick = () => {
-    // TODO add toast if empty
-    console.log(`subscribed ${email}`);
+  const handleSubscriptionClick = async () => {
+    if (!email) {
+      notifyFailure("Molimo unesite email adresu");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      notifyFailure("Molimo unesite valjanu email adresu");
+      return;
+    }
+
+    try {
+      await addSubscriber(email);
+      notifyInfo(
+        "Uspješno ste se pretplatili na newsletter! Ako ne vidite poruke, provjerite neželjenu poštu (spam mail) i maknite naš mail od tamo. Hvala."
+      );
+      setEmail("");
+    } catch (error) {
+      notifyFailure("Došlo je do greške prilikom pretplate");
+    }
   };
 
   return (
@@ -48,9 +68,8 @@ const Newsletter = () => {
                   green
                   name="newsletter-input"
                   placeholder="Unesi e-mail adresu..."
-                  onChange={() => {
-                    // TODO add formik and then make this work
-                  }}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="newsletter-button-container">

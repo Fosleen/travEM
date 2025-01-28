@@ -30,3 +30,22 @@ export async function sendNewsletterToSubscribers(subscribers, article) {
 
   return data;
 }
+
+export async function addSubscriber(email) {
+  const response = await fetch(`${apiUrl}/subscribers`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    throw new Error(data.error);
+  }
+
+  return data;
+}

@@ -24,3 +24,15 @@ export const notifyFailure = (message: string) =>
     progress: undefined,
     theme: "light",
   });
+
+export const notifyInfo = (message: string) =>
+  toast.info(message, {
+    position: "top-right",
+    autoClose: false,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });

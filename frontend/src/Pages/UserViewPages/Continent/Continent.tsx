@@ -17,6 +17,12 @@ const Continent = () => {
     fetchData();
   }, [id]);
 
+  interface Country {
+    id: number;
+    name: string;
+    description: string;
+  }
+
   const fetchData = async () => {
     try {
       if (id) {
@@ -26,7 +32,10 @@ const Continent = () => {
         const continentData = await getContinentById(parseInt(id));
         setContinent(continentData);
         const countriesData = await getCountriesByContinent(parseInt(id));
-        setCountries(countriesData);
+        const sortedCountries = countriesData.sort((a: Country, b: Country) =>
+          a.name.localeCompare(b.name)
+        );
+        setCountries(sortedCountries);
       }
     } catch (error) {
       console.error("error while fetching:", error);

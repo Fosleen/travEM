@@ -9,6 +9,15 @@ import "./TipsMenu.scss";
 import { FC } from "react";
 import { TipsMenuProps } from "../../../../common/types";
 
+const menuItems = [
+  { title: "Pakiranje", icon: icon1 },
+  { title: "Let avionom", icon: icon2 },
+  { title: "Organizacija puta", icon: icon3 },
+  { title: "Aplikacije", icon: icon4 },
+  { title: "Smještaj", icon: icon5 },
+  { title: "Revolut", icon: icon6 },
+];
+
 const TipsMenu: FC<TipsMenuProps> = ({ setIsTipsMenuShown }) => {
   const handleMouseLeave = () => {
     if (setIsTipsMenuShown) {
@@ -18,12 +27,18 @@ const TipsMenu: FC<TipsMenuProps> = ({ setIsTipsMenuShown }) => {
 
   return (
     <div className="tips-menu-container" onMouseLeave={handleMouseLeave}>
-      <TipsMenuItem title={"Pakiranje"} icon={icon1} />
-      <TipsMenuItem title={"Let avionom"} icon={icon2} />
-      <TipsMenuItem title={"Organizacija puta"} icon={icon3} />
-      <TipsMenuItem title={"Aplikacije"} icon={icon4} />
-      <TipsMenuItem title={"Smještaj"} icon={icon5} />
-      <TipsMenuItem title={"Revolut"} icon={icon6} />
+      {menuItems.map((item) => (
+        <TipsMenuItem
+          key={item.title}
+          title={item.title}
+          icon={item.icon}
+          onClick={() => {
+            if (setIsTipsMenuShown) {
+              setIsTipsMenuShown(false);
+            }
+          }}
+        />
+      ))}
     </div>
   );
 };

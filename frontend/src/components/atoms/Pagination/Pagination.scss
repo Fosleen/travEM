@@ -61,6 +61,8 @@
   color: $green;
   padding: 6px 8px;
   border-radius: 8px;
+  display: flex;
+  align-items: stretch;
 }
 
 .page-link {
@@ -88,6 +90,6 @@
   padding: 8px;
 
   @media screen and ($tabletMedium) {
-    padding: 12px 24px;
+    padding: 10px 20px;
   }
 }

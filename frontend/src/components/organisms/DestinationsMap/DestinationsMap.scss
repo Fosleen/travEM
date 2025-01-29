@@ -80,3 +80,9 @@
   padding-right: 8px;
   font-size: 32px;
 }
+
+.mapboxgl-ctrl-top-left,
+.mapboxgl-ctrl-bottom-left,
+.mapboxgl-ctrl-bottom-right {
+  z-index: 1;
+}

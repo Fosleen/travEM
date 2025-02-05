@@ -14,26 +14,39 @@ const Search: FC<SearchProps> = ({
     searchClasses += ` search-green `;
   }
 
-  const handleKeyPress = (event: { key: string }) => {
+  const handleSubmit = (event: React.FormEvent) => {
+    console.log("handleSubmit");
+
+    event.preventDefault();
+    onClick();
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    console.log("handleKeyDown");
+
     if (event.key === "Enter") {
+      console.log("Enter");
+
+      event.preventDefault();
       onClick();
     }
   };
 
   return (
-    <div className="search-container" onKeyUp={handleKeyPress}>
+    <form onSubmit={handleSubmit} className="search-container">
       <input
         type="text"
         className={searchClasses}
         onChange={onChange}
         placeholder={placeholder}
+        onKeyDown={handleKeyDown}
       />
       <MagnifyingGlass
         size={16}
         className="ph-magnifying-glass"
         onClick={onClick}
       />
-    </div>
+    </form>
   );
 };
 

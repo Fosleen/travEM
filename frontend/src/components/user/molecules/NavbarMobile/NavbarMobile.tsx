@@ -50,6 +50,11 @@ const NavbarMobile = ({
     navigate(`/pretrazivanje?naslov=${searchText}`);
   };
 
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    onClick();
+  };
+
   useEffect(() => {
     console.log(selectedSubcategory);
   }, [selectedSubcategory]);
@@ -67,13 +72,13 @@ const NavbarMobile = ({
         <div className="navbar-mobile-menu">
           <div className="navbar-empty-header"></div>
           <div className="navbar-mobile-menu-categories">
-            <div className="navbar-mobile-menu-search">
+            <form className="navbar-mobile-menu-search" onSubmit={handleSubmit}>
               <Search
                 green
                 onChange={handleSearchChange}
                 onClick={handleSearch}
               />
-            </div>
+            </form>
             <div className="navbar-mobile-menu-list">
               <div
                 className={`navbar-mobile-item ${

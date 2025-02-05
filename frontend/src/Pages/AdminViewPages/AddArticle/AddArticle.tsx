@@ -203,38 +203,38 @@ const AddArticle = () => {
                   );
                 })
               ),
-
-              isNotifySubscribersChecked
-                ? (async () => {
-                    try {
-                      const subscribers = await getSubscribers();
-
-                      if (subscribers && subscribers.length > 0) {
-                        const articleData = {
-                          id: articleResponse.id,
-                          article_title: values.article_title,
-                          article_subtitle: values.article_subtitle,
-                          article_description: values.article_description,
-                          mainArticleImage: mainArticleImage,
-                        };
-
-                        await sendNewsletterToSubscribers(
-                          subscribers,
-                          articleData
-                        );
-                      }
-                    } catch (error) {
-                      console.error("Error sending newsletter:", error);
-                      notifyFailure(
-                        "Članak je objavljen, ali slanje newslettera nije uspjelo!"
-                      );
-                    }
-                  })()
-                : Promise.resolve(),
             ]);
 
+            if (isNotifySubscribersChecked) {
+              try {
+                const subscribers = await getSubscribers();
+
+                if (subscribers && subscribers.length > 0) {
+                  const articleData = {
+                    id: articleResponse.id,
+                    article_title: values.article_title,
+                    article_subtitle: values.article_subtitle,
+                    article_description: values.article_description,
+                    mainArticleImage: mainArticleImage,
+                  };
+
+                  await sendNewsletterToSubscribers(subscribers, articleData);
+
+                  notifySuccess(
+                    "Uspješno objavljen članak i poslan newsletter!"
+                  );
+                }
+              } catch (error) {
+                console.error("Newsletter sending failed:", error);
+                notifyFailure(
+                  "Članak je objavljen, ali slanje newslettera nije uspjelo!"
+                );
+              }
+            } else {
+              notifySuccess("Članak je uspješno objavljen!");
+            }
+
             navigate("/admin/članci");
-            notifySuccess("Uspješno objavljen članak i poslan newsletter!");
           } catch (error) {
             console.error("Error publishing article:", error);
             Swal.fire({
@@ -291,6 +291,7 @@ const AddArticle = () => {
       setMainArticleImage(null);
     } else if (type == "other") {
       //ovo tu su gallery slike
+
       setOtherArticleImages(
         otherArticleImages.filter((_el, index) => index !== itemIndex)
       );

@@ -89,47 +89,47 @@ export const sendEmail = async (to, subject, html) => {
 
 export const sendNewsletterToSubscribers = async (subscribers, article) => {
   const emailTemplate = createEmailTemplate(article);
+  const batchSize = 10;
+  const batchDelay = 2000;
+  let failedEmails = [];
 
-  const emailPromises = [];
-  const batchSize = 50;
-
-  // Process in batches to avoid overwhelming the email server
   for (let i = 0; i < subscribers.length; i += batchSize) {
     const batch = subscribers.slice(i, i + batchSize);
 
-    const batchPromises = batch.map((subscriber) => {
-      return sendEmail(
-        subscriber.email,
-        `Novi članak: ${article.article_title}`,
-        emailTemplate
-      ).catch((error) => {
-        console.error(`Failed to send email to ${subscriber.email}:`, error);
-        throw error;
-      });
-    });
-
-    emailPromises.push(
-      Promise.all(batchPromises)
-        .then(() => {
-          return new Promise((resolve) => setTimeout(resolve, 1000));
-        })
-        .catch((error) => {
-          console.error(
-            `Batch ${Math.floor(i / batchSize) + 1} failed:`,
-            error
+    try {
+      const batchPromises = batch.map(async (subscriber) => {
+        try {
+          await sendEmail(
+            subscriber.email,
+            `Novi članak: ${article.article_title}`,
+            emailTemplate
           );
-          throw error;
-        })
+          return { success: true, email: subscriber.email };
+        } catch (error) {
+          console.error(`Failed to send to ${subscriber.email}:`, error);
+          return { success: false, email: subscriber.email, error };
+        }
+      });
+
+      const results = await Promise.all(batchPromises);
+      failedEmails = [...failedEmails, ...results.filter((r) => !r.success)];
+
+      await new Promise((resolve) => setTimeout(resolve, batchDelay));
+    } catch (error) {
+      console.error(`Batch ${Math.floor(i / batchSize) + 1} failed:`, error);
+    }
+  }
+
+  if (failedEmails.length > 0) {
+    console.warn(
+      `Failed to send to ${failedEmails.length} emails:`,
+      failedEmails
     );
   }
 
-  console.log(`Created ${emailPromises.length} batch promises in total`);
-
-  try {
-    await Promise.all(emailPromises);
-    console.log("All newsletters sent successfully");
-  } catch (error) {
-    console.error("Newsletter sending failed:", error);
-    throw error;
-  }
+  return {
+    totalProcessed: subscribers.length,
+    successful: subscribers.length - failedEmails.length,
+    failed: failedEmails,
+  };
 };

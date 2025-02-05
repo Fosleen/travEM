@@ -14,19 +14,21 @@ const Search: FC<SearchProps> = ({
     searchClasses += ` search-green `;
   }
 
-  const handleKeyPress = (event: { key: string }) => {
+  const handleKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === "Enter") {
+      event.preventDefault();
       onClick();
     }
   };
 
   return (
-    <div className="search-container" onKeyUp={handleKeyPress}>
+    <div className="search-container">
       <input
         type="text"
         className={searchClasses}
         onChange={onChange}
         placeholder={placeholder}
+        onKeyDown={handleKeyPress}
       />
       <MagnifyingGlass
         size={16}

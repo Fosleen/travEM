@@ -15,12 +15,18 @@ const Search: FC<SearchProps> = ({
   }
 
   const handleSubmit = (event: React.FormEvent) => {
+    console.log("handleSubmit");
+
     event.preventDefault();
     onClick();
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
+    console.log("handleKeyDown");
+
     if (event.key === "Enter") {
+      console.log("Enter");
+
       event.preventDefault();
       onClick();
     }
@@ -29,7 +35,7 @@ const Search: FC<SearchProps> = ({
   return (
     <form onSubmit={handleSubmit} className="search-container">
       <input
-        type="search"
+        type="text"
         className={searchClasses}
         onChange={onChange}
         placeholder={placeholder}

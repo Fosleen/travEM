@@ -1,29 +1,26 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import { List, X, CaretDown, CaretUp } from "@phosphor-icons/react";
-import { useEffect } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import "./NavbarMobile.scss";
 import SocialMediaLinks from "../../atoms/SocialMediaLinks/SocialMediaLinks";
 import Search from "../../../atoms/Search";
 import AirplaneTicketsMenu from "../../organisms/AirplaneTicketsMenu";
 import DestinationsMenu from "../../organisms/DestinationsMenu";
 import TipsMenu from "../../organisms/TipsMenu";
+import { useNavigate } from "react-router-dom";
 
 const NavbarMobile = ({
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
   location,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
   setOpenNav,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
   openNav,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
   setSelectedSubcategory,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
   selectedSubcategory,
 }) => {
+  const [searchText, setSearchText] = useState<string>("");
+  const navigate = useNavigate();
+
   const navHandler = () => {
     setOpenNav(!openNav);
   };
@@ -41,6 +38,16 @@ const NavbarMobile = ({
     } else {
       setSelectedSubcategory("");
     }
+  };
+
+  const handleSearchChange = (e: {
+    target: { value: SetStateAction<string> };
+  }) => {
+    setSearchText(e.target.value);
+  };
+
+  const handleSearch = () => {
+    navigate(`/pretrazivanje?naslov=${searchText}`);
   };
 
   useEffect(() => {
@@ -61,7 +68,11 @@ const NavbarMobile = ({
           <div className="navbar-empty-header"></div>
           <div className="navbar-mobile-menu-categories">
             <div className="navbar-mobile-menu-search">
-              <Search green onChange={() => {}} />
+              <Search
+                green
+                onChange={handleSearchChange}
+                onClick={handleSearch}
+              />
             </div>
             <div className="navbar-mobile-menu-list">
               <div

@@ -1,0 +1,43 @@
+@import "../../../../utils/theme.scss";
+
+.sponsors-parent-wrapper {
+  margin-bottom: 16px;
+  margin-top: 16px;
+
+  .sponsors-inner-wrapper {
+    img {
+      max-height: 40px;
+      max-width: 120px;
+      margin-right: 40px;
+    }
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .sponsors-parent-wrapper {
+    margin-bottom: 40px;
+    margin-top: 0px;
+
+    .sponsors-inner-wrapper {
+      img {
+        max-height: 56px;
+        max-width: 160px;
+        margin-right: 56px;
+      }
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .sponsors-parent-wrapper {
+    margin-bottom: 40px;
+
+    .sponsors-inner-wrapper {
+      img {
+        max-height: 56px;
+        max-width: 160px;
+        margin-right: 64px;
+      }
+    }
+  }
+}

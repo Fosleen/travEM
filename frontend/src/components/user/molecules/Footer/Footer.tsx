@@ -3,6 +3,7 @@ import SocialMediaLinks from "../../atoms/SocialMediaLinks/SocialMediaLinks";
 import logo from "../../../../assets/images/logo-light.png";
 import "./Footer.scss";
 import { useEffect, useState } from "react";
+import Marquee from "../../atoms/Marquee";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignoreS
@@ -131,6 +132,7 @@ const Footer = ({
           <img src={logo} alt="fosleen-logo" />
         </a>
       </div>
+      <Marquee />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import Fosleen from "../assets/images/logo-light.png";
 import DeraHe from "../assets/images/sponsors/DeraHe.png";
-import Saily from "../assets/images/sponsors/Saily.png";
+import Saily from "../assets/images/sponsors/Saily_.png";
 import NordVPN from "../assets/images/sponsors/NordVPN.png";
 import Istanbulepass from "../assets/images/sponsors/Istanbulepass.png";
 import CCUSA from "../assets/images/sponsors/CCUSA.png";

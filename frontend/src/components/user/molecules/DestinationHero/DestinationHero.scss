@@ -5,7 +5,7 @@
   overflow: hidden;
   padding: 0 16px;
   position: relative;
-  min-height: 400px;
+  min-height: 640px;
   height: fit-content;
 
   .destination-hero-left {
@@ -77,14 +77,16 @@
 
   .destination-hero-right {
     position: absolute;
-    top: 0px;
-    right: -256px;
+    top: 180px;
+    right: 0px;
     z-index: 0;
   }
 }
 
 @media screen and ($tabletMedium) {
   .destination-hero-container {
+    min-height: 400px;
+
     .destination-hero-left {
       .destination-hero-titles {
         .bold-grey {
@@ -109,6 +111,7 @@
     }
 
     .destination-hero-right {
+      top: 0;
       right: -80px;
     }
   }

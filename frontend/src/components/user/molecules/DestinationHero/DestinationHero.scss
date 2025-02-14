@@ -26,8 +26,9 @@
         font-size: 64px;
         position: absolute;
         z-index: 1;
-        left: 8px;
-        max-width: 500px;
+        line-height: 80%;
+        margin-left: 8px;
+        max-width: 600px;
         top: 48px;
       }
 
@@ -37,11 +38,13 @@
         font-style: normal;
         color: $limeGreen;
         font-size: 64px;
+        margin-right: 8px;
         position: absolute;
+        line-height: 80%;
         z-index: 1;
         text-shadow: 0 4px 7px rgba($color: #000000, $alpha: 0.5);
         top: 56px;
-        max-width: 500px;
+        max-width: 600px;
       }
 
       .cursive-black {
@@ -52,15 +55,15 @@
         color: $grey;
         font-size: 64px;
         z-index: 1;
-        line-height: 130%;
+        line-height: 80%;
         padding-top: 12px;
-        max-width: 500px;
+        max-width: 600px;
         word-spacing: 32px;
       }
     }
 
     .destination-hero-description {
-      margin-top: 48px;
+      margin-top: 64px;
       font-size: 16px;
       margin-bottom: 16px;
       z-index: 1;
@@ -84,14 +87,24 @@
   .destination-hero-container {
     .destination-hero-left {
       .destination-hero-titles {
+        .bold-grey {
+          line-height: 130%;
+        }
+
+        .bold-color {
+          line-height: 130%;
+        }
+
         .cursive-black {
           word-spacing: -12px;
           letter-spacing: 8px;
+          line-height: 130%;
         }
       }
 
       .destination-hero-description {
         max-width: 320px;
+        margin-top: 48px;
       }
     }
 
@@ -184,12 +197,12 @@
       .destination-hero-titles {
         .bold-grey {
           font-size: 140px;
-          max-width: 760px;
+          max-width: 840;
         }
 
         .bold-color {
           font-size: 140px;
-          max-width: 760px;
+          max-width: 840;
         }
 
         .cursive-black {

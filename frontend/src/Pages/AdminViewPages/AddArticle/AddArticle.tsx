@@ -38,7 +38,7 @@ import { getAirportCities } from "../../../api/airportCities";
 import pLimit from "p-limit";
 import AdvancedEditor from "../../../components/atoms/AdvancedEditor";
 import {
-  getSubscribers,
+  getSubscribersWithoutPagination,
   sendNewsletterToSubscribers,
 } from "../../../api/subscribers";
 
@@ -207,7 +207,7 @@ const AddArticle = () => {
 
             if (isNotifySubscribersChecked) {
               try {
-                const subscribers = await getSubscribers();
+                const subscribers = await getSubscribersWithoutPagination();
 
                 if (subscribers && subscribers.length > 0) {
                   const articleData = {

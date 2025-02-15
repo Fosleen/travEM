@@ -4,6 +4,8 @@ import controller from "../controllers/subscriberController.js";
 const router = new Router();
 router.get("/", controller.getSubscribers);
 router.post("/", controller.addSubscriber);
+router.get("/no-pagination", controller.getSubscribersNoPagination);
+
 router.delete("/:id", controller.deleteSubscriber);
 
 router.post("/send-newsletter", controller.sendNewsletter);

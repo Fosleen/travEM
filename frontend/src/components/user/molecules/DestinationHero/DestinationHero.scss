@@ -11,11 +11,11 @@
   .destination-hero-left {
     display: flex;
     flex-direction: column;
-    height: 340px;
+    height: 300px;
     justify-content: center;
 
     .destination-hero-titles {
-      padding-top: 48px;
+      padding-top: 0px;
       position: relative;
 
       .bold-grey {
@@ -29,7 +29,7 @@
         line-height: 80%;
         margin-left: 8px;
         max-width: 600px;
-        top: 48px;
+        top: 0px;
       }
 
       .bold-color {
@@ -43,7 +43,7 @@
         line-height: 80%;
         z-index: 1;
         text-shadow: 0 4px 7px rgba($color: #000000, $alpha: 0.5);
-        top: 56px;
+        top: 8px;
         max-width: 600px;
       }
 
@@ -63,15 +63,16 @@
     }
 
     .destination-hero-description {
-      margin-top: 64px;
+      margin-top: 32px;
       font-size: 16px;
       margin-bottom: 16px;
       z-index: 1;
       position: relative;
       max-width: 240px;
-      text-shadow: -1px -1px 0 #f8f8f8, 0 -1px 0 #f8f8f8, 1px -1px 0 #f8f8f8,
-        1px 0 0 #f8f8f8, 1px 1px 0 #f8f8f8, 0 1px 0 #f8f8f8, -1px 1px 0 #f8f8f8,
-        -1px 0 0 #f8f8f8;
+      color: $grey;
+      text-shadow: -2px -2px 0 white, 2px -2px 0 white, -2px 2px 0 white,
+        2px 2px 0 white, -2px 0px 0 white, 2px 0px 0 white, 0px -2px 0 white,
+        0px 2px 0 white;
     }
   }
 

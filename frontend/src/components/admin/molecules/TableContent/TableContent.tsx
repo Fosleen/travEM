@@ -11,9 +11,10 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import Button from "../../../atoms/Button";
-import { CaretUpDown, PencilSimpleLine } from "@phosphor-icons/react";
+import { CaretUpDown, PencilSimpleLine, Trash } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../../../utils/global";
+import { deleteSubscriber, getSubscribers } from "../../../../api/subscribers";
 
 const TableContent = ({ data, type }) => {
   const [sorting, setSorting] = useState();
@@ -92,15 +93,41 @@ const TableContent = ({ data, type }) => {
         ),
       }),
     ];
+  } else if (type === "subscribers") {
+    columns = [
+      columnHelper.accessor("id", {
+        header: () => "ID",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("email", {
+        header: () => "Email",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.display({
+        id: "actions",
+        cell: (row) => (
+          <Button edit onClick={() => handleEdit(row.row.original.id)}>
+            <Trash size={16} color="#333333" />
+          </Button>
+        ),
+      }),
+    ];
   }
 
-  const handleEdit = (id: number) => {
+  const handleEdit = async (id: number) => {
     if (type == "country") {
       navigate(`/admin/države/uredi/${id}`);
     } else if (type == "place") {
       navigate(`/admin/mjesta/uredi/${id}`);
     } else if (type == "article") {
       navigate(`/admin/članci/uredi/${id}`);
+    } else if (type == "subscribers") {
+      try {
+        await deleteSubscriber(id);
+        getSubscribers();
+      } catch (error) {
+        console.error("Error deleting subscriber:", error);
+      }
     }
   };
 
@@ -127,24 +154,24 @@ const TableContent = ({ data, type }) => {
     <div className="table-content-container">
       <table>
         <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header, index) => (
-                <th key={header.id}>
-                  {header.isPlaceholder ? null : (
+          {table?.getHeaderGroups()?.map((headerGroup) => (
+            <tr key={headerGroup?.id}>
+              {headerGroup?.headers?.map((header, index) => (
+                <th key={header?.id}>
+                  {header?.isPlaceholder ? null : (
                     <div className="header-content">
                       <p>
                         {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
+                          header?.column?.columnDef?.header,
+                          header?.getContext()
                         )}
                       </p>
-                      {index !== headerGroup.headers.length - 1 && (
+                      {index !== headerGroup?.headers?.length - 1 && (
                         <CaretUpDown
                           size={32}
                           color="#919191"
                           weight="fill"
-                          onClick={header.column.getToggleSortingHandler()}
+                          onClick={header?.column?.getToggleSortingHandler()}
                         />
                       )}
                     </div>
@@ -155,26 +182,29 @@ const TableContent = ({ data, type }) => {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          {table?.getRowModel()?.rows?.map((row) => (
+            <tr key={row?.id}>
+              {row?.getVisibleCells()?.map((cell) => (
+                <td key={cell?.id}>
+                  {flexRender(
+                    cell?.column?.columnDef?.cell,
+                    cell?.getContext()
+                  )}
                 </td>
               ))}
             </tr>
           ))}
         </tbody>
         <tfoot>
-          {table.getFooterGroups().map((footerGroup) => (
-            <tr key={footerGroup.id}>
-              {footerGroup.headers.map((header) => (
-                <th key={header.id}>
-                  {header.isPlaceholder
+          {table?.getFooterGroups()?.map((footerGroup) => (
+            <tr key={footerGroup?.id}>
+              {footerGroup?.headers?.map((header) => (
+                <th key={header?.id}>
+                  {header?.isPlaceholder
                     ? null
                     : flexRender(
-                        header.column.columnDef.footer,
-                        header.getContext()
+                        header?.column?.columnDef?.footer,
+                        header?.getContext()
                       )}
                 </th>
               ))}

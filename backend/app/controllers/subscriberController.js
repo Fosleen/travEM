@@ -2,8 +2,10 @@ import service from "../services/subscriberService.js";
 
 class SubscriberController {
   async getSubscribers(req, res) {
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 12;
     try {
-      const response = await service.getSubscribers();
+      const response = await service.getSubscribers(page, pageSize);
       if (!response || response.length == 0) {
         res.status(404).json({ error: "No subscribers found" });
       } else {
@@ -31,6 +33,18 @@ class SubscriberController {
     } catch (error) {
       console.error("Error sending newsletter:", error);
       res.status(500).json({ error: "Failed to send newsletter" });
+    }
+  }
+
+  async deleteSubscriber(req, res) {
+    const { id } = req.params;
+    const response = await service.deleteSubscriber(id);
+    if (response) {
+      res.status(200).json({});
+    } else {
+      res
+        .status(500)
+        .json({ error: `Error while deleting subscriber with id ${id}` });
     }
   }
 }

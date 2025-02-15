@@ -46,6 +46,7 @@ const SidebarMenu = () => {
           <SidebarMenuItem text={"Države"} />
           <SidebarMenuItem text={"Mjesta"} />
           <SidebarMenuItem text={"Sadržaj"} />
+          <SidebarMenuItem text={"Newsletter"} />
         </div>
       </div>
       <div className="sidebar-menu-items">

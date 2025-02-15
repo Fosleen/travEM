@@ -17,6 +17,8 @@ const Table: FC<TableProps> = ({
   setPage,
   setPageSize,
   setSearchText,
+  displayHeader = true,
+  displayFooter = true,
 }) => {
   const navigate = useNavigate();
 
@@ -37,19 +39,24 @@ const Table: FC<TableProps> = ({
 
   return (
     <div className="table-container">
-      <div className="table-header">
-        <ItemsPerPageSelector setItemsPerPage={setPageSize} type={type} />
-        <div className="table-search-add-container">
-          <Search
-            green
-            onChange={handleSearch}
-            placeholder="Pretraži po nazivu..."
-          />
-          <Button circle onClick={handleAddClick}>
-            +
-          </Button>
+      {displayHeader ? (
+        <div className="table-header">
+          <ItemsPerPageSelector setItemsPerPage={setPageSize} type={type} />
+          <div className="table-search-add-container">
+            <Search
+              green
+              onChange={handleSearch}
+              placeholder="Pretraži po nazivu..."
+            />
+            <Button circle onClick={handleAddClick}>
+              +
+            </Button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <></>
+      )}
+
       {data.data ? (
         <TableContent data={data.data} type={type} />
       ) : (
@@ -63,15 +70,20 @@ const Table: FC<TableProps> = ({
           visible={true}
         />
       )}
-      <div className="table-footer">
-        <PageCount
-          total={data.total}
-          page={page}
-          pageSize={data.pageSize}
-          type={type}
-        />
-        <Pagination setPage={setPage} totalPages={data.totalPages} />
-      </div>
+
+      {displayFooter ? (
+        <div className="table-footer">
+          <PageCount
+            total={data.total}
+            page={page}
+            pageSize={data.pageSize}
+            type={type}
+          />
+          <Pagination setPage={setPage} totalPages={data.totalPages} />
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };

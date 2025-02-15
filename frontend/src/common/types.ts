@@ -245,6 +245,8 @@ export interface TableProps {
   setPage: React.Dispatch<React.SetStateAction<number>>;
   setPageSize: React.Dispatch<React.SetStateAction<number>>;
   setSearchText: React.Dispatch<React.SetStateAction<string>>;
+  displayHeader: boolean;
+  displayFooter: boolean;
 }
 
 export interface PaginationProps {

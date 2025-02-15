@@ -41,6 +41,7 @@ import PrivacyPolicy from "./Pages/UserViewPages/PrivacyPolicy/PrivacyPolicy";
 import { useCookies } from "react-cookie";
 import CookieConsent from "./components/atoms/CookieConsent/CookieConsent";
 import { Helmet } from "react-helmet";
+import Subsrcibers from "./Pages/AdminViewPages/Subscribers/Subscribers";
 
 function App() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -140,6 +141,7 @@ function App() {
           <Route path="/admin/uredi-vize" element={<EditVisaInfo />} />
           <Route path="/admin/uredi-kartu" element={<EditMap />} />
           <Route path="/admin/uredi-footer" element={<EditFooter />} />
+          <Route path="/admin/newsletter" element={<Subsrcibers />} />
         </Route>
       </Routes>
     </>

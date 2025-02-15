@@ -1,8 +1,11 @@
 //@ts-nocheck
 import { apiUrl } from "./api";
 
-export async function getSubscribers() {
-  const response = await fetch(`${apiUrl}/subscribers`);
+export async function getSubscribers(page = 1, pageSize = 12) {
+  const response = await fetch(
+    `${apiUrl}/subscribers?page=${page}&pageSize=${pageSize}`
+  );
+
   const data = await response.json();
 
   if (!response.ok) {
@@ -47,5 +50,26 @@ export async function addSubscriber(email) {
     throw new Error(data.error);
   }
 
+  return data;
+}
+
+export async function deleteSubscriber(id: number) {
+  const token = localStorage.getItem("jwt");
+
+  const response = await fetch(`${apiUrl}/subscribers/${id}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    method: "DELETE",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
   return data;
 }

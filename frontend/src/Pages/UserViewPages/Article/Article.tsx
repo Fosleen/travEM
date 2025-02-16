@@ -83,16 +83,50 @@ const Article = () => {
       ) : (
         <div>
           <Helmet>
-            <meta name="keywords" content={metaKeywords} />
-            <title>{articleContent.title}</title>
-            <meta property="og:title" content={articleContent.title} />
-            <meta property="og:type" content="article" />
-            <meta property="og:image" content={articleContent.main_image_url} />
-            <meta property="og:url" content={window.location.href} />
-            <meta name="twitter:card" content={articleContent.main_image_url} />
             <meta
+              data-react-helmet="true"
+              name="prerender-status"
+              content={isLoading ? "loading" : "ready"}
+            />
+            <meta
+              data-react-helmet="true"
+              name="keywords"
+              content={metaKeywords}
+            />
+            <title data-react-helmet="true">
+              {articleContent.title || "putujEM s travEM"}
+            </title>
+            <meta
+              data-react-helmet="true"
+              property="og:title"
+              content={articleContent.title || "putujEM s travEM"}
+            />
+            <meta
+              data-react-helmet="true"
+              property="og:type"
+              content="article"
+            />
+            <meta
+              data-react-helmet="true"
+              property="og:image"
+              content={articleContent.main_image_url}
+            />
+            <meta
+              data-react-helmet="true"
+              property="og:url"
+              content={window.location.href}
+            />
+            <meta
+              data-react-helmet="true"
+              name="twitter:card"
+              content={articleContent.main_image_url}
+            />
+            <meta
+              data-react-helmet="true"
               property="og:description"
-              content={articleContent.description}
+              content={
+                articleContent.description || "Otkrijte svijet uz Emu i Matiju!"
+              }
             />
           </Helmet>
           <div className="article-container">

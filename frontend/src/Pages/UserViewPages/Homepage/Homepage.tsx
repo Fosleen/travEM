@@ -96,14 +96,6 @@ const Homepage = () => {
       {homepageContent ? (
         <>
           <Helmet>
-            <title data-react-helmet="true">
-              {"putujEM s travEM - Otkrijte svijet uz Emu i Matiju!"}
-            </title>
-            <meta
-              data-react-helmet="true"
-              property="og:title"
-              content={"putujEM s travEM - Otkrijte svijet uz Emu i Matiju!"}
-            />
             <meta
               data-react-helmet="true"
               property="og:image"

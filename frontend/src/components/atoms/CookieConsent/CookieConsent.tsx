@@ -13,10 +13,19 @@ const CookieConsent = () => {
   const willMountReactGA = useRef(true);
 
   const [cookieConsent, setCookieConsent] = useState<string | null>(
-    localStorage.getItem("cookie_consent") || CONSENT_DENIED
+    localStorage.getItem("cookie_consent")
   );
 
-  const setConsent = (consentValue: string) => {
+  const setDefaultGAValues = () => {
+    ReactGA.gtag("consent", "default", {
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied",
+      analytics_storage: "denied",
+    });
+  };
+
+  const setGAValues = (consentValue: string) => {
     ReactGA.gtag("consent", "update", {
       analytics_storage: consentValue,
       ad_storage: consentValue,
@@ -28,14 +37,14 @@ const CookieConsent = () => {
   const handleAccept = () => {
     localStorage.setItem("cookie_consent", CONSENT_GRANTED);
     setCookieConsent(CONSENT_GRANTED);
-    setConsent(CONSENT_GRANTED);
+    setGAValues(CONSENT_GRANTED);
     initializeGoogleAnalytics();
   };
 
   const handleDecline = () => {
     localStorage.setItem("cookie_consent", CONSENT_DENIED);
     setCookieConsent(CONSENT_DENIED);
-    setConsent(CONSENT_DENIED);
+    setGAValues(CONSENT_DENIED);
   };
 
   const initializeGoogleAnalytics = () => {
@@ -68,20 +77,20 @@ const CookieConsent = () => {
   };
 
   useEffect(() => {
+    if (!localStorage.getItem("cookie_consent")) {
+      setCookieConsent(null);
+    }
+
     if (!ReactGA.isInitialized) {
-      ReactGA.gtag("consent", "default", {
-        ad_storage: "denied",
-        ad_user_data: "denied",
-        ad_personalization: "denied",
-        analytics_storage: "denied",
-      });
+      setDefaultGAValues();
     }
 
     if (!willMountReactGA.current && ReactGA.isInitialized) {
-      setConsent(
+      setGAValues(
         cookieConsent === CONSENT_GRANTED ? CONSENT_GRANTED : CONSENT_DENIED
       );
     }
+
     if (willMountReactGA.current) {
       if (cookieConsent === CONSENT_GRANTED) {
         initializeGoogleAnalytics();
@@ -102,7 +111,7 @@ const CookieConsent = () => {
 
   return (
     <>
-      {cookieConsent === CONSENT_DENIED && (
+      {cookieConsent != CONSENT_DENIED && cookieConsent != CONSENT_GRANTED && (
         <div className="cookie-consent-container">
           <h2>Zašto koristimo 🍪?</h2>
           <p>

@@ -1,50 +1,91 @@
 import Button from "../Button/Button";
 import "./CookieConsent.scss";
-import { Link } from "react-router-dom";
-import { FC, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import ReactGA from "react-ga4";
 
-interface CookieConsentProps {
-  cookies: { cookie_consent?: string };
-  setCookie: (name: string, value: string) => void;
-}
+const CookieConsent = () => {
+  const { pathname } = useLocation();
+  const oldPage = useRef(pathname);
+  const willMountReactGA = useRef(true);
+  const [cookieConsent, setCookieConsent] = useState<string | null>(
+    localStorage.getItem("cookie_consent")
+  );
 
-const CookieConsent: FC<CookieConsentProps> = ({ cookies, setCookie }) => {
+  const setConsent = (consentValue: "granted" | "denied") => {
+    ReactGA.gtag("consent", "update", {
+      analytics_storage: consentValue,
+      ad_storage: consentValue,
+      ad_personalization: consentValue,
+      ad_user_data: consentValue,
+    });
+  };
+
   const handleAccept = () => {
-    setCookie("cookie_consent", "accepted");
+    localStorage.setItem("cookie_consent", "accepted");
+    setCookieConsent("accepted");
+    setConsent("granted");
+    initializeGoogleAnalytics();
   };
 
   const handleDecline = () => {
-    setCookie("cookie_consent", "declined");
+    localStorage.setItem("cookie_consent", "declined");
+    setCookieConsent("declined");
+    setConsent("denied");
   };
 
   const initializeGoogleAnalytics = () => {
-    ReactGA.initialize("G-L09ZLTCLHW");
+    if (!ReactGA.isInitialized) {
+      ReactGA.initialize([
+        {
+          trackingId: "G-L09ZLTCLHW",
+          gaOptions: { cookieDomain: "putujemstravem.com" },
+          gtagOptions: {
+            analytics_storage:
+              cookieConsent === "accepted" ? "granted" : "denied",
+          },
+        },
+      ]);
+    }
   };
 
   useEffect(() => {
-    if (cookies.cookie_consent === "accepted") {
-      initializeGoogleAnalytics();
-    } else {
-      // console.log("nisu prihvaceni");
+    if (!willMountReactGA.current && ReactGA.isInitialized) {
+      setConsent(cookieConsent === "accepted" ? "granted" : "denied");
     }
-  }, [cookies.cookie_consent]);
+    if (willMountReactGA.current) {
+      if (cookieConsent === "accepted") {
+        initializeGoogleAnalytics();
+      }
+      willMountReactGA.current = false;
+    }
+  }, [cookieConsent]);
+
+  useEffect(() => {
+    if (pathname !== oldPage.current) {
+      oldPage.current = pathname;
+
+      if (cookieConsent === "accepted" && !willMountReactGA.current) {
+        ReactGA.send({ hitType: "pageview", page: pathname });
+      }
+    }
+  }, [pathname, cookieConsent]);
 
   return (
     <>
-      {!cookies.cookie_consent && (
+      {!cookieConsent && (
         <div className="cookie-consent-container">
           <h2>Zašto koristimo 🍪?</h2>
           <p>
             Saznajte više o tome kako koristimo Vaše podatke na{" "}
-            <Link to={"pravila-o-privatnosti"}>Politici privatnosti</Link>.
+            <Link to={"/pravila-o-privatnosti"}>Politici privatnosti</Link>.
           </p>
           <div className="cookie-consent-buttons">
             <Button fitText white onClick={handleAccept}>
-              prihvati sve
+              Prihvati sve
             </Button>
             <Button fitText grey onClick={handleDecline}>
-              samo neophodni
+              Samo neophodni
             </Button>
           </div>
         </div>

@@ -1,6 +1,6 @@
 //@ts-nocheck
 
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import UserViewLayout from "./components/user/templates/UserViewLayout";
 import Homepage from "./Pages/UserViewPages/Homepage/Homepage";
 import About from "./Pages/UserViewPages/About/About";
@@ -34,23 +34,15 @@ import EditFooter from "./Pages/AdminViewPages/EditFooter/EditFooter";
 import EditCountry from "./Pages/AdminViewPages/EditCountry/EditCountry";
 import EditArticle from "./Pages/AdminViewPages/EditArticle/EditArticle";
 import Contact from "./Pages/UserViewPages/Contact/Contact";
-import ReactGA from "react-ga4";
 import ProtectedRoute from "./components/atoms/ProtectedRoute";
 import { useEffect } from "react";
 import PrivacyPolicy from "./Pages/UserViewPages/PrivacyPolicy/PrivacyPolicy";
-import { useCookies } from "react-cookie";
 import CookieConsent from "./components/atoms/CookieConsent/CookieConsent";
 import { Helmet } from "react-helmet";
 import Subsrcibers from "./Pages/AdminViewPages/Subscribers/Subscribers";
 
 function App() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [cookies, setCookie] = useCookies<any>(["cookie_consent"]);
-
-  const location = useLocation();
-
   const navigate = useNavigate();
-
   const isLoggedIn = localStorage.getItem("jwt");
 
   function isTokenExpired(token) {
@@ -62,16 +54,6 @@ function App() {
     const expirationTime = decodedToken.exp * 1000;
     return Date.now() >= expirationTime;
   }
-
-  useEffect(() => {
-    if (cookies.cookie_consent === "accepted") {
-      ReactGA.send({
-        hitType: "pageview",
-        page: location.pathname,
-        title: `Putanja: ${location.pathname}`,
-      });
-    }
-  }, [location]);
 
   useEffect(() => {
     if (isLoggedIn && isTokenExpired(isLoggedIn)) {
@@ -88,7 +70,7 @@ function App() {
           content="putujem s travem, putujemstravem, travem, putujem travem, travem putovanja, putovanja, putovanja iz hrvatske, travel blog, studentska putovanja, budget putovanja, jeftina putovanja, putovanja po europi, hrvatska putovanje, croatian travel blog, travel bloggers, croatian blog, hrvatska blog, studentska putovanja blog, jeftina studentska putovanja, travem youtube, matija dokmanović, ema pavrlišak, putovanje travem, balkanska jeftina putovanja, hrvatska jeftina putovanja, putovanje iz hrvatske, kako organizirati putovanje, savjeti za putovanja"
         />
       </Helmet>
-      <CookieConsent cookies={cookies} setCookie={setCookie} />
+      <CookieConsent />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<UserViewLayout />}>

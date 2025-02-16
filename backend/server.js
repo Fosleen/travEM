@@ -29,7 +29,12 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(prerender.set("prerenderToken", process.env.PRERENDER_TOKEN));
+app.use(
+  prerender
+    .set("prerenderToken", process.env.PRERENDER_TOKEN)
+    .set("waitAfterLastRequest", 4000)
+    .set("waitForRender", 6000)
+);
 
 app.use(
   session({

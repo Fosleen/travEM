@@ -52,6 +52,12 @@ const Article = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (!isLoading && articleContent) {
+      window.prerenderReady = true;
+    }
+  }, [isLoading, articleContent]);
+
   const handleCountryClick = () => {
     navigate(`/destinacija/${articleContent.country.name.toLowerCase()}`);
   };

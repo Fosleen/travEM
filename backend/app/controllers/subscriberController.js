@@ -16,6 +16,19 @@ class SubscriberController {
     }
   }
 
+  async getSubscribersNoPagination(req, res) {
+    try {
+      const response = await service.getSubscribersNoPagination();
+      if (!response || response.length == 0) {
+        res.status(404).json({ error: "No subscribers found" });
+      } else {
+        res.status(200).json(response);
+      }
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
   async addSubscriber(req, res) {
     const response = await service.addSubscriber(req.body.email);
     if (response.length == 0) {

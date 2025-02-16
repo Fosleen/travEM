@@ -22,6 +22,15 @@ class SubscriberService {
     }
   }
 
+  async getSubscribersNoPagination() {
+    try {
+      const subscribers = await db.models.Subscriber.findAll({});
+      return subscribers;
+    } catch (error) {
+      return [];
+    }
+  }
+
   async addSubscriber(email) {
     try {
       const subscriber = await db.models.Subscriber.create({

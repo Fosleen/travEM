@@ -3,12 +3,13 @@ import "./PrivacyPolicy.scss";
 const PrivacyPolicy = () => {
   return (
     <div className="privacy-policy-container">
-      <h4>Pravila o privatnosti</h4>
+      <h3>Pravila o privatnosti</h3>
       <p>
-        Ova web stranica poštuje Vašu privatnost i obvezuje se na zaštitu Vaših
-        osobnih podataka. Ova Pravila o privatnosti opisuju način na koji
-        prikupljamo, koristimo, otkrivamo i štitimo Vaše osobne podatke prilikom
-        korištenja naše web stranice.
+        Dobrodošli na web stranicu putujEM s travEM. Ova web stranica poštuje
+        Vašu privatnost i obvezuje se na zaštitu Vaših osobnih podataka. Ova
+        Pravila o privatnosti opisuju način na koji prikupljamo, koristimo,
+        otkrivamo i štitimo Vaše osobne podatke prilikom korištenja naše web
+        stranice.
       </p>
 
       <h4> Osobni podaci koje prikupljamo</h4>

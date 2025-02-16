@@ -105,7 +105,7 @@ const Footer = ({
         </div>
         <div className="footer-list-item">
           <div className="footer-list-item-title">PRAVILA</div>
-          <Link to="">
+          <Link to="/uvjeti-koristenja">
             <div className="footer-list-item-content">Uvjeti korištenja</div>
           </Link>
           <Link to="/pravila-o-privatnosti">

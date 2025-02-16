@@ -40,6 +40,7 @@ import PrivacyPolicy from "./Pages/UserViewPages/PrivacyPolicy/PrivacyPolicy";
 import CookieConsent from "./components/atoms/CookieConsent/CookieConsent";
 import { Helmet } from "react-helmet";
 import Subsrcibers from "./Pages/AdminViewPages/Subscribers/Subscribers";
+import TermsAndConditions from "./Pages/UserViewPages/TermsAndConditions/TermsAndConditions";
 
 function App() {
   const navigate = useNavigate();
@@ -79,6 +80,7 @@ function App() {
           <Route path="/aviokarte/:name" element={<AirplaneTickets />} />
           <Route path="/kontakt" element={<Contact />} />
           <Route path="/pravila-o-privatnosti" element={<PrivacyPolicy />} />
+          <Route path="/uvjeti-koristenja" element={<TermsAndConditions />} />
           <Route path="/pretrazivanje" element={<SearchResults />} />
           <Route path="/savjeti/:tip" element={<TipsAndTricks />} />
           <Route path="/clanak/:id" element={<Article />} />

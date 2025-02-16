@@ -4,15 +4,19 @@ import { Link, useLocation } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import ReactGA from "react-ga4";
 
+const CONSENT_GRANTED = "granted";
+const CONSENT_DENIED = "denied";
+
 const CookieConsent = () => {
   const { pathname } = useLocation();
   const oldPage = useRef(pathname);
   const willMountReactGA = useRef(true);
+
   const [cookieConsent, setCookieConsent] = useState<string | null>(
-    localStorage.getItem("cookie_consent")
+    localStorage.getItem("cookie_consent") || CONSENT_DENIED
   );
 
-  const setConsent = (consentValue: "granted" | "denied") => {
+  const setConsent = (consentValue: string) => {
     ReactGA.gtag("consent", "update", {
       analytics_storage: consentValue,
       ad_storage: consentValue,
@@ -22,16 +26,16 @@ const CookieConsent = () => {
   };
 
   const handleAccept = () => {
-    localStorage.setItem("cookie_consent", "accepted");
-    setCookieConsent("accepted");
-    setConsent("granted");
+    localStorage.setItem("cookie_consent", CONSENT_GRANTED);
+    setCookieConsent(CONSENT_GRANTED);
+    setConsent(CONSENT_GRANTED);
     initializeGoogleAnalytics();
   };
 
   const handleDecline = () => {
-    localStorage.setItem("cookie_consent", "declined");
-    setCookieConsent("declined");
-    setConsent("denied");
+    localStorage.setItem("cookie_consent", CONSENT_DENIED);
+    setCookieConsent(CONSENT_DENIED);
+    setConsent(CONSENT_DENIED);
   };
 
   const initializeGoogleAnalytics = () => {
@@ -42,7 +46,9 @@ const CookieConsent = () => {
           gaOptions: { cookieDomain: "putujemstravem.com" },
           gtagOptions: {
             analytics_storage:
-              cookieConsent === "accepted" ? "granted" : "denied",
+              cookieConsent === CONSENT_GRANTED
+                ? CONSENT_GRANTED
+                : CONSENT_DENIED,
           },
         },
       ]);
@@ -51,10 +57,12 @@ const CookieConsent = () => {
 
   useEffect(() => {
     if (!willMountReactGA.current && ReactGA.isInitialized) {
-      setConsent(cookieConsent === "accepted" ? "granted" : "denied");
+      setConsent(
+        cookieConsent === CONSENT_GRANTED ? CONSENT_GRANTED : CONSENT_DENIED
+      );
     }
     if (willMountReactGA.current) {
-      if (cookieConsent === "accepted") {
+      if (cookieConsent === CONSENT_GRANTED) {
         initializeGoogleAnalytics();
       }
       willMountReactGA.current = false;
@@ -65,7 +73,7 @@ const CookieConsent = () => {
     if (pathname !== oldPage.current) {
       oldPage.current = pathname;
 
-      if (cookieConsent === "accepted" && !willMountReactGA.current) {
+      if (cookieConsent === CONSENT_GRANTED && !willMountReactGA.current) {
         ReactGA.send({ hitType: "pageview", page: pathname });
       }
     }
@@ -73,7 +81,7 @@ const CookieConsent = () => {
 
   return (
     <>
-      {!cookieConsent && (
+      {cookieConsent === CONSENT_DENIED && (
         <div className="cookie-consent-container">
           <h2>Zašto koristimo 🍪?</h2>
           <p>

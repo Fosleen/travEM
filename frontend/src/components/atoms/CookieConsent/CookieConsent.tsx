@@ -56,6 +56,8 @@ const CookieConsent = () => {
   };
 
   useEffect(() => {
+    setConsent(CONSENT_DENIED);
+
     if (!willMountReactGA.current && ReactGA.isInitialized) {
       setConsent(
         cookieConsent === CONSENT_GRANTED ? CONSENT_GRANTED : CONSENT_DENIED

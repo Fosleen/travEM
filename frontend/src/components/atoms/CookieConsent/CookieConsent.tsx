@@ -49,6 +49,18 @@ const CookieConsent = () => {
               cookieConsent === CONSENT_GRANTED
                 ? CONSENT_GRANTED
                 : CONSENT_DENIED,
+            ad_storage:
+              cookieConsent === CONSENT_GRANTED
+                ? CONSENT_GRANTED
+                : CONSENT_DENIED,
+            ad_personalization:
+              cookieConsent === CONSENT_GRANTED
+                ? CONSENT_GRANTED
+                : CONSENT_DENIED,
+            ad_user_data:
+              cookieConsent === CONSENT_GRANTED
+                ? CONSENT_GRANTED
+                : CONSENT_DENIED,
           },
         },
       ]);
@@ -56,7 +68,14 @@ const CookieConsent = () => {
   };
 
   useEffect(() => {
-    setConsent(CONSENT_DENIED);
+    if (!ReactGA.isInitialized) {
+      ReactGA.gtag("consent", "default", {
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        analytics_storage: "denied",
+      });
+    }
 
     if (!willMountReactGA.current && ReactGA.isInitialized) {
       setConsent(

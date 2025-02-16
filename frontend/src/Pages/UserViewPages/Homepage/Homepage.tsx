@@ -12,6 +12,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { Article, HomepageData } from "../../../common/types";
 import { getHomepageArticles } from "../../../api/article";
 import { ArticleContext } from "../../../Context/ArticleContext";
+import { Helmet } from "react-helmet";
 
 const Homepage = () => {
   const { homepageArticlesContextData, setHomepageArticlesContextData } =
@@ -94,6 +95,26 @@ const Homepage = () => {
     <div className="homepage-container">
       {homepageContent ? (
         <>
+          <Helmet>
+            <title data-react-helmet="true">
+              {"putujEM s travEM - Otkrijte svijet uz Emu i Matiju!"}
+            </title>
+            <meta
+              data-react-helmet="true"
+              property="og:title"
+              content={"putujEM s travEM - Otkrijte svijet uz Emu i Matiju!"}
+            />
+            <meta
+              data-react-helmet="true"
+              property="og:image"
+              content={homepageContent.hero_image_url}
+            />
+            <meta
+              data-react-helmet="true"
+              name="twitter:card"
+              content={homepageContent.hero_image_url}
+            />
+          </Helmet>
           <HomepageHero homepageContent={homepageContent} />
           <FavoritePosts homepageArticles={favoriteArticles} />
           <HomepageBanner

@@ -32,24 +32,48 @@ app.use(express.urlencoded({ extended: false }));
 app.use(
   prerender
     .set("prerenderToken", process.env.PRERENDER_TOKEN)
-    .set("waitAfterLastRequest", 2000)
-    .set("waitForRender", 5000)
+    .set("waitAfterLastRequest", 5000)
+    .set("waitForRender", 10000)
     .set(
       "evaluateJavascript",
       `
     function checkContent() {
-      const ogTitle = document.querySelector("meta[property='og:title']");
-      const ogDesc = document.querySelector("meta[property='og:description']");
-      const status = document.querySelector("meta[name='prerender-status']");
-      
-      return ogTitle && 
-             ogDesc && 
-             status && 
-             status.getAttribute("content") === "ready" &&
-             ogTitle.getAttribute("content") !== "putujEM s travEM" &&
-             ogDesc.getAttribute("content") !== "Otkrijte svijet uz Emu i Matiju!";
+      return new Promise((resolve) => {
+        let attempts = 0;
+        const maxAttempts = 20;
+        
+        function check() {
+          const ogTitle = document.querySelector("meta[property='og:title']");
+          const ogDesc = document.querySelector("meta[property='og:description']");
+          const status = document.querySelector("meta[name='prerender-status']");
+          const hasImages = document.querySelectorAll('img').length > 0;
+          
+          if (ogTitle && 
+              ogDesc && 
+              status && 
+              status.getAttribute("content") === "ready" &&
+              ogTitle.getAttribute("content") !== "putujEM s travEM" &&
+              ogDesc.getAttribute("content") !== "Otkrijte svijet uz Emu i Matiju!" &&
+              hasImages) {
+            resolve(true);
+            return;
+          }
+          
+          attempts++;
+          if (attempts < maxAttempts) {
+            setTimeout(check, 500);
+          } else {
+            resolve(false);
+          }
+        }
+        
+        check();
+      });
     }
-    window.prerenderReady = checkContent();
+    
+    checkContent().then(ready => {
+      window.prerenderReady = ready;
+    });
   `
     )
 );

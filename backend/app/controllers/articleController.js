@@ -24,13 +24,13 @@ class ArticleController {
     }
   }
 
-  async getArticleByName(req, res) {
+  async getArticleBySearchTerm(req, res) {
     try {
       const { name } = req.params;
       const page = parseInt(req.query.page) || 1;
       const pageSize = parseInt(req.query.pageSize) || 200;
 
-      const response = await articleService.getArticleByName(
+      const response = await articleService.getArticleBySearchTerm(
         name,
         page,
         pageSize

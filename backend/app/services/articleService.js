@@ -344,11 +344,12 @@ class ArticleService {
     }
   }
 
-  async getArticleByName(name, page, pageSize) {
+  async getArticleBySearchTerm(name, page, pageSize) {
     const limit = pageSize;
     const offset = (page - 1) * pageSize;
 
     try {
+      const searchTermWithoutLastLetter = `%${name.slice(0, -1)}%`;
       const articles = await db.models.Article.findAndCountAll({
         limit: limit,
         offset: offset,
@@ -358,9 +359,18 @@ class ArticleService {
           },
         ],
         where: {
-          title: {
-            [Op.startsWith]: name,
-          },
+          [Op.or]: [
+            {
+              title: {
+                [Op.like]: searchTermWithoutLastLetter,
+              },
+            },
+            {
+              metatags: {
+                [Op.like]: searchTermWithoutLastLetter,
+              },
+            },
+          ],
         },
       });
       return {

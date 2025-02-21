@@ -257,7 +257,7 @@ router.get("/place/:id", controller.getArticlesByPlaceId);
  *                      schema:
  *                          $ref: '#/components/schemas/ServerErrorResponse'
  */
-router.get("/search/:name", controller.getArticleByName);
+router.get("/search/:name", controller.getArticleBySearchTerm);
 
 // GET /api/v1/articles/1
 /**

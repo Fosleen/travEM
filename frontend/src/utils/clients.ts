@@ -42,8 +42,8 @@ export const clients = [
     url: "https://www.instagram.com/deratockahe/",
   },
   {
-    img: NordVPN,
-    url: "https://go.nordvpn.net/aff_c?offer_id=15&aff_id=117007&url_id=902",
+    img: Surfshark,
+    url: "https://get.surfshark.net/aff_c?offer_id=926&aff_id=36878",
   },
   { img: Istanbulepass, url: "https://istanbulepass.com/?ref=travem" },
   {
@@ -63,8 +63,8 @@ export const clients = [
     url: "https://www.instagram.com/deratockahe/",
   },
   {
-    img: NordVPN,
-    url: "https://go.nordvpn.net/aff_c?offer_id=15&aff_id=117007&url_id=902",
+    img: Surfshark,
+    url: "https://get.surfshark.net/aff_c?offer_id=926&aff_id=36878",
   },
   { img: Istanbulepass, url: "https://istanbulepass.com/?ref=travem" },
   {

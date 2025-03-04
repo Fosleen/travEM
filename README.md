@@ -3,7 +3,9 @@
 
 Travel blog with custom content management system (CMS). 🚀 React + Express
 
-Try it out (LIVE): <a href="https://putujemstravem.com/">https://putujemstravem.com/</a>
+<b>Try it out (LIVE): <a href="https://putujemstravem.com/">https://putujemstravem.com/</a></b>
+
+Learn more about this project on our website: <a href="https://fosleen.com/project/travem">https://fosleen.com/project/travem</a>
 
 ## TravEM documentation - table of contents
 <ul>

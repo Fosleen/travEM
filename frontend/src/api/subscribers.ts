@@ -15,6 +15,20 @@ export async function getSubscribers(page = 1, pageSize = 12) {
   return data;
 }
 
+export async function getSubscribersStats() {
+  const response = await fetch(
+    `${apiUrl}/subscribers/new-subscribers-previous-period`
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    console.log(data.error);
+    return data.error;
+  }
+  return data;
+}
+
 export async function getSubscribersWithoutPagination() {
   const response = await fetch(`${apiUrl}/subscribers/no-pagination`);
 

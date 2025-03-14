@@ -1,0 +1,25 @@
+components:
+  schemas:
+    SubscriberStats:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            subscribers30days:
+              type: number
+              example: 26
+            subscribers7days:
+              type: number
+              example: 7
+            subscribers3days:
+              type: number
+              example: 3
+            subscribers24hours:
+              type: number
+              example: 1
+    SubscribersNotFoundResponse:
+      properties:
+        error:
+          type: string
+          example: No subscribers found

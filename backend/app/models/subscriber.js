@@ -3,6 +3,11 @@ export default (sequelize, DataTypes) => {
     "subscriber",
     {
       email: { type: DataTypes.STRING(200), allowNull: false, unique: true },
+      created_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
     },
     {
       underscored: true,

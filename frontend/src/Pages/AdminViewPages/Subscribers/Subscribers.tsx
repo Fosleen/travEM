@@ -1,20 +1,24 @@
 // @ts-nocheck
 
 import { useEffect, useState } from "react";
-import { getSubscribers } from "../../../api/subscribers";
+import { getSubscribers, getSubscribersStats } from "../../../api/subscribers";
 import Table from "../../../components/admin/organisms/Table";
+import "./Subscribers.scss";
+import SubscribersStats from "../../../components/admin/molecules/SubscribersStats";
 
 const Subsrcibers = () => {
   const [subscribers, setSubscribers] = useState([]);
+  const [subscribersStats, setSubscribersStats] = useState("...");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(8);
   const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
-    fetchData();
+    fetchSubscribersData();
+    fetchSubscribersStats();
   }, [pageSize, page]);
 
-  const fetchData = async () => {
+  const fetchSubscribersData = async () => {
     try {
       const response = await getSubscribers(page, pageSize);
       const formattedData = {
@@ -34,8 +38,20 @@ const Subsrcibers = () => {
       });
     }
   };
+
+  const fetchSubscribersStats = async () => {
+    try {
+      const response = await getSubscribersStats();
+      setSubscribersStats(response.data);
+    } catch (error) {
+      console.error("Error while fetching:", error);
+      setSubscribersStats(null);
+    }
+  };
+
   return (
     <div className="places-list-container">
+      <SubscribersStats data={subscribersStats} />
       <Table
         data={subscribers}
         setPageSize={setPageSize}

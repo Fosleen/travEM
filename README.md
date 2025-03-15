@@ -20,7 +20,7 @@ Learn more about this project on our website: <a href="https://fosleen.com/proje
 <div id="start"></div>
 
 ## How it started?
-The project was 100% custom built for our clients - travel bloggers from Croatian YouTube channel <a href="https://www.youtube.com/@travem/featured">Putujem s TravEM</a>.
+The project was 100% custom built for our clients - travel bloggers from Croatian YouTube channel <a href="https://www.youtube.com/@travem/featured">Putujem s TravEM 🧡</a>.
 
 Matija from "Putujem s TravEM" reached to us and descripted his wishes - he and Ema wanted to write a blog for a long time, but did not want to use WordPress - they wanted to have the best travel blogging webpage in Croatia, but also in Southeastern Europe. 
 

@@ -11,6 +11,8 @@ import { createAssociations } from "./database_management.js";
 import helmet from "helmet";
 import swaggerDocs from "./app/utils/swagger.js";
 import prerender from "prerender-node";
+import { initRedis } from "./app/middleware/redis.js";
+
 const app = express();
 
 // Create all 1:1, 1:M and M:N
@@ -22,6 +24,10 @@ const corsOptions = {
   methods: "GET, POST, PATCH, DELETE, PUT",
   allowedHeaders: "Content-Type, Authorization",
 };
+
+(async () => {
+  await initRedis();
+})();
 
 app.use(cors(corsOptions));
 app.use(helmet());

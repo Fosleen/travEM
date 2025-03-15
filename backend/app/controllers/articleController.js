@@ -1,3 +1,4 @@
+import { getOrSetCache } from "../middleware/redis.js";
 import articleService from "../services/articleService.js";
 import videoService from "../services/videoService.js";
 
@@ -48,7 +49,10 @@ class ArticleController {
   async getArticleById(req, res) {
     try {
       const { id } = req.params;
-      const response = await articleService.getArticleById(id);
+      const cacheKey = `article:${id}`;
+      const response = await getOrSetCache(cacheKey, async () => {
+        return await articleService.getArticleById(id);
+      });
       if (!response || response.length == 0) {
         res
           .status(404)
@@ -57,7 +61,7 @@ class ArticleController {
         res.status(200).json(response);
       }
     } catch (error) {
-      return res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ error: "Internal server error " + error });
     }
   }
 

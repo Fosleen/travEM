@@ -12,8 +12,6 @@ class CountriesService {
         offset: offset,
       });
 
-      console.log("Izlazim van");
-
       const countriesWithArticleCount = await Promise.all(
         visitedCountries.rows.map(async (country) => {
           const articleCount = await db.models.Article.count({

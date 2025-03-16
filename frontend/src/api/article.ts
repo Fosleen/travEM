@@ -234,10 +234,15 @@ export async function deleteArticleById(id: number) {
   return data;
 }
 
-export async function getFavoriteArticleByCountry(id: number) {
+export async function getFavoriteArticleByCountry(
+  id: number,
+  noCache: boolean = false
+) {
   const token = localStorage.getItem("jwt");
 
-  const response = await fetch(`${apiUrl}/articles/country/top/${id}`);
+  const response = await fetch(
+    `${apiUrl}/articles/country/top/${id}?noCache=${noCache}`
+  );
   const data = await response.json();
 
   if (!response.ok) {

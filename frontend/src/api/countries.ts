@@ -1,9 +1,13 @@
 import { CountriesData } from "../common/types";
 import { apiUrl } from "./api";
 
-export async function getCountries(page = 1, pageSize = 12) {
+export async function getCountries(
+  page = 1,
+  pageSize = 12,
+  noCache: boolean = false
+) {
   const response = await fetch(
-    `${apiUrl}/countries?page=${page}&pageSize=${pageSize}`
+    `${apiUrl}/countries?page=${page}&pageSize=${pageSize}?noCache=${noCache}`
   );
   const data = await response.json();
 
@@ -14,8 +18,8 @@ export async function getCountries(page = 1, pageSize = 12) {
   return data;
 }
 
-export async function getCountryById(id: number) {
-  const response = await fetch(`${apiUrl}/countries/${id}`);
+export async function getCountryById(id: number, noCache: boolean = false) {
+  const response = await fetch(`${apiUrl}/countries/${id}?noCache=${noCache}`);
   const data = await response.json();
 
   if (!response.ok) {
@@ -29,14 +33,15 @@ export async function getCountriesByName(
   name: string,
   page = 1,
   pageSize = 12,
-  isCount?: number
+  isCount?: number,
+  noCache: boolean = false
 ) {
   if (isCount === undefined) {
     isCount = 0;
   }
 
   const response = await fetch(
-    `${apiUrl}/countries/search/${name}?page=${page}&pageSize=${pageSize}&isCount=${isCount}`
+    `${apiUrl}/countries/search/${name}?page=${page}&pageSize=${pageSize}&isCount=${isCount}?noCache=${noCache}`
   );
   const data = await response.json();
 
@@ -99,8 +104,10 @@ export async function addCountry(
   return data;
 }
 
-export async function getCountryPlaces(id: number) {
-  const response = await fetch(`${apiUrl}/countries/places/${id}`);
+export async function getCountryPlaces(id: number, noCache: boolean = false) {
+  const response = await fetch(
+    `${apiUrl}/countries/places/${id}?noCache=${noCache}`
+  );
   const data = await response.json();
 
   if (!response.ok) {

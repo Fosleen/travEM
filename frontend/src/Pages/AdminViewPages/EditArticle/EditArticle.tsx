@@ -375,7 +375,8 @@ const EditArticle = () => {
         const sectionIconsData = await getSectionIcons();
         const articleData = await getArticleById(parseInt(id), true);
         const isSetAsMainCountryPost = await getFavoriteArticleByCountry(
-          articleData.countryId
+          articleData.countryId,
+          true
         );
         const airportsData = await getAirportCities();
 

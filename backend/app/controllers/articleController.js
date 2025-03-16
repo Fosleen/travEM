@@ -136,7 +136,15 @@ class ArticleController {
   async getTopCountryArticle(req, res) {
     try {
       const { id } = req.params;
-      const response = await articleService.getTopCountryArticle(id);
+      const useCache = req.query.noCache !== "true";
+      const cacheKey = `top-country-article:${id}`;
+      const response = await getOrSetCache(
+        cacheKey,
+        async () => {
+          return await articleService.getTopCountryArticle(id);
+        },
+        useCache
+      );
       if (!response || response.length == 0) {
         res.status(200).json({ error: "No top article found for country" });
       } else {
@@ -213,6 +221,7 @@ class ArticleController {
       } else if (!response || response.length == 0) {
         res.status(500).json({ error: "Internal server error" });
       } else {
+        await clearCache(`top-country-article:${id}`);
         res.status(200).json(response);
       }
     } catch (error) {

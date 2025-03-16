@@ -258,7 +258,7 @@ const AddCountry = () => {
 
   const fetchData = async () => {
     try {
-      const alreadyAddedCountriesData = await getCountries(1, 300); // no pagination
+      const alreadyAddedCountriesData = await getCountries(1, 300, true); // no pagination
       const colorsData = await getColors();
       const characteristicIconsData = await getCharacteristicIcons();
       const continentsData = await getContinents(true);

@@ -17,7 +17,7 @@ const CountriesList = () => {
 
   const fetchData = async () => {
     try {
-      const data = await getCountries(page, pageSize);
+      const data = await getCountries(page, pageSize, true);
       setCountries(data);
     } catch (error) {
       console.error("error while fetching:", error);
@@ -26,7 +26,13 @@ const CountriesList = () => {
 
   const fetchSearch = async () => {
     try {
-      const data = await getCountriesByName(searchText, page, pageSize, 1);
+      const data = await getCountriesByName(
+        searchText,
+        page,
+        pageSize,
+        1,
+        true
+      );
       setCountries(data);
     } catch (error) {
       console.error("error while fetching:", error);

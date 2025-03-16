@@ -66,3 +66,21 @@ export const clearCache = async (key) => {
     console.error("Redis clear cache error:", error);
   }
 };
+
+export const clearCacheByPattern = async (pattern) => {
+  if (!redisAvailable) return;
+
+  try {
+    const keys = await redisClient.keys(pattern);
+    if (keys.length > 0) {
+      const pipeline = redisClient.multi();
+      for (const key of keys) {
+        pipeline.del(key);
+      }
+      await pipeline.exec();
+      console.log(`Cleared ${keys.length} caches matching pattern: ${pattern}`);
+    }
+  } catch (error) {
+    console.error(`Redis clear cache pattern error: ${error}`);
+  }
+};

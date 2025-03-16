@@ -375,7 +375,7 @@ const EditCountry = () => {
 
   const fetchData = async () => {
     try {
-      const alreadyAddedCountriesData = await getCountries(1, 300); // no pagination
+      const alreadyAddedCountriesData = await getCountries(1, 300, true); // no pagination
       const colorsData = await getColors();
       const characteristicIconsData = await getCharacteristicIcons();
       const continentsData = await getContinents(true);
@@ -429,8 +429,8 @@ const EditCountry = () => {
 
   const fetchSelectedCountryData = async () => {
     if (name) {
-      const _country = await getCountriesByName(name, 1, 1, 0);
-      const _countryData = await getCountryById(_country.data[0].id);
+      const _country = await getCountriesByName(name, 1, 1, 0, true);
+      const _countryData = await getCountryById(_country.data[0].id, true);
 
       setCountry({
         ..._countryData,

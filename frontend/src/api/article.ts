@@ -157,10 +157,10 @@ export async function updateOrCreateTopHomepageArticles(
   return data;
 }
 
-export async function getArticleById(id: number) {
+export async function getArticleById(id: number, noCache?: boolean = false) {
   const token = localStorage.getItem("jwt");
 
-  const response = await fetch(`${apiUrl}/articles/${id}`);
+  const response = await fetch(`${apiUrl}/articles/${id}?noCache=${noCache}`);
   const data = await response.json();
 
   if (!response.ok) {

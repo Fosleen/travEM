@@ -34,10 +34,11 @@ export const initRedis = async () => {
   });
 };
 
-export const getOrSetCache = async (key, cb) => {
-  if (!redisAvailable) {
+export const getOrSetCache = async (key, cb, useCache = true) => {
+  if (!redisAvailable || !useCache) {
     return await cb();
   }
+
   try {
     const data = await redisClient.get(key);
     if (data) {

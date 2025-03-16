@@ -1,4 +1,4 @@
-import { getOrSetCache } from "../middleware/redis.js";
+import { clearCache, getOrSetCache } from "../middleware/redis.js";
 import articleService from "../services/articleService.js";
 import videoService from "../services/videoService.js";
 
@@ -48,11 +48,18 @@ class ArticleController {
 
   async getArticleById(req, res) {
     try {
+      const useCache = req.query.noCache !== "true";
       const { id } = req.params;
       const cacheKey = `article:${id}`;
-      const response = await getOrSetCache(cacheKey, async () => {
-        return await articleService.getArticleById(id);
-      });
+
+      const response = await getOrSetCache(
+        cacheKey,
+        async () => {
+          return await articleService.getArticleById(id);
+        },
+        useCache
+      );
+
       if (!response || response.length == 0) {
         res
           .status(404)
@@ -239,6 +246,7 @@ class ArticleController {
           .status(404)
           .json({ error: "Article with the provided ID doesn't exist" });
       } else {
+        await clearCache(`article:${req.params.id}`);
         res.status(200).json(response);
       }
     } catch (error) {
@@ -251,6 +259,7 @@ class ArticleController {
       const { id } = req.params;
       const response = await articleService.deleteArticle(id);
       if (response) {
+        await clearCache(`article:${id}`);
         res.status(200).json({});
       } else {
         return res.status(500).json({ error: "Internal server error" });

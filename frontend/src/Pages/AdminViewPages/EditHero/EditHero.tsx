@@ -21,7 +21,7 @@ const EditHero = () => {
 
   const fetchData = async () => {
     try {
-      const content = await getHomepage();
+      const content = await getHomepage(true);
       setHomepageContent(content);
       setUrl(content.hero_image_url);
     } catch (error) {

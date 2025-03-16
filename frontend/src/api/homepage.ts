@@ -1,7 +1,7 @@
 import { apiUrl } from "./api";
 
-export async function getHomepage() {
-  const response = await fetch(`${apiUrl}/homepage`);
+export async function getHomepage(noCache: boolean = false) {
+  const response = await fetch(`${apiUrl}/homepage?noCache=${noCache}`);
   const data = await response.json();
 
   if (!response.ok) {
@@ -11,8 +11,8 @@ export async function getHomepage() {
   return data;
 }
 
-export async function getHomepageStats() {
-  const response = await fetch(`${apiUrl}/homepage/stats`);
+export async function getHomepageStats(noCache: boolean = false) {
+  const response = await fetch(`${apiUrl}/homepage/stats?noCache=${noCache}`);
   const data = await response.json();
 
   if (!response.ok) {

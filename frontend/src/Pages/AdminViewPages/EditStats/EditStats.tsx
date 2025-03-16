@@ -20,7 +20,7 @@ const EditStats = () => {
 
   const fetchData = async () => {
     try {
-      const content = await getHomepage();
+      const content = await getHomepage(true);
       setHomepageContent(content);
     } catch (error) {
       console.error("Error occured while fetching homepage data:", error);

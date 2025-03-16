@@ -117,7 +117,15 @@ class ArticleController {
   }
 
   async getHomepageArticles(req, res) {
-    const response = await articleService.getHomepageArticles();
+    const useCache = req.query.noCache !== "true";
+    const cacheKey = `homepage-articles`;
+    const response = await getOrSetCache(
+      cacheKey,
+      async () => {
+        return await articleService.getHomepageArticles();
+      },
+      useCache
+    );
     if (response.length == 0) {
       res.status(404).json({ error: "No articles for homepage found" });
     } else {
@@ -221,6 +229,7 @@ class ArticleController {
     if (response.length == 0) {
       res.status(500).json({ error: `No articles updated` });
     } else {
+      await clearCache(`homepage-articles`);
       res.status(200).json(response);
     }
   }

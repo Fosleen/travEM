@@ -103,10 +103,12 @@ export async function getArticlesByType(
   return data;
 }
 
-export async function getHomepageArticles() {
+export async function getHomepageArticles(noCache: boolean = false) {
   const token = localStorage.getItem("jwt");
 
-  const response = await fetch(`${apiUrl}/articles/homepage`);
+  const response = await fetch(
+    `${apiUrl}/articles/homepage?noCache=${noCache}`
+  );
   const data = await response.json();
 
   if (!response.ok) {

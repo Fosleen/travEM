@@ -31,7 +31,7 @@ const EditFavoriteArticles = () => {
   const navigate = useNavigate();
   const fetchData = async () => {
     try {
-      const _favoriteArticles = await getHomepageArticles();
+      const _favoriteArticles = await getHomepageArticles(true);
       setFavoriteVerticalArticles(
         _favoriteArticles.filter(
           (el: { article_special_types: Array<{ id: number }>; id: number }) =>

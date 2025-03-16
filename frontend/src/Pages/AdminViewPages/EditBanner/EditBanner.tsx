@@ -33,9 +33,9 @@ const EditBanner = () => {
 
   const fetchData = async () => {
     try {
-      const content = await getHomepage();
+      const content = await getHomepage(true);
       setHomepageContent(content);
-      const _favoriteArticles = await getHomepageArticles();
+      const _favoriteArticles = await getHomepageArticles(true);
       setFavoriteArticles(
         _favoriteArticles.filter(
           (el: { article_special_types: Array<{ id: number }>; id: number }) =>

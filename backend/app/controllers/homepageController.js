@@ -1,9 +1,18 @@
+import { getOrSetCache } from "../middleware/redis.js";
 import service from "../services/homepageService.js";
 
 class HomepageController {
   async getHomepage(req, res) {
     try {
-      const response = await service.getHomepage();
+      const useCache = req.query.noCache !== "true";
+      const cacheKey = `homepage`;
+      const response = await getOrSetCache(
+        cacheKey,
+        async () => {
+          return await service.getHomepage();
+        },
+        useCache
+      );
       if (response == undefined) {
         res.status(404).json({ error: "No homepage found" });
       } else {
@@ -16,7 +25,15 @@ class HomepageController {
 
   async getHomepageStats(req, res) {
     try {
-      const response = await service.getHomepageStats();
+      const useCache = req.query.noCache !== "true";
+      const cacheKey = `homepage-stats`;
+      const response = await getOrSetCache(
+        cacheKey,
+        async () => {
+          return await service.getHomepageStats();
+        },
+        useCache
+      );
       if (response == undefined) {
         res.status(404).json({ error: "No homepage stats found" });
       } else {
@@ -43,6 +60,8 @@ class HomepageController {
     if (response == undefined) {
       res.status(500).json({ error: "Error updating homepage" });
     } else {
+      await clearCache(`homepage`);
+      await clearCache(`homepage-stats`);
       res.status(200).json(response);
     }
   }

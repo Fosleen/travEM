@@ -1,9 +1,18 @@
+import { clearCache, getOrSetCache } from "../middleware/redis.js";
 import service from "../services/footerService.js";
 
 class FooterController {
   async getFooter(req, res) {
     try {
-      const response = await service.getFooter();
+      const useCache = req.query.noCache !== "true";
+      const cacheKey = `footer`;
+      const response = await getOrSetCache(
+        cacheKey,
+        async () => {
+          return await service.getFooter();
+        },
+        useCache
+      );
       if (!response || response.length == 0) {
         res.status(404).json({ error: "No footer found" });
       } else {
@@ -22,6 +31,7 @@ class FooterController {
           .status(404)
           .json({ error: "Footer with the provided ID doesn't exist" });
       } else {
+        await clearCache(`footer`);
         res.status(200).json(response);
       }
     } catch (error) {

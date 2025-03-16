@@ -378,7 +378,7 @@ const EditCountry = () => {
       const alreadyAddedCountriesData = await getCountries(1, 300); // no pagination
       const colorsData = await getColors();
       const characteristicIconsData = await getCharacteristicIcons();
-      const continentsData = await getContinents();
+      const continentsData = await getContinents(true);
 
       setAlreadyAddedCountries(alreadyAddedCountriesData.data);
       setColors(colorsData);

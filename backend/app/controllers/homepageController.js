@@ -1,4 +1,4 @@
-import { getOrSetCache } from "../middleware/redis.js";
+import { clearCache, getOrSetCache } from "../middleware/redis.js";
 import service from "../services/homepageService.js";
 
 class HomepageController {

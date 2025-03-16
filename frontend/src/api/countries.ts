@@ -47,8 +47,13 @@ export async function getCountriesByName(
   return data;
 }
 
-export async function getCountriesByContinent(id: number) {
-  const response = await fetch(`${apiUrl}/continents/countries/${id}`);
+export async function getCountriesByContinent(
+  id: number,
+  noCache: boolean = false
+) {
+  const response = await fetch(
+    `${apiUrl}/continents/countries/${id}?noCache=${noCache}`
+  );
   const data = await response.json();
 
   if (!response.ok) {

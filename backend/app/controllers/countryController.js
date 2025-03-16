@@ -118,6 +118,8 @@ class CountriesController {
     if (response == undefined) {
       res.status(500).json({ error: "Error inserting country" });
     } else {
+      await clearCache(`homepage`);
+      await clearCache(`continent-countries:${req.body.continent_id}`);
       res.status(200).json(response);
     }
   }

@@ -1,7 +1,7 @@
 import { apiUrl } from "./api";
 
-export async function getFooter() {
-  const response = await fetch(`${apiUrl}/footer`);
+export async function getFooter(noCache: boolean = false) {
+  const response = await fetch(`${apiUrl}/footer?noCache=${noCache}`);
   const data = await response.json();
 
   if (!response.ok) {

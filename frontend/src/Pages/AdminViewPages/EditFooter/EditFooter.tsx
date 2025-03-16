@@ -24,7 +24,7 @@ const EditFooter = () => {
 
   const fetchData = async () => {
     try {
-      const content = await getFooter();
+      const content = await getFooter(true);
       setFooterContent(content);
       setUrl(content.image_url);
     } catch (error) {

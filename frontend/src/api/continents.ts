@@ -1,7 +1,7 @@
 import { apiUrl } from "./api";
 
-export async function getContinents() {
-  const response = await fetch(`${apiUrl}/continents`);
+export async function getContinents(noCache: boolean = false) {
+  const response = await fetch(`${apiUrl}/continents?noCache=${noCache}`);
   const data = await response.json();
 
   if (!response.ok) {

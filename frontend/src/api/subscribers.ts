@@ -42,22 +42,27 @@ export async function getSubscribersWithoutPagination() {
 }
 
 export async function sendNewsletterToSubscribers(subscribers, article) {
-  const response = await fetch(`${apiUrl}/subscribers/send-newsletter`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ subscribers, article }),
-  });
+  try {
+    const response = await fetch(`${apiUrl}/subscribers/send-newsletter`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ subscribers, article }),
+    });
 
-  const data = await response.json();
+    const data = await response.json();
 
-  if (!response.ok) {
-    console.log(data.error);
-    throw new Error(data.error);
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to send newsletter");
+    }
+
+    console.log("Newsletter sending started", data);
+    return data;
+  } catch (error) {
+    console.error("Error starting newsletter:", error);
+    throw error;
   }
-
-  return data;
 }
 
 export async function addSubscriber(email) {

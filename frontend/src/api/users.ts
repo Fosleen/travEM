@@ -21,9 +21,6 @@ export const loginUser = async (values, navigate, { setSubmitting }) => {
     const data = await response.json();
 
     if (data.success) {
-      console.log("Authentication succeeded");
-
-      console.log("Data je", data);
       localStorage.setItem("jwt", data.token);
 
       const jwtToken = localStorage.getItem("jwt");
@@ -32,10 +29,8 @@ export const loginUser = async (values, navigate, { setSubmitting }) => {
       const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
       const decodedPayload = JSON.parse(atob(base64));
 
-      console.log("Decoded payload je", decodedPayload);
       const exp_time = decodedPayload.exp;
       localStorage.setItem("jwtExpiration", exp_time);
-      console.log("exp_time", exp_time);
       notifySuccess("Uspješna prijava!");
       navigate("/admin/sadržaj");
     } else {

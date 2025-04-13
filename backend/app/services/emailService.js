@@ -89,55 +89,47 @@ export const sendEmail = async (to, subject, html) => {
 
 export const sendNewsletterToSubscribers = async (subscribers, article) => {
   const emailTemplate = createEmailTemplate(article);
-  const batchSize = 5; // Smaller batch size
-  const batchDelay = 5000; // Longer delay (5 seconds)
+  const batchSize = 10;
+  const batchDelay = 2000;
   let failedEmails = [];
 
   for (let i = 0; i < subscribers.length; i += batchSize) {
     const batch = subscribers.slice(i, i + batchSize);
-    console.log(
-      `Processing batch ${Math.floor(i / batchSize) + 1} of ${Math.ceil(
-        subscribers.length / batchSize
-      )}`
-    );
 
     try {
-      for (const subscriber of batch) {
+      const batchPromises = batch.map(async (subscriber) => {
         try {
-          console.log(`Sending email to ${subscriber.email}`);
           await sendEmail(
             subscriber.email,
             `Novi članak: ${article.article_title}`,
             emailTemplate
           );
-          console.log(`Successfully sent to ${subscriber.email}`);
+          return { success: true, email: subscriber.email };
         } catch (error) {
           console.error(`Failed to send to ${subscriber.email}:`, error);
-          failedEmails.push({
-            success: false,
-            email: subscriber.email,
-            error: error.message,
-          });
+          return { success: false, email: subscriber.email, error };
         }
+      });
 
-        await new Promise((resolve) => setTimeout(resolve, 500));
-      }
+      const results = await Promise.all(batchPromises);
+      failedEmails = [...failedEmails, ...results.filter((r) => !r.success)];
 
-      console.log(
-        `Completed batch ${
-          Math.floor(i / batchSize) + 1
-        }, waiting before next batch`
-      );
       await new Promise((resolve) => setTimeout(resolve, batchDelay));
     } catch (error) {
       console.error(`Batch ${Math.floor(i / batchSize) + 1} failed:`, error);
     }
   }
 
+  if (failedEmails.length > 0) {
+    console.warn(
+      `Failed to send to ${failedEmails.length} emails:`,
+      failedEmails
+    );
+  }
+
   return {
     totalProcessed: subscribers.length,
     successful: subscribers.length - failedEmails.length,
-    failed: failedEmails.length,
-    failedDetails: failedEmails,
+    failed: failedEmails,
   };
 };

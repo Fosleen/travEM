@@ -54,19 +54,11 @@ class SubscriberController {
   async sendNewsletter(req, res) {
     try {
       const { subscribers, article } = req.body;
-
-      res.status(200).json({ message: "Newsletter sending started" });
-      process.nextTick(async () => {
-        try {
-          await service.sendNewsletter(subscribers, article);
-          console.log("Newsletter sent successfully to all subscribers");
-        } catch (error) {
-          console.error("Background newsletter sending failed:", error);
-        }
-      });
+      await service.sendNewsletter(subscribers, article);
+      res.status(200).json({ message: "Newsletter sent successfully" });
     } catch (error) {
-      console.error("Error initiating newsletter:", error);
-      res.status(500).json({ error: "Failed to start newsletter sending" });
+      console.error("Error sending newsletter:", error);
+      res.status(500).json({ error: "Failed to send newsletter" });
     }
   }
 

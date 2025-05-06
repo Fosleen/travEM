@@ -41,6 +41,7 @@ import CookieConsent from "./components/atoms/CookieConsent/CookieConsent";
 import { Helmet } from "react-helmet";
 import Subsrcibers from "./Pages/AdminViewPages/Subscribers/Subscribers";
 import TermsAndConditions from "./Pages/UserViewPages/TermsAndConditions/TermsAndConditions";
+import PopUp from "./components/user/molecules/PopUp";
 
 function App() {
   const navigate = useNavigate();
@@ -71,6 +72,7 @@ function App() {
           content="putujem s travem, putujemstravem, travem, putujem travem, travem putovanja, putovanja, putovanja iz hrvatske, travel blog, studentska putovanja, budget putovanja, jeftina putovanja, putovanja po europi, hrvatska putovanje, croatian travel blog, travel bloggers, croatian blog, hrvatska blog, studentska putovanja blog, jeftina studentska putovanja, travem youtube, matija dokmanović, ema pavrlišak, putovanje travem, balkanska jeftina putovanja, hrvatska jeftina putovanja, putovanje iz hrvatske, kako organizirati putovanje, savjeti za putovanja"
         />
       </Helmet>
+      <PopUp />
       <CookieConsent />
       <Routes>
         <Route path="/login" element={<Login />} />

@@ -6,9 +6,7 @@ import { notifyFailure, notifyInfo } from "../../../atoms/Toast/Toast";
 import { addSubscriber } from "../../../../api/subscribers";
 import travemLogo from "../../../../assets/images/travem-logo-hero.png";
 import popUpBg from "../../../../assets/images/popupbg.jpg";
-import popUpBgLq from "../../../../assets/images/popupbg-lq.jpg";
 import { X } from "@phosphor-icons/react";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const PopUp = () => {
   const [email, setEmail] = useState("");
@@ -20,7 +18,7 @@ const PopUp = () => {
     if (!hasClosedPopup) {
       const timer = setTimeout(() => {
         setShowPopup(true);
-      }, 2000);
+      }, 6000);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -93,13 +91,7 @@ const PopUp = () => {
           </div>
         </div>
         <div className="email-popup-img-section">
-          <LazyLoadImage
-            alt="travem-popup-bg"
-            src={popUpBg}
-            placeholderSrc={popUpBgLq}
-            wrapperClassName="lazy-image-wrapper"
-            effect="blur"
-          />
+          <img alt="travem-popup-bg" src={popUpBg} />
         </div>
       </div>
     </div>

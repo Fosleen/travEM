@@ -43,8 +43,6 @@ class SubscriberService {
       });
       console.log(subscribers30days);
 
-      // const subscribers7days = subscribers30days
-
       return {
         data: {
           subscribers30days: subscribers30days.length,

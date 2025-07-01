@@ -10,67 +10,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const createEmailTemplate = (article) => {
-  return `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <style>
-            .email-container {
-              max-width: 600px;
-              margin: 0 auto;
-              font-family: Arial, sans-serif;
-            }
-            .article-image {
-              width: 100%;
-              max-height: 300px;
-              object-fit: cover;
-            }
-            .article-title {
-              color: #2BAC82;
-              font-size: 24px;
-              margin: 20px 0;
-            }
-            .article-description {
-              color: #333;
-              line-height: 1.6;
-            }
-            .read-more-btn {
-              display: inline-block;
-              padding: 10px 20px;
-              background-color: #2BAC82;
-              color: white;
-              text-decoration: none;
-              border-radius: 5px;
-              margin: 20px 0;
-            }
-            .footer {
-              margin-top: 30px;
-              padding-top: 20px;
-              border-top: 1px solid #eee;
-              font-size: 12px;
-              color: #666;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="email-container">
-            <img src="${article.mainArticleImage}" alt="Article Image" class="article-image">
-            <h1 class="article-title">${article.article_title}</h1>
-            <p class="article-description">${article.article_description}</p>
-            <a href="https://putujemstravem.com/clanak/${article.id}" class="read-more-btn">
-              Pročitaj više
-            </a>
-            <div class="footer">
-              <p>Primili ste ovaj email jer ste pretplaćeni na naš newsletter.</p>
-              <p>Za odjavu nam se javite na mail travem.hr@gmail.com</p>
-            </div>
-          </div>
-        </body>
-      </html>
-    `;
-};
-
 export const sendEmail = async (to, subject, html) => {
   try {
     const info = await transporter.sendMail({
@@ -87,49 +26,115 @@ export const sendEmail = async (to, subject, html) => {
   }
 };
 
-export const sendNewsletterToSubscribers = async (subscribers, article) => {
-  const emailTemplate = createEmailTemplate(article);
-  const batchSize = 10;
-  const batchDelay = 2000;
-  let failedEmails = [];
+const syncSubscribersToMailerLite = async (subscribers) => {
+  try {
+    const batches = chunkArray(subscribers, 1000);
 
-  for (let i = 0; i < subscribers.length; i += batchSize) {
-    const batch = subscribers.slice(i, i + batchSize);
+    for (const batch of batches) {
+      const subscribersData = batch.map((subscriber) => ({
+        email: subscriber.email,
+        groups: [process.env.MAILERLITE_GROUP_ID],
+      }));
 
-    try {
-      const batchPromises = batch.map(async (subscriber) => {
-        try {
-          await sendEmail(
-            subscriber.email,
-            `Novi članak: ${article.article_title}`,
-            emailTemplate
-          );
-          return { success: true, email: subscriber.email };
-        } catch (error) {
-          console.error(`Failed to send to ${subscriber.email}:`, error);
-          return { success: false, email: subscriber.email, error };
-        }
+      await fetch("https://connect.mailerlite.com/api/subscribers", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.MAILERLITE_API_KEY}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ subscribers: subscribersData }),
       });
 
-      const results = await Promise.all(batchPromises);
-      failedEmails = [...failedEmails, ...results.filter((r) => !r.success)];
-
-      await new Promise((resolve) => setTimeout(resolve, batchDelay));
-    } catch (error) {
-      console.error(`Batch ${Math.floor(i / batchSize) + 1} failed:`, error);
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
+  } catch (error) {
+    console.error("Sync error:", error);
+    throw error;
   }
+};
 
-  if (failedEmails.length > 0) {
-    console.warn(
-      `Failed to send to ${failedEmails.length} emails:`,
-      failedEmails
+const chunkArray = (array, size) => {
+  const chunks = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunks.push(array.slice(i, i + size));
+  }
+  return chunks;
+};
+
+export const sendNewsletterToSubscribers = async (subscribers, articleData) => {
+  try {
+    console.log("Starting newsletter send for:", articleData.article_title);
+    console.log("Subscribers count:", subscribers.length);
+
+    console.log("Syncing subscribers to MailerLite...");
+    await syncSubscribersToMailerLite(subscribers);
+
+    console.log("Creating campaign...");
+    const campaignResponse = await fetch(
+      "https://connect.mailerlite.com/api/campaigns",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.MAILERLITE_API_KEY}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: `Newsletter: ${articleData.article_title}`,
+          type: "regular",
+          emails: [
+            {
+              subject: articleData.article_title,
+              from_name: process.env.FROM_NAME || "putujemstravem",
+              from: process.env.FROM_EMAIL,
+            },
+          ],
+          filter: [
+            [
+              {
+                operator: "in_any",
+                args: ["groups", [process.env.MAILERLITE_GROUP_ID]],
+              },
+            ],
+          ],
+        }),
+      }
     );
-  }
 
-  return {
-    totalProcessed: subscribers.length,
-    successful: subscribers.length - failedEmails.length,
-    failed: failedEmails,
-  };
+    const campaign = await campaignResponse.json();
+    console.log("Campaign response:", campaign);
+
+    if (!campaignResponse.ok) {
+      throw new Error(`Campaign creation failed: ${JSON.stringify(campaign)}`);
+    }
+
+    console.log("Scheduling campaign...");
+    const scheduleResponse = await fetch(
+      `https://connect.mailerlite.com/api/campaigns/${campaign.data.id}/schedule`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.MAILERLITE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          delivery: "instant",
+        }),
+      }
+    );
+
+    if (!scheduleResponse.ok) {
+      const scheduleError = await scheduleResponse.json();
+      throw new Error(
+        `Campaign scheduling failed: ${JSON.stringify(scheduleError)}`
+      );
+    }
+
+    console.log("Newsletter sent successfully!");
+    return { success: true };
+  } catch (error) {
+    console.error("Newsletter sending error:", error);
+    throw new Error(`Newsletter sending failed: ${error.message}`);
+  }
 };

@@ -1,3 +1,4 @@
+import { sendNewsletterToSubscribers } from "../services/emailService.js";
 import service from "../services/subscriberService.js";
 
 class SubscriberController {
@@ -51,17 +52,6 @@ class SubscriberController {
     }
   }
 
-  async sendNewsletter(req, res) {
-    try {
-      const { subscribers, article } = req.body;
-      await service.sendNewsletter(subscribers, article);
-      res.status(200).json({ message: "Newsletter sent successfully" });
-    } catch (error) {
-      console.error("Error sending newsletter:", error);
-      res.status(500).json({ error: "Failed to send newsletter" });
-    }
-  }
-
   async deleteSubscriber(req, res) {
     const { id } = req.params;
     const response = await service.deleteSubscriber(id);
@@ -71,6 +61,25 @@ class SubscriberController {
       res
         .status(500)
         .json({ error: `Error while deleting subscriber with id ${id}` });
+    }
+  }
+
+  async sendNewsletter(req, res) {
+    try {
+      const { subscribers, articleData } = req.body;
+
+      const result = await sendNewsletterToSubscribers(
+        subscribers,
+        articleData
+      );
+
+      res.json({ success: true, message: "Newsletter sent successfully" });
+    } catch (error) {
+      console.error("Newsletter sending failed:", error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+      });
     }
   }
 }

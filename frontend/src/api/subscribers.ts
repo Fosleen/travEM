@@ -48,7 +48,7 @@ export async function sendNewsletterToSubscribers(subscribers, article) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ subscribers, article }),
+      body: JSON.stringify({ subscribers, articleData: article }),
     });
 
     const data = await response.json();

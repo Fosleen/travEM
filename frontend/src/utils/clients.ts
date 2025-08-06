@@ -8,7 +8,7 @@ import Surfshark from "../assets/images/sponsors/surfshark.png";
 export const clients = [
   {
     img: Fosleen,
-    url: "https://www.fosleen.com/",
+    url: "https://fosleen.com/?utm_source=putujemstravem&utm_medium=footer&utm_campaign=internal-link",
   },
   {
     img: Saily,
@@ -31,7 +31,7 @@ export const clients = [
   // duplicated because there are not enough sponsors
   {
     img: Fosleen,
-    url: "https://www.fosleen.com/",
+    url: "https://fosleen.com/?utm_source=putujemstravem&utm_medium=footer&utm_campaign=internal-link",
   },
   {
     img: Saily,
@@ -52,7 +52,7 @@ export const clients = [
   },
   {
     img: Fosleen,
-    url: "https://www.fosleen.com/",
+    url: "https://fosleen.com/?utm_source=putujemstravem&utm_medium=footer&utm_campaign=internal-link",
   },
   {
     img: Saily,

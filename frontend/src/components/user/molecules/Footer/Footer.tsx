@@ -127,12 +127,11 @@ const Footer = ({
           </span>
         </div>
       </div>
-      <a
-        href="https://fosleen.com/?utm_source=putujemstravem&utm_medium=footer&utm_campaign=internal-link"
-        target="_blank"
-      >
-        <img src={logo} alt="fosleen-logo" />
-      </a>
+      <div className="footer-logo">
+        <a href="https://fosleen.com/?utm_source=putujemstravem&utm_medium=footer&utm_campaign=internal-link" target="blank">
+          <img src={logo} alt="fosleen-logo" />
+        </a>
+      </div>
       <Marquee />
     </div>
   );

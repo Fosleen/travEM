@@ -1,5 +1,4 @@
 import db from "../models/index.js";
-import { sendNewsletterToSubscribers } from "./emailService.js";
 import { Op } from "sequelize";
 
 class SubscriberService {
@@ -33,7 +32,6 @@ class SubscriberService {
     sevenDaysAgo.setDate(todaysDate.getDate() - 7);
     threeDaysAgo.setDate(todaysDate.getDate() - 3);
     oneDayAgo.setDate(todaysDate.getDate() - 1);
-
     try {
       const subscribers30days = await db.models.Subscriber.findAll({
         attributes: ["created_at"],
@@ -41,10 +39,6 @@ class SubscriberService {
           created_at: { [Op.gte]: thirtyDaysAgo },
         },
       });
-      console.log(subscribers30days);
-
-      // const subscribers7days = subscribers30days
-
       return {
         data: {
           subscribers30days: subscribers30days.length,
@@ -78,7 +72,6 @@ class SubscriberService {
       const subscriber = await db.models.Subscriber.create({
         email: email,
       });
-
       return subscriber;
     } catch (error) {
       console.log(error);
@@ -88,10 +81,24 @@ class SubscriberService {
 
   async sendNewsletter(subscribers, article) {
     try {
-      const result = await sendNewsletterToSubscribers(subscribers, article);
+      const body = {
+        subscribers,
+        article,
+      };
+
+      const response = await fetch(process.env.LAMBDA_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": process.env.X_API_KEY,
+        },
+        body,
+      });
+
+      const result = await response.json();
       return result;
     } catch (error) {
-      console.error("Error in sendNewsletter service:", error);
+      console.error("Error calling Lambda:", error);
       throw error;
     }
   }
@@ -101,7 +108,6 @@ class SubscriberService {
       await db.models.Subscriber.destroy({
         where: { id: id },
       });
-
       return [];
     } catch (error) {
       console.log(error);

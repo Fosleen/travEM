@@ -1,0 +1,28 @@
+{
+  "name": "email-lambda",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon lambda.js",
+    "dev": "nodemon --exec node lambda.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "dotenv": "^17.2.1",
+    "eslint": "^9.33.0",
+    "express": "^5.1.0",
+    "install": "^0.13.0",
+    "nodemon": "^3.1.10",
+    "npm": "^11.5.2",
+    "prettier": "^3.6.2"
+  },
+  "dependencies": {
+    "@codegenie/serverless-express": "^4.17.0",
+    "knex": "^3.1.0",
+    "mysql2": "^3.14.3",
+    "nodemailer": "^7.0.5"
+  }
+}

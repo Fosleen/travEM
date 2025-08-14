@@ -11,16 +11,15 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "dotenv": "^17.2.1",
-    "eslint": "^9.33.0",
-    "express": "^5.1.0",
-    "install": "^0.13.0",
-    "nodemon": "^3.1.10",
-    "npm": "^11.5.2",
-    "prettier": "^3.6.2"
+    "install": "^0.13.0"
   },
   "dependencies": {
     "@codegenie/serverless-express": "^4.17.0",
-    "nodemailer": "^7.0.5"
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "nodemailer": "^7.0.5",
+    "nodemon": "^3.1.10",
+    "npm": "^11.5.2"
   }
 }

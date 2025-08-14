@@ -1,5 +1,6 @@
 import db from "../models/index.js";
 import { Op } from "sequelize";
+import axios from "axios";
 
 class SubscriberService {
   async getSubscribers(page, pageSize) {

@@ -85,6 +85,7 @@ class SubscriberService {
         subscribers,
         article,
       };
+      console.log("body", body);
 
       const response = await fetch(process.env.LAMBDA_URL, {
         method: "POST",
@@ -92,7 +93,7 @@ class SubscriberService {
           "Content-Type": "application/json",
           "x-api-key": process.env.X_API_KEY,
         },
-        body,
+        body: JSON.stringify(body),
       });
 
       const result = await response.json();

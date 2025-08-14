@@ -87,23 +87,19 @@ class SubscriberService {
       };
       console.log("body", body);
 
-      const response = await fetch(process.env.LAMBDA_URL, {
-        method: "POST",
+      const response = await axios.post(process.env.LAMBDA_URL, body, {
         headers: {
           "Content-Type": "application/json",
           "x-api-key": process.env.X_API_KEY,
         },
-        body: JSON.stringify(body),
       });
 
-      const result = await response.json();
-      return result;
+      return response.data;
     } catch (error) {
       console.error("Error calling Lambda:", error);
       throw error;
     }
   }
-
   async deleteSubscriber(id) {
     try {
       await db.models.Subscriber.destroy({

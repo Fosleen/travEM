@@ -178,7 +178,6 @@ const Article = () => {
               </div>
             )}
           </div>
-          <Ad dataAdSlot="12345678" />
           <LazyLoadComponent>
             <div className="article-gallery-wrapper">
               {articleContent?.gallery_images && (

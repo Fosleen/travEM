@@ -1,6 +1,6 @@
 import Fosleen from "../assets/images/logo-light.png";
 import DeraHe from "../assets/images/sponsors/DeraHe.png";
-import Saily from "../assets/images/sponsors/Saily_.png";
+import Airalo from "../assets/images/sponsors/Airalo.png";
 import Istanbulepass from "../assets/images/sponsors/Istanbulepass.png";
 import CCUSA from "../assets/images/sponsors/CCUSA.png";
 import Surfshark from "../assets/images/sponsors/surfshark.png";
@@ -11,8 +11,8 @@ export const clients = [
     url: "https://fosleen.com/?utm_source=putujemstravem&utm_medium=footer&utm_campaign=internal-link",
   },
   {
-    img: Saily,
-    url: "https://go.saily.site/aff_c?offer_id=101&aff_id=7336",
+    img: Airalo,
+    url: "https://try.airalo.com/putujem",
   },
   {
     img: DeraHe,
@@ -34,8 +34,8 @@ export const clients = [
     url: "https://fosleen.com/?utm_source=putujemstravem&utm_medium=footer&utm_campaign=internal-link",
   },
   {
-    img: Saily,
-    url: "https://go.saily.site/aff_c?offer_id=101&aff_id=7336",
+    img: Airalo,
+    url: "https://try.airalo.com/putujem",
   },
   {
     img: DeraHe,
@@ -55,8 +55,8 @@ export const clients = [
     url: "https://fosleen.com/?utm_source=putujemstravem&utm_medium=footer&utm_campaign=internal-link",
   },
   {
-    img: Saily,
-    url: "https://go.saily.site/aff_c?offer_id=101&aff_id=7336",
+    img: Airalo,
+    url: "https://try.airalo.com/putujem",
   },
   {
     img: DeraHe,

@@ -413,7 +413,7 @@ const createEmailTemplate = (article) => {
                             class="social-cell"
                           >
                             <a
-                              href="https://www.instagram.com/travel_paradox"
+                              href="https://www.instagram.com/putujuci_paradoks/"
                               target="_blank"
                               style="display: inline-block"
                             >

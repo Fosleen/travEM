@@ -211,7 +211,7 @@ const createEmailTemplate = (article) => {
                 <table border="0" cellpadding="0" cellspacing="0" width="100%">
                   <!-- Article Image -->
                   <tr>
-                    <td style="padding-bottom: 25px">
+                    <td align="center" style="padding-bottom: 25px">
                       <img
                         src="${article.mainArticleImage}"
                         alt="${article.article_title}"

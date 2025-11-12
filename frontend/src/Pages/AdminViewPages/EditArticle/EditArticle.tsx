@@ -29,7 +29,10 @@ import AdvancedDropdown from "../../../components/admin/atoms/AdvancedDropdown";
 import Button from "../../../components/atoms/Button";
 import ToggleSwitch from "../../../components/admin/atoms/ToggleSwitch";
 import Swal from "sweetalert2";
-import { notifySuccess } from "../../../components/atoms/Toast/Toast";
+import {
+  notifyFailure,
+  notifySuccess,
+} from "../../../components/atoms/Toast/Toast";
 import {
   createTopCountryArticle,
   deleteArticleById,
@@ -53,6 +56,10 @@ import {
 } from "../../../api/galleryImages";
 import { getAirportCities } from "../../../api/airportCities";
 import AdvancedEditor from "../../../components/atoms/AdvancedEditor";
+import {
+  getSubscribersWithoutPagination,
+  sendNewsletterToSubscribers,
+} from "../../../api/subscribers";
 
 const EditArticle = () => {
   const { id } = useParams();
@@ -267,6 +274,37 @@ const EditArticle = () => {
           notifySuccess("Uspješno uređen članak!");
         }
       });
+    }
+  };
+
+  const resendNewsletter = async () => {
+    const result = await Swal.fire({
+      title: "Jeste li sigurni?",
+      text: "Poslat ćete newsletter svim pretplatnicima.",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#2BAC82",
+      cancelButtonColor: "#AC2B2B",
+      cancelButtonText: "Odustani",
+      confirmButtonText: "Da, pošalji!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const subscribers = await getSubscribersWithoutPagination();
+        const articleDataMapped = {
+          id: article.id,
+          article_title: article.title,
+          article_subtitle: article.subtitle,
+          article_description: article.description,
+          mainArticleImage: article.main_image_url,
+        };
+        await sendNewsletterToSubscribers(subscribers, articleDataMapped);
+        notifySuccess("Newsletter uspješno poslan pretplatnicima!");
+      } catch (error) {
+        console.error("Error sending newsletter:", error);
+        notifyFailure("Došlo je do pogreške prilikom slanja newslettera.");
+      }
     }
   };
 
@@ -935,6 +973,13 @@ const EditArticle = () => {
                     </Button>
                     <Button type="button" white onClick={handleCancel}>
                       Odustani
+                    </Button>
+                    <Button
+                      type="button"
+                      adminPrimary
+                      onClick={resendNewsletter}
+                    >
+                      Ponovno pošalji newsletter pretplatnicima
                     </Button>
                   </div>
                 </Form>

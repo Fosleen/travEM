@@ -23,17 +23,7 @@
         font-size: 32px;
         margin-top: 64px;
         color: transparent;
-        text-shadow: 2px 0 0 rgba($color: #2bac82, $alpha: 0.3);
-      }
-
-      .top {
-        position: absolute;
-        top: -2px;
-        left: -2px;
-        color: $grey;
-        text-shadow: -1px -1px 0 #f8f8f8, 0 -1px 0 #f8f8f8, 1px -1px 0 #f8f8f8,
-          1px 0 0 #f8f8f8, 1px 1px 0 #f8f8f8, 0 1px 0 #f8f8f8,
-          -1px 1px 0 #f8f8f8, -1px 0 0 #f8f8f8;
+        text-shadow: 2px 0 0 rgba($color: $textPrimary, $alpha: 1);
       }
     }
 

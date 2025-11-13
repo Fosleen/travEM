@@ -10,7 +10,6 @@ const ArticleHero = ({ article }) => {
       <div className="article-hero-left">
         <div className="article-hero-titles">
           <h2>{article.title}</h2>
-          <h2 className="top">{article.title}</h2>
         </div>
         <h5>
           {formatDate(article.date_written)} {article.user?.first_name}{" "}

@@ -86,6 +86,10 @@ const createEmailTemplate = (article, userEmail) => {
         .mobile-padding {
           padding: 32px !important;
         }
+        .unsubscribe-button-text {
+            padding: 20px 40px !important;
+            font-size: 18px !important;
+        }
         .header-padding{
           padding: 96px 40px !important;
         }
@@ -776,20 +780,20 @@ const createEmailTemplate = (article, userEmail) => {
                               border-radius: 25px;
                             "
                           >
-                            <a
+                         <a
                               href="${unsubscribeUrl}"                              
-                              target="_blank"
-                              class="text-footer"
-                              style="
-                                display: inline-block;
-                                padding: 20px 40px;
-                                font-size: 18px;
-                                font-weight: 600;
-                                color: #cccccc;
-                                text-decoration: none;
-                                letter-spacing: 0.3px;
-                              "
-                            >
+                                target="_blank"
+                                class="text-footer unsubscribe-button-text"
+                                style="
+                                    display: inline-block;
+                                    padding: 12px 24px;
+                                    font-size: 14px;
+                                    font-weight: 600;
+                                    color: #cccccc;
+                                    text-decoration: none;
+                                    letter-spacing: 0.3px;
+                                "
+                                >
                               Odjavi se s newslettera
                             </a>
                           </td>

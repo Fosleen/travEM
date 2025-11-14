@@ -112,6 +112,19 @@ class SubscriberService {
       return null;
     }
   }
+
+  async deleteSubscriberByEmail(email) {
+    try {
+      const result = await db.models.Subscriber.destroy({
+        where: { email: email },
+      });
+
+      return result > 0;
+    } catch (error) {
+      console.log("Error deleting subscriber by email:", error);
+      return false;
+    }
+  }
 }
 
 export default new SubscriberService();

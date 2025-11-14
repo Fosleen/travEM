@@ -298,6 +298,7 @@ const EditArticle = () => {
           article_subtitle: article.subtitle,
           article_description: article.description,
           mainArticleImage: article.main_image_url,
+          article_type_id: article.articleTypeId,
         };
         await sendNewsletterToSubscribers(subscribers, articleDataMapped);
         notifySuccess("Newsletter uspješno poslan pretplatnicima!");

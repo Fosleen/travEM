@@ -216,6 +216,7 @@ const AddArticle = () => {
                     article_subtitle: values.article_subtitle,
                     article_description: values.article_description,
                     mainArticleImage: mainArticleImage,
+                    article_type_id: articleResponse.articleTypeId,
                   };
 
                   await sendNewsletterToSubscribers(subscribers, articleData);

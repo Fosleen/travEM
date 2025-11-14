@@ -1,0 +1,83 @@
+@import "../../../utils/theme.scss";
+
+.unsubscribe-container {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+
+  .unsubscribe-content {
+    background-color: $bg;
+    border-radius: 16px;
+    padding: 48px 32px;
+    max-width: 600px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+    h2 {
+      color: $textPrimary;
+      font-weight: 700;
+      font-size: 24px;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    p {
+      color: $textPrimary;
+      font-size: 16px;
+      margin-bottom: 12px;
+      line-height: 1.6;
+
+      &:last-of-type {
+        margin-bottom: 32px;
+      }
+    }
+
+    .unsubscribe-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+
+      button {
+        min-width: 200px;
+      }
+    }
+  }
+}
+
+@media screen and ($tablet) {
+  .unsubscribe-container {
+    .unsubscribe-content {
+      padding: 64px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      h2 {
+        font-size: 28px;
+      }
+
+      p {
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .unsubscribe-container {
+    .unsubscribe-content {
+      padding: 80px 64px;
+
+      h2 {
+        font-size: 32px;
+      }
+
+      p {
+        font-size: 20px;
+      }
+    }
+  }
+}

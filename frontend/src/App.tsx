@@ -37,11 +37,11 @@ import Contact from "./Pages/UserViewPages/Contact/Contact";
 import ProtectedRoute from "./components/atoms/ProtectedRoute";
 import { useEffect } from "react";
 import PrivacyPolicy from "./Pages/UserViewPages/PrivacyPolicy/PrivacyPolicy";
-import CookieConsent from "./components/atoms/CookieConsent/CookieConsent";
 import { Helmet } from "react-helmet";
 import Subsrcibers from "./Pages/AdminViewPages/Subscribers/Subscribers";
 import TermsAndConditions from "./Pages/UserViewPages/TermsAndConditions/TermsAndConditions";
 import PopUp from "./components/user/molecules/PopUp";
+import Unsubscribe from "./Pages/UserViewPages/Unsubscribe/Unsubscribe";
 
 function App() {
   const navigate = useNavigate();
@@ -73,7 +73,6 @@ function App() {
         />
       </Helmet>
       <PopUp />
-      <CookieConsent />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<UserViewLayout />}>
@@ -96,6 +95,7 @@ function App() {
             path="/destinacija/:countryName/:placeName"
             element={<DestinationPlace />}
           />
+          <Route path="/otkazi-pretplatu" element={<Unsubscribe />} />
         </Route>
 
         <Route

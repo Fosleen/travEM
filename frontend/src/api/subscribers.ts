@@ -104,3 +104,18 @@ export async function deleteSubscriber(id: number) {
   }
   return data;
 }
+
+export async function unsubscribeUser(token: string) {
+  const response = await fetch(
+    `${apiUrl}/subscribers/unsubscribe?userToken=${token}`,
+    {
+      method: "GET",
+    }
+  );
+  const data = await response.json();
+  if (!response.ok) {
+    console.error(data.error);
+    throw new Error(data.error || "Failed to unsubscribe");
+  }
+  return data;
+}

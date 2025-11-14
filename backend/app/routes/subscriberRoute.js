@@ -6,9 +6,9 @@ const router = new Router();
 router.get("/", controller.getSubscribers);
 router.post("/", controller.addSubscriber);
 router.get("/no-pagination", controller.getSubscribersNoPagination);
+router.get("/unsubscribe", controller.unsubscribeUser);
 
 router.delete("/:id", controller.deleteSubscriber);
-
 router.post("/send-newsletter", controller.sendNewsletter);
 
 // GET /api/v1/subscribers/new-subscribers-previous-period

@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import service from "../services/subscriberService.js";
 
 class SubscriberController {
@@ -74,6 +75,42 @@ class SubscriberController {
       res
         .status(500)
         .json({ error: `Error while deleting subscriber with id ${id}` });
+    }
+  }
+
+  async unsubscribeUser(req, res) {
+    try {
+      const { userToken } = req.query;
+
+      if (!userToken) {
+        return res.status(400).json({ error: "Token is required" });
+      }
+
+      const decoded = jwt.verify(userToken, process.env.JWT_SECRET);
+      const email = decoded.email;
+      const response = await service.deleteSubscriberByEmail(email);
+
+      if (response) {
+        res.status(200).json({
+          message: "Successfully unsubscribed",
+          email: email,
+        });
+      } else {
+        res.status(404).json({
+          error: "Subscriber not found",
+        });
+      }
+    } catch (error) {
+      console.log("Error unsubscribing user:", error);
+
+      if (error.name === "JsonWebTokenError") {
+        return res.status(400).json({ error: "Invalid token" });
+      }
+      if (error.name === "TokenExpiredError") {
+        return res.status(400).json({ error: "Token expired" });
+      }
+
+      res.status(500).json({ error: "Failed to unsubscribe" });
     }
   }
 }

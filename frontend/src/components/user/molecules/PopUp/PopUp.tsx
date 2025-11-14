@@ -36,7 +36,7 @@ const PopUp = () => {
     try {
       await addSubscriber(email);
       notifyInfo(
-        "Uspješno ste se pretplatili na newsletter! Ako ne vidite poruke, provjerite neželjenu poštu (spam mail) i maknite naš mail od tamo. Hvala."
+        "Uspješno ste se pretplatili na newsletter! Ako ne vidite poruke, provjerite neželjenu poštu (spam mail) i maknite naš mail odande. Hvala."
       );
       setEmail("");
       closePopup();

@@ -114,7 +114,10 @@ const createEmailTemplate = (article, userEmail) => {
           font-size: 13px !important;
           padding: 14px 22px !important;
         }
-        .social-icon {
+       
+      }
+
+       .social-icon {
           width: 40px !important;
           height: 40px !important;
           padding: 6px !important;
@@ -123,7 +126,6 @@ const createEmailTemplate = (article, userEmail) => {
           width: 28px !important;
           height: 28px !important;
         }
-      }
 
       /* Force light mode appearance in dark mode */
       @media (prefers-color-scheme: dark) {

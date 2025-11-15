@@ -1,7 +1,7 @@
 //@ts-nocheck
 
 import SidebarMenuItem from "../../atoms/SidebarMenuItem";
-import logo from "../../../../assets/images/travem-logo-grey.png";
+import logo from "../../../../assets/images/travem-logo-grey.avif";
 import "./SidebarMenu.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { SignOut } from "@phosphor-icons/react";

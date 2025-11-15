@@ -1,5 +1,5 @@
 import HomepageImage from "../../atoms/HomepageImage";
-import travemLogo from "../../../../assets/images/travem-logo-hero.png";
+import travemLogo from "../../../../assets/images/travem-logo-hero.avif";
 import suitcaseIcon from "../../../../assets/images/suitcase-icon.png";
 import planeIcon from "../../../../assets/images/plane-icon.png";
 import { ArrowDown } from "@phosphor-icons/react";

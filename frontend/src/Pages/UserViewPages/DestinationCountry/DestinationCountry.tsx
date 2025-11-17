@@ -63,6 +63,24 @@ const DestinationCountry = () => {
       <Helmet>
         <meta name="keywords" content={metaKeywords} />
         <title>{title}</title>
+
+        <meta property="og:title" content={title} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={window.location.href} />
+        <meta
+          property="og:description"
+          content={country?.description || "Otkrijte svijet uz Emu i Matiju!"}
+        />
+        <meta property="og:image" content={country?.main_image_url} />
+        <meta property="og:site_name" content="putujEM s travEM" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta
+          name="twitter:description"
+          content={country?.description || "Otkrijte svijet uz Emu i Matiju!"}
+        />
+        <meta name="twitter:image" content={country?.main_image_url} />
       </Helmet>
       {country ? (
         <div className="destination-country-page-container">

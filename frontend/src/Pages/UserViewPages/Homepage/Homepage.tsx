@@ -96,14 +96,27 @@ const Homepage = () => {
       {homepageContent ? (
         <>
           <Helmet>
+            <meta property="og:title" content="putujEM s travEM" />
+            <meta property="og:type" content="website" />
+            <meta property="og:url" content={window.location.href} />
             <meta
-              data-react-helmet="true"
+              property="og:description"
+              content="Otkrijte svijet uz Emu i Matiju! Najdetaljniji vodiči, povoljne karte i savjeti za savršeno putovanje."
+            />
+            <meta
               property="og:image"
               content={homepageContent.hero_image_url}
             />
+            <meta property="og:site_name" content="putujEM s travEM" />
+
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta name="twitter:title" content="putujEM s travEM" />
             <meta
-              data-react-helmet="true"
-              name="twitter:card"
+              name="twitter:description"
+              content="Otkrijte svijet uz Emu i Matiju! Najdetaljniji vodiči, povoljne karte i savjeti za savršeno putovanje."
+            />
+            <meta
+              name="twitter:image"
               content={homepageContent.hero_image_url}
             />
           </Helmet>

@@ -1,0 +1,88 @@
+@import "../../../utils/theme.scss";
+
+.map-parent-wrapper {
+  height: 400px;
+  padding-left: 16px;
+  padding-right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+
+  position: relative;
+
+  svg {
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
+
+@media screen and ($tablet) {
+  .map-parent-wrapper {
+    height: 500px;
+
+    gap: 0px;
+    padding: 0 16px;
+  }
+}
+
+@media screen and ($desktop) {
+  .map-parent-wrapper {
+    max-width: 1300px;
+    margin: 0 auto;
+    flex-direction: row;
+    gap: 0px;
+    height: 600px;
+    width: 100%;
+  }
+}
+
+@media screen and ($desktopLarge) {
+  .map-parent-wrapper {
+    padding: 0;
+  }
+}
+
+.rsm-geographies {
+  path {
+    cursor: pointer;
+  }
+  background-color: red;
+  overflow: hidden;
+}
+
+.zoom-buttons {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+
+  button {
+    width: 100%;
+    padding: 8px;
+    background-color: red;
+    font-size: 34px;
+    border: none;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.mapboxgl-popup-close-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-right: 8px;
+  font-size: 32px;
+}
+
+.mapboxgl-ctrl-top-left,
+.mapboxgl-ctrl-bottom-left,
+.mapboxgl-ctrl-bottom-right {
+  z-index: 1;
+}

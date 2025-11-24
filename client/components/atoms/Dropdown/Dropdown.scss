@@ -1,0 +1,76 @@
+@import "../../../utils/theme.scss";
+
+select {
+  width: 100%;
+  outline: none;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 200%;
+  height: 48px;
+  padding: 24px;
+}
+
+.dropdown {
+  width: 100%;
+  outline: none;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 140%;
+  padding: 8px;
+  gap: 12px;
+  border-radius: 8px;
+  background-color: $bg;
+  border: 2px solid $lightBlue;
+
+  &::placeholder {
+    color: $grey;
+    line-height: 140%;
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  &.success {
+    border: 1px solid $green;
+    color: $limeLight;
+  }
+
+  &.error {
+    border: 1px solid $delete;
+
+    &::placeholder {
+      color: $delete;
+    }
+  }
+}
+
+.dropdown-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.dropdown-label {
+  margin-bottom: 4px;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  color: $grey;
+
+  &.error {
+    color: $delete;
+  }
+}
+
+.dropdown-message {
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-top: 4px;
+  color: $grey;
+}
+
+.dropdown-item {
+  height: 150px;
+}

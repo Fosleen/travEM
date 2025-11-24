@@ -1,0 +1,24 @@
+@import "../../../utils/theme.scss";
+
+.admin-view-layout-container {
+  display: flex;
+  min-height: 100vh;
+  height: 100%;
+  position: relative;
+  z-index: 2; // google ads hovering above logout button
+
+  .admin-view-sidebar {
+    height: 100%;
+    position: fixed;
+    min-width: 256px;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #d2eb64, #2bac82);
+  }
+
+  .admin-view-content {
+    padding-left: 256px;
+    padding-top: 64px;
+    width: 100%;
+    margin-left: 24px;
+  }
+}

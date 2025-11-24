@@ -1,0 +1,26 @@
+@import "../../../../utils/theme.scss";
+
+.table-container {
+  background-color: $greyLight;
+  padding: 16px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .table-header {
+    display: flex;
+    justify-content: space-between;
+
+    .table-search-add-container {
+      display: flex;
+      gap: 16px;
+    }
+  }
+
+  .table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}

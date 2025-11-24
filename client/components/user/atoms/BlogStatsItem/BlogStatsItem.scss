@@ -1,0 +1,99 @@
+@use "@/utils/theme.scss" as *;
+
+.blog-stats-item-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+
+  .blog-stats-item-wrapper {
+    position: relative;
+    max-width: 135px;
+
+    .blog-stats-item-image {
+      width: 100%;
+      padding: 8px;
+      background-color: $green;
+      border-radius: 50%;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .blog-stats-item-value {
+      position: absolute;
+      display: flex;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      justify-content: center;
+      align-items: center;
+
+      p {
+        font-size: 40px;
+        color: $bg;
+        font-weight: 600;
+        text-shadow: 0 4px 8px rgba($color: #000000, $alpha: 0.5);
+      }
+    }
+  }
+
+  p {
+    text-align: center;
+    font-weight: 700;
+    font-size: 16px;
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .blog-stats-item-container {
+    .blog-stats-item-wrapper {
+      .blog-stats-item-value {
+        p {
+          font-size: 56px;
+        }
+      }
+    }
+
+    p {
+      font-size: 20px;
+    }
+  }
+}
+
+@media screen and ($tablet) {
+  .blog-stats-item-container {
+    .blog-stats-item-wrapper {
+      .blog-stats-item-value {
+        p {
+          font-size: 40px;
+        }
+      }
+    }
+
+    p {
+      font-size: 16px;
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .blog-stats-item-container {
+    .blog-stats-item-wrapper {
+      .blog-stats-item-value {
+        p {
+          font-size: 40px;
+        }
+      }
+    }
+
+    p {
+      font-size: 24px;
+    }
+  }
+}

@@ -1,4 +1,4 @@
-@import "../../../utils/theme.scss";
+@use "@/utils/theme.scss" as *;
 
 .btn-scroll-to-top {
   bottom: 30px;

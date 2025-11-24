@@ -1,4 +1,4 @@
-@import "../../../utils/theme.scss";
+@use "@/utils/theme.scss" as *;
 
 .pagination-wrapper {
   width: 100%;

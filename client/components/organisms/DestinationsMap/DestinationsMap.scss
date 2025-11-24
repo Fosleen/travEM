@@ -1,4 +1,4 @@
-@import "../../../utils/theme.scss";
+@use "@/utils/theme.scss" as *;
 
 .map-parent-wrapper {
   height: 400px;

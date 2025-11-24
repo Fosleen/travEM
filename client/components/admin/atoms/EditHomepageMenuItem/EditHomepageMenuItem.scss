@@ -1,4 +1,4 @@
-@import "../../../../utils/theme.scss";
+@use "@/utils/theme.scss" as *;
 
 .edit-homepage-menu-item-container {
   background: $greyLight;

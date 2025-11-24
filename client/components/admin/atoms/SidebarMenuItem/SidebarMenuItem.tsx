@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import "./SidebarMenuItem.scss";
 import {
   Article,
@@ -13,7 +13,7 @@ import { Users } from "@phosphor-icons/react";
 const SidebarMenuItem: FC<SidebarMenuItemProps> = ({ text }) => {
   return (
     <Link
-      to={`/admin/${text.toLowerCase()}`}
+      href={`/admin/${text.toLowerCase()}`}
       className="sidebar-menu-item-container"
     >
       {text == "Članci" && <Article size={32} />}

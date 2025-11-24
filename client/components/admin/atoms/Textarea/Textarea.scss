@@ -1,4 +1,4 @@
-@import "../../../../utils/theme.scss";
+@use "@/utils/theme.scss" as *;
 
 .textarea-parent-wrapper {
   width: 100%;

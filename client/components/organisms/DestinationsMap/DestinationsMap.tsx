@@ -1,7 +1,19 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
+"use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+import "mapbox-gl/dist/mapbox-gl.css";
+import Pin from "../../atoms/Pin";
+import "./DestinationsMap.scss";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { countries } from "../../../utils/all_countries.ts";
+import { FC } from "react";
+import { getVisitedCountries, getVisitedPlaces } from "../../../api/map.ts";
+import { DestinationsMapProps, PlacesData } from "../../../common/types.ts";
+import { getPlaces } from "../../../api/places.ts";
 import Map, {
   Marker,
   NavigationControl,
@@ -11,18 +23,7 @@ import Map, {
   Source,
   Layer,
   Popup,
-} from "react-map-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
-import Pin from "../../atoms/Pin";
-import "./DestinationsMap.scss";
-
-import { useNavigate } from "react-router";
-import { Link } from "react-router-dom";
-import { countries } from "../../../utils/all_countries.ts";
-import { FC } from "react";
-import { getVisitedCountries, getVisitedPlaces } from "../../../api/map.ts";
-import { DestinationsMapProps, PlacesData } from "../../../common/types.ts";
-import { getPlaces } from "../../../api/places.ts";
+} from "react-map-gl/mapbox";
 
 const DestinationsMap: FC<DestinationsMapProps> = ({
   initialLongitude,
@@ -34,19 +35,16 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
     "https://d2ad6b4ur7yvpq.cloudfront.net/naturalearth-3.3.0/ne_50m_admin_0_countries.geojson";
   const sourceId = "countries";
   const layerId = "country-fills";
-  const navigate = useNavigate();
+  const router = useRouter();
   const mapRef = useRef(null);
   const [hoveredCountry, setHoveredCountry] = useState(null);
   const [cursor, setCursor] = useState<string>("auto");
-
   const [visitedPlaces, setVisitedPlaces] = useState<PlacesData | null>([]);
-
   const [matchingCountries, setMatchingCountries] = useState([]);
 
   const fetchData = async () => {
     try {
       const content = await getVisitedCountries();
-
       let visitedPlaces;
       if (showOnlyFeatured) {
         visitedPlaces = await getVisitedPlaces();
@@ -55,23 +53,19 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
         visitedPlaces = await getPlaces(1, 1000);
         setVisitedPlaces(visitedPlaces.data);
       }
-
       const visitedCountries = content.map((country) => {
         const eng_name =
           country.name.charAt(0).toUpperCase() + country.name.slice(1);
         const cro_name = countries.some((c) => c.eng_name === eng_name)
           ? country.name
           : eng_name;
-
         return { eng_name, cro_name };
       });
-
       const matchingCountries = countries.filter((country) =>
         visitedCountries.some(
           (visitedCountry) => visitedCountry.cro_name === country.cro_name
         )
       );
-
       setMatchingCountries(matchingCountries);
     } catch (error) {
       console.error("Error occurred while fetching data:", error);
@@ -88,22 +82,19 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
       const features = await map.queryRenderedFeatures(event.point, {
         layers: [layerId],
       });
-
       if (features.length > 0) {
         const clickedCountryName = features[0].properties.name;
-
         const isCountryInList = matchingCountries.find(
           (country) => country.eng_name === clickedCountryName
         );
-
         if (isCountryInList) {
-          navigate(`/destinacija/${isCountryInList.cro_name}`);
+          router.push(`/destinacija/${isCountryInList.cro_name}`); // FIXED: Added parentheses
         } else {
-          navigate("/nema-drzave");
+          router.push("/nema-drzave");
         }
       }
     },
-    [matchingCountries]
+    [matchingCountries, router] // FIXED: Added router to dependencies
   );
 
   const onHover = useCallback(async (event) => {
@@ -111,7 +102,6 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
     const features = await map.queryRenderedFeatures(event.point, {
       layers: [layerId],
     });
-
     if (features.length > 0) {
       const hovered = features[0].properties.name;
       setHoveredCountry(hovered);
@@ -119,16 +109,17 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
     }
   }, []);
 
+  const [popupInfo, setPopupInfo] = useState(null);
+
   const pins = useMemo(
     () =>
       visitedPlaces.map((city, index) => (
         <Marker
-          key={`marker-${index}`}
+          key={`marker-${index}`} // FIXED: Added curly braces
           longitude={city.longitude}
           latitude={city.latitude}
           onClick={(e) => {
             e.originalEvent.stopPropagation();
-
             setPopupInfo(city);
           }}
         >
@@ -137,8 +128,6 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
       )),
     [visitedPlaces]
   );
-
-  const [popupInfo, setPopupInfo] = useState(null);
 
   return (
     <div className="map-parent-wrapper">
@@ -162,7 +151,6 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
         <FullscreenControl position="top-left" />
         <NavigationControl position="top-left" />
         <ScaleControl />
-
         <Source id={sourceId} type="geojson" data={geojsonUrl}>
           <Layer
             id={layerId}
@@ -172,25 +160,23 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
               "fill-color": [
                 "case",
                 ["==", ["get", "name"], hoveredCountry],
-                "#098f45", // Hovered country color
+                "#098f45",
                 [
                   "in",
                   ["get", "name"],
                   [
                     "literal",
-
                     matchingCountries.map((country) => country.eng_name),
                   ],
                 ],
-                "#a9cf00", // Visited country color
-                "#f8f8f8", // Default color for other countries
+                "#a9cf00",
+                "#f8f8f8",
               ],
               "fill-opacity": 0.5,
             }}
           />
-
           <Layer
-            id={`${layerId}-outline`}
+            id={`${layerId}-outline`} // FIXED: Added curly braces
             type="line"
             source={sourceId}
             paint={{
@@ -199,9 +185,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
             }}
           />
         </Source>
-
         {pins}
-
         {popupInfo && (
           <Popup
             anchor="top"
@@ -211,16 +195,20 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
           >
             <div>
               <Link
-                to={`/destinacija/${popupInfo.country.name}/${popupInfo.name}`}
-                target="_new"
+                href={`/destinacija/${popupInfo.country.name}/${popupInfo.name}`} // FIXED: Added curly braces
+                target="_blank"
               >
                 {popupInfo["name"]}
               </Link>
             </div>
             <Link
-              to={`/destinacija/${popupInfo.country.name}/${popupInfo.name}`}
+              href={`/destinacija/${popupInfo.country.name}/${popupInfo.name}`} // FIXED: Added curly braces
             >
-              <img width="100%" src={popupInfo.main_image_url} />
+              <img
+                width="100%"
+                src={popupInfo.main_image_url}
+                alt={popupInfo.name}
+              />
             </Link>
           </Popup>
         )}

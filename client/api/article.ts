@@ -159,7 +159,7 @@ export async function updateOrCreateTopHomepageArticles(
   return data;
 }
 
-export async function getArticleById(id: number, noCache?: boolean = false) {
+export async function getArticleById(id: number, noCache: boolean = false) {
   const token = localStorage.getItem("jwt");
 
   const response = await fetch(`${apiUrl}/articles/${id}?noCache=${noCache}`);

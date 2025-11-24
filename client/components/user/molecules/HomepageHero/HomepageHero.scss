@@ -1,0 +1,291 @@
+@use "@/utils/theme.scss" as *;
+
+.homepage-hero-container {
+  width: 100%;
+  position: relative;
+  min-height: 400px;
+  height: fit-content;
+
+  .overlay-icon {
+    &-1,
+    &-2 {
+      display: none;
+      visibility: hidden;
+    }
+  }
+
+  .homepage-hero-left {
+    position: absolute;
+    top: -90px;
+    left: -40px;
+    z-index: 0;
+  }
+
+  p {
+    font-size: 16px;
+    font-weight: 600;
+    text-shadow: -1px -1px 0 #fff, 0 -1px 0 #fff, 1px -1px 0 #fff, 1px 0 0 #fff,
+      1px 1px 0 #fff, 0 1px 0 #fff, -1px 1px 0 #fff, -1px 0 0 #fff;
+    max-width: 256px;
+    text-align: right;
+
+    &.light-color {
+      color: #888888;
+    }
+  }
+
+  .homepage-hero-right {
+    height: fit-content;
+    position: relative;
+
+    .homepage-hero-welcome {
+      display: flex;
+      flex-direction: column;
+      align-items: end;
+      margin-right: 16px;
+      justify-content: center;
+      height: calc(100vh / 3);
+
+      .homepage-hero-welcome-box {
+        background-color: $bg;
+        box-shadow: 1px 4px 6px rgba($color: #000000, $alpha: 0.25);
+        height: fit-content;
+
+        img {
+          height: 100%;
+          padding: 8px;
+          width: 280px;
+        }
+      }
+    }
+
+    .homepage-hero-more {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .homepage-hero-more-row {
+        display: flex;
+        flex-direction: column;
+        align-items: end;
+        margin-right: 16px;
+        gap: 8px;
+
+        p {
+          width: fit-content;
+
+          &.names {
+            font-family: "Testimonia";
+            font-size: 48px;
+            color: $grey;
+            max-width: 100%;
+          }
+
+          &.special {
+            padding: 8px 16px;
+            background-color: $bg;
+            border-radius: 24px;
+            box-shadow: 0px 0px 6px 2px $limeGreen;
+          }
+        }
+
+        &:last-child {
+          display: none;
+          visibility: hidden;
+          margin-left: 16px;
+        }
+
+        .arrow-icon {
+          cursor: pointer;
+          background-color: #eeeeee;
+          width: 72px;
+          height: 72px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .homepage-hero-container {
+    display: flex;
+    flex-direction: column;
+    padding-right: 72px;
+
+    .homepage-hero-left {
+      left: -70px;
+      z-index: 0;
+    }
+
+    .homepage-hero-right {
+      .homepage-hero-welcome {
+        gap: 24px;
+
+        .homepage-hero-welcome-box {
+          img {
+            width: 360px;
+          }
+        }
+      }
+
+      .homepage-hero-more {
+        .homepage-hero-more-row {
+          gap: 24px;
+
+          p {
+            &.names {
+              font-size: 56px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .homepage-hero-container {
+    position: relative;
+
+    .overlay-icon {
+      &-1,
+      &-2 {
+        position: absolute;
+        display: block;
+        visibility: visible;
+        width: 200px; // 280
+      }
+
+      &-1 {
+        right: 0px;
+        top: -24px;
+      }
+
+      &-2 {
+        width: 120px;
+        bottom: 0px;
+        z-index: 1;
+        left: 280px;
+      }
+    }
+
+    .homepage-hero-left {
+      left: -70px;
+      z-index: 0;
+    }
+
+    .homepage-hero-right {
+      height: calc(100vh - 240px);
+      min-height: 592px;
+      justify-content: space-around;
+      display: flex;
+      flex-direction: column;
+
+      .homepage-hero-welcome {
+        gap: 8px;
+        margin-right: 160px;
+
+        p {
+          &:first-child {
+            width: 100%;
+            margin-top: 80px;
+            max-width: 640px;
+            text-align: center;
+          }
+        }
+
+        .homepage-hero-welcome-box {
+          img {
+            padding: 20px;
+            width: 640px;
+          }
+        }
+      }
+
+      .homepage-hero-more {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        align-items: end;
+        justify-content: end;
+
+        .homepage-hero-more-row {
+          flex-direction: row;
+          align-items: center;
+
+          p {
+            width: fit-content;
+
+            &.names {
+              font-size: 72px;
+            }
+
+            &.special {
+              padding: 12px 24px;
+              cursor: pointer;
+            }
+          }
+
+          &:last-child {
+            display: flex;
+            visibility: visible;
+            align-items: center;
+          }
+        }
+      }
+    }
+
+    .homepage-hero-destinations-menu-here-container {
+      position: absolute;
+      bottom: -344px;
+      position: absolute;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 2;
+
+      p {
+        text-shadow: none;
+        //color: $grey;
+        font-weight: 700;
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+@media screen and ($desktopLarge) {
+  .homepage-hero-container {
+    .overlay-icon {
+      &-1,
+      &-2 {
+        width: 220px;
+      }
+
+      &-1 {
+        top: -50px;
+      }
+
+      &-2 {
+        width: 120px;
+        left: 360px;
+      }
+    }
+
+    .homepage-hero-left {
+      left: calc((100vw - 1480px) / 2);
+      z-index: 0;
+    }
+
+    .homepage-hero-right {
+      margin-right: calc((100vw - 1480px) / 2);
+    }
+  }
+}

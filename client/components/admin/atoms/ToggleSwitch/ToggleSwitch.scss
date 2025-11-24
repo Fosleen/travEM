@@ -1,4 +1,4 @@
-@import "../../../../utils/theme.scss";
+@use "@/utils/theme.scss" as *;
 
 .toggle-switch-container {
   // ne radi dobro ako ugnijezdis ostalo u ovo

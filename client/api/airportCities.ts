@@ -1,12 +1,20 @@
 import { apiUrl } from "./api";
 
 export async function getAirportCities() {
-  const response = await fetch(`${apiUrl}/airport-cities`);
-  const data = await response.json();
+  try {
+    const response = await fetch(`${apiUrl}/airport-cities`, {
+      next: { revalidate: 3600 },
+    });
 
-  if (!response.ok) {
-    console.log(data.error);
-    return data.error;
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return { error: errorData.error };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching airport cities:", error);
+    return { error: error.message };
   }
-  return data;
 }

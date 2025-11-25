@@ -1,0 +1,67 @@
+// components/user/pages/airplaneTickets/AirplaneTickets.scss
+@import "../../../../utils/theme.scss";
+
+.airplane-tickets-grid-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  @media screen and ($tablet) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+  }
+}
+
+.airplane-tickets-text-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  h1 {
+    // Changed from h2 to h1 for better SEO
+    color: $textPrimary;
+    font-size: 40px;
+    margin: 0;
+  }
+}
+
+.no-tickets-message {
+  grid-column: 1 / -1; // Span full width
+  text-align: center;
+  padding: 40px 20px;
+
+  h2 {
+    color: $textPrimary;
+    font-size: 24px;
+    font-weight: normal;
+  }
+}
+
+.airplane-tickets-connected-articles-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  @media screen and ($tabletMedium) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media screen and ($desktopLarge) {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.airplane-tickets-text-articles-wrapper {
+  h2 {
+    font-weight: bold;
+    font-size: 40px;
+  }
+}
+
+.airplane-tickets-parent-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-top: 28px;
+  padding-bottom: 28px;
+}

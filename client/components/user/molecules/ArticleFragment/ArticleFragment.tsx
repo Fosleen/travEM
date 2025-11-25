@@ -22,7 +22,7 @@ const ArticleFragment: FC<ArticleProps> = ({
         <div className="article-fragment-image-wrapper">
           <Image
             alt={section?.section_images[0].alt || "Article image"}
-            src={section?.section_images[0].url}
+            src={section?.section_images[0].url.trimStart()}
             width={section?.section_images[0].width || 1200}
             height={section?.section_images[0].height || 800}
             sizes="(max-width: 768px) 100vw, (max-width: 1300px) 90vw, 1200px"
@@ -34,7 +34,7 @@ const ArticleFragment: FC<ArticleProps> = ({
         <div className="article-fragment-images-wrapper">
           <Image
             alt={section?.section_images[0].alt || "Article image"}
-            src={section?.section_images[0].url}
+            src={section?.section_images[0].url.trimStart()}
             width={section?.section_images[0].width || 600}
             height={section?.section_images[0].height || 400}
             sizes="(max-width: 768px) 100vw, 50vw"
@@ -42,7 +42,7 @@ const ArticleFragment: FC<ArticleProps> = ({
           />
           <Image
             alt={section?.section_images[1].alt || "Article image"}
-            src={section?.section_images[1].url}
+            src={section?.section_images[1].url.trimStart()}
             width={section?.section_images[1].width || 600}
             height={section?.section_images[1].height || 400}
             sizes="(max-width: 768px) 100vw, 50vw"

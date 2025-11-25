@@ -20,9 +20,9 @@
     "react-fast-marquee": "^1.6.5",
     "react-ga4": "^2.1.0",
     "react-map-gl": "^8.1.0",
-    "react-photo-gallery": "^8.0.0",
     "react-toastify": "^11.0.5",
-    "sass": "^1.94.2"
+    "sass": "^1.94.2",
+    "yet-another-react-lightbox": "^3.25.0"
   },
   "devDependencies": {
     "@types/node": "^20",

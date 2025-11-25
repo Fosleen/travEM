@@ -1,3 +1,4 @@
+// api/countries.ts
 import { CountriesData } from "../common/types";
 import { apiUrl } from "./api";
 
@@ -14,30 +15,47 @@ export async function getCountries(
   pageSize = 12,
   noCache: boolean = false
 ) {
-  const response = await fetch(
-    `${apiUrl}/countries?page=${page}&pageSize=${pageSize}&noCache=${noCache}`,
-    {
-      next: { revalidate: noCache ? 0 : 3600 },
+  try {
+    const response = await fetch(
+      `${apiUrl}/countries?page=${page}&pageSize=${pageSize}&noCache=${noCache}`,
+      {
+        next: { revalidate: noCache ? 0 : 3600 },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return { error: errorData.error };
     }
-  );
-  const data = await response.json();
-  if (!response.ok) {
-    console.log(data.error);
-    return data.error;
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching countries:", error);
+    return { error: error.message };
   }
-  return data;
 }
 
 export async function getCountryById(id: number, noCache: boolean = false) {
-  const response = await fetch(`${apiUrl}/countries/${id}?noCache=${noCache}`, {
-    next: { revalidate: noCache ? 0 : 3600 },
-  });
-  const data = await response.json();
-  if (!response.ok) {
-    console.log(data.error);
-    return data.error;
+  try {
+    const response = await fetch(
+      `${apiUrl}/countries/${id}?noCache=${noCache}`,
+      {
+        next: { revalidate: noCache ? 0 : 3600 },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return { error: errorData.error };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching country:", error);
+    return { error: error.message };
   }
-  return data;
 }
 
 export async function getCountriesByName(
@@ -47,39 +65,54 @@ export async function getCountriesByName(
   isCount?: number,
   noCache: boolean = false
 ) {
-  if (isCount === undefined) {
-    isCount = 0;
-  }
-  const response = await fetch(
-    `${apiUrl}/countries/search/${name}?page=${page}&pageSize=${pageSize}&isCount=${isCount}&noCache=${noCache}`,
-    {
-      next: { revalidate: noCache ? 0 : 3600 },
+  try {
+    if (isCount === undefined) {
+      isCount = 0;
     }
-  );
-  const data = await response.json();
-  if (!response.ok) {
-    console.log(data.error);
-    return data.error;
+
+    const response = await fetch(
+      `${apiUrl}/countries/search/${name}?page=${page}&pageSize=${pageSize}&isCount=${isCount}&noCache=${noCache}`,
+      {
+        next: { revalidate: noCache ? 0 : 3600 },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return { error: errorData.error };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching countries by name:", error);
+    return { error: error.message };
   }
-  return data;
 }
 
 export async function getCountriesByContinent(
   id: number,
   noCache: boolean = false
 ) {
-  const response = await fetch(
-    `${apiUrl}/continents/countries/${id}?noCache=${noCache}`,
-    {
-      next: { revalidate: noCache ? 0 : 3600 },
+  try {
+    const response = await fetch(
+      `${apiUrl}/continents/countries/${id}?noCache=${noCache}`,
+      {
+        next: { revalidate: noCache ? 0 : 3600 },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return { error: errorData.error };
     }
-  );
-  const data = await response.json();
-  if (!response.ok) {
-    console.log(data.error);
-    return data.error;
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching countries by continent:", error);
+    return { error: error.message };
   }
-  return data;
 }
 
 export async function addCountry(
@@ -91,6 +124,7 @@ export async function addCountry(
   color_id: number
 ) {
   const token = getToken();
+
   const response = await fetch(`${apiUrl}/countries`, {
     headers: {
       Accept: "application/json",
@@ -107,32 +141,43 @@ export async function addCountry(
       color_id: color_id,
     }),
   });
+
   const data = await response.json();
+
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
 export async function getCountryPlaces(id: number, noCache: boolean = false) {
-  const response = await fetch(
-    `${apiUrl}/countries/places/${id}?noCache=${noCache}`,
-    {
-      next: { revalidate: noCache ? 0 : 3600 },
+  try {
+    const response = await fetch(
+      `${apiUrl}/countries/places/${id}?noCache=${noCache}`,
+      {
+        next: { revalidate: noCache ? 0 : 3600 },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return [];
     }
-  );
-  const data = await response.json();
-  if (!response.ok) {
-    console.log(data.error);
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching country places:", error);
     return [];
   }
-  return data;
 }
 
 export async function updateCountry(country: CountriesData) {
   console.log(country);
   const token = getToken();
+
   const response = await fetch(`${apiUrl}/countries/${country.id}`, {
     headers: {
       Accept: "application/json",
@@ -149,11 +194,14 @@ export async function updateCountry(country: CountriesData) {
       color_id: country.colorId,
     }),
   });
+
   const data = await response.json();
+
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   console.log(data);
   return data;
 }

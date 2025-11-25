@@ -1,23 +1,40 @@
+// api/continents.ts
 import { apiUrl } from "./api";
 
 export async function getContinents(noCache: boolean = false) {
-  const response = await fetch(`${apiUrl}/continents?noCache=${noCache}`);
-  const data = await response.json();
+  try {
+    const response = await fetch(`${apiUrl}/continents?noCache=${noCache}`, {
+      next: { revalidate: noCache ? 0 : 3600 },
+    });
 
-  if (!response.ok) {
-    console.log(data.error);
-    return data.error;
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return { error: errorData.error };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching continents:", error);
+    return { error: error.message };
   }
-  return data;
 }
 
 export async function getContinentById(id: number) {
-  const response = await fetch(`${apiUrl}/continents/${id}`);
-  const data = await response.json();
+  try {
+    const response = await fetch(`${apiUrl}/continents/${id}`, {
+      next: { revalidate: 3600 },
+    });
 
-  if (!response.ok) {
-    console.log(data.error);
-    return data.error;
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return { error: errorData.error };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching continent:", error);
+    return { error: error.message };
   }
-  return data;
 }

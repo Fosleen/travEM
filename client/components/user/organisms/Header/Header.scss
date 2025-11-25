@@ -1,19 +1,23 @@
 @use "@/utils/theme.scss" as *;
 
+@use "@/utils/theme.scss" as *;
 .header-container {
   position: relative;
-
   .header-top {
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     padding-left: 8px;
-
-    img {
+    a {
       padding: 8px 0;
       position: relative;
       z-index: 2;
+      display: block;
+
+      img {
+        display: block;
+      }
     }
   }
 

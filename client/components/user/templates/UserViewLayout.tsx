@@ -1,5 +1,6 @@
-import { Outlet } from "react-router";
-import { useLocation } from "react-router-dom";
+"use client";
+
+import { usePathname } from "next/navigation";
 import Header from "../organisms/Header";
 import Footer from "../molecules/Footer";
 import Newsletter from "../molecules/Newsletter";
@@ -7,12 +8,14 @@ import "./UserViewLayout.scss";
 import ScrollToTop from "../../atoms/ScrollToTop";
 import { useState } from "react";
 
-const UserViewLayout = () => {
-  const location = useLocation();
+const UserViewLayout = ({ children }: { children: React.ReactNode }) => {
+  const pathname = usePathname();
+
   const isHomePage =
-    location.pathname === "/" ||
-    location.pathname.startsWith("/destinacija") ||
-    location.pathname.startsWith("/clanak");
+    pathname === "/" ||
+    pathname === "/pocetna" ||
+    pathname.startsWith("/destinacija") ||
+    pathname.startsWith("/clanak");
 
   const [isPlaneTicketsMenuShown, setIsPlaneTicketsMenuShown] = useState(false);
   const [isDestinationsMenuShown, setIsDestinationsMenuShown] = useState(false);
@@ -35,12 +38,8 @@ const UserViewLayout = () => {
         selectedSubcategory={selectedSubcategory}
         setSelectedSubcategory={setSelectedSubcategory}
       />
-      <div
-        className={`user-view-layout-page ${
-          isHomePage == false && "max-width"
-        }`}
-      >
-        <Outlet />
+      <div className={`user-view-layout-page ${!isHomePage && "max-width"}`}>
+        {children}
       </div>
       <Newsletter />
       <Footer

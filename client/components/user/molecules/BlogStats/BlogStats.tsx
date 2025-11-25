@@ -1,12 +1,10 @@
 import "./BlogStats.scss";
-
-const icon1 = "/images/world-icon.png";
-const icon2 = "/images/globe-icon.png";
-const icon3 = "/images/article-icon.png";
-const icon4 = "/images/plane-ticket-icon.png";
-const icon5 = "/images/vlogging-icon.png";
-const icon6 = "/images/walk-icon.png";
-
+import icon1 from "@/assets/images/world-icon.png";
+import icon2 from "@/assets/images/globe-icon.png";
+import icon3 from "@/assets/images/article-icon.png";
+import icon4 from "@/assets/images/plane-ticket-icon.png";
+import icon5 from "@/assets/images/vlogging-icon.png";
+import icon6 from "@/assets/images/walk-icon.png";
 import BlogStatsItem from "../../atoms/BlogStatsItem";
 import { HomepageData, Nullable } from "../../../../common/types";
 import { FC, useEffect, useState } from "react";

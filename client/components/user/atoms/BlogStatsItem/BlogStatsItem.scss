@@ -9,19 +9,16 @@
   .blog-stats-item-wrapper {
     position: relative;
     max-width: 135px;
+    width: 100%;
 
     .blog-stats-item-image {
+      position: relative;
       width: 100%;
+      aspect-ratio: 1; // Makes it square
       padding: 8px;
       background-color: $green;
       border-radius: 50%;
       overflow: hidden;
-
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
     }
 
     .blog-stats-item-value {

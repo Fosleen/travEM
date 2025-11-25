@@ -82,6 +82,11 @@ export interface AirplaneTicketsMenuProps {
   setIsPlaneTicketsMenuShown?: (value: boolean) => void;
 }
 
+export interface AirplaneTicketsMenuItemProps {
+  title: string;
+  isCroatia: boolean;
+}
+
 export interface SectionImage {
   id?: number;
   url: string;
@@ -271,7 +276,7 @@ export interface DestinationsMapProps {
 }
 
 export interface BlogStatsItemProps {
-  icon: string;
+  icon: StaticImageData;
   value: string;
   text: string;
 }

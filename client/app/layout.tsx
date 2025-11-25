@@ -14,7 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="en"
+      lang="hr"
       className={`
         ${montserrat.variable} 
         ${archivoBlack.variable} 

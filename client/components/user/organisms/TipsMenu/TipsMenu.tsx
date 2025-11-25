@@ -1,13 +1,13 @@
 import TipsMenuItem from "../../molecules/TipsMenuItem";
-import icon1 from "../../../../assets/images/luggage-icon.png";
-import icon2 from "../../../../assets/images/airport-icon.png";
-import icon3 from "../../../../assets/images/travel-org-icon.png";
-import icon4 from "../../../../assets/images/travel-app-icon.png";
-import icon5 from "../../../../assets/images/bed-icon.png";
-import icon6 from "../../../../assets/images/cards-icon.png";
+import icon1 from "@/assets/images/luggage-icon.png";
+import icon2 from "@/assets/images/airport-icon.png";
+import icon3 from "@/assets/images/travel-org-icon.png";
+import icon4 from "@/assets/images/travel-app-icon.png";
+import icon5 from "@/assets/images/bed-icon.png";
+import icon6 from "@/assets/images/cards-icon.png";
 import "./TipsMenu.scss";
 import { FC } from "react";
-import { TipsMenuProps } from "../../../../common/types";
+import { TipsMenuProps } from "@/common/types";
 
 const menuItems = [
   { title: "Pakiranje", icon: icon1 },

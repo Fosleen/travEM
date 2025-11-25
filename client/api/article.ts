@@ -2,6 +2,14 @@
 // @ts-nocheck
 import { apiUrl } from "./api";
 
+// Helper function to get token (only on client side)
+const getToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("jwt");
+  }
+  return null;
+};
+
 export async function addArticle(
   title: string,
   subtitle: string,
@@ -16,7 +24,7 @@ export async function addArticle(
   date_written: Date,
   airport_city_id: number | null
 ) {
-  const token = localStorage.getItem("jwt");
+  const token = getToken();
 
   const response = await fetch(`${apiUrl}/articles`, {
     headers: {
@@ -51,8 +59,6 @@ export async function addArticle(
 }
 
 export async function getArticlesByName(name: string, page = 1, pageSize = 12) {
-  const token = localStorage.getItem("jwt");
-
   const response = await fetch(
     `${apiUrl}/articles/search/${name}?page=${page}&pageSize=${pageSize}`
   );
@@ -70,8 +76,6 @@ export async function getArticles(
   pageSize = 12,
   articleType: number | null = null
 ) {
-  const token = localStorage.getItem("jwt");
-
   const response = await fetch(
     `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${articleType}`
   );
@@ -89,8 +93,6 @@ export async function getArticlesByType(
   pageSize = 8,
   article_type: number
 ) {
-  const token = localStorage.getItem("jwt");
-
   const response = await fetch(
     `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${article_type}`
   );
@@ -104,10 +106,12 @@ export async function getArticlesByType(
 }
 
 export async function getHomepageArticles(noCache: boolean = false) {
-  const token = localStorage.getItem("jwt");
-
   const response = await fetch(
-    `${apiUrl}/articles/homepage?noCache=${noCache}`
+    `${apiUrl}/articles/homepage?noCache=${noCache}`,
+    {
+      // Add cache configuration for Next.js
+      next: { revalidate: noCache ? 0 : 3600 }, // Cache for 1 hour unless noCache is true
+    }
   );
   const data = await response.json();
 
@@ -119,8 +123,6 @@ export async function getHomepageArticles(noCache: boolean = false) {
 }
 
 export async function getRecommendedArticles(id: number, type: string) {
-  const token = localStorage.getItem("jwt");
-
   const response = await fetch(
     `${apiUrl}/articles/recommended/${id}?type=${type}`
   );
@@ -137,7 +139,7 @@ export async function updateOrCreateTopHomepageArticles(
   articleIds: Array<number>,
   specialTypeId: number
 ) {
-  const token = localStorage.getItem("jwt");
+  const token = getToken();
 
   const response = await fetch(`${apiUrl}/articles/homepage/${specialTypeId}`, {
     headers: {
@@ -160,9 +162,10 @@ export async function updateOrCreateTopHomepageArticles(
 }
 
 export async function getArticleById(id: number, noCache: boolean = false) {
-  const token = localStorage.getItem("jwt");
-
-  const response = await fetch(`${apiUrl}/articles/${id}?noCache=${noCache}`);
+  const response = await fetch(`${apiUrl}/articles/${id}?noCache=${noCache}`, {
+    // Add cache configuration for Next.js
+    next: { revalidate: noCache ? 0 : 3600 }, // Cache for 1 hour unless noCache is true
+  });
   const data = await response.json();
 
   if (!response.ok) {
@@ -196,7 +199,7 @@ export async function updateArticle(
     place_id: place_id,
   };
 
-  const token = localStorage.getItem("jwt");
+  const token = getToken();
 
   const response = await fetch(`${apiUrl}/articles/${id}`, {
     headers: {
@@ -217,7 +220,7 @@ export async function updateArticle(
 }
 
 export async function deleteArticleById(id: number) {
-  const token = localStorage.getItem("jwt");
+  const token = getToken();
 
   const response = await fetch(`${apiUrl}/articles/${id}`, {
     headers: {
@@ -238,10 +241,12 @@ export async function getFavoriteArticleByCountry(
   id: number,
   noCache: boolean = false
 ) {
-  const token = localStorage.getItem("jwt");
-
   const response = await fetch(
-    `${apiUrl}/articles/country/top/${id}?noCache=${noCache}`
+    `${apiUrl}/articles/country/top/${id}?noCache=${noCache}`,
+    {
+      // Add cache configuration for Next.js
+      next: { revalidate: noCache ? 0 : 3600 }, // Cache for 1 hour unless noCache is true
+    }
   );
   const data = await response.json();
 
@@ -253,7 +258,7 @@ export async function getFavoriteArticleByCountry(
 }
 
 export async function createTopCountryArticle(articleId: number) {
-  const token = localStorage.getItem("jwt");
+  const token = getToken();
 
   const response = await fetch(`${apiUrl}/articles/country/top`, {
     headers: {
@@ -276,7 +281,7 @@ export async function createTopCountryArticle(articleId: number) {
 }
 
 export async function removeTopCountryArticle(articleId: number) {
-  const token = localStorage.getItem("jwt");
+  const token = getToken();
 
   const response = await fetch(`${apiUrl}/articles/country/top/${articleId}`, {
     headers: {

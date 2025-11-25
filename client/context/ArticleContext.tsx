@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, createContext, useState } from "react";
 import { Article, Props } from "../common/types";
 

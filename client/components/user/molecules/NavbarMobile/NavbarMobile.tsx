@@ -9,7 +9,7 @@ import Search from "../../../atoms/Search";
 import AirplaneTicketsMenu from "../../organisms/AirplaneTicketsMenu";
 import DestinationsMenu from "../../organisms/DestinationsMenu";
 import TipsMenu from "../../organisms/TipsMenu";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 
 const NavbarMobile = ({
   location,
@@ -19,20 +19,20 @@ const NavbarMobile = ({
   selectedSubcategory,
 }) => {
   const [searchText, setSearchText] = useState<string>("");
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const navHandler = () => {
     setOpenNav(!openNav);
   };
 
+  // Close nav when pathname changes
   useEffect(() => {
     setOpenNav(false);
     setSelectedSubcategory("");
-  }, [location]);
+  }, [location.pathname, setOpenNav, setSelectedSubcategory]);
 
   const handleSubcategoryChange = (type: string) => {
     console.log(type);
-    7;
     if (type != selectedSubcategory) {
       setSelectedSubcategory(type);
     } else {
@@ -47,7 +47,7 @@ const NavbarMobile = ({
   };
 
   const handleSearch = () => {
-    navigate(`/pretrazivanje?naslov=${searchText}`);
+    router.push(`/pretrazivanje?naslov=${searchText}`);
   };
 
   useEffect(() => {

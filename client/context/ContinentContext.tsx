@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, createContext, useState } from "react";
 import { ContinentsData, Props } from "../common/types";
 

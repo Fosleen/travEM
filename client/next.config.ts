@@ -6,6 +6,22 @@ const nextConfig: NextConfig = {
       "mapbox-gl": "./node_modules/mapbox-gl/dist/mapbox-gl.js",
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "live.staticflickr.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "beibozwdtawltlsguoef.supabase.co",
+        port: "",
+        pathname: "/storage/v1/object/public/**",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

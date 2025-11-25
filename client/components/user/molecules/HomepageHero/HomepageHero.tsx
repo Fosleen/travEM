@@ -8,6 +8,7 @@ import { useState } from "react";
 import DestinationsMenu from "../../organisms/DestinationsMenu";
 import { FC } from "react";
 import { HomepageData } from "../../../../common/types";
+import Image from "next/image";
 
 const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
   homepageContent,
@@ -21,8 +22,22 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
 
   return (
     <div className="homepage-hero-container">
-      <img className="overlay-icon-1" src={suitcaseIcon} alt="suitcase" />
-      <img className="overlay-icon-2" src={planeIcon} alt="plane" />
+      <Image
+        className="overlay-icon-1"
+        src={suitcaseIcon}
+        alt="suitcase"
+        width={320}
+        height={320}
+        style={{ width: "auto", height: "auto" }}
+      />
+      <Image
+        className="overlay-icon-2"
+        src={planeIcon}
+        alt="plane"
+        width={120}
+        height={120}
+        style={{ width: "auto", height: "auto" }}
+      />
       <div className="homepage-hero-left">
         <HomepageImage url={homepageContent.hero_image_url} />
       </div>
@@ -30,7 +45,14 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
         <div className="homepage-hero-welcome">
           <p className="light-color">Dobrodošli na</p>
           <div className="homepage-hero-welcome-box">
-            <img src={travemLogo} alt="travem-logo" />
+            <Image
+              src={travemLogo}
+              alt="travem-logo"
+              width={640}
+              height={200}
+              style={{ width: "auto", height: "auto" }}
+              priority
+            />
           </div>
           <p className="light-color">
             i otkrijte nove informacije o putovanjima iz prve ruke

@@ -1,12 +1,14 @@
-// @ts-nocheck
-
-import { useContext, useEffect } from "react";
+import { FC, useContext, useEffect } from "react";
 import DestinationItem from "../../atoms/DestinationItem";
 import "./AirplaneTicketsMenuItem.scss";
 import { getAirportCities } from "../../../../api/airportCities";
-import { PlaneTicketsContext } from "../../../../Context/PlaneTicketsMenuContext";
+import { PlaneTicketsContext } from "@/context/PlaneTicketsMenuContext";
+import { AirplaneTicketsMenuItemProps } from "@/common/types";
 
-const AirplaneTicketsMenuItem = ({ title, isCroatia }) => {
+const AirplaneTicketsMenuItem: FC<AirplaneTicketsMenuItemProps> = ({
+  title,
+  isCroatia,
+}) => {
   const {
     homepagePlaneTicketsContextData,
     setHomepagePlaneTicketsContextData,
@@ -16,6 +18,8 @@ const AirplaneTicketsMenuItem = ({ title, isCroatia }) => {
     try {
       if (!homepagePlaneTicketsContextData) {
         const response = await getAirportCities();
+        console.log("res", response);
+
         setHomepagePlaneTicketsContextData(response);
       }
     } catch {
@@ -36,8 +40,8 @@ const AirplaneTicketsMenuItem = ({ title, isCroatia }) => {
         {homepagePlaneTicketsContextData
           ?.filter((airportCity) =>
             isCroatia
-              ? airportCity.is_in_croatia == 1
-              : airportCity.is_in_croatia != 1
+              ? airportCity.is_in_croatia == true
+              : airportCity.is_in_croatia != true
           )
           .map((airportCity) => (
             <DestinationItem

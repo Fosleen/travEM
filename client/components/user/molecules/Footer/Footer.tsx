@@ -1,34 +1,40 @@
+"use client";
+
+import { useEffect, useState, FC } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import SocialMediaLinks from "../../atoms/SocialMediaLinks/SocialMediaLinks";
+import Marquee from "../../atoms/Marquee";
 import logo from "../../../../assets/images/logo-light.png";
 import "./Footer.scss";
-import { useEffect, useState } from "react";
-import Marquee from "../../atoms/Marquee";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignoreS
-const Footer = ({
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
+interface FooterProps {
+  setIsPlaneTicketsMenuShown: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsDestinationsMenuShown: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsTipsMenuShown: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenNav: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedSubcategory: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const Footer: FC<FooterProps> = ({
   setIsPlaneTicketsMenuShown,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
   setIsDestinationsMenuShown,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
   setIsTipsMenuShown,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
   setOpenNav,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
   setSelectedSubcategory,
 }) => {
-  const [isDesktop, setDesktop] = useState(window.innerWidth >= 1024);
+  const [isDesktop, setDesktop] = useState(false);
 
-  const updateMedia = () => {
-    setDesktop(window.innerWidth >= 1024);
-  };
+  useEffect(() => {
+    const updateMedia = () => {
+      setDesktop(window.innerWidth >= 1024);
+    };
+
+    updateMedia();
+
+    window.addEventListener("resize", updateMedia);
+    return () => window.removeEventListener("resize", updateMedia);
+  }, []);
 
   const goToTop = (type: string) => {
     window.scrollTo({
@@ -38,7 +44,6 @@ const Footer = ({
 
     closeAllMenus();
     if (isDesktop) {
-      // open desktop version of menu
       if (type == "destinacije") {
         setIsDestinationsMenuShown(true);
       } else if (type == "savjeti") {
@@ -47,7 +52,6 @@ const Footer = ({
         setIsPlaneTicketsMenuShown(true);
       }
     } else {
-      // open mobile version of menu
       setOpenNav(true);
       setSelectedSubcategory(type);
     }
@@ -58,11 +62,6 @@ const Footer = ({
     setIsDestinationsMenuShown(false);
     setIsTipsMenuShown(false);
   };
-
-  useEffect(() => {
-    window.addEventListener("resize", updateMedia);
-    return () => window.removeEventListener("resize", updateMedia);
-  });
 
   return (
     <div className="footer-container">
@@ -130,9 +129,17 @@ const Footer = ({
       <div className="footer-logo">
         <a
           href="https://fosleen.com/?utm_source=putujemstravem&utm_medium=footer&utm_campaign=internal-link"
-          target="blank"
+          target="_blank"
+          rel="noopener noreferrer"
         >
-          <img src={logo} alt="fosleen-logo" />
+          <Image
+            src={logo}
+            alt="fosleen-logo"
+            width={160}
+            height={40}
+            style={{ width: "auto", height: "auto" }}
+            priority
+          />
         </a>
       </div>
       <Marquee />

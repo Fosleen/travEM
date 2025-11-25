@@ -6,6 +6,7 @@ import NewsletterImage from "../../atoms/NewsletterImage";
 import { useState } from "react";
 import { notifyFailure, notifyInfo } from "../../../atoms/Toast/Toast";
 import { addSubscriber } from "../../../../api/subscribers";
+import Image from "next/image";
 
 const Newsletter = () => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -55,7 +56,13 @@ const Newsletter = () => {
       <div className="newsletter-content-container">
         <div className="newsletter-content">
           <div className="newsletter-envelope">
-            <img src={envelope} alt="envelope-icon" />
+            <Image
+              src={envelope}
+              alt="envelope-icon"
+              width={320}
+              height={320}
+              style={{ width: "auto", height: "auto" }}
+            />
           </div>
           <div className="newsletter-content-text">
             <h3>Pridruži nam se</h3>

@@ -1,5 +1,4 @@
 /* Remove @import statements - fonts loaded via Next.js */
-
 * {
   margin: 0;
   padding: 0;
@@ -26,4 +25,16 @@
 
 .error-message {
   color: red;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+  font-family: inherit;
 }

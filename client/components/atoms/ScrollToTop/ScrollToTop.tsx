@@ -1,39 +1,41 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import "./ScrollToTop.scss";
+import { usePathname } from "next/navigation";
 import { ArrowCircleUp } from "@phosphor-icons/react/dist/ssr";
-import { useLocation } from "react-router";
+import "./ScrollToTop.scss";
 
 const ScrollToTop = () => {
   const [showTopBtn, setShowTopBtn] = useState(false);
-  const pageHeight = document.documentElement.scrollHeight;
-  const scrollThreshold = 0.4 * pageHeight; //it has to be dynamic because of many pages
-  const location = useLocation();
+  const pathname = usePathname();
 
   useEffect(() => {
-    window.addEventListener("scroll", () => {
+    const handleScroll = () => {
+      const pageHeight = document.documentElement.scrollHeight;
+      const scrollThreshold = 0.4 * pageHeight;
+
       if (window.scrollY > scrollThreshold) {
         setShowTopBtn(true);
       } else {
         setShowTopBtn(false);
       }
-    });
-  });
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
-    goToTopInstant();
-  }, [location]);
+    window.scrollTo({
+      top: 0,
+      behavior: "instant",
+    });
+  }, [pathname]);
 
   const goToTopSmooth = () => {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
-    });
-  };
-
-  const goToTopInstant = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "instant",
     });
   };
 

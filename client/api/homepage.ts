@@ -1,7 +1,17 @@
 import { apiUrl } from "./api";
 
+// Helper function to get token (only on client side)
+const getToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("jwt");
+  }
+  return null;
+};
+
 export async function getHomepage(noCache: boolean = false) {
-  const response = await fetch(`${apiUrl}/homepage?noCache=${noCache}`);
+  const response = await fetch(`${apiUrl}/homepage?noCache=${noCache}`, {
+    next: { revalidate: noCache ? 0 : 3600 },
+  });
   const data = await response.json();
 
   if (!response.ok) {
@@ -12,7 +22,9 @@ export async function getHomepage(noCache: boolean = false) {
 }
 
 export async function getHomepageStats(noCache: boolean = false) {
-  const response = await fetch(`${apiUrl}/homepage/stats?noCache=${noCache}`);
+  const response = await fetch(`${apiUrl}/homepage/stats?noCache=${noCache}`, {
+    next: { revalidate: noCache ? 0 : 3600 },
+  });
   const data = await response.json();
 
   if (!response.ok) {
@@ -23,7 +35,7 @@ export async function getHomepageStats(noCache: boolean = false) {
 }
 
 export async function updateHeroImage(url: string) {
-  const token = localStorage.getItem("jwt");
+  const token = getToken();
 
   const response = await fetch(`${apiUrl}/homepage`, {
     headers: {
@@ -36,7 +48,6 @@ export async function updateHeroImage(url: string) {
       hero_image_url: url,
     }),
   });
-
   const data = await response.json();
 
   if (!response.ok) {
@@ -54,7 +65,7 @@ export async function updateBanner(
   banner_image_url: string,
   button_url: string
 ) {
-  const token = localStorage.getItem("jwt");
+  const token = getToken();
 
   const response = await fetch(`${apiUrl}/homepage`, {
     headers: {
@@ -72,7 +83,6 @@ export async function updateBanner(
       button_url: button_url,
     }),
   });
-
   const data = await response.json();
 
   if (!response.ok) {
@@ -87,7 +97,7 @@ export async function updateStats(
   videos_nmbr: string,
   distance_nmbr: string
 ) {
-  const token = localStorage.getItem("jwt");
+  const token = getToken();
 
   const response = await fetch(`${apiUrl}/homepage`, {
     headers: {
@@ -102,7 +112,6 @@ export async function updateStats(
       distance_nmbr: distance_nmbr,
     }),
   });
-
   const data = await response.json();
 
   if (!response.ok) {

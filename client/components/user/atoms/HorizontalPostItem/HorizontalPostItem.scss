@@ -11,21 +11,15 @@
     background-color: transparent;
   }
 
-  & .horizontal-post-item-image-container {
+  .horizontal-post-item-image-container {
+    position: relative;
     width: 144px;
     height: 100px;
+    flex-shrink: 0;
 
     &.small {
       width: 124px;
       height: 88px;
-    }
-
-    img {
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 8px;
     }
   }
 

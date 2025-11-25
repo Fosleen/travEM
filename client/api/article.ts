@@ -10,6 +10,170 @@ const getToken = () => {
   return null;
 };
 
+export async function getArticleById(id: number, noCache: boolean = false) {
+  try {
+    console.log(`Fetching article ${id} from ${apiUrl}/articles/${id}`);
+
+    const response = await fetch(
+      `${apiUrl}/articles/${id}?noCache=${noCache}`,
+      {
+        // Add cache configuration for Next.js
+        next: { revalidate: noCache ? 0 : 3600 }, // Cache for 1 hour unless noCache is true
+        // Add headers to help with debugging
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      console.error(`API Error: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      console.error("Error response:", errorText);
+      return { error: true, message: errorText };
+    }
+
+    const data = await response.json();
+    console.log("Article fetched successfully:", data.title);
+    return data;
+  } catch (error) {
+    console.error("Fetch error:", error);
+    return { error: true, message: error.message };
+  }
+}
+
+export async function getArticlesByName(name: string, page = 1, pageSize = 12) {
+  try {
+    const response = await fetch(
+      `${apiUrl}/articles/search/${name}?page=${page}&pageSize=${pageSize}`
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return { error: errorData.error };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching articles by name:", error);
+    return { error: error.message };
+  }
+}
+
+export async function getArticles(
+  page = 1,
+  pageSize = 12,
+  articleType: number | null = null
+) {
+  try {
+    const response = await fetch(
+      `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${articleType}`
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return { error: errorData.error };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching articles:", error);
+    return { error: error.message };
+  }
+}
+
+export async function getArticlesByType(
+  page = 1,
+  pageSize = 8,
+  article_type: number
+) {
+  try {
+    const response = await fetch(
+      `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${article_type}`
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return { error: errorData.error };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching articles by type:", error);
+    return { error: error.message };
+  }
+}
+
+export async function getHomepageArticles(noCache: boolean = false) {
+  try {
+    const response = await fetch(
+      `${apiUrl}/articles/homepage?noCache=${noCache}`,
+      {
+        next: { revalidate: noCache ? 0 : 3600 },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return { error: errorData.error };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching homepage articles:", error);
+    return { error: error.message };
+  }
+}
+
+export async function getRecommendedArticles(id: number, type: string) {
+  try {
+    const response = await fetch(
+      `${apiUrl}/articles/recommended/${id}?type=${type}`
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return { error: errorData.error };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching recommended articles:", error);
+    return { error: error.message };
+  }
+}
+
+export async function getFavoriteArticleByCountry(
+  id: number,
+  noCache: boolean = false
+) {
+  try {
+    const response = await fetch(
+      `${apiUrl}/articles/country/top/${id}?noCache=${noCache}`,
+      {
+        next: { revalidate: noCache ? 0 : 3600 },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return { error: errorData.error };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching favorite article:", error);
+    return { error: error.message };
+  }
+}
+
+// All POST/PUT/DELETE methods remain the same as they only run client-side
 export async function addArticle(
   title: string,
   subtitle: string,
@@ -34,98 +198,21 @@ export async function addArticle(
     },
     method: "POST",
     body: JSON.stringify({
-      title: title,
-      subtitle: subtitle,
-      description: description,
-      video: video,
-      metatags: metatags,
-      article_type_id: article_type_id,
-      country_id: country_id,
-      place_id: place_id,
-      user_id: user_id,
-      main_image_url: main_image_url,
-      date_written: date_written,
-      airport_city_id: airport_city_id,
+      title,
+      subtitle,
+      description,
+      video,
+      metatags,
+      article_type_id,
+      country_id,
+      place_id,
+      user_id,
+      main_image_url,
+      date_written,
+      airport_city_id,
     }),
   });
 
-  const data = await response.json();
-
-  if (!response.ok) {
-    console.log(data.error);
-    return data.error;
-  }
-  return data;
-}
-
-export async function getArticlesByName(name: string, page = 1, pageSize = 12) {
-  const response = await fetch(
-    `${apiUrl}/articles/search/${name}?page=${page}&pageSize=${pageSize}`
-  );
-  const data = await response.json();
-
-  if (!response.ok) {
-    console.log(data.error);
-    return data.error;
-  }
-  return data;
-}
-
-export async function getArticles(
-  page = 1,
-  pageSize = 12,
-  articleType: number | null = null
-) {
-  const response = await fetch(
-    `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${articleType}`
-  );
-  const data = await response.json();
-
-  if (!response.ok) {
-    console.log(data.error);
-    return data.error;
-  }
-  return data;
-}
-
-export async function getArticlesByType(
-  page = 1,
-  pageSize = 8,
-  article_type: number
-) {
-  const response = await fetch(
-    `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${article_type}`
-  );
-  const data = await response.json();
-
-  if (!response.ok) {
-    console.log(data.error);
-    return data.error;
-  }
-  return data;
-}
-
-export async function getHomepageArticles(noCache: boolean = false) {
-  const response = await fetch(
-    `${apiUrl}/articles/homepage?noCache=${noCache}`,
-    {
-      // Add cache configuration for Next.js
-      next: { revalidate: noCache ? 0 : 3600 }, // Cache for 1 hour unless noCache is true
-    }
-  );
-  const data = await response.json();
-
-  if (!response.ok) {
-    console.log(data.error);
-    return data.error;
-  }
-  return data;
-}
-
-export async function getRecommendedArticles(id: number, type: string) {
-  const response = await fetch(
-    `${apiUrl}/articles/recommended/${id}?type=${type}`
-  );
   const data = await response.json();
 
   if (!response.ok) {
@@ -161,20 +248,6 @@ export async function updateOrCreateTopHomepageArticles(
   return data;
 }
 
-export async function getArticleById(id: number, noCache: boolean = false) {
-  const response = await fetch(`${apiUrl}/articles/${id}?noCache=${noCache}`, {
-    // Add cache configuration for Next.js
-    next: { revalidate: noCache ? 0 : 3600 }, // Cache for 1 hour unless noCache is true
-  });
-  const data = await response.json();
-
-  if (!response.ok) {
-    console.log(data.error);
-    return data.error;
-  }
-  return data;
-}
-
 export async function updateArticle(
   id: number,
   title: string,
@@ -188,15 +261,15 @@ export async function updateArticle(
   airport_city_id: number | null
 ) {
   const requestBody = {
-    title: title,
-    subtitle: subtitle,
-    description: description,
-    metatags: metatags,
-    main_image_url: main_image_url,
-    article_type_id: article_type_id,
-    airport_city_id: airport_city_id,
-    country_id: country_id,
-    place_id: place_id,
+    title,
+    subtitle,
+    description,
+    metatags,
+    main_image_url,
+    article_type_id,
+    airport_city_id,
+    country_id,
+    place_id,
   };
 
   const token = getToken();
@@ -228,26 +301,6 @@ export async function deleteArticleById(id: number) {
     },
     method: "DELETE",
   });
-  const data = await response.json();
-
-  if (!response.ok) {
-    console.log(data.error);
-    return data.error;
-  }
-  return data;
-}
-
-export async function getFavoriteArticleByCountry(
-  id: number,
-  noCache: boolean = false
-) {
-  const response = await fetch(
-    `${apiUrl}/articles/country/top/${id}?noCache=${noCache}`,
-    {
-      // Add cache configuration for Next.js
-      next: { revalidate: noCache ? 0 : 3600 }, // Cache for 1 hour unless noCache is true
-    }
-  );
   const data = await response.json();
 
   if (!response.ok) {

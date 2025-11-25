@@ -88,17 +88,25 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
         )}
       </div>
 
-      <div className="article-gallery-wrapper">
-        {articleContent?.gallery_images && (
-          <Gallery
-            photos={articleContent.gallery_images.map((image) => ({
-              src: image.url,
-              width: image.width,
-              height: image.height,
-            }))}
-          />
-        )}
-      </div>
+      {/* <div className="article-gallery-wrapper">
+        {articleContent?.gallery_images &&
+          articleContent.gallery_images.length > 0 && (
+            <Gallery
+              photos={articleContent.gallery_images
+                .filter((image) => image.url)
+                .map((image) => ({
+                  src: image.url,
+                  width: image.width || 4,
+                  height: image.height || 3,
+                  alt: image.alt || "Gallery image",
+                  key: image.id || image.url,
+                  // Add these properties to prevent the thumbs error
+                  srcSet: [],
+                  sizes: [],
+                }))}
+            />
+          )}
+      </div> */}
 
       {countryPlaces.length !== 0 && (
         <CountryPlaces hasPadding={false} places={countryPlaces} />

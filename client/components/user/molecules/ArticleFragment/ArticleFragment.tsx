@@ -2,7 +2,7 @@
 import "./ArticleFragment.scss";
 import { FC } from "react";
 import { ArticleProps } from "../../../../common/types";
-import DOMPurify from "dompurify";
+import DOMPurify from "isomorphic-dompurify";
 import Image from "next/image";
 
 const ArticleFragment: FC<ArticleProps> = ({
@@ -11,7 +11,6 @@ const ArticleFragment: FC<ArticleProps> = ({
   index,
 }) => {
   const sectionId = `odlomak-${index}`;
-
   return (
     <div className="article-wrapper" id={sectionId}>
       <h3>{section?.subtitle}</h3>

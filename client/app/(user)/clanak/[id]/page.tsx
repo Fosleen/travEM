@@ -5,12 +5,12 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 type Props = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
-// Generate metadata for SEO and link previews
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const article = await getArticleById(Number(params.id));
+  const { id } = await params;
+  const article = await getArticleById(Number(id));
 
   if (!article || article.error) {
     return {
@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: article.description || "Otkrijte svijet uz Emu i Matiju!",
       images: [article.main_image_url],
       type: "article",
-      url: `https://your-domain.com/clanak/${params.id}`,
+      url: `https://putujemstravem.com/clanak/${id}`,
     },
     twitter: {
       card: "summary_large_image",
@@ -40,15 +40,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// Server component that fetches data
 export default async function Page({ params }: Props) {
-  const articleContent = await getArticleById(Number(params.id));
+  const { id } = await params;
+  const articleContent = await getArticleById(Number(id));
 
   if (!articleContent || articleContent.error) {
     notFound();
   }
 
-  // Fetch country places if article has a placeId
   const countryPlaces = articleContent.placeId
     ? await getCountryPlaces(articleContent.placeId)
     : [];

@@ -1,16 +1,18 @@
-// @ts-nocheck
-
 import "./ArticleImage.scss";
 
 import { useEffect, useState } from "react";
 
 const ArticleImage = ({ article }) => {
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+  const [screenWidth, setScreenWidth] = useState(0);
 
   useEffect(() => {
+    // Set initial width on mount (client-side only)
+    setScreenWidth(window.innerWidth);
+
     const handleResize = () => {
       setScreenWidth(window.innerWidth);
     };
+
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);

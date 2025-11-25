@@ -9,8 +9,9 @@
     right: 8px;
     top: -64px;
 
-    img {
+    .vlog-icon {
       width: 32px;
+      height: auto;
     }
   }
 
@@ -38,7 +39,7 @@
     .destination-videos-image {
       top: -72px;
 
-      img {
+      .vlog-icon {
         width: 64px;
       }
     }
@@ -57,7 +58,7 @@
       right: -16px;
       top: -104px;
 
-      img {
+      .vlog-icon {
         width: 112px;
       }
     }

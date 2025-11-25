@@ -108,7 +108,7 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
                 onClick={() => openLightbox(index)}
               >
                 <Image
-                  src={image.url}
+                  src={image.url.trim()}
                   alt={image.alt || "Gallery image"}
                   width={image.width || 600}
                   height={image.height || 400}
@@ -131,7 +131,7 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
           close={() => setLightboxOpen(false)}
           index={lightboxIndex}
           slides={galleryImages?.map((image) => ({
-            src: image.url,
+            src: image.url.trim(),
             alt: image.alt || "Gallery image",
           }))}
         />

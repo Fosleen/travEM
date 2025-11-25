@@ -42,6 +42,7 @@
     width: 100%;
     position: absolute;
     z-index: 0;
+    filter: blur(6);
 
     & img {
       border-radius: 0 12px 12px 0;

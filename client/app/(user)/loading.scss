@@ -1,6 +1,6 @@
 @use "@/utils/theme.scss" as *;
 
-.article-loading-container {
+.loading-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -9,7 +9,7 @@
   background: $bg;
 }
 
-.article-loading-content {
+.loading-content {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -89,6 +89,9 @@
   }
 }
 
+/* -----------------------------------------------------
+   ANIMATIONS
+----------------------------------------------------- */
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -131,8 +134,11 @@
   }
 }
 
+/* -----------------------------------------------------
+   RESPONSIVE
+----------------------------------------------------- */
 @media (max-width: 768px) {
-  .article-loading-content {
+  .loading-content {
     padding: 0 1rem;
 
     h2 {

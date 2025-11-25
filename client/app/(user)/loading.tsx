@@ -14,32 +14,44 @@ const funFacts = [
 ];
 
 export default function Loading() {
-  const [showTip, setShowTip] = useState(false);
-  const [currentTip, setCurrentTip] = useState("");
+  const TIP_INTERVAL = 4000;
+  const FIRST_TIP_DELAY = 5000;
+
+  const [currentTipIndex, setCurrentTipIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowTip(true);
-      setCurrentTip(funFacts[Math.floor(Math.random() * funFacts.length)]);
-    }, 3000);
+    const firstTimer = setTimeout(() => {
+      setCurrentTipIndex(0);
+    }, FIRST_TIP_DELAY);
 
-    return () => clearTimeout(timer);
+    const interval = setInterval(() => {
+      setCurrentTipIndex((prev) => {
+        if (prev === null) return null;
+        return (prev + 1) % funFacts.length;
+      });
+    }, TIP_INTERVAL);
+
+    return () => {
+      clearTimeout(firstTimer);
+      clearInterval(interval);
+    };
   }, []);
 
   return (
-    <div className="article-loading-container">
-      <div className="article-loading-content">
+    <div className="loading-container">
+      <div className="loading-content">
         <div className="loading-spinner-wrapper">
           <div className="loading-spinner"></div>
           <div className="loading-spinner-inner"></div>
         </div>
-        <h2>Učitavanje članka...</h2>
+
+        <h2>Učitavanje...</h2>
         <p>Molimo pričekajte</p>
 
-        {showTip && (
+        {currentTipIndex !== null && (
           <div className="loading-tip">
             <span className="tip-icon">💡</span>
-            <p>{currentTip}</p>
+            <p>{funFacts[currentTipIndex]}</p>
           </div>
         )}
       </div>

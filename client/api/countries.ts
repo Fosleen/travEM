@@ -21,7 +21,6 @@ export async function getCountries(
     }
   );
   const data = await response.json();
-
   if (!response.ok) {
     console.log(data.error);
     return data.error;
@@ -34,7 +33,6 @@ export async function getCountryById(id: number, noCache: boolean = false) {
     next: { revalidate: noCache ? 0 : 3600 },
   });
   const data = await response.json();
-
   if (!response.ok) {
     console.log(data.error);
     return data.error;
@@ -52,7 +50,6 @@ export async function getCountriesByName(
   if (isCount === undefined) {
     isCount = 0;
   }
-
   const response = await fetch(
     `${apiUrl}/countries/search/${name}?page=${page}&pageSize=${pageSize}&isCount=${isCount}&noCache=${noCache}`,
     {
@@ -60,7 +57,6 @@ export async function getCountriesByName(
     }
   );
   const data = await response.json();
-
   if (!response.ok) {
     console.log(data.error);
     return data.error;
@@ -79,7 +75,6 @@ export async function getCountriesByContinent(
     }
   );
   const data = await response.json();
-
   if (!response.ok) {
     console.log(data.error);
     return data.error;
@@ -96,7 +91,6 @@ export async function addCountry(
   color_id: number
 ) {
   const token = getToken();
-
   const response = await fetch(`${apiUrl}/countries`, {
     headers: {
       Accept: "application/json",
@@ -114,7 +108,6 @@ export async function addCountry(
     }),
   });
   const data = await response.json();
-
   if (!response.ok) {
     console.log(data.error);
     return data.error;
@@ -130,7 +123,6 @@ export async function getCountryPlaces(id: number, noCache: boolean = false) {
     }
   );
   const data = await response.json();
-
   if (!response.ok) {
     console.log(data.error);
     return [];
@@ -141,7 +133,6 @@ export async function getCountryPlaces(id: number, noCache: boolean = false) {
 export async function updateCountry(country: CountriesData) {
   console.log(country);
   const token = getToken();
-
   const response = await fetch(`${apiUrl}/countries/${country.id}`, {
     headers: {
       Accept: "application/json",
@@ -159,7 +150,6 @@ export async function updateCountry(country: CountriesData) {
     }),
   });
   const data = await response.json();
-
   if (!response.ok) {
     console.log(data.error);
     return data.error;

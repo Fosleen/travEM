@@ -1,8 +1,7 @@
-// @ts-nocheck
-
 import Link from "next/link";
 import icon from "../../../../assets/images/main-post-icon.png";
 import "./MainCountryPost.scss";
+import Image from "next/image";
 
 const MainCountryPost = ({ article }) => {
   return (
@@ -11,15 +10,25 @@ const MainCountryPost = ({ article }) => {
       className="main-country-post-container"
     >
       <div className="main-country-post-bg-image-container">
-        <img src={article.main_image_url} alt="post-bg-image" />
+        <Image
+          src={article.main_image_url}
+          alt="post-bg-image"
+          width={4000}
+          height={2000}
+        />
       </div>
       <div className="main-country-top-layer">
         <div className="main-country-post-top-image-container">
-          <img src={article.main_image_url} alt="post-image" />
+          <img
+            src={article.main_image_url}
+            alt={`${article.title} post-image`}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            style={{ objectFit: "cover" }}
+          />
         </div>
         <div className="main-country-icon-container">
           <div className="main-country-icon-circle">
-            <img src={icon} alt="icon" />
+            <Image src={icon} alt="icon" width={80} height={40} />
           </div>
         </div>
         <div className="main-country-post-text-container">{article.title}</div>

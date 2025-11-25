@@ -16,7 +16,7 @@ const Marquee = () => {
       >
         {clients.map((client, index) => (
           <Link
-            href={client.url}
+            href={client.url.trim()}
             key={index}
             target="_blank"
             rel="noopener noreferrer"

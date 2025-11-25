@@ -4,7 +4,7 @@ import icon1 from "../../../../assets/images/menu-icon.png";
 import icon2 from "../../../../assets/images/teamwork-icon.png";
 import { FC } from "react";
 import { SpecificityProps } from "../../../../common/types";
-import { LazyLoadImage } from "react-lazy-load-image-component";
+import Image from "next/image";
 
 const Specificities: FC<{
   iconNmbr: string;
@@ -16,10 +16,10 @@ const Specificities: FC<{
         <div className="country-highligth-container">
           <div className="country-highligth-left">
             <div className="country-highlight-left-bg-image">
-              {iconNmbr == "1" ? (
-                <img src={icon1} alt="icon1" />
+              {iconNmbr === "1" ? (
+                <Image src={icon1} alt="icon1" />
               ) : (
-                <img src={icon2} alt="icon2" />
+                <Image src={icon2} alt="icon2" />
               )}
             </div>
             <div className="country-highligth-left-content">
@@ -48,13 +48,18 @@ const Specificities: FC<{
               </div>
             </div>
           </div>
-
           <div className="country-highlight-right">
             {specificities &&
               specificities.specificity_images &&
               specificities.specificity_images.map((el, index) => (
                 <div className="country-highlight-image-container" key={index}>
-                  <LazyLoadImage alt={el.url} src={el.url} />
+                  <Image
+                    src={el.url.trim()}
+                    alt={`Specificity image ${index + 1}`}
+                    width={600}
+                    height={400}
+                    quality={75}
+                  />
                 </div>
               ))}
           </div>

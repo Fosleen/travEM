@@ -1,13 +1,14 @@
 // @ts-nocheck
 
 import { FC, useEffect, useState } from "react";
-import passportImage from "../../../../assets/images/passport-icon.png";
+import passportImage from "@/assets/images/passport-icon.png";
 import "./VisaInfo.scss";
 import Button from "../../../atoms/Button";
 import AdvancedDropdown from "../../../admin/atoms/AdvancedDropdown";
 import { getVisitedCountries } from "../../../../api/map";
 import { checkIfInfoExists } from "../../../../api/visaInfo";
 import { Info } from "@phosphor-icons/react";
+import Image from "next/image";
 
 const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
   countryId,
@@ -71,7 +72,7 @@ const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
 
   return (
     <div className="visa-info-container">
-      <img src={passportImage} alt="passport-image" />
+      <Image src={passportImage} alt="passport-image" />
       <div className="visa-info-text">
         <div className="visa-info-title-container">
           <h2>Provjerite putne isprave</h2>
@@ -81,7 +82,7 @@ const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
             onMouseEnter={() => setTooltipVisible(true)}
             onMouseLeave={() => setTooltipVisible(false)}
           >
-            <Info size={24} weight="duotone" />
+            <Info size={24} weight="duotone" width={200} />
             {tooltipVisible && (
               <span className="tooltip">
                 Odaberite državu čije dokumente/putne isprave posjedujete kako

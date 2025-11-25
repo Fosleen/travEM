@@ -28,9 +28,9 @@ const ArticleTableOfContents = ({ article }) => {
               section.section_icon?.url && (
                 <TableOfContentsItem
                   key={index}
-                  icon={section.section_icon.url}
+                  icon={section.section_icon.url.trim()}
                   text={section.subtitle}
-                  href={`#${sectionId}`} // ← FIXED: Was href=`#${sectionId}`}
+                  href={`#${sectionId}`}
                 />
               )
             );

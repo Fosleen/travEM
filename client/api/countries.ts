@@ -1,13 +1,24 @@
 import { CountriesData } from "../common/types";
 import { apiUrl } from "./api";
 
+// Helper function to get token (only on client side)
+const getToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("jwt");
+  }
+  return null;
+};
+
 export async function getCountries(
   page = 1,
   pageSize = 12,
   noCache: boolean = false
 ) {
   const response = await fetch(
-    `${apiUrl}/countries?page=${page}&pageSize=${pageSize}?noCache=${noCache}`
+    `${apiUrl}/countries?page=${page}&pageSize=${pageSize}&noCache=${noCache}`,
+    {
+      next: { revalidate: noCache ? 0 : 3600 },
+    }
   );
   const data = await response.json();
 
@@ -19,7 +30,9 @@ export async function getCountries(
 }
 
 export async function getCountryById(id: number, noCache: boolean = false) {
-  const response = await fetch(`${apiUrl}/countries/${id}?noCache=${noCache}`);
+  const response = await fetch(`${apiUrl}/countries/${id}?noCache=${noCache}`, {
+    next: { revalidate: noCache ? 0 : 3600 },
+  });
   const data = await response.json();
 
   if (!response.ok) {
@@ -41,7 +54,10 @@ export async function getCountriesByName(
   }
 
   const response = await fetch(
-    `${apiUrl}/countries/search/${name}?page=${page}&pageSize=${pageSize}&isCount=${isCount}?noCache=${noCache}`
+    `${apiUrl}/countries/search/${name}?page=${page}&pageSize=${pageSize}&isCount=${isCount}&noCache=${noCache}`,
+    {
+      next: { revalidate: noCache ? 0 : 3600 },
+    }
   );
   const data = await response.json();
 
@@ -57,7 +73,10 @@ export async function getCountriesByContinent(
   noCache: boolean = false
 ) {
   const response = await fetch(
-    `${apiUrl}/continents/countries/${id}?noCache=${noCache}`
+    `${apiUrl}/continents/countries/${id}?noCache=${noCache}`,
+    {
+      next: { revalidate: noCache ? 0 : 3600 },
+    }
   );
   const data = await response.json();
 
@@ -76,7 +95,7 @@ export async function addCountry(
   continent_id: number,
   color_id: number
 ) {
-  const token = localStorage.getItem("jwt");
+  const token = getToken();
 
   const response = await fetch(`${apiUrl}/countries`, {
     headers: {
@@ -94,7 +113,6 @@ export async function addCountry(
       color_id: color_id,
     }),
   });
-
   const data = await response.json();
 
   if (!response.ok) {
@@ -106,21 +124,23 @@ export async function addCountry(
 
 export async function getCountryPlaces(id: number, noCache: boolean = false) {
   const response = await fetch(
-    `${apiUrl}/countries/places/${id}?noCache=${noCache}`
+    `${apiUrl}/countries/places/${id}?noCache=${noCache}`,
+    {
+      next: { revalidate: noCache ? 0 : 3600 },
+    }
   );
   const data = await response.json();
 
   if (!response.ok) {
     console.log(data.error);
-    return data.error;
+    return [];
   }
   return data;
 }
 
 export async function updateCountry(country: CountriesData) {
   console.log(country);
-
-  const token = localStorage.getItem("jwt");
+  const token = getToken();
 
   const response = await fetch(`${apiUrl}/countries/${country.id}`, {
     headers: {
@@ -138,7 +158,6 @@ export async function updateCountry(country: CountriesData) {
       color_id: country.colorId,
     }),
   });
-
   const data = await response.json();
 
   if (!response.ok) {
@@ -146,6 +165,5 @@ export async function updateCountry(country: CountriesData) {
     return data.error;
   }
   console.log(data);
-
   return data;
 }

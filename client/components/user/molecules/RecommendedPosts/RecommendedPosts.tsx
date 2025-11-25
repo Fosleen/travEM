@@ -2,16 +2,11 @@ import "./RecommendedPosts.scss";
 import HorizontalPostItemBig from "../../atoms/HorizontalPostItemBig";
 import { FC, useEffect, useState } from "react";
 import { getRecommendedArticles } from "../../../../api/article";
-import { ThreeDots } from "react-loader-spinner";
 import { Article } from "../../../../common/types";
 import ReactGA from "react-ga4";
 
 const RecommendedPosts: FC<{ id: number; type: string }> = ({ id, type }) => {
   const [articles, setArticles] = useState<Array<Article> | null>(null);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const fetchData = async () => {
     try {
@@ -21,6 +16,10 @@ const RecommendedPosts: FC<{ id: number; type: string }> = ({ id, type }) => {
       console.error("error while fetching:", error);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleClick = (index: number) => {
     ReactGA.event({
@@ -45,15 +44,7 @@ const RecommendedPosts: FC<{ id: number; type: string }> = ({ id, type }) => {
           })}
         </div>
       ) : (
-        <ThreeDots
-          height="80"
-          width="80"
-          radius="8"
-          color="#2BAC82"
-          ariaLabel="three-dots-loading"
-          wrapperStyle={{ justifyContent: "center" }}
-          visible={true}
-        />
+        <p>Loading...</p>
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 import { getHomepage } from "@/api/homepage";
 import { getHomepageArticles } from "@/api/article";
 import { Metadata } from "next";
-import Homepage from "@/components/pages/homepage/Homepage";
+import Homepage from "@/components/user/pages/homepage/Homepage";
 
 export async function generateMetadata(): Promise<Metadata> {
   const homepageContent = await getHomepage();
@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
         "Otkrijte svijet uz Emu i Matiju! Najdetaljniji vodiči, povoljne karte i savjeti za savršeno putovanje.",
       images: [homepageContent.hero_image_url],
       type: "website",
-      url: "https://your-domain.com",
+      url: "https://putujemstravem.com",
     },
     twitter: {
       card: "summary_large_image",

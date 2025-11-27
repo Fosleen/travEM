@@ -1,8 +1,6 @@
-// api/countries.ts
 import { CountriesData } from "../common/types";
 import { apiUrl } from "./api";
 
-// Helper function to get token (only on client side)
 const getToken = () => {
   if (typeof window !== "undefined") {
     return localStorage.getItem("jwt");

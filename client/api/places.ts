@@ -1,6 +1,13 @@
 import { PlacesData } from "../common/types";
-
 import { apiUrl } from "./api";
+
+// Helper to get auth token (only works client-side)
+const getAuthToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("jwt");
+  }
+  return null;
+};
 
 export async function getPlaces(page = 1, pageSize = 12) {
   const response = await fetch(
@@ -37,9 +44,14 @@ export async function getPlacesByCountry(id: number) {
   return data;
 }
 
-export async function getPlacesByName(name: string, page = 1, pageSize = 12) {
+export async function getPlacesByName(
+  name: string,
+  page = 1,
+  pageSize = 12,
+  noCache: boolean = false
+) {
   const response = await fetch(
-    `${apiUrl}/places/search/${name}?page=${page}&pageSize=${pageSize}`
+    `${apiUrl}/places/search/${name}?page=${page}&pageSize=${pageSize}&noCache=${noCache}`
   );
   const data = await response.json();
 
@@ -62,7 +74,7 @@ export async function addPlace(
   country_id: number,
   videos: Array<string>
 ) {
-  const token = localStorage.getItem("jwt");
+  const token = getAuthToken();
 
   const response = await fetch(`${apiUrl}/places`, {
     headers: {
@@ -95,7 +107,7 @@ export async function addPlace(
 }
 
 export async function addPlaceOnMap(id: number) {
-  const token = localStorage.getItem("jwt");
+  const token = getAuthToken();
 
   const response = await fetch(`${apiUrl}/places/${id}`, {
     headers: {
@@ -119,7 +131,7 @@ export async function addPlaceOnMap(id: number) {
 }
 
 export async function removePlaceOnMap(id: number) {
-  const token = localStorage.getItem("jwt");
+  const token = getAuthToken();
 
   const response = await fetch(`${apiUrl}/places/${id}`, {
     headers: {
@@ -143,7 +155,7 @@ export async function removePlaceOnMap(id: number) {
 }
 
 export async function addPlaceAboveMap(id: number) {
-  const token = localStorage.getItem("jwt");
+  const token = getAuthToken();
 
   const response = await fetch(`${apiUrl}/places/${id}`, {
     headers: {
@@ -167,7 +179,7 @@ export async function addPlaceAboveMap(id: number) {
 }
 
 export async function removePlaceAboveMap(id: number) {
-  const token = localStorage.getItem("jwt");
+  const token = getAuthToken();
 
   const response = await fetch(`${apiUrl}/places/${id}`, {
     headers: {
@@ -191,7 +203,7 @@ export async function removePlaceAboveMap(id: number) {
 }
 
 export async function deletePlaceById(id: number) {
-  const token = localStorage.getItem("jwt");
+  const token = getAuthToken();
 
   const response = await fetch(`${apiUrl}/places/${id}`, {
     headers: {
@@ -209,7 +221,7 @@ export async function deletePlaceById(id: number) {
 }
 
 export async function updatePlace(place: PlacesData) {
-  const token = localStorage.getItem("jwt");
+  const token = getAuthToken();
 
   const response = await fetch(`${apiUrl}/places/${place.id}`, {
     headers: {

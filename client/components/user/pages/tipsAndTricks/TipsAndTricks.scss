@@ -1,0 +1,72 @@
+@use "@/utils/theme.scss" as *;
+
+.tips-and-tricks-grid-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
+  @media screen and ($tabletMedium) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  // @media screen and ($desktopLarge) {
+  //   display: grid;
+  //   grid-template-columns: repeat(4, 1fr);
+  // }
+}
+
+.tips-and-tricks-text-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  h2 {
+    font-size: 48px;
+    color: $textPrimary;
+
+    @media screen and ($tabletMedium) {
+      font-size: 96px;
+    }
+  }
+
+  h4 {
+    font-size: 18px;
+    color: $textPrimary;
+
+    @media screen and ($tabletMedium) {
+      font-size: 24px;
+    }
+  }
+}
+.tips-and-tricks-connected-articles-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+
+  @media screen and ($tabletMedium) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media screen and ($desktopLarge) {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.tips-and-tricks-text-articles-wrapper {
+  h2 {
+    font-weight: bold;
+    font-size: 40px;
+  }
+}
+
+.tips-and-tricks-parent-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-top: 28px;
+  padding-bottom: 28px;
+}

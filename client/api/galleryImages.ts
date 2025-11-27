@@ -16,10 +16,10 @@ export async function addGalleryImage(
     },
     method: "POST",
     body: JSON.stringify({
-      url: url,
-      height: height,
-      width: width,
-      article_id: article_id,
+      url,
+      height,
+      width,
+      article_id,
     }),
   });
 

@@ -6,9 +6,8 @@ import ItemsPerPageSelector from "../../molecules/ItemsPerPageSelector";
 import Search from "../../../atoms/Search";
 import Button from "../../../atoms/Button";
 import { FC, SetStateAction } from "react";
-import { useNavigate } from "react-router-dom";
-import { ThreeDots } from "react-loader-spinner";
 import { TableProps } from "../../../../common/types";
+import { useRouter } from "next/navigation";
 
 const Table: FC<TableProps> = ({
   data,
@@ -20,15 +19,15 @@ const Table: FC<TableProps> = ({
   displayHeader = true,
   displayFooter = true,
 }) => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleAddClick = () => {
     if (type == "country") {
-      navigate("/admin/države/dodaj");
+      router.push("/admin/drzave/dodaj");
     } else if (type == "place") {
-      navigate("/admin/mjesta/dodaj");
+      router.push("/admin/mjesta/dodaj");
     } else if (type == "article") {
-      navigate("/admin/članci/dodaj");
+      router.push("/admin/clanci/dodaj");
     }
   };
 
@@ -60,15 +59,7 @@ const Table: FC<TableProps> = ({
       {data.data ? (
         <TableContent data={data.data} type={type} />
       ) : (
-        <ThreeDots
-          height="80"
-          width="80"
-          radius="8"
-          color="#2BAC82"
-          ariaLabel="three-dots-loading"
-          wrapperStyle={{ justifyContent: "center" }}
-          visible={true}
-        />
+        <p>Loading...</p>
       )}
 
       {displayFooter ? (

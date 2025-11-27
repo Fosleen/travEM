@@ -10,10 +10,19 @@ import { FC } from "react";
 import { SidebarMenuItemProps } from "../../../../common/types";
 import { Users } from "@phosphor-icons/react";
 
+const normalize = (value: string) => {
+  return value
+    .toLowerCase()
+    .replace(/č|ć/g, "c")
+    .replace(/š/g, "s")
+    .replace(/đ/g, "d")
+    .replace(/ž/g, "z");
+};
+
 const SidebarMenuItem: FC<SidebarMenuItemProps> = ({ text }) => {
   return (
     <Link
-      href={`/admin/${text.toLowerCase()}`}
+      href={`/admin/${normalize(text)}`}
       className="sidebar-menu-item-container"
     >
       {text == "Članci" && <Article size={32} />}

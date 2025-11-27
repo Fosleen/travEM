@@ -24,7 +24,9 @@ const Dropdown: FC<DropdownProps> = ({
     ? "dropdown-message error"
     : "dropdown-message";
   const errorStyle = error ? { margin: "8px 0" } : {};
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedOption, setSelectedOption] = useState<string | undefined>(
+    defaultValue || undefined
+  );
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignoreS

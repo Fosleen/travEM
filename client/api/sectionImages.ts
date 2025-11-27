@@ -3,8 +3,8 @@ import { apiUrl } from "./api";
 export async function addSectionImage(
   url: string,
   section_id: number,
-  height: number,
-  width: number
+  height?: number,
+  width?: number
 ) {
   const token = localStorage.getItem("jwt");
 
@@ -16,10 +16,10 @@ export async function addSectionImage(
     },
     method: "POST",
     body: JSON.stringify({
-      url: url,
-      section_id: section_id,
-      height: height,
-      width: width,
+      url,
+      section_id,
+      height,
+      width,
     }),
   });
 
@@ -42,9 +42,7 @@ export async function updateSectionImage(url: string, id: number) {
       Authorization: `Bearer ${token}`,
     },
     method: "PATCH",
-    body: JSON.stringify({
-      url: url,
-    }),
+    body: JSON.stringify({ url }),
   });
 
   const data = await response.json();

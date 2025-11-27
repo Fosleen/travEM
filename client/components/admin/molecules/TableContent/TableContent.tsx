@@ -12,14 +12,14 @@ import {
 } from "@tanstack/react-table";
 import Button from "../../../atoms/Button";
 import { CaretUpDown, PencilSimpleLine, Trash } from "@phosphor-icons/react";
-import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../../../utils/global";
 import { deleteSubscriber, getSubscribers } from "../../../../api/subscribers";
+import { useRouter } from "next/navigation";
 
 const TableContent = ({ data, type }) => {
   const [sorting, setSorting] = useState();
   const columnHelper = createColumnHelper();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   let columns;
   if (type === "country") {
@@ -116,11 +116,11 @@ const TableContent = ({ data, type }) => {
 
   const handleEdit = async (id: number) => {
     if (type == "country") {
-      navigate(`/admin/države/uredi/${id}`);
+      router.push(`/admin/drzave/uredi/${id}`);
     } else if (type == "place") {
-      navigate(`/admin/mjesta/uredi/${id}`);
+      router.push(`/admin/mjesta/uredi/${id}`);
     } else if (type == "article") {
-      navigate(`/admin/članci/uredi/${id}`);
+      router.push(`/admin/clanci/uredi/${id}`);
     } else if (type == "subscribers") {
       try {
         await deleteSubscriber(id);

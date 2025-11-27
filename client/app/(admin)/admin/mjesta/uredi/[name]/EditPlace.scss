@@ -1,0 +1,154 @@
+@use "@/utils/theme.scss" as *;
+
+.edit-place-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 12px;
+
+  h6 {
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+
+  .edit-place-header {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1024px;
+  }
+
+  .edit-place-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .edit-place-inputs {
+      border-radius: 8px;
+      max-width: 1024px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      .edit-place-input {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .edit-place-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+
+        .edit-place-row-item {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+      }
+    }
+
+    .edit-place-images-container {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+
+      .edit-place-image {
+        height: 72px;
+        position: relative;
+        cursor: pointer;
+        display: inline-block;
+
+        .edit-place-image-remove-icon {
+          display: none;
+          position: absolute;
+          left: 50%;
+          margin-left: -16px;
+          top: 50%;
+          margin-top: -16px;
+        }
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        &:hover {
+          .edit-place-image-remove-icon {
+            display: block;
+          }
+
+          img {
+            opacity: 40%;
+            transition: 0.2s;
+          }
+        }
+      }
+
+      .edit-place-item {
+        width: 108px;
+        background-color: $greyMiddle;
+        height: 72px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      }
+    }
+
+    .edit-place-videos-wrapper {
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 1024px;
+
+      .edit-place-video-outer-container {
+        .edit-place-videos-container {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+
+          .edit-place-header {
+            height: 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+
+          .edit-place-video-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+
+            * > svg {
+              width: 52px;
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    }
+
+    .edit-place-toggle-container {
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 1024px;
+
+      .edit-place-toggle-input {
+        margin-top: 8px;
+      }
+    }
+
+    .edit-place-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 64px;
+    }
+  }
+}

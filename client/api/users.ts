@@ -1,13 +1,7 @@
-//@ts-nocheck
-
 import { notifyFailure, notifySuccess } from "../components/atoms/Toast/Toast";
 import { apiUrl } from "./api";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignoreS
-// eslint-disable-next-line
-
-export const loginUser = async (values, navigate, { setSubmitting }) => {
+export const loginUser = async (values, router, { setSubmitting, setUser }) => {
   try {
     const response = await fetch(`${apiUrl}/login`, {
       method: "POST",
@@ -23,19 +17,24 @@ export const loginUser = async (values, navigate, { setSubmitting }) => {
     if (data.success) {
       localStorage.setItem("jwt", data.token);
 
-      const jwtToken = localStorage.getItem("jwt");
-      const tokenParts = jwtToken?.split(".");
-      const base64Url = tokenParts[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const decodedPayload = JSON.parse(atob(base64));
+      document.cookie = `jwt=${data.token}; path=/; max-age=${
+        7 * 24 * 60 * 60
+      }`;
 
-      const exp_time = decodedPayload.exp;
-      localStorage.setItem("jwtExpiration", exp_time);
+      const decodedPayload = JSON.parse(atob(data.token.split(".")[1]));
+      localStorage.setItem("jwtExpiration", decodedPayload.exp);
+
+      if (setUser) {
+        setUser({
+          id: decodedPayload.id,
+          username: decodedPayload.username,
+        });
+      }
+
       notifySuccess("Uspješna prijava!");
-      navigate("/admin/sadržaj");
+      router.push("/admin/sadrzaj");
     } else {
       notifyFailure("Neispravni podaci.");
-      console.log("Authentication failed");
     }
   } catch (error) {
     notifyFailure("Greška pri loginu.");

@@ -1,25 +1,28 @@
-//@ts-nocheck
+"use client";
 
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import { SignOut } from "@phosphor-icons/react";
 import SidebarMenuItem from "../../atoms/SidebarMenuItem";
 import logo from "../../../../assets/images/travem-logo-grey.webp";
 import "./SidebarMenu.scss";
-import { Link, useNavigate } from "react-router-dom";
-import { SignOut } from "@phosphor-icons/react";
-import { useEffect, useState } from "react";
 
 const SidebarMenu = () => {
   const [expirationTime, setExpirationTime] = useState("");
+  const router = useRouter();
 
-  const navigate = useNavigate();
   const handleLogout = () => {
     localStorage.clear();
-    navigate("/login");
+    router.push("/login");
   };
 
   useEffect(() => {
     const jwtExpiration = localStorage.getItem("jwtExpiration");
+
     if (jwtExpiration) {
-      const expirationDate = new Date(jwtExpiration * 1000);
+      const expirationDate = new Date(Number(jwtExpiration) * 1000);
       setExpirationTime(
         expirationDate.toLocaleString("en-GB", { hour12: false })
       );
@@ -27,10 +30,12 @@ const SidebarMenu = () => {
 
     const interval = setInterval(() => {
       const currentTime = Math.floor(Date.now() / 1000);
-      if (currentTime > jwtExpiration) {
+      const storedExpiration = localStorage.getItem("jwtExpiration");
+
+      if (storedExpiration && currentTime > Number(storedExpiration)) {
         handleLogout();
       }
-    }, 900000); //svakih 15 minuta se provjerava
+    }, 900000); // Check every 15 minutes
 
     return () => clearInterval(interval);
   }, []);
@@ -38,8 +43,14 @@ const SidebarMenu = () => {
   return (
     <div className="sidebar-menu-container">
       <div>
-        <Link to="/admin" className="sidebar-menu-logo">
-          <img src={logo} alt="travem-logo-grey" />
+        <Link href="/admin" className="sidebar-menu-logo">
+          <Image
+            src={logo}
+            alt="travem-logo-grey"
+            width={150}
+            height={50}
+            priority
+          />
         </Link>
         <div className="sidebar-menu-items">
           <SidebarMenuItem text={"Članci"} />
@@ -58,7 +69,7 @@ const SidebarMenu = () => {
           onClick={handleLogout}
           style={{ cursor: "pointer" }}
         >
-          <SignOut size={32} onClick={handleLogout} /> Odjava
+          <SignOut size={32} /> Odjava
         </div>
       </div>
     </div>

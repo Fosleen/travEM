@@ -1,41 +1,77 @@
-//@ts-nocheck
-import { createContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+// Context/AuthContext.tsx
+"use client";
 
-const AuthContext = createContext({
+import { createContext, useEffect, useState, ReactNode } from "react";
+import { useRouter, usePathname } from "next/navigation";
+
+interface User {
+  id: number;
+  username: string;
+  // Add other user properties as needed
+}
+
+interface AuthContextType {
+  accessToken: string | null;
+  user: User | null;
+  setAccessToken: (token: string | null) => void;
+  setUser: (user: User | null) => void;
+}
+
+const AuthContext = createContext<AuthContextType>({
   accessToken: null,
   user: null,
   setAccessToken: () => {},
+  setUser: () => {},
 });
 
-const AuthProvider = ({ children }) => {
-  const [accessToken, setAccessToken] = useState(() =>
-    localStorage.getItem("jwt")
-  );
-  const [user, setUser] = useState(null); // Initialize user state as null
+interface AuthProviderProps {
+  children: ReactNode;
+}
 
+const AuthProvider = ({ children }: AuthProviderProps) => {
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    // Decode the token to get user information
-    const token = localStorage.getItem("jwt");
-    if (token) {
-      // Parse the token and set user state
-      try {
-        const tokenDecoded = JSON.parse(atob(token.split(".")[1]));
-        setUser(tokenDecoded.user);
-      } catch (error) {
-        console.error("Error decoding token:", error);
+    // Only run on client side
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("jwt");
+      setAccessToken(token);
+
+      if (token) {
+        try {
+          const tokenDecoded = JSON.parse(atob(token.split(".")[1]));
+          setUser({
+            id: tokenDecoded.id,
+            username: tokenDecoded.username,
+            // Add other user fields from your token
+          });
+        } catch (error) {
+          console.error("Error decoding token:", error);
+          setUser(null);
+
+          // Only redirect if not already on login page
+          if (!pathname?.includes("/admin/login")) {
+            router.push("/admin/login");
+          }
+        }
+      } else {
         setUser(null);
+
+        // Only redirect if not already on login page
+        if (!pathname?.includes("/admin/login")) {
+          router.push("/admin/login");
+        }
       }
-    } else {
-      setUser(null);
-      router.push("/login");
     }
-  }, [accessToken]);
+  }, [accessToken, pathname, router]);
 
   return (
-    <AuthContext.Provider value={{ accessToken, user, setAccessToken }}>
+    <AuthContext.Provider
+      value={{ accessToken, user, setAccessToken, setUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

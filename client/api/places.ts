@@ -11,7 +11,10 @@ const getAuthToken = () => {
 
 export async function getPlaces(page = 1, pageSize = 12) {
   const response = await fetch(
-    `${apiUrl}/places?page=${page}&pageSize=${pageSize}`
+    `${apiUrl}/places?page=${page}&pageSize=${pageSize}`,
+    {
+      cache: "no-store", // ← Disable Next.js cache
+    }
   );
   const data = await response.json();
 
@@ -23,7 +26,9 @@ export async function getPlaces(page = 1, pageSize = 12) {
 }
 
 export async function getPlacesWithImage() {
-  const response = await fetch(`${apiUrl}/places/with-image`);
+  const response = await fetch(`${apiUrl}/places/with-image`, {
+    cache: "no-store", // ← Disable Next.js cache
+  });
   const data = await response.json();
 
   if (!response.ok) {
@@ -34,7 +39,9 @@ export async function getPlacesWithImage() {
 }
 
 export async function getPlacesByCountry(id: number) {
-  const response = await fetch(`${apiUrl}/countries/places/${id}`);
+  const response = await fetch(`${apiUrl}/countries/places/${id}`, {
+    cache: "no-store", // ← Disable Next.js cache
+  });
   const data = await response.json();
 
   if (!response.ok) {
@@ -51,7 +58,10 @@ export async function getPlacesByName(
   noCache: boolean = false
 ) {
   const response = await fetch(
-    `${apiUrl}/places/search/${name}?page=${page}&pageSize=${pageSize}&noCache=${noCache}`
+    `${apiUrl}/places/search/${name}?page=${page}&pageSize=${pageSize}&noCache=${noCache}`,
+    {
+      cache: "no-store", // ← Disable Next.js cache
+    }
   );
   const data = await response.json();
 

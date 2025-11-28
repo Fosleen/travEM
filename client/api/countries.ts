@@ -17,7 +17,7 @@ export async function getCountries(
     const response = await fetch(
       `${apiUrl}/countries?page=${page}&pageSize=${pageSize}&noCache=${noCache}`,
       {
-        next: { revalidate: noCache ? 0 : 3600 },
+        cache: "no-store", // ← Disable Next.js cache
       }
     );
 
@@ -39,7 +39,7 @@ export async function getCountryById(id: number, noCache: boolean = false) {
     const response = await fetch(
       `${apiUrl}/countries/${id}?noCache=${noCache}`,
       {
-        next: { revalidate: noCache ? 0 : 3600 },
+        cache: "no-store", // ← Disable Next.js cache
       }
     );
 
@@ -71,7 +71,7 @@ export async function getCountriesByName(
     const response = await fetch(
       `${apiUrl}/countries/search/${name}?page=${page}&pageSize=${pageSize}&isCount=${isCount}&noCache=${noCache}`,
       {
-        next: { revalidate: noCache ? 0 : 3600 },
+        cache: "no-store", // ← Disable Next.js cache
       }
     );
 
@@ -96,7 +96,7 @@ export async function getCountriesByContinent(
     const response = await fetch(
       `${apiUrl}/continents/countries/${id}?noCache=${noCache}`,
       {
-        next: { revalidate: noCache ? 0 : 3600 },
+        cache: "no-store", // ← Disable Next.js cache
       }
     );
 

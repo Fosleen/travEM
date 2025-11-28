@@ -58,33 +58,6 @@ const Modal = forwardRef<HTMLDialogElement, ModalProps>(
                   setModalInputValue(e.target.value);
                 }}
               />
-
-              {isAddArticle && (
-                <div className="modal-input-container">
-                  <Input
-                    name="width"
-                    placeholder="Unesi aspect ratio vrijednost za width"
-                    label="Aspect ratio za width"
-                    value={modalImageWidthValue}
-                    onChange={(e) => {
-                      if (setImageWidthValue) {
-                        setImageWidthValue(e.target.value);
-                      }
-                    }}
-                  />
-                  <Input
-                    name="height"
-                    placeholder="Unesi aspect ratio vrijednost za height"
-                    label="Aspect ratio za height"
-                    value={modalImageHeightValue}
-                    onChange={(e) => {
-                      if (setImageHeightValue) {
-                        setImageHeightValue(e.target.value);
-                      }
-                    }}
-                  />
-                </div>
-              )}
             </div>
             <div className="modal-buttons">
               <Button

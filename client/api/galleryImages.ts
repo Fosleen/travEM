@@ -2,9 +2,9 @@ import { apiUrl } from "./api";
 
 export async function addGalleryImage(
   url: string,
-  height: string,
-  width: string,
-  article_id: number
+  article_id: number,
+  height?: string,
+  width?: string
 ) {
   const token = localStorage.getItem("jwt");
 
@@ -17,9 +17,9 @@ export async function addGalleryImage(
     method: "POST",
     body: JSON.stringify({
       url,
+      article_id,
       height,
       width,
-      article_id,
     }),
   });
 

@@ -237,9 +237,9 @@ const EditArticle = () => {
             if (!image.id) {
               return await addGalleryImage(
                 image.url,
+                article.id, 
                 image.height,
-                image.width,
-                article.id
+                image.width 
               );
             }
           });

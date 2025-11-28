@@ -1,10 +1,9 @@
 "use client";
-
 import { useSearchParams, useRouter } from "next/navigation";
 import Pagination from "@/components/atoms/Pagination";
 import HorizontalPostItemBig from "@/components/user/atoms/HorizontalPostItemBig/HorizontalPostItemBig";
 import "./SearchResults.scss";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { Article, Nullable } from "@/common/types";
 
 interface SearchResultsProps {
@@ -24,8 +23,10 @@ const SearchResults = ({
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-  const [articles] = useState<Nullable<Array<Article>>>(initialArticles);
-  const [totalPages] = useState(initialTotalPages);
+  // Use props directly instead of useState
+  const articles = initialArticles;
+  const totalPages = initialTotalPages;
+
   const currentSearchQuery = searchParams.get("naslov") || initialSearchQuery;
   const currentPage = parseInt(
     searchParams.get("page") || String(initialPage),
@@ -46,19 +47,16 @@ const SearchResults = ({
         <h4>Pretraživanja za:&nbsp;</h4>
         <h3>{currentSearchQuery}</h3>
       </div>
-
       {!currentSearchQuery && (
         <div className="search-results-no-query">
           Unesite pojam za pretraživanje.
         </div>
       )}
-
       {currentSearchQuery && articles?.length === 0 && (
         <div className="search-results-empty">
           Ne postoji niti jedan članak s tim nazivom.
         </div>
       )}
-
       {articles && articles.length > 0 && (
         <div
           className="search-results-grid-wrapper"
@@ -69,7 +67,6 @@ const SearchResults = ({
           ))}
         </div>
       )}
-
       {totalPages > 1 && (
         <Pagination
           totalPages={totalPages}

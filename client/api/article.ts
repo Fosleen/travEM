@@ -45,7 +45,11 @@ export async function getArticleById(id: number, noCache: boolean = false) {
 export async function getArticlesByName(name: string, page = 1, pageSize = 12) {
   try {
     const response = await fetch(
-      `${apiUrl}/articles/search/${name}?page=${page}&pageSize=${pageSize}`
+      `${apiUrl}/articles/search/${name}?page=${page}&pageSize=${pageSize}`,
+      {
+        cache: "no-store", // Disable caching
+        next: { revalidate: 0 }, // No revalidation
+      }
     );
 
     if (!response.ok) {
@@ -68,7 +72,11 @@ export async function getArticles(
 ) {
   try {
     const response = await fetch(
-      `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${articleType}`
+      `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${articleType}`,
+      {
+        cache: "no-store", // Disable caching
+        next: { revalidate: 0 }, // No revalidation
+      }
     );
 
     if (!response.ok) {
@@ -173,7 +181,6 @@ export async function getFavoriteArticleByCountry(
   }
 }
 
-// All POST/PUT/DELETE methods remain the same as they only run client-side
 export async function addArticle(
   title: string,
   subtitle: string,

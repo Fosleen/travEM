@@ -3,10 +3,18 @@ import "./Pagination.scss";
 import { FC } from "react";
 import { PaginationProps } from "../../../common/types";
 
-const Pagination: FC<PaginationProps> = ({ setPage, totalPages }) => {
+const Pagination: FC<PaginationProps> = ({
+  setPage,
+  onPageChange,
+  totalPages,
+  currentPage,
+}) => {
   const handlePageClick = (event: { selected: number }) => {
     window.scrollTo({ top: 0, behavior: "instant" });
-    setPage(event.selected + 1);
+    const pageHandler = onPageChange || setPage;
+    if (pageHandler) {
+      pageHandler(event.selected + 1);
+    }
   };
 
   return (
@@ -30,6 +38,7 @@ const Pagination: FC<PaginationProps> = ({ setPage, totalPages }) => {
         containerClassName="pagination"
         activeClassName="active-pagination"
         renderOnZeroPageCount={null}
+        forcePage={currentPage ? currentPage - 1 : 0}
       />
     </div>
   );

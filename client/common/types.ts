@@ -255,8 +255,10 @@ export interface TableProps {
 }
 
 export interface PaginationProps {
-  setPage: React.Dispatch<React.SetStateAction<number>>;
+  setPage?: (page: number) => void;
+  onPageChange?: (page: number) => void;
   totalPages: number;
+  currentPage?: number;
 }
 
 export interface SidebarMenuItemProps {

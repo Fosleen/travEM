@@ -165,17 +165,15 @@ const AddArticlePage = () => {
               todaysDate,
               parseInt(values.article_airport_city_id)
             );
-
+            console.log("otherArticleImages", otherArticleImages);
+            console.log("About to save gallery images:", otherArticleImages);
+            const galleryResults = await Promise.all(
+              otherArticleImages.map((image) =>
+                addGalleryImage(image.url, articleResponse.id, "0", "0")
+              )
+            );
+            console.log("Gallery images saved:", galleryResults);
             await Promise.all([
-              ...otherArticleImages.map((image) =>
-                addGalleryImage(
-                  image.url,
-                  image.height,
-                  image.width,
-                  articleResponse.id
-                )
-              ),
-
               isMainCountryPostChecked
                 ? createTopCountryArticle(articleResponse.id)
                 : Promise.resolve(),
@@ -318,8 +316,6 @@ const AddArticlePage = () => {
         ...otherArticleImages,
         {
           url: modalInputValue,
-          width: imageWidthValue,
-          height: imageHeightValue,
         },
       ]);
     } else if (imageType == "section") {

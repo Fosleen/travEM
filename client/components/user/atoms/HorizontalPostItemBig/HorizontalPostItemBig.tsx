@@ -31,6 +31,8 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             style={{ objectFit: "cover" }}
+            unoptimized
+            priority={false}
           />
         </div>
         <div className="horizontal-post-item-big-text-container">

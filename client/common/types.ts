@@ -43,9 +43,9 @@ export interface TextareaProps {
   placeholder: string;
   error?: string;
   disabled?: boolean;
-  value?: string | null;
+  value?: string;
   rows?: number;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 export interface SearchProps {

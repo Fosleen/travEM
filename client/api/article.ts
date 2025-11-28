@@ -10,6 +10,8 @@ const getToken = () => {
   return null;
 };
 
+// api/article.ts
+
 export async function getArticleById(id: number, noCache: boolean = false) {
   try {
     console.log(`Fetching article ${id} from ${apiUrl}/articles/${id}`);
@@ -17,9 +19,7 @@ export async function getArticleById(id: number, noCache: boolean = false) {
     const response = await fetch(
       `${apiUrl}/articles/${id}?noCache=${noCache}`,
       {
-        // Add cache configuration for Next.js
-        next: { revalidate: noCache ? 0 : 3600 }, // Cache for 1 hour unless noCache is true
-        // Add headers to help with debugging
+        cache: "no-store", // ← Always fetch from server (Redis will cache it)
         headers: {
           Accept: "application/json",
         },
@@ -42,13 +42,60 @@ export async function getArticleById(id: number, noCache: boolean = false) {
   }
 }
 
+export async function getArticlesByType(
+  page = 1,
+  pageSize = 8,
+  article_type: number
+) {
+  try {
+    const response = await fetch(
+      `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${article_type}`,
+      {
+        cache: "no-store", // ← Disable Next.js cache
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return { error: errorData.error };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching articles by type:", error);
+    return { error: error.message };
+  }
+}
+
+export async function getRecommendedArticles(id: number, type: string) {
+  try {
+    const response = await fetch(
+      `${apiUrl}/articles/recommended/${id}?type=${type}`,
+      {
+        cache: "no-store", // ← Disable Next.js cache
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return { error: errorData.error };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching recommended articles:", error);
+    return { error: error.message };
+  }
+}
+
 export async function getArticlesByName(name: string, page = 1, pageSize = 12) {
   try {
     const response = await fetch(
       `${apiUrl}/articles/search/${name}?page=${page}&pageSize=${pageSize}`,
       {
-        cache: "no-store", // Disable caching
-        next: { revalidate: 0 }, // No revalidation
+        cache: "no-store", // ← Disable Next.js cache
       }
     );
 
@@ -74,8 +121,7 @@ export async function getArticles(
     const response = await fetch(
       `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${articleType}`,
       {
-        cache: "no-store", // Disable caching
-        next: { revalidate: 0 }, // No revalidation
+        cache: "no-store", // ← Disable Next.js cache
       }
     );
 
@@ -92,35 +138,12 @@ export async function getArticles(
   }
 }
 
-export async function getArticlesByType(
-  page = 1,
-  pageSize = 8,
-  article_type: number
-) {
-  try {
-    const response = await fetch(
-      `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${article_type}`
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.log(errorData.error);
-      return { error: errorData.error };
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching articles by type:", error);
-    return { error: error.message };
-  }
-}
-
 export async function getHomepageArticles(noCache: boolean = false) {
   try {
     const response = await fetch(
       `${apiUrl}/articles/homepage?noCache=${noCache}`,
       {
-        next: { revalidate: noCache ? 0 : 3600 },
+        cache: "no-store", // ← Disable Next.js cache, rely on Redis
       }
     );
 
@@ -137,25 +160,6 @@ export async function getHomepageArticles(noCache: boolean = false) {
   }
 }
 
-export async function getRecommendedArticles(id: number, type: string) {
-  try {
-    const response = await fetch(
-      `${apiUrl}/articles/recommended/${id}?type=${type}`
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.log(errorData.error);
-      return { error: errorData.error };
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error fetching recommended articles:", error);
-    return { error: error.message };
-  }
-}
-
 export async function getFavoriteArticleByCountry(
   id: number,
   noCache: boolean = false
@@ -164,7 +168,7 @@ export async function getFavoriteArticleByCountry(
     const response = await fetch(
       `${apiUrl}/articles/country/top/${id}?noCache=${noCache}`,
       {
-        next: { revalidate: noCache ? 0 : 3600 },
+        cache: "no-store", // ← Disable Next.js cache
       }
     );
 
@@ -180,6 +184,9 @@ export async function getFavoriteArticleByCountry(
     return { error: error.message };
   }
 }
+
+// Keep the rest of your mutations (POST, PATCH, DELETE) as they are
+// They already don't use caching
 
 export async function addArticle(
   title: string,
@@ -296,6 +303,8 @@ export async function updateArticle(
     console.log(data.error);
     return data.error;
   }
+  console.log("data", data);
+
   return data;
 }
 

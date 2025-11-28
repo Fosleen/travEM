@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import { FC } from "react";
 import "./Textarea.scss";
 import { TextareaProps } from "../../../../common/types";
@@ -12,7 +10,7 @@ const Textarea: FC<TextareaProps> = ({
   disabled = false,
   onChange,
   rows,
-  value = null,
+  value = "",
 }) => {
   return (
     <div className="textarea-parent-wrapper">
@@ -28,7 +26,6 @@ const Textarea: FC<TextareaProps> = ({
           value={value}
         />
       </div>
-
       {error && <div className="error-message">{error}</div>}
     </div>
   );

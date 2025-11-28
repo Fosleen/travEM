@@ -9,6 +9,7 @@ import "./globals.css";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
+import GoogleAnalytics from "@/components/atoms/GoogleAnalytics/GoogleAnalytics";
 
 export default function RootLayout({
   children,
@@ -26,7 +27,10 @@ export default function RootLayout({
         ${theBoldFont.variable}
       `}
     >
-      <body className={montserrat.className}>{children}</body>
+      <body className={montserrat.className}>
+        <GoogleAnalytics />
+        {children}
+      </body>
     </html>
   );
 }

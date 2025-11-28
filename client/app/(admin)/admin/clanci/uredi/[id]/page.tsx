@@ -126,144 +126,267 @@ const EditArticle = () => {
   };
 
   const handleSave = async (values) => {
+    console.log("=== HANDLE SAVE STARTED ===");
     setIsSubmitClicked(true);
 
-    if (validateImages()) {
-      Swal.fire({
-        title: "Jeste li sigurni?",
-        text: "Objavit ćete ovaj uređeni članak",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#2BAC82",
-        cancelButtonColor: "#AC2B2B",
-        cancelButtonText: "Odustani",
-        confirmButtonText: "Da, objavi!",
-      }).then(async (result) => {
-        let metatagsString = "";
-        values.metatags.map(
-          (el, index) =>
-            (metatagsString += `${index !== 0 ? ", " : ""}${el.metatag_text}`)
+    if (!validateImages()) {
+      console.log("❌ Image validation failed");
+      return;
+    }
+
+    console.log("✅ Images validated");
+
+    const result = await Swal.fire({
+      title: "Jeste li sigurni?",
+      text: "Objavit ćete ovaj uređeni članak",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#2BAC82",
+      cancelButtonColor: "#AC2B2B",
+      cancelButtonText: "Odustani",
+      confirmButtonText: "Da, objavi!",
+    });
+
+    console.log("Swal result:", result);
+
+    if (!result.isConfirmed) {
+      console.log("❌ User cancelled");
+      return;
+    }
+
+    try {
+      console.log("=== STARTING UPDATE PROCESS ===");
+
+      // Build metatags string
+      let metatagsString = "";
+      values.metatags.forEach(
+        (el, index) =>
+          (metatagsString += `${index !== 0 ? ", " : ""}${el.metatag_text}`)
+      );
+      console.log("Metatags string:", metatagsString);
+
+      // 1. Update main article
+      console.log("1️⃣ Updating main article...", {
+        id: article.id,
+        title: values.article_title,
+        subtitle: values.article_subtitle,
+        description: values.article_description,
+        metatags: metatagsString,
+        mainArticleImage,
+        article_type: values.article_type,
+        article_country: values.article_country,
+        article_place: values.article_place,
+        article_airport_city_id: values.article_airport_city_id,
+      });
+
+      const articleResponse = await updateArticle(
+        article.id,
+        values.article_title,
+        values.article_subtitle,
+        values.article_description,
+        metatagsString,
+        mainArticleImage,
+        values.article_type,
+        values.article_country,
+        values.article_place,
+        values.article_airport_city_id
+      );
+
+      console.log("✅ Article updated:", articleResponse);
+
+      // 2. Update/Add sections
+      console.log(
+        "2️⃣ Updating sections...",
+        values.sections.length,
+        "sections"
+      );
+
+      await Promise.all(
+        values.sections.map(async (el, index) => {
+          console.log(
+            `   Section ${index + 1}:`,
+            el.section_id ? "UPDATE" : "CREATE"
+          );
+
+          if (el.section_id) {
+            // Update existing section
+            const sectionResponse = await updateSection(
+              el.section_id,
+              el.section_text,
+              el.section_subtitle,
+              index + 1,
+              el.section_url_title,
+              el.section_url_link,
+              el.section_icon
+            );
+            console.log(`   ✅ Section ${index + 1} updated:`, sectionResponse);
+
+            // Add new images to existing section
+            const newImages =
+              sectionImages[index]?.filter((img) => !img.id) || [];
+            console.log(
+              `   Adding ${newImages.length} new images to section ${index + 1}`
+            );
+
+            await Promise.all(
+              newImages.map(async (image: SectionImage) => {
+                const imgResponse = await addSectionImage(
+                  image.url,
+                  el.section_id,
+                  image.width,
+                  image.height
+                );
+                console.log(`   ✅ Image added:`, imgResponse);
+                return imgResponse;
+              })
+            );
+          } else {
+            // Add new section
+            const response = await addSection(
+              el.section_text,
+              el.section_subtitle,
+              index + 1,
+              el.section_url_title,
+              el.section_url_link,
+              el.section_icon,
+              article.id
+            );
+            console.log(`   ✅ Section ${index + 1} created:`, response);
+
+            // Add images to new section
+            const newImages = sectionImages[index] || [];
+            console.log(`   Adding ${newImages.length} images to new section`);
+
+            await Promise.all(
+              newImages.map(async (image: SectionImage) => {
+                const imgResponse = await addSectionImage(
+                  image.url,
+                  response.id,
+                  image.height,
+                  image.width
+                );
+                console.log(`   ✅ Image added to new section:`, imgResponse);
+                return imgResponse;
+              })
+            );
+          }
+        })
+      );
+
+      console.log("✅ All sections updated");
+
+      // 3. Delete removed sections
+      const removedSections = article.sections
+        .map((section) => section.id)
+        .filter(
+          (sectionId) =>
+            !values.sections.some((section) => section.section_id === sectionId)
         );
 
-        if (result.isConfirmed) {
-          const articleResponse = await updateArticle(
+      console.log("3️⃣ Deleting removed sections:", removedSections);
+
+      await Promise.all(
+        removedSections.map(async (id: number) => {
+          const deleteResponse = await deleteSection(id);
+          console.log(`   ✅ Section ${id} deleted:`, deleteResponse);
+          return deleteResponse;
+        })
+      );
+
+      console.log("✅ Removed sections deleted");
+
+      // 4. Delete removed section images
+      const removedSectionImages = article.sections.map((section, index) =>
+        section.section_images
+          .map((image: SectionImage) => image.id)
+          .filter(
+            (imageId: number) =>
+              !sectionImages[index]?.some((img) => img.id === imageId)
+          )
+      );
+
+      const flatRemovedImages = removedSectionImages.flat();
+      console.log("4️⃣ Deleting removed section images:", flatRemovedImages);
+
+      await Promise.all(
+        flatRemovedImages.map(async (id: number) => {
+          const deleteResponse = await deleteSectionImage(id);
+          console.log(`   ✅ Section image ${id} deleted:`, deleteResponse);
+          return deleteResponse;
+        })
+      );
+
+      console.log("✅ Removed section images deleted");
+
+      // 5. Add new gallery images
+      const newGalleryImages = otherArticleImages.filter((img) => !img.id);
+      console.log("5️⃣ Adding new gallery images:", newGalleryImages.length);
+
+      await Promise.all(
+        newGalleryImages.map(async (image: GalleryImage) => {
+          const imgResponse = await addGalleryImage(
+            image.url,
             article.id,
-            values.article_title,
-            values.article_subtitle,
-            values.article_description,
-            metatagsString,
-            mainArticleImage,
-            values.article_type,
-            values.article_country,
-            values.article_place,
-            values.article_airport_city_id
+            image.height,
+            image.width
           );
-          console.log(articleResponse);
+          console.log(`   ✅ Gallery image added:`, imgResponse);
+          return imgResponse;
+        })
+      );
 
-          values.sections.map(async (el, index) => {
-            if (el.section_id) {
-              await updateSection(
-                el.section_id,
-                el.section_text,
-                el.section_subtitle,
-                index + 1,
-                el.section_url_title,
-                el.section_url_link,
-                el.section_icon
-              );
+      console.log("✅ Gallery images added");
 
-              sectionImages[index].map(async (image: SectionImage) => {
-                if (!image.id) {
-                  await addSectionImage(
-                    image.url,
-                    el.section_id,
-                    image.width,
-                    image.height
-                  );
-                }
-              });
-            } else {
-              const response = await addSection(
-                el.section_text,
-                el.section_subtitle,
-                index + 1,
-                el.section_url_title,
-                el.section_url_link,
-                el.section_icon,
-                article.id
-              );
+      // 6. Delete removed gallery images
+      const removedGalleryImages = article.gallery_images
+        .map((image: GalleryImage) => image.id)
+        .filter(
+          (imageId) => !otherArticleImages.some((img) => img.id === imageId)
+        );
 
-              sectionImages[index].map(async (image: SectionImage) => {
-                if (!image.id) {
-                  await addSectionImage(
-                    image.url,
-                    response.id,
-                    image.height,
-                    image.width
-                  );
-                }
-              });
-            }
-          });
+      console.log("6️⃣ Deleting removed gallery images:", removedGalleryImages);
 
-          // delete removed sections (and images in that section automatically)
-          const removedSections = article.sections
-            .map((section) => section.id) // take only id (later sectionId)
-            .filter(
-              (sectionId) =>
-                !values.sections.some(
-                  (section) => section.section_id === sectionId // and check if any section_id (of any section in values.sections) has same id as current section (if yes, don't include it in removedSections array = ! in front)
-                )
-            );
-          removedSections.map(async (el: number) => await deleteSection(el));
+      await Promise.all(
+        removedGalleryImages.map(async (id: number) => {
+          const deleteResponse = await deleteGalleryImage(id);
+          console.log(`   ✅ Gallery image ${id} deleted:`, deleteResponse);
+          return deleteResponse;
+        })
+      );
 
-          // delete removed section images
-          const removedSectionImages = article.sections.map((section, index) =>
-            section.section_images
-              .map((image: SectionImage) => image.id)
-              .filter(
-                (imageId: number) =>
-                  !sectionImages[index].some((img) => img.id === imageId)
-              )
-          );
+      console.log("✅ Gallery images deleted");
 
-          removedSectionImages.map(async (el: Array<number>) => {
-            el.map(async (item: number) => {
-              await deleteSectionImage(item);
-            });
-          });
+      // 7. Handle top country article
+      console.log("7️⃣ Handling top country article...");
+      console.log("   isMainCountryPostChecked:", isMainCountryPostChecked);
+      console.log("   isMainCountryPost:", isMainCountryPost);
 
-          otherArticleImages.map(async (image: GalleryImage) => {
-            if (!image.id) {
-              return await addGalleryImage(
-                image.url,
-                article.id, 
-                image.height,
-                image.width 
-              );
-            }
-          });
+      if (isMainCountryPostChecked) {
+        console.log("   Creating top country article...");
+        const topResponse = await createTopCountryArticle(id);
+        console.log("   ✅ Top country article created:", topResponse);
+      } else if (isMainCountryPost) {
+        console.log("   Removing top country article...");
+        const removeResponse = await removeTopCountryArticle(id);
+        console.log("   ✅ Top country article removed:", removeResponse);
+      }
 
-          const removedGalleryImages = article.gallery_images
-            .map((image: GalleryImage) => image.id)
-            .filter(
-              (imageId) => !otherArticleImages.some((img) => img.id === imageId)
-            );
+      console.log("✅ Top country article handled");
 
-          removedGalleryImages.map(async (id: number) => {
-            await deleteGalleryImage(id);
-          });
+      // 8. Success!
+      console.log("=== UPDATE COMPLETE ===");
+      console.log("🎉 Navigating to /admin/clanci");
 
-          if (isMainCountryPostChecked) {
-            await createTopCountryArticle(id);
-          } else if (isMainCountryPost) {
-            await removeTopCountryArticle(id);
-          }
-
-          router.push("/admin/clanci");
-          notifySuccess("Uspješno uređen članak!");
-        }
+      router.push("/admin/clanci");
+      notifySuccess("Uspješno uređen članak!");
+    } catch (error) {
+      console.error("❌ ERROR in handleSave:", error);
+      console.error("Error details:", {
+        message: error.message,
+        stack: error.stack,
+        name: error.name,
       });
+      notifyFailure("Došlo je do pogreške prilikom uređivanja članka.");
     }
   };
 

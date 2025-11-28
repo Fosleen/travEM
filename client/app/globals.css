@@ -38,3 +38,11 @@ input::placeholder,
 textarea::placeholder {
   font-family: inherit;
 }
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}

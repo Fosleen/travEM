@@ -17,10 +17,12 @@ import Button from "../../../atoms/Button";
 import AdvancedDropdown from "../../atoms/AdvancedDropdown";
 import { FieldArray, FieldArrayRenderProps, Form, Formik } from "formik";
 import { getAboveMapPlaces, getOnMapPlaces } from "../../../../api/map";
+import { useRouter } from "next/navigation";
 
 const FeaturedPlaces: FC<{ isOnMapSelected: boolean }> = ({
   isOnMapSelected,
 }) => {
+  const router = useRouter();
   const [onMapPlaces, setOnMapPlaces] = useState<Array<PlacesData>>([]);
   const [aboveMapPlaces, setAboveMapPlaces] = useState<Array<PlacesData>>([]);
 
@@ -222,7 +224,13 @@ const FeaturedPlaces: FC<{ isOnMapSelected: boolean }> = ({
                   <Button type="submit" adminPrimary>
                     spremi
                   </Button>
-                  <Button type="button" white onClick={() => {}}>
+                  <Button
+                    type="button"
+                    white
+                    onClick={() => {
+                      router.push("/admin/sadrzaj");
+                    }}
+                  >
                     Odustani
                   </Button>
                 </div>

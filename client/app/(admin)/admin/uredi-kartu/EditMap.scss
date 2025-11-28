@@ -1,0 +1,9 @@
+@use "@/utils/theme.scss" as *;
+
+.edit-map-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 12px;
+  max-width: 1024px;
+}

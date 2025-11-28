@@ -1,14 +1,12 @@
-// app/admin/layout.tsx
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import SidebarMenu from "@/components/admin/molecules/SidebarMenu";
 import ScrollToTop from "@/components/atoms/ScrollToTop";
-import { AuthProvider } from "@/Context/AuthContext";
 import "@/components/admin/templates/AdminViewLayout.scss";
+import { AuthProvider } from "@/context/AuthContext";
 
-// Token expiration helper
 function isTokenExpired(token: string | null) {
   if (!token) return true;
 
@@ -31,24 +29,20 @@ export default function AdminLayout({
   const pathname = usePathname();
 
   useEffect(() => {
-    // Check authentication on client side only
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("jwt");
-      
-      // Allow access to login page without token
-      if (pathname === "/admin/login") {
+
+      if (pathname === "/login") {
         return;
       }
 
-      // Redirect to login if no token or token expired
       if (!token || isTokenExpired(token)) {
-        router.push("/admin/login");
+        router.push("/login");
       }
     }
   }, [pathname, router]);
 
-  // If on login page, don't show sidebar
-  if (pathname === "/admin/login") {
+  if (pathname === "/login") {
     return <AuthProvider>{children}</AuthProvider>;
   }
 

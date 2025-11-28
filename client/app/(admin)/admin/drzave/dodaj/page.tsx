@@ -137,6 +137,9 @@ const AddCountry = () => {
             values.country_continent,
             values.country_color
           );
+          console.log("countryResponse", countryResponse);
+
+          console.log("values.specificities", values.specificities);
 
           values.specificities.map(async (el, index) => {
             return await addSpecificity(
@@ -146,6 +149,7 @@ const AddCountry = () => {
               specificityImages[index]
             );
           });
+          console.log("values.characteristics", values.characteristics);
 
           values.characteristics.map(
             async (el) =>
@@ -156,6 +160,7 @@ const AddCountry = () => {
                 el.characteristic_icon
               )
           );
+          console.log("values.videos", values.videos);
 
           values.videos.map(
             async (el) =>

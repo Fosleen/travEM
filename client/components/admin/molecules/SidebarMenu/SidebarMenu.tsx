@@ -47,7 +47,7 @@ const SidebarMenu = () => {
           <Image
             src={logo}
             alt="travem-logo-grey"
-            width={150}
+            width={80}
             height={50}
             priority
           />

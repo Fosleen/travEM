@@ -1,7 +1,7 @@
-"use client";
-
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
+
+"use client";
 
 import { useParams, useRouter } from "next/navigation";
 import "./EditArticle.scss";
@@ -125,7 +125,7 @@ const EditArticle = () => {
     return mainArticleImage != "" && mainArticleImage;
   };
 
-  const handleSave = async (values) => {
+  const handleSave = async (values: any) => {
     console.log("=== HANDLE SAVE STARTED ===");
     setIsSubmitClicked(true);
 

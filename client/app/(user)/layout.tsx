@@ -12,7 +12,7 @@ import { ArticleProvider } from "@/context/ArticleContext";
 import "../../components/user/templates/UserViewLayout.scss";
 import { PlaneTicketsProvider } from "@/context/PlaneTicketsMenuContext";
 import { ContinentProvider } from "@/context/ContinentContext";
-import { CountryProvider } from "@/Context/CountryContext";
+import { CountryProvider } from "@/context/CountryContext";
 
 export default function UserViewLayout({
   children,

@@ -1,7 +1,6 @@
-"use client";
-
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
+"use client";
 
 import ArticleFragment from "@/components/user/molecules/ArticleFragment";
 import ArticleHero from "@/components/user/molecules/ArticleHero";

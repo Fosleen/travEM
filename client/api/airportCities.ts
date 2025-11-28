@@ -13,7 +13,7 @@ export async function getAirportCities() {
     }
 
     return await response.json();
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching airport cities:", error);
     return { error: error.message };
   }

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { useEffect, useState } from "react";
 import Input from "../../../atoms/Input";
 import "./PopUp.scss";

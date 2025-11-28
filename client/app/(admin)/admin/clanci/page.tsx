@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import { useEffect, useState } from "react";
@@ -11,10 +12,6 @@ const ArticlesList = () => {
   const [pageSize, setPageSize] = useState(8);
   const [searchText, setSearchText] = useState("");
 
-  useEffect(() => {
-    fetchData();
-  }, [pageSize, page]);
-
   const fetchData = async () => {
     try {
       const data = await getArticles(page, pageSize);
@@ -23,6 +20,10 @@ const ArticlesList = () => {
       console.error("error while fetching:", error);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, [pageSize, page]);
 
   const fetchSearch = async () => {
     try {

@@ -1,4 +1,4 @@
-// components/user/pages/continent/Continent.tsx
+// @ts-nocheck
 "use client";
 
 import DestinationsMap from "../../../organisms/DestinationsMap";

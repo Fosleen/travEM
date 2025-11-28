@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";

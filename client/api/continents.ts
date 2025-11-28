@@ -14,7 +14,7 @@ export async function getContinents(noCache: boolean = false) {
     }
 
     return await response.json();
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching continents:", error);
     return { error: error.message };
   }
@@ -33,7 +33,7 @@ export async function getContinentById(id: number) {
     }
 
     return await response.json();
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching continent:", error);
     return { error: error.message };
   }

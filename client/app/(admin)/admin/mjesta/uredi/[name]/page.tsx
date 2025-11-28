@@ -1,7 +1,6 @@
-"use client";
-
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
+"use client";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { getVisitedCountries } from "@/api/map";
 import { PlacesData } from "@/common/types";

@@ -31,7 +31,7 @@ export async function getSubscribers(
     }
 
     return await response.json();
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching subscribers:", error);
     return { error: error.message };
   }
@@ -57,7 +57,7 @@ export async function getSubscribersStats() {
     }
 
     return await response.json();
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching subscriber stats:", error);
     return { error: error.message };
   }
@@ -80,7 +80,7 @@ export async function getSubscribersWithoutPagination() {
     }
 
     return await response.json();
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching subscribers:", error);
     return { error: error.message };
   }
@@ -159,7 +159,7 @@ export async function deleteSubscriber(id: number) {
     }
 
     return await response.json();
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error deleting subscriber:", error);
     return { error: error.message };
   }

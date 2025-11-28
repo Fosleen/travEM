@@ -3,7 +3,7 @@ import icon from "../../../../assets/images/main-post-icon.png";
 import "./MainCountryPost.scss";
 import Image from "next/image";
 
-const MainCountryPost = ({ article }) => {
+const MainCountryPost = ({ article }: any) => {
   return (
     <Link
       href={`/clanak/${article.id}`}

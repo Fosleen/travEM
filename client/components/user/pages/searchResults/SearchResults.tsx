@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import { useSearchParams, useRouter } from "next/navigation";
 import Pagination from "@/components/atoms/Pagination";

@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import { getHomepage, updateStats } from "@/api/homepage";

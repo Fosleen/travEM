@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   try {
     const articleTypes = await getArticleTypes();
-    const selectedType = articleTypes?.find((el) => el.name === tip);
+    const selectedType = articleTypes?.find((el: any) => el.name === tip);
 
     if (!selectedType) {
       return {
@@ -73,7 +73,7 @@ export default async function Page({ params, searchParams }: Props) {
     notFound();
   }
 
-  const selectedArticleType = articleTypes.find((el) => el.name === tip);
+  const selectedArticleType = articleTypes.find((el: any) => el.name === tip);
 
   if (!selectedArticleType) {
     notFound();

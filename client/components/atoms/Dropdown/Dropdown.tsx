@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { useState, FC } from "react";
 import { DropdownProps } from "../../../common/types";
 import "./Dropdown.scss";

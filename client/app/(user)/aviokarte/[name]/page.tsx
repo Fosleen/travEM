@@ -60,7 +60,7 @@ export default async function Page({ params }: Props) {
   }
 
   const filteredTickets = articlesData.data.filter(
-    (article) =>
+    (article: any) =>
       article.airport_city?.name?.toLowerCase() === decodedName.toLowerCase()
   );
 

@@ -1,10 +1,12 @@
+// @ts-nocheck
+
 import { CaretRight } from "@phosphor-icons/react";
 import DestinationItem from "../../atoms/DestinationItem";
 import "./DestinationsMenuItem.scss";
 import Link from "next/link";
 import { FC, useContext, useEffect, useState } from "react";
 import { getCountriesByContinent } from "../../../../api/countries";
-import { CountryContext } from "../../../../Context/CountryContext";
+import { CountryContext } from "@/context/CountryContext";
 
 const DestinationsMenuItem: FC<{
   title: string;

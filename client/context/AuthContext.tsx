@@ -1,4 +1,3 @@
-// Context/AuthContext.tsx
 "use client";
 
 import { createContext, useEffect, useState, ReactNode } from "react";
@@ -7,7 +6,6 @@ import { useRouter, usePathname } from "next/navigation";
 interface User {
   id: number;
   username: string;
-  // Add other user properties as needed
 }
 
 interface AuthContextType {
@@ -35,7 +33,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Only run on client side
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("jwt");
       setAccessToken(token);
@@ -46,13 +43,11 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
           setUser({
             id: tokenDecoded.id,
             username: tokenDecoded.username,
-            // Add other user fields from your token
           });
         } catch (error) {
           console.error("Error decoding token:", error);
           setUser(null);
 
-          // Only redirect if not already on login page
           if (!pathname?.includes("/admin/login")) {
             router.push("/admin/login");
           }
@@ -60,7 +55,6 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       } else {
         setUser(null);
 
-        // Only redirect if not already on login page
         if (!pathname?.includes("/admin/login")) {
           router.push("/admin/login");
         }

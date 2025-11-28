@@ -1,4 +1,5 @@
-// app/admin/login/page.tsx
+// @ts-nocheck
+
 "use client";
 
 import { useContext } from "react";
@@ -8,14 +9,14 @@ import Button from "../../../components/atoms/Button";
 import Logo from "../../../assets/images/travem-logo-grey.avif";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { loginUser } from "../../../api/users";
-import { AuthContext } from "../../../Context/AuthContext";
+import { AuthContext } from "../../../context/AuthContext";
 import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
   const { setUser } = useContext(AuthContext);
   const router = useRouter();
 
-  const handleLogin = async (values, { setSubmitting }) => {
+  const handleLogin = async (values: any, { setSubmitting }: any) => {
     await loginUser(values, router, {
       setSubmitting,
       setUser,

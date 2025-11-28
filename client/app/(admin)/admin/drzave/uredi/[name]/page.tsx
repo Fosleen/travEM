@@ -1,7 +1,7 @@
+// @ts-nocheck
+
 "use client";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 import "./EditCountry.scss";
 import { Fragment, useEffect, useRef, useState } from "react";
 import * as Yup from "yup";

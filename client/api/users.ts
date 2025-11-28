@@ -1,7 +1,11 @@
 import { notifyFailure, notifySuccess } from "../components/atoms/Toast/Toast";
 import { apiUrl } from "./api";
 
-export const loginUser = async (values, router, { setSubmitting, setUser }) => {
+export const loginUser = async (
+  values: any,
+  router: any,
+  { setSubmitting, setUser }: any
+) => {
   try {
     const response = await fetch(`${apiUrl}/login`, {
       method: "POST",

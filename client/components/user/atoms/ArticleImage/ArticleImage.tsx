@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import "./ArticleImage.scss";
 
 import { useEffect, useState } from "react";

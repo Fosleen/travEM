@@ -4,7 +4,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import "mapbox-gl/dist/mapbox-gl.css";
+import "mapbox-gl/dist/mapbox-gl.css?legacy";
 import Pin from "../../atoms/Pin";
 import "./DestinationsMap.scss";
 import { useRouter } from "next/navigation";

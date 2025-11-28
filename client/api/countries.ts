@@ -28,7 +28,7 @@ export async function getCountries(
     }
 
     return await response.json();
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching countries:", error);
     return { error: error.message };
   }
@@ -50,7 +50,7 @@ export async function getCountryById(id: number, noCache: boolean = false) {
     }
 
     return await response.json();
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching country:", error);
     return { error: error.message };
   }
@@ -82,7 +82,7 @@ export async function getCountriesByName(
     }
 
     return await response.json();
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching countries by name:", error);
     return { error: error.message };
   }
@@ -107,7 +107,7 @@ export async function getCountriesByContinent(
     }
 
     return await response.json();
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching countries by continent:", error);
     return { error: error.message };
   }
@@ -166,7 +166,7 @@ export async function getCountryPlaces(id: number, noCache: boolean = false) {
     }
 
     return await response.json();
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching country places:", error);
     return [];
   }

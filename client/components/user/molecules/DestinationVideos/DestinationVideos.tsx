@@ -4,7 +4,7 @@ import { VideoProps } from "@/common/types";
 import Image from "next/image";
 import VideoItem from "../../atoms/VideoItem";
 
-const DestinationVideos = ({ data }) => {
+const DestinationVideos = ({ data }: any) => {
   return (
     <div className="destination-videos-container">
       {data && (

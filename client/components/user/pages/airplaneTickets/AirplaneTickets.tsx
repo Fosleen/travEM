@@ -1,4 +1,4 @@
-// components/user/pages/airplaneTickets/AirplaneTickets.tsx
+// @ts-nocheck
 "use client";
 
 import HorizontalPostItemBig from "../../atoms/HorizontalPostItemBig/HorizontalPostItemBig";

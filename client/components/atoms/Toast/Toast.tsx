@@ -1,38 +1,25 @@
-import { toast } from "react-toastify";
+import { toast, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const defaultOptions: ToastOptions = {
+  position: "top-right",
+  autoClose: 800,
+  hideProgressBar: true,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  theme: "light",
+};
+
 export const notifySuccess = (message: string) =>
-  toast.success(message, {
-    position: "top-right",
-    autoClose: 800,
-    hideProgressBar: true,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "light",
-  });
+  toast.success(message, defaultOptions);
 
 export const notifyFailure = (message: string) =>
-  toast.error(message, {
-    position: "top-right",
-    autoClose: 800,
-    hideProgressBar: true,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "light",
-  });
+  toast.error(message, defaultOptions);
 
 export const notifyInfo = (message: string) =>
   toast.info(message, {
-    position: "top-right",
+    ...defaultOptions,
     autoClose: false,
     hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "light",
   });

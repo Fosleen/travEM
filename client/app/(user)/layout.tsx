@@ -2,6 +2,8 @@
 
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Header from "@/components/user/organisms/Header";
 import Footer from "@/components/user/molecules/Footer";
 import Newsletter from "@/components/user/molecules/Newsletter";
@@ -23,7 +25,6 @@ export default function UserViewLayout({
     pathname === "/pocetna" ||
     pathname.startsWith("/destinacija") ||
     pathname.startsWith("/clanak");
-
   const [isPlaneTicketsMenuShown, setIsPlaneTicketsMenuShown] = useState(false);
   const [isDestinationsMenuShown, setIsDestinationsMenuShown] = useState(false);
   const [isTipsMenuShown, setIsTipsMenuShown] = useState(false);
@@ -63,6 +64,18 @@ export default function UserViewLayout({
                 setIsTipsMenuShown={setIsTipsMenuShown}
                 setOpenNav={setOpenNav}
                 setSelectedSubcategory={setSelectedSubcategory}
+              />
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
               />
             </main>
           </CountryProvider>

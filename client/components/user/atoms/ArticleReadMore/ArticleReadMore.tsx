@@ -1,14 +1,21 @@
 // @ts-nocheck
-
+import Image from "next/image";
 import "./ArticleReadMore.scss";
 import ReadMore from "../../../../assets/images/read_more.png";
 
 const ArticleReadMore = ({ section }) => {
   return (
     <div className="article-read-more-wrapper">
-      <img src={ReadMore} alt="" />
+      <Image
+        src={ReadMore}
+        alt="procitaj vise"
+        width={50}
+        height={50}
+        quality={100}
+        priority
+      />
       {/* <h2>Pročitaj:</h2> */}
-      <a href={section.link_url} target="blank">
+      <a href={section.link_url} target="_blank" rel="noopener noreferrer">
         {section.link_title}
       </a>
     </div>

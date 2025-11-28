@@ -2,6 +2,8 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import SidebarMenu from "@/components/admin/molecules/SidebarMenu";
 import ScrollToTop from "@/components/atoms/ScrollToTop";
 import "@/components/admin/templates/AdminViewLayout.scss";
@@ -9,7 +11,6 @@ import { AuthProvider } from "@/context/AuthContext";
 
 function isTokenExpired(token: string | null) {
   if (!token) return true;
-
   try {
     const decodedToken = JSON.parse(atob(token.split(".")[1]));
     const expirationTime = decodedToken.exp * 1000;
@@ -31,11 +32,9 @@ export default function AdminLayout({
   useEffect(() => {
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("jwt");
-
       if (pathname === "/login") {
         return;
       }
-
       if (!token || isTokenExpired(token)) {
         router.push("/login");
       }
@@ -43,7 +42,23 @@ export default function AdminLayout({
   }, [pathname, router]);
 
   if (pathname === "/login") {
-    return <AuthProvider>{children}</AuthProvider>;
+    return (
+      <AuthProvider>
+        {children}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
+      </AuthProvider>
+    );
   }
 
   return (
@@ -54,6 +69,18 @@ export default function AdminLayout({
           <SidebarMenu />
         </div>
         <div className="admin-view-content">{children}</div>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </div>
     </AuthProvider>
   );

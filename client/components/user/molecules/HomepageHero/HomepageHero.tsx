@@ -15,11 +15,9 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
 }) => {
   const [isDestinationsMenuHereShown, setIsDestinationsMenuHereShown] =
     useState(false);
-
   const handleMouseOver = () => {
     setIsDestinationsMenuHereShown(true);
   };
-
   return (
     <div className="homepage-hero-container">
       <Image
@@ -50,7 +48,6 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
               alt="travem-logo"
               width={640}
               height={200}
-              style={{ width: "auto", height: "auto" }}
               priority
             />
           </div>

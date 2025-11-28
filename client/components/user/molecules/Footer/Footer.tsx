@@ -135,7 +135,7 @@ const Footer: FC<FooterProps> = ({
           <Image
             src={logo}
             alt="fosleen-logo"
-            width={160}
+            width={100}
             height={40}
             style={{ width: "auto", height: "auto" }}
             priority

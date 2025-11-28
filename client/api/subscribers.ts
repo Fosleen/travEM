@@ -21,7 +21,6 @@ export async function getSubscribers(
           Accept: "application/json",
           Authorization: token ? `Bearer ${token}` : "",
         },
-        next: { revalidate: noCache ? 0 : 300 },
       }
     );
 
@@ -48,7 +47,6 @@ export async function getSubscribersStats() {
           Accept: "application/json",
           Authorization: token ? `Bearer ${token}` : "",
         },
-        next: { revalidate: 300 },
       }
     );
 
@@ -73,7 +71,6 @@ export async function getSubscribersWithoutPagination() {
         Accept: "application/json",
         Authorization: token ? `Bearer ${token}` : "",
       },
-      next: { revalidate: 300 },
     });
 
     if (!response.ok) {

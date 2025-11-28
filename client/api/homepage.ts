@@ -10,7 +10,7 @@ const getToken = () => {
 
 export async function getHomepage(noCache: boolean = false) {
   const response = await fetch(`${apiUrl}/homepage?noCache=${noCache}`, {
-    next: { revalidate: noCache ? 0 : 3600 },
+    cache: "no-store", // ← Disable Next.js cache
   });
   const data = await response.json();
 
@@ -23,7 +23,7 @@ export async function getHomepage(noCache: boolean = false) {
 
 export async function getHomepageStats(noCache: boolean = false) {
   const response = await fetch(`${apiUrl}/homepage/stats?noCache=${noCache}`, {
-    next: { revalidate: noCache ? 0 : 3600 },
+    cache: "no-store", // ← Disable Next.js cache
   });
   const data = await response.json();
 

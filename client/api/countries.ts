@@ -155,7 +155,7 @@ export async function getCountryPlaces(id: number, noCache: boolean = false) {
     const response = await fetch(
       `${apiUrl}/countries/places/${id}?noCache=${noCache}`,
       {
-        next: { revalidate: noCache ? 0 : 3600 },
+        cache: "no-store", // ← Disable Next.js cache
       }
     );
 

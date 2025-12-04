@@ -1,7 +1,6 @@
 // @ts-nocheck
 
 import DestinationItem from "../../atoms/DestinationItem";
-import worldMap from "@/assets/images/world-map.jpg";
 import "./CountryPlaces.scss";
 import Image from "next/image";
 
@@ -20,7 +19,12 @@ const CountryPlaces = ({ hasPadding = true, places = [], countryName }) => {
           ))}
       </div>
       <div className="country-places-world-map-image">
-        <Image src={worldMap} alt="world-map" width={1024} />
+        <Image
+          src="/images/world-map.jpg"
+          alt="world-map"
+          width={958}
+          height={946}
+        />
       </div>
     </div>
   );

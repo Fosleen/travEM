@@ -6,8 +6,8 @@ import "./PopUp.scss";
 import Button from "../../../atoms/Button";
 import { notifyFailure, notifyInfo } from "../../../atoms/Toast/Toast";
 import { addSubscriber } from "../../../../api/subscribers";
-import travemLogo from "../../../../assets/images/travem-logo-hero.webp";
-import popUpBg from "../../../../assets/images/popupbg.webp";
+import travemLogo from "/images/travem-logo-hero.webp";
+import popUpBg from "/images/popupbg.webp";
 import { X } from "@phosphor-icons/react";
 
 const PopUp = () => {

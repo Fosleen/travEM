@@ -1,5 +1,4 @@
 import Link from "next/link";
-import icon from "../../../../assets/images/main-post-icon.png";
 import "./MainCountryPost.scss";
 import Image from "next/image";
 
@@ -28,7 +27,12 @@ const MainCountryPost = ({ article }: any) => {
         </div>
         <div className="main-country-icon-container">
           <div className="main-country-icon-circle">
-            <Image src={icon} alt="icon" width={80} height={40} />
+            <Image
+              src="/images/main-post-icon.png"
+              alt="icon"
+              width={80}
+              height={40}
+            />
           </div>
         </div>
         <div className="main-country-post-text-container">{article.title}</div>

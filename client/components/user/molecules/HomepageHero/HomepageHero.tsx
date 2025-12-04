@@ -1,7 +1,4 @@
 import HomepageImage from "../../atoms/HomepageImage";
-import travemLogo from "@/assets/images/travem-logo-hero.webp";
-import suitcaseIcon from "@/assets/images/suitcase-icon.png";
-import planeIcon from "@/assets/images/plane-icon.png";
 import { ArrowDown } from "@phosphor-icons/react";
 import "./HomepageHero.scss";
 import { useState } from "react";
@@ -22,7 +19,7 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
     <div className="homepage-hero-container">
       <Image
         className="overlay-icon-1"
-        src={suitcaseIcon}
+        src="/images/suitcase-icon.png"
         alt="suitcase"
         width={320}
         height={320}
@@ -30,7 +27,7 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
       />
       <Image
         className="overlay-icon-2"
-        src={planeIcon}
+        src="/images/plane-icon.png"
         alt="plane"
         width={120}
         height={120}
@@ -44,7 +41,7 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
           <p className="light-color">Dobrodošli na</p>
           <div className="homepage-hero-welcome-box">
             <Image
-              src={travemLogo}
+              src="/images/travem-logo-hero.webp"
               alt="travem-logo"
               width={640}
               height={200}

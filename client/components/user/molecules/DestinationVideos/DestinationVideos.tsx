@@ -1,4 +1,3 @@
-import vlogIcon from "@/assets/images/vlog-icon.png";
 import "./DestinationVideos.scss";
 import { VideoProps } from "@/common/types";
 import Image from "next/image";
@@ -11,7 +10,7 @@ const DestinationVideos = ({ data }: any) => {
         <>
           <div className="destination-videos-image">
             <Image
-              src={vlogIcon}
+              src="/images/vlog-icon.png"
               alt="vlogging-camera-icon"
               width={112}
               height={112}

@@ -1,6 +1,5 @@
 import Button from "../../../atoms/Button";
 import Input from "../../../atoms/Input";
-import envelope from "../../../../assets/images/envelope.png";
 import "./Newsletter.scss";
 import NewsletterImage from "../../atoms/NewsletterImage";
 import { useState } from "react";
@@ -57,7 +56,7 @@ const Newsletter = () => {
         <div className="newsletter-content">
           <div className="newsletter-envelope">
             <Image
-              src={envelope}
+              src="/images/envelope.png"
               alt="envelope-icon"
               width={320}
               height={320}

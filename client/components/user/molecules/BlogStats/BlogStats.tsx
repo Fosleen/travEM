@@ -1,10 +1,4 @@
 import "./BlogStats.scss";
-import icon1 from "@/assets/images/world-icon.png";
-import icon2 from "@/assets/images/globe-icon.png";
-import icon3 from "@/assets/images/article-icon.png";
-import icon4 from "@/assets/images/plane-ticket-icon.png";
-import icon5 from "@/assets/images/vlogging-icon.png";
-import icon6 from "@/assets/images/walk-icon.png";
 import BlogStatsItem from "../../atoms/BlogStatsItem";
 import { HomepageData, Nullable } from "../../../../common/types";
 import { FC, useEffect, useState } from "react";
@@ -30,32 +24,32 @@ const BlogStats: FC<{ homepageContent: HomepageData }> = ({
       {blogStats && (
         <>
           <BlogStatsItem
-            icon={icon1}
+            icon="/images/world-icon.png"
             value={blogStats.continents_nmbr.toString()}
             text="kontinenta"
           />
           <BlogStatsItem
-            icon={icon2}
+            icon="/images/globe-icon.png"
             value={blogStats.countries_nmbr.toString()}
             text="države"
           />
           <BlogStatsItem
-            icon={icon3}
+            icon="/images/article-icon.png"
             value={blogStats.articles_nmbr.toString()}
             text="članaka"
           />
           <BlogStatsItem
-            icon={icon4}
+            icon="/images/plane-ticket-icon.png"
             value={homepageContent.flights_nmbr}
             text="letova avionom"
           />
           <BlogStatsItem
-            icon={icon5}
+            icon="/images/vlogging-icon.png"
             value={homepageContent.videos_nmbr}
             text="videa"
           />
           <BlogStatsItem
-            icon={icon6}
+            icon="/images/walk-icon.png"
             value={homepageContent.distance_nmbr}
             text="prijeđenih kilometara"
           />

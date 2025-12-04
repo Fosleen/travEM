@@ -1,7 +1,6 @@
 // @ts-nocheck
 
 import { FC, useEffect, useState } from "react";
-import passportImage from "@/assets/images/passport-icon.png";
 import "./VisaInfo.scss";
 import Button from "../../../atoms/Button";
 import AdvancedDropdown from "../../../admin/atoms/AdvancedDropdown";
@@ -72,7 +71,12 @@ const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
 
   return (
     <div className="visa-info-container">
-      <Image src={passportImage} alt="passport-image" />
+      <Image
+        src="/images/passport-icon.png"
+        width={321}
+        height={321}
+        alt="passport-image"
+      />
       <div className="visa-info-text">
         <div className="visa-info-title-container">
           <h2>Provjerite putne isprave</h2>

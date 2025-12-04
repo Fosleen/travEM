@@ -1,12 +1,12 @@
 import Link from "next/link";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import "./TipsMenuItem.scss";
 import { convertToSlug } from "../../../../utils/global";
 import { FC, MouseEventHandler } from "react";
 
 const TipsMenuItem: FC<{
   title: string;
-  icon: StaticImageData;
+  icon: string;
   onClick?: MouseEventHandler<HTMLElement>;
 }> = ({ title, icon, onClick }) => {
   return (
@@ -16,8 +16,20 @@ const TipsMenuItem: FC<{
       onClick={onClick}
     >
       <h2>{title}</h2>
-      <Image src={icon} alt="icon" className="icon-top-left" />
-      <Image src={icon} alt="icon" className="icon-bottom-right" />
+      <Image
+        src={icon}
+        alt="icon"
+        className="icon-top-left"
+        width={98}
+        height={98}
+      />
+      <Image
+        src={icon}
+        alt="icon"
+        className="icon-bottom-right"
+        width={98}
+        height={98}
+      />
     </Link>
   );
 };

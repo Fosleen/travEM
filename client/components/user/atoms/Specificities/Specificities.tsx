@@ -1,7 +1,5 @@
 import "./Specificities.scss";
 import { Dot } from "@phosphor-icons/react";
-import icon1 from "../../../../assets/images/menu-icon.png";
-import icon2 from "../../../../assets/images/teamwork-icon.png";
 import { FC } from "react";
 import { SpecificityProps } from "../../../../common/types";
 import Image from "next/image";
@@ -17,9 +15,19 @@ const Specificities: FC<{
           <div className="country-highligth-left">
             <div className="country-highlight-left-bg-image">
               {iconNmbr === "1" ? (
-                <Image src={icon1} alt="icon1" />
+                <Image
+                  src="/images/menu-icon.png"
+                  width={381}
+                  height={418}
+                  alt="icon1"
+                />
               ) : (
-                <Image src={icon2} alt="icon2" />
+                <Image
+                  src="/images/teamwork-icon.png"
+                  width={381}
+                  height={418}
+                  alt="icon2"
+                />
               )}
             </div>
             <div className="country-highligth-left-content">

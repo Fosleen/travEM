@@ -6,7 +6,6 @@ import { useContext } from "react";
 import "./Login.scss";
 import Input from "../../../components/atoms/Input";
 import Button from "../../../components/atoms/Button";
-import Logo from "../../../assets/images/travem-logo-grey.avif";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { loginUser } from "../../../api/users";
 import { AuthContext } from "../../../context/AuthContext";
@@ -26,7 +25,7 @@ const LoginPage = () => {
   return (
     <div className="login-form-wrapper">
       <div className="login-form-logo-wrapper">
-        <img src={Logo} alt="" />
+        <img src="/images/travem-logo-grey.avif" alt="" />
       </div>
       <Formik
         initialValues={{ username: "", password: "" }}

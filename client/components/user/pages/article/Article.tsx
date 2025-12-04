@@ -7,7 +7,6 @@ import ArticleHero from "@/components/user/molecules/ArticleHero";
 import ArticleTableOfContents from "@/components/user/molecules/ArticleTableOfContents";
 import "./Article.scss";
 import ArticleReadMore from "@/components/user/atoms/ArticleReadMore";
-import Location from "@/assets/images/location.png";
 import CountryPlaces from "@/components/user/molecules/CountryPlaces";
 import React, { useState } from "react";
 import RecommendedPosts from "@/components/user/molecules/RecommendedPosts";
@@ -56,7 +55,12 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
         <div className="article-location-container">
           {articleContent.articleTypeId === 1 && (
             <div className="article-location">
-              <Image src={Location} alt="location" width={24} height={24} />
+              <Image
+                src="/images/location.png"
+                alt="location"
+                width={24}
+                height={24}
+              />
               <h4 onClick={handlePlaceClick} className="article-location">
                 {articleContent.place && `${articleContent.place.name}, `}
               </h4>
@@ -86,7 +90,12 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
 
         {articleContent.articleTypeId === 1 && (
           <div className="article-location-container">
-            <Image src={Location} alt="location" width={24} height={24} />
+            <Image
+              src="/images/location.png"
+              alt="location"
+              width={24}
+              height={24}
+            />
             <h4 onClick={handlePlaceClick} className="article-location">
               {articleContent.place && `${articleContent.place.name}, `}
             </h4>

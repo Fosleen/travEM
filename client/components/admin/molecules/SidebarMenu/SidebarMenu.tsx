@@ -6,7 +6,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { SignOut } from "@phosphor-icons/react";
 import SidebarMenuItem from "../../atoms/SidebarMenuItem";
-import logo from "../../../../assets/images/travem-logo-grey.webp";
 import "./SidebarMenu.scss";
 
 const SidebarMenu = () => {
@@ -45,7 +44,7 @@ const SidebarMenu = () => {
       <div>
         <Link href="/admin" className="sidebar-menu-logo">
           <Image
-            src={logo}
+            src="/images/travem-logo-grey.webp"
             alt="travem-logo-grey"
             width={80}
             height={50}

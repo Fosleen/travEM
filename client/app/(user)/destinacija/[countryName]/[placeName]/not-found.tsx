@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Warning from "@/assets/images/country_not_found.png";
 import "../NotFound.scss";
 
 const NotFound = () => {
@@ -8,7 +7,7 @@ const NotFound = () => {
       <h1>Nažalost, još nismo posjetili ovo mjesto.</h1>
       <div className="image-container">
         <Image
-          src={Warning}
+          src='/images/country_not_found.png"'
           alt="error-icon"
           fill
           style={{ objectFit: "contain" }}

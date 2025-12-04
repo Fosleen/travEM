@@ -1,5 +1,4 @@
 import { FC } from "react";
-import worldMap from "../../../../assets/images/world-map.jpg";
 import "./Characteristics.scss";
 import { CharacteristicProps } from "../../../../common/types";
 import Image from "next/image";
@@ -10,7 +9,12 @@ const Characteristics: FC<{ characteristics: Array<CharacteristicProps> }> = ({
   return (
     <div className="characteristics-info-container">
       <div className="characteristics-world-map-image">
-        <Image src={worldMap} alt="world-map" />
+        <Image
+          src="/images/world-map.jpg"
+          width={958}
+          height={946}
+          alt="world-map"
+        />
       </div>
       <div className="characteristics-info-content">
         <h2>Da vas ne iznenadi</h2>

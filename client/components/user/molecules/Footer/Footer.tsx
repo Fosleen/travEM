@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import SocialMediaLinks from "../../atoms/SocialMediaLinks/SocialMediaLinks";
 import Marquee from "../../atoms/Marquee";
-import logo from "../../../../assets/images/logo-light.png";
 import "./Footer.scss";
 
 interface FooterProps {
@@ -133,7 +132,7 @@ const Footer: FC<FooterProps> = ({
           rel="noopener noreferrer"
         >
           <Image
-            src={logo}
+            src="/images/logo-light.png"
             alt="fosleen-logo"
             width={100}
             height={40}

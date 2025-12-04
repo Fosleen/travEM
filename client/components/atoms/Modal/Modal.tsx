@@ -1,7 +1,6 @@
 // @ts-nocheck
 
 import { Dispatch, SetStateAction, forwardRef } from "react";
-import upload from "@/assets/images/upload_image.svg";
 import Button from "../Button";
 import Input from "../Input";
 import "./Modal.scss";
@@ -47,7 +46,13 @@ const Modal = forwardRef<HTMLDialogElement, ModalProps>(
           }}
         >
           <div className="modal-inner-container">
-            <Image src={upload} alt="upload-image" className="modal-image" />
+            <Image
+              src="/images/upload_image.svg"
+              alt="upload-image"
+              width={98}
+              height={98}
+              className="modal-image"
+            />
             <div className="modal-input-container">
               <Input
                 name="image-url"

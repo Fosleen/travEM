@@ -4,8 +4,6 @@ import { useEffect, useState, FC } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import logoWhite from "../../../../assets/images/travem-logo-white.webp";
-import logoGrey from "../../../../assets/images/travem-logo-grey.webp";
 import NavbarDesktop from "../../molecules/NavbarDesktop";
 import NavbarMobile from "../../molecules/NavbarMobile";
 import AirplaneTicketsMenu from "../AirplaneTicketsMenu";
@@ -52,13 +50,22 @@ const Header: FC<HeaderProps> = ({
     return () => window.removeEventListener("resize", updateMedia);
   }, []);
 
-  const isHomePage = pathname === "/"|| pathname === "/pocetna";
+  const isHomePage = pathname === "/" || pathname === "/pocetna";
 
   return (
     <div className="header-container">
       <div className="header-top">
         <Link href="/">
-          <Image src={isHomePage ? logoWhite : logoGrey} alt="travem-logo" />
+          <Image
+            src={
+              isHomePage
+                ? "/images/travem-logo-white.webp"
+                : "/images/travem-logo-grey.webp"
+            }
+            width={102}
+            height={61}
+            alt="travem-logo"
+          />
         </Link>
         {isDesktop && (
           <NavbarDesktop

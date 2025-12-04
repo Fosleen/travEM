@@ -1,13 +1,12 @@
 // @ts-nocheck
 import Image from "next/image";
 import "./ArticleReadMore.scss";
-import ReadMore from "../../../../assets/images/read_more.png";
 
 const ArticleReadMore = ({ section }) => {
   return (
     <div className="article-read-more-wrapper">
       <Image
-        src={ReadMore}
+        src="/images/read_more.png"
         alt="procitaj vise"
         width={50}
         height={50}

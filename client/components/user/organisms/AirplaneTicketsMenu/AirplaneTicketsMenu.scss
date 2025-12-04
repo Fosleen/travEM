@@ -1,7 +1,7 @@
 @use "@/utils/theme.scss" as *;
 
 .airplane-tickets-menu-container {
-  background-image: url("../../../../assets/images/continents-bg-image.png");
+  background-image: url("/images/continents-bg-image.png");
   background-size: cover;
   width: fit-content;
   background-color: $bg;

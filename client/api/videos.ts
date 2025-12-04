@@ -1,12 +1,19 @@
 import { apiUrl } from "./api";
 
+const getToken = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("jwt");
+  }
+  return null;
+};
+
 export async function addVideo(
   url: string,
   article_id?: number | null,
   place_id?: number | null,
   country_id?: number | null
 ) {
-  const token = localStorage.getItem("jwt");
+  const token = getToken();
   const response = await fetch(`${apiUrl}/videos`, {
     headers: {
       Accept: "application/json",
@@ -21,9 +28,7 @@ export async function addVideo(
       country_id: country_id,
     }),
   });
-
   const data = await response.json();
-
   if (!response.ok) {
     console.log(data.error);
     return data.error;
@@ -32,8 +37,7 @@ export async function addVideo(
 }
 
 export async function updateVideo(id: number, url: string) {
-  const token = localStorage.getItem("jwt");
-
+  const token = getToken();
   const response = await fetch(`${apiUrl}/videos/${id}`, {
     headers: {
       Accept: "application/json",
@@ -45,9 +49,7 @@ export async function updateVideo(id: number, url: string) {
       url: url,
     }),
   });
-
   const data = await response.json();
-
   if (!response.ok) {
     console.log(data.error);
     return data.error;
@@ -56,8 +58,7 @@ export async function updateVideo(id: number, url: string) {
 }
 
 export async function deleteVideo(id: number) {
-  const token = localStorage.getItem("jwt");
-
+  const token = getToken();
   const response = await fetch(`${apiUrl}/videos/${id}`, {
     headers: {
       Accept: "application/json",
@@ -66,9 +67,7 @@ export async function deleteVideo(id: number) {
     },
     method: "DELETE",
   });
-
   const data = await response.json();
-
   if (!response.ok) {
     console.log(data.error);
     return data.error;

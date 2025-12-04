@@ -42,6 +42,7 @@ import {
 import { addSection, deleteSection, updateSection } from "@/api/sections";
 import { addSectionImage, deleteSectionImage } from "@/api/sectionImages";
 import { addGalleryImage, deleteGalleryImage } from "@/api/galleryImages";
+import { addVideo, updateVideo, deleteVideo } from "@/api/videos";
 import { getAirportCities } from "@/api/airportCities";
 import AdvancedEditor from "@/components/atoms/AdvancedEditor";
 import {
@@ -372,6 +373,31 @@ const EditArticle = () => {
       }
 
       console.log("✅ Top country article handled");
+
+      // 8 Handle video update/add/delete
+      console.log("Handling video...");
+      const hasVideo =
+        values.article_video && values.article_video.trim() !== "";
+      const existingVideo = article.video;
+
+      if (hasVideo && existingVideo) {
+        // Update existing video
+        console.log("   Updating existing video...", existingVideo.id);
+        await updateVideo(existingVideo.id, values.article_video);
+        console.log("   ✅ Video updated");
+      } else if (hasVideo && !existingVideo) {
+        // Add new video
+        console.log("   Adding new video...");
+        await addVideo(values.article_video, article.id, null, null);
+        console.log("   ✅ Video added");
+      } else if (!hasVideo && existingVideo) {
+        // Delete existing video
+        console.log("   Deleting existing video...", existingVideo.id);
+        await deleteVideo(existingVideo.id);
+        console.log("   ✅ Video deleted");
+      } else {
+        console.log("   No video changes needed");
+      }
 
       // 8. Success!
       console.log("=== UPDATE COMPLETE ===");

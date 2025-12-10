@@ -291,7 +291,7 @@ const createEmailTemplate = (article, userEmail) => {
                   <tr>
                     <td align="center">
                       <img
-                        src="https://putujemstravem.com/assets/travem-logo-hero-CRM5TaXd.avif"
+                        src="https://beibozwdtawltlsguoef.supabase.co/storage/v1/object/public/Ana%20zatrazila%20da%20stavimo/travem-logo-hero-CRM5TaXd.avif"
                         alt="Putujem s travEM"
                         width="280"
                         style="

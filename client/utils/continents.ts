@@ -3,8 +3,8 @@ import { apiUrl } from "./api";
 
 export async function getContinents(noCache: boolean = false) {
   try {
-    const response = await fetch(`${apiUrl}/continents?noCache=${noCache}`, {
-      next: { revalidate: noCache ? 0 : 3600 },
+    const response = await fetch(`${apiUrl}/continents?noCache=true`, {
+      next: { revalidate: noCache ? 0 : 0 },
     });
 
     if (!response.ok) {

@@ -1,0 +1,146 @@
+@use "@/utils/theme.scss" as *;
+
+.article-container {
+  max-width: 1300px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 auto;
+  .article-content {
+    padding: 16px;
+  }
+}
+
+@media screen and ($desktopLarge) {
+  .article-container {
+    .article-content {
+      padding: 0;
+    }
+  }
+}
+
+.article-content {
+  padding: 16px;
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 24px;
+  @media screen and ($desktop) {
+    padding-left: 16px;
+  }
+  @media screen and ($desktopLarge) {
+    padding: 0;
+  }
+}
+
+.article-connected-articles-wrapper {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 16px;
+  margin-top: 24px;
+  @media screen and ($desktopLarge) {
+    padding: 0;
+  }
+}
+
+.article-text-articles-wrapper {
+  padding: 16px;
+  max-width: 1300px;
+  margin: 0 auto;
+  h2 {
+    font-weight: bold;
+  }
+  @media screen and ($desktopLarge) {
+    padding: 16px 0;
+  }
+}
+
+.article-gallery-wrapper {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 16px;
+  @media screen and ($desktopLarge) {
+    padding: 16px 0;
+  }
+}
+
+.article-location-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 16px;
+  .article-location {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: underline;
+    max-width: 1300px;
+    cursor: pointer;
+    h2 {
+      font-weight: bold;
+    }
+    @media screen and ($desktop) {
+      margin-left: 0px;
+    }
+    @media screen and ($desktopLarge) {
+      padding: 0;
+    }
+  }
+}
+
+.article-gallery-text-wrapper {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  @media screen and ($desktopLarge) {
+    padding: 0;
+  }
+}
+
+.article-location-parent {
+  max-width: 1300px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 auto;
+  margin-bottom: 24px;
+}
+
+// Gallery Grid Styles
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  padding: 2rem 0;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.5rem;
+    padding: 1rem 0;
+  }
+}
+
+.gallery-item {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+  
+  img {
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover img {
+    transform: scale(1.05);
+  }
+}

@@ -1,0 +1,154 @@
+@use "@/utils/theme.scss" as *;
+
+a {
+  text-decoration: none;
+}
+
+.favorite-post-item-container {
+  position: relative;
+  width: 100%;
+  padding: 8px;
+
+  .favorite-post-item-icon-container {
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    background-color: $bg;
+    width: 72px;
+    height: 72px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    box-shadow: 0px 0px 16px $grey;
+
+    .favorite-post-item-icon {
+      border-radius: 50%;
+      max-width: 64px;
+    }
+  }
+
+  .favorite-post-item-content {
+    width: 100%;
+
+    .favorite-post-item-content-text {
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+
+      p {
+        padding-left: 72px;
+        padding-right: 8px;
+        font-weight: bold;
+        font-size: 18px;
+        margin: 0 auto;
+        text-align: center;
+      }
+    }
+
+    .favorite-post-item-content-image {
+      width: 100%;
+      height: 180px;
+
+      img {
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 24px;
+      }
+    }
+  }
+}
+
+@media screen and ($tablet) {
+  .favorite-post-item-container {
+    padding: 16px;
+
+    .favorite-post-item-icon-container {
+      left: 32px;
+      top: 16px;
+      width: 112px;
+      height: 112px;
+
+      .favorite-post-item-icon {
+        max-width: 96px;
+      }
+    }
+
+    .favorite-post-item-content {
+      .favorite-post-item-content-text {
+        p {
+          font-size: 24px;
+          padding-left: 136px;
+          padding-right: 20px;
+        }
+      }
+
+      .favorite-post-item-content-image {
+        height: 320px;
+      }
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .favorite-post-item-container {
+    padding-right: 0;
+
+    .favorite-post-item-icon-container {
+      left: 0px;
+      top: 32px;
+      width: 80px;
+      height: 80px;
+
+      .favorite-post-item-icon {
+        max-width: 72px;
+      }
+    }
+
+    .favorite-post-item-content {
+      .favorite-post-item-content-text {
+        p {
+          font-size: 16px;
+          padding-left: 72px;
+          padding-right: 16px;
+        }
+      }
+
+      .favorite-post-item-content-image {
+        height: 200px;
+        padding-left: 20px;
+      }
+    }
+  }
+}
+
+@media screen and ($desktopLarge) {
+  .favorite-post-item-container {
+    .favorite-post-item-icon-container {
+      left: 0px;
+      top: 32px;
+      width: 96px;
+      height: 96px;
+
+      .favorite-post-item-icon {
+        max-width: 80px;
+      }
+    }
+
+    .favorite-post-item-content {
+      .favorite-post-item-content-text {
+        p {
+          font-size: 20px;
+          padding-left: 104px;
+          padding-right: 20px;
+        }
+      }
+
+      .favorite-post-item-content-image {
+        height: 240px;
+      }
+    }
+  }
+}

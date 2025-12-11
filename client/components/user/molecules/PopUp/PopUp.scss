@@ -1,0 +1,198 @@
+@use "@/utils/theme.scss" as *;
+
+.email-popup-bg {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 99;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+
+  /* Animation for background fade out */
+  &.closing {
+    opacity: 0;
+  }
+
+  .email-popup-container {
+    height: 100%;
+    background-color: $bg;
+    display: flex;
+    flex-direction: column;
+    border-radius: 24px;
+    justify-content: space-between;
+    box-shadow: 0 0 32px #333333;
+    position: relative;
+    transform: scale(1);
+    opacity: 1;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+
+    &.closing {
+      transform: scale(0.9);
+      opacity: 0;
+    }
+
+    .email-popup-remove-icon {
+      position: absolute;
+      right: 12px;
+      top: 22px;
+      cursor: pointer;
+      background-color: $lightBlue;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 40px;
+      padding: 6px;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: rotate(90deg);
+      }
+    }
+
+    .email-popup-text-section {
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 56px;
+
+      .popup-logo-img {
+        max-width: 160px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .newsletter-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+
+        .newsletter-actions {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .newsletter-button-container {
+          margin-left: auto;
+          margin-right: auto;
+          display: flex;
+        }
+      }
+    }
+
+    .email-popup-img-section {
+      width: 100%;
+      overflow: hidden;
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
+
+      .lazy-image-wrapper {
+        width: 100% !important;
+        height: 100% !important;
+        display: block !important;
+      }
+
+      .lazy-load-image-background {
+        width: 100% !important;
+        height: 100% !important;
+        display: block !important;
+      }
+
+      img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        border-bottom-left-radius: 24px;
+        border-bottom-right-radius: 24px;
+      }
+    }
+  }
+}
+
+/* When the popup appears, add entrance animation */
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.email-popup-container {
+  animation: popIn 0.5s ease forwards;
+}
+
+@media screen and ($desktop) {
+  .email-popup-bg {
+    .email-popup-container {
+      max-width: 1000px;
+      max-height: 700px;
+      flex-direction: row;
+
+      .email-popup-remove-icon {
+        right: 32px;
+        top: 32px;
+        box-shadow: 0 0 8px #333333;
+      }
+
+      .email-popup-text-section {
+        flex: 1 1 50%;
+
+        .popup-logo-img {
+          max-width: 280px;
+        }
+
+        .newsletter-form {
+          gap: 32px;
+
+          .newsletter-actions {
+            gap: 16px;
+          }
+
+          h2 {
+            font-size: 36px;
+          }
+
+          p {
+            font-size: 16px;
+          }
+        }
+      }
+
+      .email-popup-img-section {
+        flex: 1 1 50%;
+        height: 100%;
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 24px;
+        border-top-right-radius: 24px;
+
+        img {
+          height: 100% !important;
+          object-fit: cover !important;
+          object-position: center bottom !important;
+          border-bottom-left-radius: 0px;
+          border-bottom-right-radius: 24px;
+          border-top-right-radius: 24px;
+        }
+      }
+    }
+  }
+}

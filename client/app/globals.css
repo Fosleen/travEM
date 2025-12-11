@@ -1,0 +1,48 @@
+/* Remove @import statements - fonts loaded via Next.js */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: #333333;
+}
+
+/* Font is applied via className on body, but you can override: */
+.font-testimonia {
+  font-family: var(--font-testimonia);
+}
+
+.font-bold {
+  font-family: var(--font-bold);
+}
+
+.font-archivo {
+  font-family: var(--font-archivo-black);
+}
+
+.font-sacramento {
+  font-family: var(--font-sacramento);
+}
+
+.error-message {
+  color: red;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+  font-family: inherit;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}

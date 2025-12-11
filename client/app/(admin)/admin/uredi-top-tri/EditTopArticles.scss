@@ -1,0 +1,24 @@
+@use "@/utils/theme.scss" as *;
+
+.edit-top-homepage-articles-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 12px;
+
+  .edit-top-homepage-articles-inputs {
+    border-radius: 8px;
+    border: 2px solid $greyMiddle;
+    padding: 16px;
+    max-width: 1024px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .edit-top-homepage-articles-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 24px;
+  }
+}

@@ -1,0 +1,29 @@
+@use "@/utils/theme.scss" as *;
+
+.blog-stats-container {
+  max-width: 1300px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin: 0 auto;
+  gap: 16px;
+  padding: 0 16px;
+  width: 100%;
+}
+
+@media screen and ($tabletMedium) {
+  .blog-stats-container {
+    gap: 24px;
+  }
+}
+
+@media screen and ($tablet) {
+  .blog-stats-container {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+@media screen and ($desktopLarge) {
+  .blog-stats-container {
+    padding: 0;
+  }
+}

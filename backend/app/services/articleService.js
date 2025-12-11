@@ -514,6 +514,8 @@ class ArticleService {
     place_id,
     airport_city_id
   ) {
+    console.log("patchArticle");
+
     try {
       await db.models.Article.update(
         {
@@ -535,6 +537,8 @@ class ArticleService {
       );
 
       const updatedArticle = await db.models.Article.findByPk(id);
+      console.log("updatedArticle", updatedArticle);
+
       return updatedArticle;
     } catch (error) {
       console.log(error);

@@ -1,0 +1,39 @@
+// components/user/pages/continent/Continent.scss
+@use "@/utils/theme.scss" as *;
+
+.continent-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.continent-text-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  h1 {
+    // Changed from h2 to h1 for better SEO
+    color: $textPrimary;
+    font-size: 40px;
+    margin: 0;
+  }
+}
+
+.continent-page-recommended-wrapper {
+  margin-top: 24px;
+  margin-bottom: 24px;
+  gap: 24px;
+  display: flex;
+  flex-direction: column;
+
+  @media screen and ($tablet) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media screen and ($desktop) {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

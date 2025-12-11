@@ -1,0 +1,27 @@
+@use "@/utils/theme.scss" as *;
+
+.featured-map-place-selector-container {
+  display: flex;
+  gap: 16px;
+  padding: 8px;
+  justify-content: center;
+  align-items: center;
+  background-color: $greyLight;
+  box-shadow: 0 0 5px #0000007c;
+  border-radius: 8px;
+  width: fit-content;
+
+  p {
+    display: flex;
+    font-weight: 600;
+    justify-content: center;
+    padding: 12px 32px;
+    cursor: pointer;
+
+    &.selected {
+      background-color: $green;
+      color: $bg;
+      border-radius: 8px;
+    }
+  }
+}

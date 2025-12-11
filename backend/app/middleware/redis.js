@@ -1,6 +1,7 @@
 import Redis from "redis";
 
 const DEFAULT_EXPIRATION = 3600 * 6; // 6 hours
+const CACHE_OPERATION_TIMEOUT = 5000;
 export let redisAvailable = false;
 
 export const redisClient = Redis.createClient({
@@ -59,28 +60,69 @@ export const getOrSetCache = async (key, cb, useCache = true) => {
   }
 };
 
+/**
+ * Clear cache with timeout wrapper - safe for local development
+ * Won't throw errors if Redis is unavailable
+ */
 export const clearCache = async (key) => {
+  if (!redisAvailable) {
+    console.log(`⚠️ Redis unavailable, skipping cache clear for: ${key}`);
+    return;
+  }
+
   try {
-    await redisClient.del(key);
+    await Promise.race([
+      redisClient.del(key),
+      new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error("Cache clear timeout")),
+          CACHE_OPERATION_TIMEOUT
+        )
+      ),
+    ]);
+    console.log(`✅ Cache cleared: ${key}`);
   } catch (error) {
-    console.error("Redis clear cache error:", error);
+    console.error(
+      `⚠️ Cache clear failed for ${key} (continuing anyway):`,
+      error.message
+    );
   }
 };
 
 export const clearCacheByPattern = async (pattern) => {
-  if (!redisAvailable) return;
+  if (!redisAvailable) {
+    console.log(
+      `⚠️ Redis unavailable, skipping pattern cache clear: ${pattern}`
+    );
+    return;
+  }
 
   try {
-    const keys = await redisClient.keys(pattern);
-    if (keys.length > 0) {
-      const pipeline = redisClient.multi();
-      for (const key of keys) {
-        pipeline.del(key);
-      }
-      await pipeline.exec();
-      console.log(`Cleared ${keys.length} caches matching pattern: ${pattern}`);
-    }
+    await Promise.race([
+      (async () => {
+        const keys = await redisClient.keys(pattern);
+        if (keys.length > 0) {
+          const pipeline = redisClient.multi();
+          for (const key of keys) {
+            pipeline.del(key);
+          }
+          await pipeline.exec();
+          console.log(
+            `✅ Cleared ${keys.length} caches matching pattern: ${pattern}`
+          );
+        }
+      })(),
+      new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error("Cache pattern clear timeout")),
+          CACHE_OPERATION_TIMEOUT
+        )
+      ),
+    ]);
   } catch (error) {
-    console.error(`Redis clear cache pattern error: ${error}`);
+    console.error(
+      `⚠️ Cache pattern clear failed for ${pattern} (continuing anyway):`,
+      error.message
+    );
   }
 };

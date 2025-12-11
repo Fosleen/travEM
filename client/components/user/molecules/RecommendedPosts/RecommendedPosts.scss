@@ -1,0 +1,44 @@
+@use "@/utils/theme.scss" as *;
+
+.recommended-posts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: $greyMiddleDark;
+  }
+
+  .recommended-posts {
+    display: grid;
+    flex-direction: column;
+    gap: 8px;
+
+    &.last:last-child {
+      margin-bottom: 64px;
+    }
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .recommended-posts-container {
+    .recommended-posts {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .recommended-posts-container {
+    h2 {
+      margin-top: 24px;
+    }
+
+    .recommended-posts {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+}

@@ -1,0 +1,17 @@
+.privacy-policy-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  h3 {
+    font-size: 28px;
+    font-weight: 600;
+  }
+
+  h4 {
+    font-size: 20px;
+    font-weight: 500;
+  }
+}

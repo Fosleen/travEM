@@ -4,8 +4,8 @@ export default (sequelize, DataTypes) => {
     "gallery_image",
     {
       url: { type: DataTypes.STRING, allowNull: false },
-      width: { type: DataTypes.INTEGER, allowNull: false },
-      height: { type: DataTypes.INTEGER, allowNull: false },
+      width: { type: DataTypes.INTEGER, allowNull: true },
+      height: { type: DataTypes.INTEGER, allowNull: true },
     },
     {
       underscored: true,

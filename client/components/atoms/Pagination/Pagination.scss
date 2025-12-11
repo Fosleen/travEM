@@ -1,0 +1,95 @@
+@use "@/utils/theme.scss" as *;
+
+.pagination-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+  background-color: white;
+  border-radius: 8px;
+
+  @media screen and ($tabletMedium) {
+    width: fit-content;
+  }
+
+  ul {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    gap: 4px;
+    padding: 12px;
+
+    @media screen and ($tabletMedium) {
+      gap: 16px;
+    }
+
+    li {
+      list-style: none;
+      min-width: 28px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+
+      @media screen and ($tabletMedium) {
+        padding: 0px;
+      }
+
+      a {
+        text-decoration: none;
+        cursor: pointer;
+      }
+    }
+  }
+
+  ul.pagination {
+    text-decoration: none;
+  }
+}
+
+.page-item {
+  background-color: $limeLight;
+  border-radius: 8px;
+  color: $grey;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.page-item-carrot {
+  background-color: $limeLight;
+  color: $green;
+  padding: 6px 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: stretch;
+}
+
+.page-link {
+  cursor: pointer;
+  padding: 6px 8px;
+  min-width: 32px;
+  height: 100%;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.active-pagination {
+  background-color: $green;
+
+  .page-link {
+    color: white;
+  }
+}
+
+.page-link-next,
+.page-link-previous {
+  font-weight: bold;
+  color: $green;
+  padding: 8px;
+
+  @media screen and ($tabletMedium) {
+    padding: 10px 20px;
+  }
+}

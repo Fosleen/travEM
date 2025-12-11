@@ -1,0 +1,14 @@
+@use "@/utils/theme.scss" as *;
+
+.destination-posts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media screen and ($tablet) {
+  .destination-posts-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

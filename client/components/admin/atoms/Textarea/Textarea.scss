@@ -1,0 +1,35 @@
+@use "@/utils/theme.scss" as *;
+
+.textarea-parent-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  label {
+    font-weight: 600;
+  }
+
+  .textarea-wrapper {
+    width: 100%;
+  }
+}
+
+textarea {
+  width: 100%;
+  background-color: $bg;
+  padding: 14px 4px;
+  border-radius: 8px;
+  border: 1px solid $lightBlue;
+  color: $grey;
+  font-weight: 500;
+  font-size: 14px;
+  padding-left: 16px;
+  resize: none;
+}
+
+.error-message {
+  color: red;
+  display: flex;
+  align-items: flex-start;
+}

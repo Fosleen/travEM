@@ -1,0 +1,24 @@
+@use "@/utils/theme.scss" as *;
+
+.edit-homepage-menu-item-container {
+  background: $greyLight;
+  border-radius: 16px;
+  border: 2px solid $green;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  box-shadow: 0 4px 4px rgba($color: #000000, $alpha: 0.25);
+
+  p {
+    padding: 56px;
+    font-weight: 500;
+    font-size: 20px;
+  }
+
+  &:hover {
+    background-color: $greyMiddle;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+}

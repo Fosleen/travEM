@@ -10,7 +10,6 @@ import { exec } from "child_process";
 import { createAssociations } from "./database_management.js";
 import helmet from "helmet";
 import swaggerDocs from "./app/utils/swagger.js";
-import prerender from "prerender-node";
 import { initRedis } from "./app/middleware/redis.js";
 
 const app = express();
@@ -19,7 +18,7 @@ const app = express();
 createAssociations();
 
 const corsOptions = {
-  origin: "https://putujemstravem.com", //change this to localhost:5173 for testing
+  origin: "https://putujemstravem.com", //change this to localhost:3000 for testing
   credentials: true,
   methods: "GET, POST, PATCH, DELETE, PUT",
   allowedHeaders: "Content-Type, Authorization",
@@ -34,13 +33,6 @@ app.use(helmet());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-app.use(
-  prerender
-    .set("prerenderToken", process.env.PRERENDER_TOKEN)
-    .set("waitAfterLastRequest", 5000)
-    .set("waitForRender", 10000)
-);
 
 app.use(
   session({

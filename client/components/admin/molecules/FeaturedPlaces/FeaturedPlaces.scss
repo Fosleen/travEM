@@ -1,0 +1,49 @@
+@use "@/utils/theme.scss" as *;
+
+.featured-places-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .featured-places-content {
+    display: flex;
+    gap: 8px;
+    flex-direction: column;
+    margin-bottom: 24px;
+
+    .featured-places-header {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .featured-places-dropdown {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+
+      & svg {
+        cursor: pointer;
+      }
+    }
+
+    .favorite-places-dropdowns-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .featured-places-dropdowns-container {
+    }
+  }
+
+  .featured-places-buttons {
+    display: flex;
+    gap: 8px;
+  }
+}

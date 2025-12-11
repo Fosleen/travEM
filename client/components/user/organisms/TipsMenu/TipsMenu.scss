@@ -1,0 +1,32 @@
+@use "@/utils/theme.scss" as *;
+
+.tips-menu-container {
+  background-image: url("/images/continents-bg-image.png");
+  background-size: cover;
+  width: fit-content;
+  background-color: $bg;
+  width: 100%;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+
+@media screen and ($tablet) {
+  .tips-menu-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}
+
+@media screen and ($desktop) {
+  .tips-menu-container {
+    min-width: 740px;
+    border-radius: 14px;
+    box-shadow: 0px 0px 12px rgb(199, 199, 199);
+    max-width: 1200px;
+    padding: 24px;
+  }
+}

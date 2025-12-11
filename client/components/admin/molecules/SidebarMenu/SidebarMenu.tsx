@@ -14,6 +14,7 @@ const SidebarMenu = () => {
 
   const handleLogout = () => {
     localStorage.clear();
+    document.cookie = "jwt=; path=/; max-age=0";
     router.push("/login");
   };
 

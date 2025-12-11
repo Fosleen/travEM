@@ -48,15 +48,15 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
           console.error("Error decoding token:", error);
           setUser(null);
 
-          if (!pathname?.includes("/admin/login")) {
-            router.push("/admin/login");
+          if (!pathname?.includes("/login")) {
+            router.push("/login");
           }
         }
       } else {
         setUser(null);
 
-        if (!pathname?.includes("/admin/login")) {
-          router.push("/admin/login");
+        if (!pathname?.includes("/login")) {
+          router.push("/login");
         }
       }
     }

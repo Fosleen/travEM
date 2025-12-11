@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 import { FooterData, Nullable } from "@/common/types";
 import "./EditFooter.scss";
-import { getFooter, updateFooter } from "@/api/footer";
+import { getFooter, updateFooter } from "@/utils/footer";
 import Button from "@/components/atoms/Button";
 import Input from "@/components/atoms/Input";
 import { notifyFailure, notifySuccess } from "@/components/atoms/Toast/Toast";

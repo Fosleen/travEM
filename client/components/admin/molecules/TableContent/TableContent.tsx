@@ -13,7 +13,10 @@ import {
 import Button from "../../../atoms/Button";
 import { CaretUpDown, PencilSimpleLine, Trash } from "@phosphor-icons/react";
 import { formatDate } from "../../../../utils/global";
-import { deleteSubscriber, getSubscribers } from "../../../../api/subscribers";
+import {
+  deleteSubscriber,
+  getSubscribers,
+} from "../../../../utils/subscribers";
 import { useRouter } from "next/navigation";
 
 const TableContent = ({ data, type }) => {

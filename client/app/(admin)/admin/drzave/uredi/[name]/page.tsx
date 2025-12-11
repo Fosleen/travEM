@@ -20,24 +20,24 @@ import {
   getCountriesByName,
   getCountryById,
   updateCountry,
-} from "@/api/countries";
-import { getCharacteristicIcons } from "@/api/characteristicIcons";
-import { getColors } from "@/api/colors";
-import { getContinents } from "@/api/continents";
+} from "@/utils/countries";
+import { getCharacteristicIcons } from "@/utils/characteristicIcons";
+import { getColors } from "@/utils/colors";
+import { getContinents } from "@/utils/continents";
 import {
   CharacteristicProps,
   CountriesData,
   SpecificityProps,
 } from "@/common/types";
-import { addVideo, deleteVideo, updateVideo } from "@/api/videos";
-import { updateCharacteristic } from "@/api/characteristics";
-import { updateSpecificity } from "@/api/specificities";
+import { addVideo, deleteVideo, updateVideo } from "@/utils/videos";
+import { updateCharacteristic } from "@/utils/characteristics";
+import { updateSpecificity } from "@/utils/specificities";
 import {
   addSpecificityItem,
   deleteSpecificityItem,
   updateSpecificityItem,
-} from "@/api/specificityItems";
-import { updateSpecificityImage } from "@/api/specificityImages";
+} from "@/utils/specificityItems";
+import { updateSpecificityImage } from "@/utils/specificityImages";
 import { useParams, useRouter } from "next/navigation";
 
 const EditCountry = () => {

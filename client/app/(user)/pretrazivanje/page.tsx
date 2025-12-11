@@ -1,4 +1,4 @@
-import { getArticlesByName } from "@/api/article";
+import { getArticlesByName } from "@/utils/article";
 import SearchResults from "@/components/user/pages/searchResults/SearchResults";
 import { Metadata } from "next";
 
@@ -33,13 +33,13 @@ export async function generateMetadata({
       )}`,
       siteName: "putujEM s travEM",
       images: [
-      {
-        url: "https://putujemstravem.com/default-og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: `Uvjeti korištenja`,
-      },
-    ],
+        {
+          url: "https://putujemstravem.com/default-og-image.jpg",
+          width: 1200,
+          height: 630,
+          alt: `Uvjeti korištenja`,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",

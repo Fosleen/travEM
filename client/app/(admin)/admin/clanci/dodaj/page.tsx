@@ -8,10 +8,10 @@ import { useRouter } from "next/navigation";
 import Input from "@/components/atoms/Input";
 import Button from "@/components/atoms/Button";
 import { Fragment, useEffect, useRef, useState } from "react";
-import { getArticleTypes } from "@/api/articleTypes";
+import { getArticleTypes } from "@/utils/articleTypes";
 import Dropdown from "@/components/atoms/Dropdown";
-import { getVisitedCountries } from "@/api/map";
-import { getSectionIcons } from "@/api/sectionIcons";
+import { getVisitedCountries } from "@/utils/map";
+import { getSectionIcons } from "@/utils/sectionIcons";
 import { Plus, Trash, X } from "@phosphor-icons/react";
 import Swal from "sweetalert2";
 import {
@@ -21,22 +21,22 @@ import {
   SectionIconsData,
 } from "@/common/types";
 import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
-import { getPlacesByCountry } from "@/api/places";
+import { getPlacesByCountry } from "@/utils/places";
 import AdvancedDropdown from "@/components/admin/atoms/AdvancedDropdown";
-import { addArticle, createTopCountryArticle } from "@/api/article";
-import { addSection } from "@/api/sections";
+import { addArticle, createTopCountryArticle } from "@/utils/article";
+import { addSection } from "@/utils/sections";
 import Modal from "@/components/atoms/Modal";
-import { addSectionImage } from "@/api/sectionImages";
-import { addGalleryImage } from "@/api/galleryImages";
+import { addSectionImage } from "@/utils/sectionImages";
+import { addGalleryImage } from "@/utils/galleryImages";
 import { notifyFailure, notifySuccess } from "@/components/atoms/Toast/Toast";
 import Textarea from "@/components/admin/atoms/Textarea";
-import { getAirportCities } from "@/api/airportCities";
+import { getAirportCities } from "@/utils/airportCities";
 import pLimit from "p-limit";
 import AdvancedEditor from "@/components/atoms/AdvancedEditor";
 import {
   getSubscribersWithoutPagination,
   sendNewsletterToSubscribers,
-} from "@/api/subscribers";
+} from "@/utils/subscribers";
 
 const AddArticlePage = () => {
   const router = useRouter();

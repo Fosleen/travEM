@@ -7,7 +7,7 @@ import {
   getArticles,
   getHomepageArticles,
   updateOrCreateTopHomepageArticles,
-} from "@/api/article";
+} from "@/utils/article";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import AdvancedDropdown from "@/components/admin/atoms/AdvancedDropdown";
 import Button from "@/components/atoms/Button";

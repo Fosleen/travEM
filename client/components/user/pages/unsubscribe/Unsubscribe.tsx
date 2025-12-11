@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import Button from "@/components/atoms/Button";
 import "./Unsubscribe.scss";
 import { notifyFailure, notifyInfo } from "@/components/atoms/Toast/Toast";
-import { unsubscribeUser } from "@/api/subscribers";
+import { unsubscribeUser } from "@/utils/subscribers";
 import SocialMediaLinks from "@/components/user/atoms/SocialMediaLinks";
 
 const Unsubscribe = () => {

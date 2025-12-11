@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./NewsletterImage.scss";
-import { getFooter } from "../../../../api/footer";
+import { getFooter } from "../../../../utils/footer";
 import { FooterData, Nullable } from "../../../../common/types";
 
 const NewsletterImage = () => {

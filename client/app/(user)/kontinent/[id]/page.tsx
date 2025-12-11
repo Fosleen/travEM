@@ -1,6 +1,6 @@
 // app/kontinent/[id]/page.tsx
-import { getContinentById } from "@/api/continents";
-import { getCountriesByContinent } from "@/api/countries";
+import { getContinentById } from "@/utils/continents";
+import { getCountriesByContinent } from "@/utils/countries";
 import Continent from "@/components/user/pages/continent/Continent";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";

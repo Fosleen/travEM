@@ -1,5 +1,5 @@
-import { getHomepage } from "@/api/homepage";
-import { getHomepageArticles } from "@/api/article";
+import { getHomepage } from "@/utils/homepage";
+import { getHomepageArticles } from "@/utils/article";
 import { Metadata } from "next";
 import Homepage from "@/components/user/pages/homepage/Homepage";
 

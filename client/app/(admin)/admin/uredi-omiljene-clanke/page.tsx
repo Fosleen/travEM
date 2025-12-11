@@ -7,7 +7,7 @@ import {
   getArticles,
   getHomepageArticles,
   updateOrCreateTopHomepageArticles,
-} from "@/api/article";
+} from "@/utils/article";
 import Swal from "sweetalert2";
 import { notifyFailure, notifySuccess } from "@/components/atoms/Toast/Toast";
 import { ErrorMessage, Field, Form, Formik } from "formik";

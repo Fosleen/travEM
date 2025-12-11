@@ -2,7 +2,7 @@ import "./BlogStats.scss";
 import BlogStatsItem from "../../atoms/BlogStatsItem";
 import { HomepageData, Nullable } from "../../../../common/types";
 import { FC, useEffect, useState } from "react";
-import { getHomepageStats } from "../../../../api/homepage";
+import { getHomepageStats } from "../../../../utils/homepage";
 
 const BlogStats: FC<{ homepageContent: HomepageData }> = ({
   homepageContent,

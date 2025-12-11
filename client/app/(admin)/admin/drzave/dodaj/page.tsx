@@ -12,17 +12,17 @@ import Button from "@/components/atoms/Button";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import Input from "@/components/atoms/Input";
 import Textarea from "@/components/admin/atoms/Textarea";
-import { getColors } from "@/api/colors";
-import { getCharacteristicIcons } from "@/api/characteristicIcons";
+import { getColors } from "@/utils/colors";
+import { getCharacteristicIcons } from "@/utils/characteristicIcons";
 import * as Yup from "yup";
 import AdvancedDropdown from "@/components/admin/atoms/AdvancedDropdown";
 import { countries as countryList } from "@/utils/all_countries";
 import { Plus, Trash, X } from "@phosphor-icons/react";
-import { addCountry, getCountries } from "@/api/countries";
-import { getContinents } from "@/api/continents";
-import { addSpecificity } from "@/api/specificities";
-import { addCharacteristic } from "@/api/characteristics";
-import { addVideo } from "@/api/videos";
+import { addCountry, getCountries } from "@/utils/countries";
+import { getContinents } from "@/utils/continents";
+import { addSpecificity } from "@/utils/specificities";
+import { addCharacteristic } from "@/utils/characteristics";
+import { addVideo } from "@/utils/videos";
 
 const AddCountry = () => {
   const router = useRouter();

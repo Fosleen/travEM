@@ -5,7 +5,7 @@ import "./EditBanner.scss";
 import Button from "@/components/atoms/Button";
 import { useEffect, useState } from "react";
 import { EditBannerData, HomepageData } from "@/common/types";
-import { getHomepage, updateBanner } from "@/api/homepage";
+import { getHomepage, updateBanner } from "@/utils/homepage";
 import Input from "@/components/atoms/Input";
 import { useRouter } from "next/navigation";
 import { notifyFailure, notifySuccess } from "@/components/atoms/Toast/Toast";
@@ -16,7 +16,7 @@ import {
   getArticles,
   getHomepageArticles,
   updateOrCreateTopHomepageArticles,
-} from "@/api/article";
+} from "@/utils/article";
 import Swal from "sweetalert2";
 
 export default function EditBannerPage() {

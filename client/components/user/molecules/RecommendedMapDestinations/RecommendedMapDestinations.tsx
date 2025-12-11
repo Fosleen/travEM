@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import DestinationItem from "../../atoms/DestinationItem";
 import "./RecommendedMapDestinations.scss";
-import { getAboveMapPlaces } from "../../../../api/map";
+import { getAboveMapPlaces } from "../../../../utils/map";
 import { Nullable, PlacesData } from "../../../../common/types";
 
 const RecommendedMapDestinations = () => {

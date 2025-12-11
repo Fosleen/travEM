@@ -4,7 +4,7 @@ import "./Newsletter.scss";
 import NewsletterImage from "../../atoms/NewsletterImage";
 import { useState } from "react";
 import { notifyFailure, notifyInfo } from "../../../atoms/Toast/Toast";
-import { addSubscriber } from "../../../../api/subscribers";
+import { addSubscriber } from "../../../../utils/subscribers";
 import Image from "next/image";
 
 const Newsletter = () => {

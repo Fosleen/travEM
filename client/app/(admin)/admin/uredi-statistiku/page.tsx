@@ -1,7 +1,7 @@
 // @ts-nocheck
 "use client";
 
-import { getHomepage, updateStats } from "@/api/homepage";
+import { getHomepage, updateStats } from "@/utils/homepage";
 import "./EditStats.scss";
 import { HomepageData } from "@/common/types";
 import { useEffect, useState } from "react";

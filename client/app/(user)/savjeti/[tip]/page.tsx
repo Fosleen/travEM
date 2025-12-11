@@ -1,5 +1,5 @@
-import { getArticleTypes } from "@/api/articleTypes";
-import { getArticles, getRecommendedArticles } from "@/api/article";
+import { getArticleTypes } from "@/utils/articleTypes";
+import { getArticles, getRecommendedArticles } from "@/utils/article";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { convertFromSlug } from "@/utils/global";

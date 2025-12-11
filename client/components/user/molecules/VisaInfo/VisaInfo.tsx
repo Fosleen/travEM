@@ -4,8 +4,8 @@ import { FC, useEffect, useState } from "react";
 import "./VisaInfo.scss";
 import Button from "../../../atoms/Button";
 import AdvancedDropdown from "../../../admin/atoms/AdvancedDropdown";
-import { getVisitedCountries } from "../../../../api/map";
-import { checkIfInfoExists } from "../../../../api/visaInfo";
+import { getVisitedCountries } from "../../../../utils/map";
+import { checkIfInfoExists } from "../../../../utils/visaInfo";
 import { Info } from "@phosphor-icons/react";
 import Image from "next/image";
 

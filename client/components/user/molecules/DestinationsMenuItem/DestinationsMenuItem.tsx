@@ -5,7 +5,7 @@ import DestinationItem from "../../atoms/DestinationItem";
 import "./DestinationsMenuItem.scss";
 import Link from "next/link";
 import { FC, useContext, useEffect, useState } from "react";
-import { getCountriesByContinent } from "../../../../api/countries";
+import { getCountriesByContinent } from "../../../../utils/countries";
 import { CountryContext } from "@/context/CountryContext";
 
 const DestinationsMenuItem: FC<{

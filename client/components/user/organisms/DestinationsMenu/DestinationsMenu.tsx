@@ -1,6 +1,6 @@
 // import { ThreeDots } from "react-loader-spinner";
 import { ContinentContext } from "@/context/ContinentContext";
-import { getContinents } from "../../../../api/continents";
+import { getContinents } from "../../../../utils/continents";
 import {
   ContinentsData,
   DestinationsMenuProps,

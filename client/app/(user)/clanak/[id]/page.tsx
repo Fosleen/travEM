@@ -1,5 +1,5 @@
-import { getArticleById } from "@/api/article";
-import { getCountryPlaces } from "@/api/countries";
+import { getArticleById } from "@/utils/article";
+import { getCountryPlaces } from "@/utils/countries";
 import Article from "@/components/user/pages/article/Article";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";

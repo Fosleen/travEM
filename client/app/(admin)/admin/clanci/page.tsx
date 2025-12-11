@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import "./ArticlesList.scss";
-import { getArticles, getArticlesByName } from "@/api/article";
+import { getArticles, getArticlesByName } from "@/utils/article";
 import Table from "@/components/admin/organisms/Table";
 
 const ArticlesList = () => {

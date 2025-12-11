@@ -7,7 +7,7 @@ import "./Login.scss";
 import Input from "../../../components/atoms/Input";
 import Button from "../../../components/atoms/Button";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { loginUser } from "../../../api/users";
+import { loginUser } from "../../../utils/users";
 import { AuthContext } from "../../../context/AuthContext";
 import { useRouter } from "next/navigation";
 

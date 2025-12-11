@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSubscribers, getSubscribersStats } from "@/api/subscribers";
+import { getSubscribers, getSubscribersStats } from "@/utils/subscribers";
 import Table from "@/components/admin/organisms/Table";
 import "./Subscribers.scss";
 import SubscribersStats from "@/components/admin/molecules/SubscribersStats";

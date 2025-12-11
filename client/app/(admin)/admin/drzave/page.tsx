@@ -5,7 +5,7 @@
 import { useEffect, useState } from "react";
 import Table from "@/components/admin/organisms/Table";
 import "./CountriesList.scss";
-import { getCountries, getCountriesByName } from "@/api/countries";
+import { getCountries, getCountriesByName } from "@/utils/countries";
 
 export default function CountriesListPage() {
   const [countries, setCountries] = useState([]);

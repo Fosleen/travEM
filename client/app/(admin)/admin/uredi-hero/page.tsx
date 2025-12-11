@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Button from "@/components/atoms/Button";
 import "./EditHero.scss";
 import { HomepageData } from "@/common/types";
-import { getHomepage, updateHeroImage } from "@/api/homepage";
+import { getHomepage, updateHeroImage } from "@/utils/homepage";
 import { PencilSimpleLine } from "@phosphor-icons/react";
 import Input from "@/components/atoms/Input";
 import { notifyFailure, notifySuccess } from "@/components/atoms/Toast/Toast";

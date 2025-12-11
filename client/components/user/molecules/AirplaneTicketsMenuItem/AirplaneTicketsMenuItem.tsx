@@ -1,7 +1,7 @@
 import { FC, useContext, useEffect } from "react";
 import DestinationItem from "../../atoms/DestinationItem";
 import "./AirplaneTicketsMenuItem.scss";
-import { getAirportCities } from "../../../../api/airportCities";
+import { getAirportCities } from "../../../../utils/airportCities";
 import { PlaneTicketsContext } from "@/context/PlaneTicketsMenuContext";
 import { AirplaneTicketsMenuItemProps } from "@/common/types";
 

@@ -1,7 +1,7 @@
 import "./RecommendedPosts.scss";
 import HorizontalPostItemBig from "../../atoms/HorizontalPostItemBig";
 import { FC, useEffect, useState } from "react";
-import { getRecommendedArticles } from "../../../../api/article";
+import { getRecommendedArticles } from "../../../../utils/article";
 import { Article } from "../../../../common/types";
 import ReactGA from "react-ga4";
 

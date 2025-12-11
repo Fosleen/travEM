@@ -16,10 +16,10 @@ import {
   SectionImage,
 } from "@/common/types";
 import * as Yup from "yup";
-import { getPlacesByCountry } from "@/api/places";
-import { getArticleTypes } from "@/api/articleTypes";
-import { getVisitedCountries } from "@/api/map";
-import { getSectionIcons } from "@/api/sectionIcons";
+import { getPlacesByCountry } from "@/utils/places";
+import { getArticleTypes } from "@/utils/articleTypes";
+import { getVisitedCountries } from "@/utils/map";
+import { getSectionIcons } from "@/utils/sectionIcons";
 import Modal from "@/components/atoms/Modal";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import Input from "@/components/atoms/Input";
@@ -38,17 +38,17 @@ import {
   getFavoriteArticleByCountry,
   removeTopCountryArticle,
   updateArticle,
-} from "@/api/article";
-import { addSection, deleteSection, updateSection } from "@/api/sections";
-import { addSectionImage, deleteSectionImage } from "@/api/sectionImages";
-import { addGalleryImage, deleteGalleryImage } from "@/api/galleryImages";
-import { addVideo, updateVideo, deleteVideo } from "@/api/videos";
-import { getAirportCities } from "@/api/airportCities";
+} from "@/utils/article";
+import { addSection, deleteSection, updateSection } from "@/utils/sections";
+import { addSectionImage, deleteSectionImage } from "@/utils/sectionImages";
+import { addGalleryImage, deleteGalleryImage } from "@/utils/galleryImages";
+import { addVideo, updateVideo, deleteVideo } from "@/utils/videos";
+import { getAirportCities } from "@/utils/airportCities";
 import AdvancedEditor from "@/components/atoms/AdvancedEditor";
 import {
   getSubscribersWithoutPagination,
   sendNewsletterToSubscribers,
-} from "@/api/subscribers";
+} from "@/utils/subscribers";
 
 const EditArticle = () => {
   const params = useParams();

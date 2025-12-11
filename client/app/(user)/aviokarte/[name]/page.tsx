@@ -1,4 +1,4 @@
-import { getArticlesByType, getRecommendedArticles } from "@/api/article";
+import { getArticlesByType, getRecommendedArticles } from "@/utils/article";
 import AirplaneTickets from "@/components/user/pages/airplaneTickets/AirplaneTickets";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";

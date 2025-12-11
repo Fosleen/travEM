@@ -11,12 +11,12 @@ import {
   getPlacesWithImage,
   removePlaceAboveMap,
   removePlaceOnMap,
-} from "../../../../api/places";
+} from "../../../../utils/places";
 import { Trash } from "@phosphor-icons/react";
 import Button from "../../../atoms/Button";
 import AdvancedDropdown from "../../atoms/AdvancedDropdown";
 import { FieldArray, FieldArrayRenderProps, Form, Formik } from "formik";
-import { getAboveMapPlaces, getOnMapPlaces } from "../../../../api/map";
+import { getAboveMapPlaces, getOnMapPlaces } from "../../../../utils/map";
 import { useRouter } from "next/navigation";
 
 const FeaturedPlaces: FC<{ isOnMapSelected: boolean }> = ({

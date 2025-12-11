@@ -2,12 +2,16 @@
 "use client";
 
 import "./EditVisaInfo.scss";
-import { getVisitedCountries } from "@/api/map";
+import { getVisitedCountries } from "@/utils/map";
 import { useEffect, useState } from "react";
 import { CountriesData } from "@/common/types";
 import { notifySuccess } from "@/components/atoms/Toast/Toast";
 import Swal from "sweetalert2";
-import { addVisaInfo, checkIfInfoExists, patchVisaInfo } from "@/api/visaInfo";
+import {
+  addVisaInfo,
+  checkIfInfoExists,
+  patchVisaInfo,
+} from "@/utils/visaInfo";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import Input from "@/components/atoms/Input";
 import * as Yup from "yup";

@@ -2,7 +2,7 @@
 // @ts-nocheck
 "use client";
 import { Fragment, useEffect, useRef, useState } from "react";
-import { getVisitedCountries } from "@/api/map";
+import { getVisitedCountries } from "@/utils/map";
 import { PlacesData } from "@/common/types";
 import Button from "@/components/atoms/Button";
 import "./EditPlace.scss";
@@ -12,12 +12,12 @@ import AdvancedDropdown from "@/components/admin/atoms/AdvancedDropdown";
 import Input from "@/components/atoms/Input";
 import Modal from "@/components/atoms/Modal";
 import Swal from "sweetalert2";
-import { deletePlaceById, getPlacesByName, updatePlace } from "@/api/places";
+import { deletePlaceById, getPlacesByName, updatePlace } from "@/utils/places";
 import * as Yup from "yup";
 import { notifySuccess } from "@/components/atoms/Toast/Toast";
 import { Plus, Trash, X } from "@phosphor-icons/react";
 import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
-import { addVideo, deleteVideo, updateVideo } from "@/api/videos";
+import { addVideo, deleteVideo, updateVideo } from "@/utils/videos";
 import { useParams, useRouter } from "next/navigation";
 
 const EditPlace = () => {

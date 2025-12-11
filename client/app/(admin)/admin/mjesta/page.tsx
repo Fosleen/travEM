@@ -4,7 +4,7 @@
 
 import { useEffect, useState } from "react";
 import Table from "@/components/admin/organisms/Table";
-import { getPlaces, getPlacesByName } from "@/api/places";
+import { getPlaces, getPlacesByName } from "@/utils/places";
 import "./PlacesList.scss";
 
 const PlacesList = () => {

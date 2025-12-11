@@ -13,10 +13,10 @@ import Input from "@/components/atoms/Input";
 import Textarea from "@/components/admin/atoms/Textarea";
 import { Plus, Trash, X } from "@phosphor-icons/react";
 import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
-import { getVisitedCountries } from "@/api/map";
+import { getVisitedCountries } from "@/utils/map";
 import Modal from "@/components/atoms/Modal";
 import AdvancedDropdown from "@/components/admin/atoms/AdvancedDropdown";
-import { addPlace } from "@/api/places";
+import { addPlace } from "@/utils/places";
 import { useRouter } from "next/navigation";
 
 const AddPlace = () => {

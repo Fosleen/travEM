@@ -5,7 +5,7 @@ import Input from "../../../atoms/Input";
 import "./PopUp.scss";
 import Button from "../../../atoms/Button";
 import { notifyFailure, notifyInfo } from "../../../atoms/Toast/Toast";
-import { addSubscriber } from "../../../../api/subscribers";
+import { addSubscriber } from "../../../../utils/subscribers";
 import travemLogo from "/images/travem-logo-hero.webp";
 import popUpBg from "/images/popupbg.webp";
 import { X } from "@phosphor-icons/react";

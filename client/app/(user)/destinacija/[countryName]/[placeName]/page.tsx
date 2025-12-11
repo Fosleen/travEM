@@ -1,4 +1,4 @@
-import { getPlacesByName } from "@/api/places";
+import { getPlacesByName } from "@/utils/places";
 import DestinationPlace from "@/components/user/pages/destinationPlace/DestinationPlace";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";

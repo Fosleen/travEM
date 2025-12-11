@@ -11,9 +11,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { countries } from "../../../utils/all_countries.ts";
 import { FC } from "react";
-import { getVisitedCountries, getVisitedPlaces } from "../../../api/map.ts";
+import { getVisitedCountries, getVisitedPlaces } from "../../../utils/map";
 import { DestinationsMapProps, PlacesData } from "../../../common/types.ts";
-import { getPlaces } from "../../../api/places.ts";
+import { getPlaces } from "../../../utils/places";
 import Map, {
   Marker,
   NavigationControl,

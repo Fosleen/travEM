@@ -1,5 +1,5 @@
-import { getCountriesByName, getCountryById } from "@/api/countries";
-import { getFavoriteArticleByCountry } from "@/api/article";
+import { getCountriesByName, getCountryById } from "@/utils/countries";
+import { getFavoriteArticleByCountry } from "@/utils/article";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import DestinationCountry from "@/components/user/pages/destinationCountry/DestinationCountry";

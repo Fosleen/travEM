@@ -1,5 +1,5 @@
-import Unsubscribe from "@/components/user/pages/unsubscribe/Unsubscribe";
 import { Metadata } from "next";
+import Unsubscribe from "@/components/user/pages/unsubscribe/Unsubscribe";
 
 export const metadata: Metadata = {
   title: "Odjava s newslettera - putujEM s travEM",
@@ -10,13 +10,8 @@ export const metadata: Metadata = {
   },
 };
 
-type Props = {
-  searchParams: Promise<{ userToken?: string }>;
-};
+export const dynamic = "force-static";
 
-export default async function Page({ searchParams }: Props) {
-  const params = await searchParams;
-  const userToken = params.userToken || null;
-
-  return <Unsubscribe userToken={userToken} />;
+export default function Page() {
+  return <Unsubscribe />;
 }

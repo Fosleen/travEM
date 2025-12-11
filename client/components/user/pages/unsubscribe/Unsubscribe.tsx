@@ -1,28 +1,29 @@
 "use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Button from "@/components/atoms/Button";
 import "./Unsubscribe.scss";
 import { notifyFailure, notifyInfo } from "@/components/atoms/Toast/Toast";
 import { unsubscribeUser } from "@/api/subscribers";
 import SocialMediaLinks from "@/components/user/atoms/SocialMediaLinks";
 
-interface UnsubscribeProps {
-  userToken: string | null;
-}
-
-const Unsubscribe = ({ userToken }: UnsubscribeProps) => {
+const Unsubscribe = () => {
+  const searchParams = useSearchParams();
+  const [userToken, setUserToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isUnsubscribed, setIsUnsubscribed] = useState(false);
+
+  useEffect(() => {
+    const token = searchParams.get("userToken");
+    setUserToken(token);
+  }, [searchParams]);
 
   const handleUnsubscribe = async () => {
     if (!userToken) {
       notifyFailure("Nevažeći link za odjavu");
       return;
     }
-
     setIsLoading(true);
-
     try {
       await unsubscribeUser(userToken);
       setIsUnsubscribed(true);

@@ -11,6 +11,12 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import GoogleAnalytics from "@/components/atoms/GoogleAnalytics/GoogleAnalytics";
 
+export const metadata = {
+  verification: {
+    google: "PHVKpg8LweUjIPPjYVVs6RRymMs9DmxBN4q99VM_L2k",
+  },
+};
+
 export default function RootLayout({
   children,
 }: {

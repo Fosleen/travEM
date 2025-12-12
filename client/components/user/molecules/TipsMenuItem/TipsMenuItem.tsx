@@ -20,17 +20,20 @@ const TipsMenuItem: FC<{
         src={icon}
         alt="icon"
         className="icon-top-left"
-        width={98}
-        height={98}
+        width={96}
+        height={96}
+        quality={90}
       />
       <Image
         src={icon}
         alt="icon"
         className="icon-bottom-right"
-        width={98}
-        height={98}
+        width={96}
+        height={96}
+        quality={90}
       />
     </Link>
   );
 };
+
 export default TipsMenuItem;

@@ -18,7 +18,12 @@ const app = express();
 createAssociations();
 
 const corsOptions = {
-  origin: "https://putujemstravem.com", //change this to localhost:3000 for testing
+  origin: [
+    "https://putujemstravem.com",
+    "https://www.putujemstravem.com",
+    "https://travem-n1ucljdnb-putujem-s-travems-projects.vercel.app",
+    "https://travem-nu.vercel.app/",
+  ],
   credentials: true,
   methods: "GET, POST, PATCH, DELETE, PUT",
   allowedHeaders: "Content-Type, Authorization",

@@ -10,7 +10,6 @@ import "primereact/resources/themes/lara-light-cyan/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import GoogleAnalytics from "@/components/atoms/GoogleAnalytics/GoogleAnalytics";
-import Script from "next/script";
 
 export const metadata = {
   verification: {
@@ -35,13 +34,6 @@ export default function RootLayout({
       `}
     >
       <body className={montserrat.className}>
-        <Script
-          id="adsense-script"
-          strategy="afterInteractive"
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3489990178681903"
-          crossOrigin="anonymous"
-        />
         <GoogleAnalytics />
         {children}
       </body>

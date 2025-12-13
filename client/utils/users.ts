@@ -15,26 +15,20 @@ export const loginUser = async (
       body: JSON.stringify(values),
       credentials: "include",
     });
-
     const data = await response.json();
-
     if (data.success) {
       localStorage.setItem("jwt", data.token);
-
       document.cookie = `jwt=${data.token}; path=/; max-age=${
         7 * 24 * 60 * 60
-      }`;
-
+      }; SameSite=Strict`;
       const decodedPayload = JSON.parse(atob(data.token.split(".")[1]));
       localStorage.setItem("jwtExpiration", decodedPayload.exp);
-
       if (setUser) {
         setUser({
           id: decodedPayload.id,
           username: decodedPayload.username,
         });
       }
-
       notifySuccess("Uspješna prijava!");
       router.push("/admin/sadrzaj");
     } else {

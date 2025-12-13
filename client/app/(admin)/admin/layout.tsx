@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SidebarMenu from "@/components/admin/molecules/SidebarMenu";
@@ -28,17 +28,33 @@ export default function AdminLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     if (typeof window !== "undefined") {
-      const token = localStorage.getItem("jwt");
-      if (pathname === "/login") {
-        return;
-      }
-      if (!token || isTokenExpired(token)) {
-        router.push("/login");
-      }
+      const checkAuth = () => {
+        const token = localStorage.getItem("jwt");
+
+        if (pathname === "/login") {
+          if (isMounted) setIsChecking(false);
+          return;
+        }
+
+        if (!token || isTokenExpired(token)) {
+          router.push("/login");
+        } else {
+          if (isMounted) setIsChecking(false);
+        }
+      };
+
+      checkAuth();
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [pathname, router]);
 
   if (pathname === "/login") {
@@ -59,6 +75,10 @@ export default function AdminLayout({
         />
       </AuthProvider>
     );
+  }
+
+  if (isChecking) {
+    return null;
   }
 
   return (

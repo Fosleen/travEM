@@ -13,6 +13,7 @@ interface AuthContextType {
   user: User | null;
   setAccessToken: (token: string | null) => void;
   setUser: (user: User | null) => void;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -20,51 +21,69 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   setAccessToken: () => {},
   setUser: () => {},
+  logout: () => {},
 });
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
+function getInitialAuth(): { token: string | null; user: User | null } {
+  if (typeof window === "undefined") {
+    return { token: null, user: null };
+  }
+
+  const token = localStorage.getItem("jwt");
+
+  if (!token) {
+    return { token: null, user: null };
+  }
+
+  try {
+    const tokenDecoded = JSON.parse(atob(token.split(".")[1]));
+    return {
+      token,
+      user: {
+        id: tokenDecoded.id,
+        username: tokenDecoded.username,
+      },
+    };
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return { token: null, user: null };
+  }
+}
+
 const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const initialAuth = getInitialAuth();
+  const [accessToken, setAccessToken] = useState<string | null>(
+    initialAuth.token
+  );
+  const [user, setUser] = useState<User | null>(initialAuth.user);
   const router = useRouter();
   const pathname = usePathname();
 
+  const logout = () => {
+    localStorage.removeItem("jwt");
+    document.cookie = "jwt=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+    setAccessToken(null);
+    setUser(null);
+    router.push("/login");
+  };
+
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("jwt");
-      setAccessToken(token);
-
-      if (token) {
-        try {
-          const tokenDecoded = JSON.parse(atob(token.split(".")[1]));
-          setUser({
-            id: tokenDecoded.id,
-            username: tokenDecoded.username,
-          });
-        } catch (error) {
-          console.error("Error decoding token:", error);
-          setUser(null);
-
-          if (!pathname?.includes("/login")) {
-            router.push("/login");
-          }
-        }
-      } else {
-        setUser(null);
-
-        if (!pathname?.includes("/login")) {
-          router.push("/login");
-        }
-      }
+    if (
+      typeof window !== "undefined" &&
+      !accessToken &&
+      !pathname?.includes("/login")
+    ) {
+      router.push("/login");
     }
   }, [accessToken, pathname, router]);
 
   return (
     <AuthContext.Provider
-      value={{ accessToken, user, setAccessToken, setUser }}
+      value={{ accessToken, user, setAccessToken, setUser, logout }}
     >
       {children}
     </AuthContext.Provider>

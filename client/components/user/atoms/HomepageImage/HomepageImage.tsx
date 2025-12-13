@@ -1,23 +1,27 @@
 "use client";
-
 import "./HomepageImage.scss";
 import { FC, useEffect, useState } from "react";
 
 const HomepageImage: FC<{ url: string }> = ({ url }) => {
-  const [screenWidth, setScreenWidth] = useState<number>(
-    typeof window !== "undefined" ? window.innerWidth : 768
-  );
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const handleResize = () => {
-      setScreenWidth(window.innerWidth);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
     };
 
-    window.addEventListener("resize", handleResize);
+    checkMobile();
+
+    window.addEventListener("resize", checkMobile);
+
     return () => {
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", checkMobile);
     };
   }, []);
+
+  if (isMobile === null) {
+    return null;
+  }
 
   return (
     <div className="homepage-image-container">
@@ -30,7 +34,7 @@ const HomepageImage: FC<{ url: string }> = ({ url }) => {
       >
         <defs>
           <clipPath id="homepage-clip-custom">
-            {screenWidth < 768 ? (
+            {isMobile ? (
               <path
                 d="M589 0.5H1.99951C1.99978 136 1.00004 419 1 474C0.999956 537.032 59.4895 560.17 109.5 545.5C165.5 529.073 183.833 382.667 191.499 350.5C204.166 270.333 238.5 186.5 287 118.5C335.5 50.5 420.5 27.5 487.5 48C554.5 68.5 573 6 589 0.5Z"
                 fill="#D9D9D9"

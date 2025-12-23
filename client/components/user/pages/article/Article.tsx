@@ -58,7 +58,7 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
               <Image
                 src="/images/location.png"
                 alt="location"
-                width={24}
+                width={20}
                 height={24}
               />
               <h4 onClick={handlePlaceClick} className="article-location">

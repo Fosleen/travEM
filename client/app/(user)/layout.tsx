@@ -22,7 +22,6 @@ export default function UserViewLayout({
   const pathname = usePathname();
   const isHomePage =
     pathname === "/" ||
-    pathname === "/pocetna" ||
     pathname.startsWith("/destinacija") ||
     pathname.startsWith("/clanak");
   const [isPlaneTicketsMenuShown, setIsPlaneTicketsMenuShown] = useState(false);

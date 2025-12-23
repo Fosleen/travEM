@@ -50,7 +50,7 @@ const Header: FC<HeaderProps> = ({
     return () => window.removeEventListener("resize", updateMedia);
   }, []);
 
-  const isHomePage = pathname === "/" || pathname === "/pocetna";
+  const isHomePage = pathname === "/";
 
   return (
     <div className="header-container">

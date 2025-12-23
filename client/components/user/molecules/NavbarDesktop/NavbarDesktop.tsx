@@ -18,7 +18,7 @@ const NavbarDesktop: FC<{
 }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const isHomePage = pathname === "/" || pathname === "/pocetna";
+  const isHomePage = pathname === "/";
   const [searchText, setSearchText] = useState<string>("");
 
   const handlePlaneTicketsMouseOver = () => {

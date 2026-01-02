@@ -55,7 +55,7 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
         <div className="article-location-container">
           {articleContent.articleTypeId === 1 && (
             <div className="article-location">
-              <Image
+              <img
                 src="/images/location.png"
                 alt="location"
                 width={20}
@@ -90,10 +90,10 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
 
         {articleContent.articleTypeId === 1 && (
           <div className="article-location-container">
-            <Image
+            <img
               src="/images/location.png"
               alt="location"
-              width={24}
+              width={20}
               height={24}
             />
             <h4 onClick={handlePlaceClick} className="article-location">

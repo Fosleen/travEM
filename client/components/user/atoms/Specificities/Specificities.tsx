@@ -61,12 +61,11 @@ const Specificities: FC<{
               specificities.specificity_images &&
               specificities.specificity_images.map((el, index) => (
                 <div className="country-highlight-image-container" key={index}>
-                  <Image
+                  <img
                     src={el.url.trim()}
                     alt={`Specificity image ${index + 1}`}
                     width={600}
                     height={400}
-                    quality={75}
                   />
                 </div>
               ))}

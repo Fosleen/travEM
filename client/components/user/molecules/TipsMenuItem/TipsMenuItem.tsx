@@ -1,7 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import "./TipsMenuItem.scss";
-import { convertToSlug } from "../../../../utils/global";
+import {
+  convertToSlug,
+  removeCroatianDiacritics,
+} from "../../../../utils/global";
 import { FC, MouseEventHandler } from "react";
 
 const TipsMenuItem: FC<{
@@ -11,7 +14,7 @@ const TipsMenuItem: FC<{
 }> = ({ title, icon, onClick }) => {
   return (
     <Link
-      href={`/savjeti/${convertToSlug(title)}`}
+      href={`/savjeti/${removeCroatianDiacritics(convertToSlug(title))}`}
       className="tips-menu-item-container"
       onClick={onClick}
     >

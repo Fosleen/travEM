@@ -13,3 +13,23 @@ export const convertToSlug = (sentence: string) => {
 export const convertFromSlug = (slug: string) => {
   return slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, " ");
 };
+
+export const removeCroatianDiacritics = (text: string): string => {
+  const diacriticsMap: { [key: string]: string } = {
+    č: "c",
+    Č: "C",
+    ć: "c",
+    Ć: "C",
+    š: "s",
+    Š: "S",
+    đ: "d",
+    Đ: "D",
+    ž: "z",
+    Ž: "Z",
+  };
+
+  return text.replace(
+    /[čćšđžČĆŠĐŽ]/g,
+    (match) => diacriticsMap[match] || match
+  );
+};

@@ -1,7 +1,9 @@
+/* Search.scss (bez dizanja iznad overlay-a) */
 @use "@/utils/theme.scss" as *;
 
 .search-container {
   position: relative;
+  z-index: 1;
 
   .search {
     background-color: #e6edf5;

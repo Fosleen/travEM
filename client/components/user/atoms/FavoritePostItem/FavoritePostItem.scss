@@ -7,26 +7,8 @@ a {
 .favorite-post-item-container {
   position: relative;
   width: 100%;
-  padding: 8px;
-
-  .favorite-post-item-icon-container {
-    position: absolute;
-    left: 8px;
-    top: 8px;
-    background-color: $bg;
-    width: 72px;
-    height: 72px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    box-shadow: 0px 0px 16px $grey;
-
-    .favorite-post-item-icon {
-      border-radius: 50%;
-      max-width: 64px;
-    }
-  }
+  padding: 12px; /* malo više "zraka" na mobu */
+  display: block;
 
   .favorite-post-item-content {
     width: 100%;
@@ -48,7 +30,12 @@ a {
 
     .favorite-post-item-content-image {
       width: 100%;
-      height: 180px;
+      height: 170px; /* mrvicu manje na mobu */
+      position: relative;
+
+      /* KLJUČNO: uvučemo sliku da badge može "visiti" van,
+         ali da i dalje ostane unutar ekrana */
+      margin: 0 12px;
 
       img {
         padding: 0;
@@ -56,25 +43,51 @@ a {
         height: 100%;
         object-fit: cover;
         border-radius: 24px;
+        display: block;
+      }
+
+      /* ===== FLAG ICON: kao desktop (malo van kuta slike) ===== */
+      .favorite-post-item-icon-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 3;
+
+        /* "krug u krugu" */
+        width: 64px;
+        height: 64px;
+        padding: 6px;
+
+        background-color: $bg;
+        border-radius: 50%;
+        box-shadow: 0 0 16px rgba(0, 0, 0, 0.35);
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        /* efekt kao desktop: malo viri van slike */
+        transform: translate(-35%, -35%);
+
+        z-index: 3;
+        pointer-events: none;
+
+        .favorite-post-item-icon {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          object-fit: cover;
+          display: block;
+        }
       }
     }
   }
 }
 
+/* ===== TABLET ===== */
 @media screen and ($tablet) {
   .favorite-post-item-container {
     padding: 16px;
-
-    .favorite-post-item-icon-container {
-      left: 32px;
-      top: 16px;
-      width: 112px;
-      height: 112px;
-
-      .favorite-post-item-icon {
-        max-width: 96px;
-      }
-    }
 
     .favorite-post-item-content {
       .favorite-post-item-content-text {
@@ -87,25 +100,23 @@ a {
 
       .favorite-post-item-content-image {
         height: 320px;
+        margin: 0; /* od tableta više ne trebamo uvlačenje */
+
+        .favorite-post-item-icon-container {
+          width: 96px;
+          height: 96px;
+          padding: 8px;
+          transform: translate(-35%, -35%);
+        }
       }
     }
   }
 }
 
+/* ===== DESKTOP ===== */
 @media screen and ($desktop) {
   .favorite-post-item-container {
     padding-right: 0;
-
-    .favorite-post-item-icon-container {
-      left: 0px;
-      top: 32px;
-      width: 80px;
-      height: 80px;
-
-      .favorite-post-item-icon {
-        max-width: 72px;
-      }
-    }
 
     .favorite-post-item-content {
       .favorite-post-item-content-text {
@@ -119,24 +130,22 @@ a {
       .favorite-post-item-content-image {
         height: 200px;
         padding-left: 20px;
+        margin: 0;
+
+        .favorite-post-item-icon-container {
+          width: 80px;
+          height: 80px;
+          padding: 6px;
+          transform: translate(-35%, -35%);
+        }
       }
     }
   }
 }
 
+/* ===== DESKTOP LARGE ===== */
 @media screen and ($desktopLarge) {
   .favorite-post-item-container {
-    .favorite-post-item-icon-container {
-      left: 0px;
-      top: 32px;
-      width: 96px;
-      height: 96px;
-
-      .favorite-post-item-icon {
-        max-width: 80px;
-      }
-    }
-
     .favorite-post-item-content {
       .favorite-post-item-content-text {
         p {
@@ -148,7 +157,27 @@ a {
 
       .favorite-post-item-content-image {
         height: 240px;
+
+        .favorite-post-item-icon-container {
+          width: 96px;
+          height: 96px;
+          padding: 8px;
+          transform: translate(-35%, -35%);
+        }
       }
     }
   }
 }
+
+/* ===== MOBILE FIX: zadrži razmak od ruba ekrana ===== */
+@media screen and (max-width: 767px) {
+  .favorite-post-item-container {
+    width: calc(100% - 32px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+
+
+

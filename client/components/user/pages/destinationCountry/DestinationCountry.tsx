@@ -13,6 +13,8 @@ import Characteristics from "../../atoms/Characteristics";
 import Specificities from "../../atoms/Specificities";
 import { CountriesData } from "@/common/types";
 
+import BestTimeToVisit from "../../molecules/BestTimeToVisit/BestTimeToVisit";
+
 interface DestinationCountryProps {
   initialCountry: CountriesData;
   initialFavoriteArticle: any;
@@ -81,6 +83,10 @@ const DestinationCountry = ({
           />
         </div>
       )}
+
+      {/*Best time to visit */}
+      {/* ispod highlights */}
+      <BestTimeToVisit countrySlug={countryName} />
 
       <div className="destination-country-visa-info-container">
         <VisaInfo countryId={country.id} countryName={country.name} />

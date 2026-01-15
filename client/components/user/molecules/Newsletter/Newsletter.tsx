@@ -1,32 +1,50 @@
+// client/components/user/molecules/Newsletter/Newsletter.tsx
+
 import Button from "../../../atoms/Button";
 import Input from "../../../atoms/Input";
 import "./Newsletter.scss";
 import NewsletterImage from "../../atoms/NewsletterImage";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { notifyFailure, notifyInfo } from "../../../atoms/Toast/Toast";
 import { addSubscriber } from "../../../../utils/subscribers";
 import Image from "next/image";
 
+import {
+  COMMON_DOMAINS,
+  normalizeEmail,
+  isBasicValidEmail,
+  suggestEmailCorrection,
+} from "../../../../utils/email";
+
 const Newsletter = () => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
-  // eslint-disable-next-line
   const [email, setEmail] = useState("");
 
+  // memo samo da ne radimo novu referencu bezveze
+  const commonDomains = useMemo(() => COMMON_DOMAINS, []);
+
   const handleSubscriptionClick = async () => {
-    if (!email) {
+    const normalized = normalizeEmail(email);
+
+    if (!normalized) {
       notifyFailure("Molimo unesite email adresu");
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!isBasicValidEmail(normalized)) {
       notifyFailure("Molimo unesite valjanu email adresu");
       return;
     }
 
+    const suggestion = suggestEmailCorrection(normalized, commonDomains);
+    const finalEmail = suggestion ?? normalized;
+
+    if (suggestion) {
+      notifyInfo(`Ispravili smo domenu: ${normalized} -> ${finalEmail}`);
+      setEmail(finalEmail);
+    }
+
     try {
-      await addSubscriber(email);
+      await addSubscriber(finalEmail);
       notifyInfo(
         "Uspješno ste se pretplatili na newsletter! Ako ne vidite poruke, provjerite neželjenu poštu (spam mail) i maknite naš mail odande. Hvala."
       );
@@ -52,6 +70,7 @@ const Newsletter = () => {
           />
         </svg>
       </div>
+
       <div className="newsletter-content-container">
         <div className="newsletter-content">
           <div className="newsletter-envelope">
@@ -63,11 +82,13 @@ const Newsletter = () => {
               style={{ width: "auto", height: "auto" }}
             />
           </div>
+
           <div className="newsletter-content-text">
             <h3>Pridruži nam se</h3>
             <p>
               Inspiriraj se. Primaj popuste na letove. Prvi saznaj sve savjete.
             </p>
+
             <div className="newsletter-actions">
               <div className="newsletter-input-container">
                 <Input
@@ -78,6 +99,7 @@ const Newsletter = () => {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
+
               <div className="newsletter-button-container">
                 <Button primary onClick={handleSubscriptionClick}>
                   pretplati se
@@ -86,6 +108,7 @@ const Newsletter = () => {
             </div>
           </div>
         </div>
+
         <div className="newsletter-image">
           <NewsletterImage />
         </div>

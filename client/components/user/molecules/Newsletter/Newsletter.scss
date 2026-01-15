@@ -117,7 +117,7 @@
         .newsletter-envelope {
           left: 48px;
           width: 104px;
-          top: 0px;
+          top: 30px;
 
           img {
             width: 156px;
@@ -154,6 +154,16 @@
     .newsletter-content-container {
       .newsletter-content {
         padding-left: 0;
+
+        .newsletter-envelope {
+          left: 48px;
+          width: 104px;
+          top: 24px;
+
+          img {
+            width: 156px;
+          }
+        }
       }
     }
   }

@@ -1,3 +1,4 @@
+/*
 @use "@/utils/theme.scss" as *;
 
 .navbar-desktop-container {
@@ -50,3 +51,76 @@
     }
   }
 }
+*/
+
+/* NavbarDesktop.scss */
+@use "@/utils/theme.scss" as *;
+
+.navbar-desktop-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  /* Ne dižemo cijeli navbar iznad overlay-a,
+     nego samo lijevi dio (navbar itemi). */
+  position: relative;
+}
+
+.navbar-desktop-inner-container {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  margin-left: 16px;
+  position: relative;
+
+  &:last-of-type {
+    gap: 16px;
+  }
+
+  /* Lijevi dio (prvi) s itemima mora biti iznad overlay-a */
+  &:first-of-type {
+    z-index: 3000;
+  }
+
+  /* Desni dio (zadnji) sa search + socials treba biti ispod overlay-a
+     da se zatamni kada je menu otvoren */
+  &:last-of-type {
+    z-index: 1;
+  }
+
+  .navbar-item {
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: $grey;
+    cursor: pointer;
+
+    & svg {
+      fill: $grey;
+    }
+
+    &.dark {
+      color: $bg;
+
+      & svg {
+        fill: $bg;
+      }
+    }
+
+    &:hover {
+      color: $grey;
+      background-color: $bg;
+      box-shadow: 0px 0px 6px 2px $limeGreen;
+
+      & svg {
+        fill: $grey;
+      }
+    }
+  }
+}
+
+

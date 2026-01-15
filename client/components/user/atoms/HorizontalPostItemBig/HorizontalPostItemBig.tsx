@@ -17,13 +17,22 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
       ? `/clanak/${data?.id}`
       : `/destinacija/${data.name?.toLowerCase()}`;
 
+  const flagUrl =
+    (data as any)?.country?.flag_image_url || (data as any)?.flag_image_url;
+
   return (
     <Link href={href}>
       <div
         className={`horizontal-post-item-big-container ${
           stretched ? "stretched" : ""
-        }${thin ? "thin" : ""}`}
+        }${thin ? " thin" : ""}`}
       >
+        {flagUrl && (
+          <div className="favorite-post-item-icon-container">
+            <img className="favorite-post-item-icon" src={flagUrl} alt="flag" />
+          </div>
+        )}
+
         <div className="horizontal-post-item-big-image-container">
           <Image
             src={data?.main_image_url}
@@ -35,6 +44,7 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
             priority={false}
           />
         </div>
+
         <div className="horizontal-post-item-big-text-container">
           <h4>{type == "article" ? data?.title : data?.name}</h4>
           <div className="horizontal-post-item-big-inner-text-container">

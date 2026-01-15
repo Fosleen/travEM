@@ -7,11 +7,58 @@
   z-index: 5;
 
   .destinations-menu-item-header {
+    border-radius: 16px;
+
     a {
       width: 100%;
       display: flex;
       justify-content: space-between;
       align-items: center;
+
+      padding: 6px 10px;
+      border-radius: 16px;
+
+      /* default stanje (desktop) */
+      box-shadow: 0 0 0 0 rgba(45, 165, 128, 0);
+      transition: box-shadow 120ms ease-out, transform 120ms ease-out;
+      will-change: box-shadow, transform;
+
+      /* CaretRight (svg) – default */
+      svg {
+        transition:
+          transform 120ms ease-out,
+          filter 120ms ease-out;
+
+        /* mali delay – dolazi nakon obruba */
+        transition-delay: 60ms;
+        will-change: transform, filter;
+      }
+    }
+
+    /* DESKTOP hover/focus */
+    a:hover,
+    a:focus-visible {
+      box-shadow:
+        0 0 0 2px #2da580,
+        0 0 10px rgba(45, 165, 128, 0.55),
+        0 0 18px rgba(45, 165, 128, 0.35);
+
+      transform: translateY(-1px);
+
+      svg {
+        transform: translateX(6px);
+        filter:
+          drop-shadow(0 0 4px rgba(45, 165, 128, 0.7))
+          drop-shadow(0 0 8px rgba(45, 165, 128, 0.45));
+      }
+    }
+
+    a:active {
+      transform: translateY(0);
+
+      svg {
+        transform: translateX(4px);
+      }
     }
 
     h2 {
@@ -24,6 +71,31 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
+  }
+}
+
+/* MOBITEL + TABLET: header je STALNO neon (da izgleda kao gumb) */
+@media screen and (max-width: 1023px) {
+  .destinations-menu-item-container {
+    .destinations-menu-item-header {
+      a {
+        box-shadow:
+          0 0 0 2px #2da580,
+          0 0 8px rgba(45, 165, 128, 0.45),
+          0 0 14px rgba(45, 165, 128, 0.25);
+
+        transform: translateY(-1px);
+
+        /*
+        svg {
+          transform: translateX(4px);
+          filter:
+            drop-shadow(0 0 4px rgba(45, 165, 128, 0.6))
+            drop-shadow(0 0 6px rgba(45, 165, 128, 0.35));
+        }
+        */
+      }
+    }
   }
 }
 
@@ -46,6 +118,7 @@
     .destinations-menu-items {
       display: flex;
       flex-wrap: wrap;
+      gap: 8px;
     }
   }
 }

@@ -19,10 +19,9 @@ createAssociations();
 
 const corsOptions = {
   origin: [
-    "https://putujemstravem.com",
-    "https://www.putujemstravem.com",
-    "https://travem-n1ucljdnb-putujem-s-travems-projects.vercel.app",
-    "https://travem-nu.vercel.app/",
+    "http://localhost:3000",
+
+    
   ],
   credentials: true,
   methods: "GET, POST, PATCH, DELETE, PUT",

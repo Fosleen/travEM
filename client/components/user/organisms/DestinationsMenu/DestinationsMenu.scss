@@ -3,13 +3,21 @@
 .destinations-menu-container {
   background-image: url("/images/continents-bg-image.png");
   background-size: cover;
-  width: fit-content;
   background-color: $bg;
+
   width: 100%;
   padding: 8px;
+
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  /* ✅ FIX: neka menu bude iznad svih badge/flag elemenata */
+  position: relative;
+  z-index: 9999;
+
+  /* ✅ dodatno osiguranje: izolira stacking context (super protiv "probijanja") */
+  isolation: isolate;
 }
 
 @media screen and ($tabletMedium) {

@@ -1,3 +1,4 @@
+/* SocialMediaLinks.scss (bez dizanja iznad overlay-a) */
 @use "@/utils/theme.scss" as *;
 
 .socials-container {
@@ -7,6 +8,9 @@
   margin-bottom: 8px;
   padding-left: 8px;
   padding-right: 8px;
+
+  position: relative;
+  z-index: 1;
 
   .socials-item {
     border-radius: 50%;

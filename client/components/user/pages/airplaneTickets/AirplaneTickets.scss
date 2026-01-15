@@ -1,3 +1,4 @@
+/*
 @import "../../../../utils/theme.scss";
 
 .airplane-tickets-grid-wrapper {
@@ -64,3 +65,33 @@
   padding-top: 28px;
   padding-bottom: 28px;
 }
+*/
+
+@import "../../../../utils/theme.scss";
+
+.airplane-tickets-parent-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-top: 0; // hero je već "header zone"
+  padding-bottom: 28px;
+}
+
+.airplane-tickets-sections-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+
+  @media screen and ($tabletMedium) {
+    padding: 0 24px;
+  }
+
+  @media screen and ($desktop) {
+    padding: 0;
+  }
+}
+

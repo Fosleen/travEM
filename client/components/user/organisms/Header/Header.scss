@@ -1,3 +1,4 @@
+/*
 @use "@/utils/theme.scss" as *;
 .header-container {
   position: relative;
@@ -57,3 +58,96 @@
     }
   }
 }
+*/
+
+/* Header.scss */
+@use "@/utils/theme.scss" as *;
+
+.header-container {
+  position: relative;
+
+  .header-top {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 8px;
+
+    a {
+      padding: 8px 0;
+      position: relative;
+      z-index: 3000; // logo iznad overlay-a
+      display: block;
+
+      img {
+        display: block;
+      }
+    }
+  }
+
+  /* Dropdownovi moraju biti iznad overlay-a */
+  .header-filter-menu-container {
+    position: absolute;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+
+    z-index: 3000;
+  }
+
+  /* Overlay: brzo zatamnjenje, bez “teškog” efekta */
+  .header-dim-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.38);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: opacity 90ms linear, visibility 0ms linear 90ms;
+
+    z-index: 2000;
+    pointer-events: none;
+
+    will-change: opacity;
+    transform: translateZ(0);
+  }
+
+  .header-dim-overlay.is-active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 90ms linear;
+  }
+}
+
+@media screen and ($tabletMedium) {
+  .header-container {
+    z-index: 5;
+
+    .header-top {
+      max-width: 1300px;
+      margin: 0 auto;
+      justify-content: start;
+    }
+  }
+}
+
+@media screen and ($desktop) {
+  .header-container {
+    .header-top {
+      padding: 0 24px;
+    }
+  }
+}
+
+@media screen and ($desktopLarge) {
+  .header-container {
+    .header-top {
+      padding: 0;
+    }
+  }
+}
+

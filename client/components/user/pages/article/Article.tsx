@@ -15,6 +15,8 @@ import Image from "next/image";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 
+import ArticleTableOfContentsDropUp from "@/components/user/molecules/ArticleTableOfContentsDropUp/ArticleTableOfContentsDropUp";
+
 interface ArticleProps {
   initialArticle: any;
   initialCountryPlaces: any[];
@@ -51,6 +53,7 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
       <div className="article-container">
         <ArticleHero article={articleContent} />
       </div>
+
       <div className="article-location-parent">
         <div className="article-location-container">
           {articleContent.articleTypeId === 1 && (
@@ -71,10 +74,15 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
           )}
         </div>
       </div>
-      <ArticleTableOfContents
-        article={articleContent}
-        key={articleContent.id}
-      />
+
+      <ArticleTableOfContents article={articleContent} key={articleContent.id} />
+
+      {/* ✅ SENTINEL MORA BITI OVDJE (odmah ispod gornjeg TOC-a) */}
+      <div className="toc-dropup-sentinel" />
+
+      {/* DropUp je “floating”, zato ga renderamo ovdje (nije bitno gdje je u DOM-u, ali sentinel je bitan) */}
+      <ArticleTableOfContentsDropUp article={articleContent} />
+
       <div className="article-content">
         {articleContent?.sections?.map((section, index) => (
           <React.Fragment key={index}>
@@ -148,11 +156,9 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
       {countryPlaces.length !== 0 && (
         <CountryPlaces hasPadding={false} places={countryPlaces} />
       )}
+
       <div className="article-connected-articles-wrapper">
-        <RecommendedPosts
-          id={articleContent.id}
-          type={articleContent.articleTypeId}
-        />
+        <RecommendedPosts id={articleContent.id} type={articleContent.articleTypeId} />
       </div>
     </div>
   );

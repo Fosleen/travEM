@@ -83,7 +83,7 @@ export default function TermsAndConditions() {
       </p>
       <h4>7. Izmjene uvjeta</h4>
       <p>
-        <span className="bold">PutujEM s travEM</span> zadržava pravo izmijeniti
+        <span className="bold">putujEM s travEM</span> zadržava pravo izmijeniti
         ove uvjete korištenja u bilo kojem trenutku. Sve promjene bit će
         objavljene na ovoj stranici i stupit će na snagu odmah nakon objave.
         Preporučujemo vam da redovito pregledavate ove uvjete.

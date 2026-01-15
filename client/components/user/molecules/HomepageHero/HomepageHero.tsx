@@ -25,14 +25,21 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
         height={320}
         style={{ width: "auto", height: "auto" }}
       />
-      <Image
-        className="overlay-icon-2"
-        src="/images/plane-icon.png"
-        alt="plane"
-        width={120}
-        height={120}
-        style={{ width: "auto", height: "auto" }}
-      />
+
+      <div className="homepage-hero-left">
+        <HomepageImage url={homepageContent.hero_image_url} />
+
+        {/* AVIONČIĆ – VEZAN ZA HERO SLIKU */}
+        <Image
+          className="overlay-icon-2"
+          src="/images/plane-icon.png"
+          alt="plane"
+          width={120}
+          height={120}
+          style={{ width: "auto", height: "auto" }}
+        />
+      </div>
+      
       <div className="homepage-hero-left">
         <HomepageImage url={homepageContent.hero_image_url} />
       </div>
@@ -49,23 +56,20 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
             />
           </div>
           <p className="light-color">
-            i otkrijte nove informacije o putovanjima iz prve ruke
+            Svijet je veći nego što misliš.
           </p>
         </div>
         <div className="homepage-hero-more">
           <div className="homepage-hero-more-row">
             <p className="light-color">Mi smo</p>
             <p className="names">Ema i Matija</p>
+            
+          </div>
+          <div className="homepage-hero-more-row">
+            <p className="light-color"> i vodimo te kroz destinacije koje smo zaista posjetili. Korak po korak, iz prve ruke. <br></br> Odaberi destinaciju: </p>
             <div className="arrow-icon" onMouseOver={handleMouseOver}>
               <ArrowDown size={32} color="#333333" weight="thin" />
             </div>
-          </div>
-          <div className="homepage-hero-more-row">
-            <p className="light-color"> Izaberite destinaciju </p>
-            <p className="special light-color" onMouseOver={handleMouseOver}>
-              ovdje
-            </p>
-            <p className="light-color"> i putujte s nama</p>
           </div>
         </div>
       </div>
@@ -81,3 +85,5 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
 };
 
 export default HomepageHero;
+
+

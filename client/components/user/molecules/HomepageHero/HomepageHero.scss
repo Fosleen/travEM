@@ -14,6 +14,26 @@
     }
   }
 
+  // BITNO: da aviončić može izaći van ruba slike
+  overflow: visible;
+
+  .overlay-icon-2 {
+    position: absolute;
+
+    // centar po širini slike
+    left: 50%;
+    bottom: 0;
+
+    //pola aviončića ispod ruba slike
+    transform: translate(-50%, 60%);
+
+    width: clamp(40px, 5vw, 72px);
+    height: auto;
+
+    z-index: 3;
+    pointer-events: none;
+  }
+
   .homepage-hero-left {
     position: absolute;
     top: -90px;
@@ -63,7 +83,7 @@
     .homepage-hero-more {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 20px;
 
       .homepage-hero-more-row {
         display: flex;
@@ -90,21 +110,35 @@
           }
         }
 
+        // Na mobitelu želim da se vidi zadnji red
         &:last-child {
-          display: none;
-          visibility: hidden;
+          display: flex;
+          visibility: visible;
           margin-left: 16px;
         }
 
         .arrow-icon {
           cursor: pointer;
-          background-color: #eeeeee;
+          background-color: #d2eb64;
           width: 72px;
           height: 72px;
           display: flex;
           justify-content: center;
           align-items: center;
           border-radius: 50%;
+          transition: box-shadow 0.3s ease, transform 0.3s ease;
+
+          &:hover {
+            box-shadow: 0 0 0 3px (#2da580);
+            transform: translateY(-2px);
+          }
+
+          // Hover često ne radi na touch uređajima, pa dodajem active/focus
+          &:active,
+          &:focus-visible {
+            box-shadow: 0 0 0 3px (#2da580);
+            transform: translateY(-2px);
+          }
         }
       }
     }
@@ -151,6 +185,7 @@
 @media screen and ($desktop) {
   .homepage-hero-container {
     position: relative;
+    padding-bottom: clamp(48px, 6vw, 96px);
 
     .overlay-icon {
       &-1,
@@ -243,20 +278,37 @@
     .homepage-hero-destinations-menu-here-container {
       position: absolute;
       bottom: -344px;
-      position: absolute;
       width: fit-content;
       margin-left: auto;
       margin-right: auto;
       left: 0;
       right: 0;
       text-align: center;
-      z-index: 2;
+      z-index: 5;
+
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+
+      // bitno: dok je zatvoren, ne smije hvatati hover
+      pointer-events: none;
 
       p {
         text-shadow: none;
         //color: $grey;
         font-weight: 700;
         font-size: 14px;
+      }
+    }
+
+    &:hover,
+    &:focus-within {
+      .homepage-hero-destinations-menu-here-container {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto; // sad se može klikati po njemu ako treba
       }
     }
   }
@@ -287,6 +339,13 @@
 
     .homepage-hero-right {
       margin-right: calc((100vw - 1480px) / 2);
+
+      //Fix za widescreen
+      height: fit-content;
+      min-height: unset;
+      justify-content: flex-start;
+      gap: 48px; // ugodan razmak bez "space-around" efekta
     }
   }
 }
+

@@ -163,6 +163,42 @@ const ArticleTableOfContentsDropUp = ({ article }: Props) => {
     return () => obs.disconnect();
   }, [hasSections]);
 
+  // 1.5) MOBILE: podigni scroll-to-top iznad TOC dropupa
+  useEffect(() => {
+    const root = document.documentElement;
+
+    if (showDropup) {
+      // visina zatvorenog TOC dropupa (sigurna vrijednost)
+      root.style.setProperty("--toc-safe-bottom", "84px");
+    } else {
+      root.style.setProperty("--toc-safe-bottom", "0px");
+    }
+    return () => {
+      root.style.setProperty("--toc-safe-bottom", "0px");
+    };
+  }, [showDropup]);
+
+  // 1.6) MOBILE: sakrij ScrollToTop dok je TOC dropup OTVOREN
+useEffect(() => {
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  if (!isMobile) return;
+
+  const root = document.documentElement;
+
+  if (showDropup && isOpen) {
+    // sakrij scroll-to-top
+    root.style.setProperty("--toc-scrolltop-hidden", "1");
+  } else {
+    root.style.setProperty("--toc-scrolltop-hidden", "0");
+  }
+
+  return () => {
+    root.style.setProperty("--toc-scrolltop-hidden", "0");
+  };
+}, [showDropup, isOpen]);
+
+
+
   // 2) ESC zatvori
   useEffect(() => {
     if (!isOpen) return;

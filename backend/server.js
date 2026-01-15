@@ -20,7 +20,7 @@ createAssociations();
 const corsOptions = {
   origin: [
     "http://localhost:3000",
-
+    "http://192.168.100.60:3000",
     
   ],
   credentials: true,
@@ -73,7 +73,8 @@ app.post("/deploy", (req, res) => {
 
 // Start the server
 const PORT = dbConfig.PORT;
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on port ${PORT}`);
   swaggerDocs(app, PORT);
 });
+

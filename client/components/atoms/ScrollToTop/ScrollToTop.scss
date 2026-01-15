@@ -19,3 +19,13 @@
 .btn-scroll-to-top:hover {
   transform: scale(1.15);
 }
+
+.btn-scroll-to-top {
+  opacity: calc(1 - var(--toc-scrolltop-hidden, 0));
+  pointer-events: auto;
+
+  &[style*="--toc-scrolltop-hidden: 1"] {
+    pointer-events: none;
+  }
+}
+

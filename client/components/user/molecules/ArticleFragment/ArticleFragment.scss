@@ -5,13 +5,58 @@
   flex-direction: column;
   gap: 24px;
   margin-bottom: 24px;
+
+  width: 100%;
   max-width: 900px;
 
-  h3 {
+  /* ===== Titles ===== */
+
+  /* default h3 (kad nema ikone) */
+  .article-section-title--default {
     font-weight: 800;
     font-size: 24px;
     color: $grey;
+    margin: 0; /* da bude konzistentno */
   }
+
+  /* wrapper za title s ikonom */
+  .article-section-title--with-icon {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0; /* bitno jer nije h tag */
+  }
+
+  .article-section-title__icon {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 auto;
+
+    img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+    }
+  }
+
+  /* h2 kad ima ikonu */
+  .article-section-title__text {
+    font-weight: 900;
+    font-size: 30px;
+    line-height: 1.15;
+    color: $grey;
+    margin: 0;
+  }
+
+  /* malo manji h2 na mobu highlighting je i dalje tu */
+  @media screen and (max-width: 520px) {
+    .article-section-title__text {
+      font-size: 26px;
+    }
+  }
+
+  /* ===== Content ===== */
 
   .article-html-content {
     display: flex;
@@ -70,7 +115,6 @@
           }
         }
 
-        // numbered lists - only show numbers when data-list is not set
         &:not([data-list]) {
           list-style: decimal;
         }
@@ -108,35 +152,52 @@
   }
 }
 
-.article-fragment-images-wrapper {
-  flex-direction: row;
-  gap: 12px;
+/* 1 slika - bez cropanja */
+.article-fragment-image-wrapper {
+  width: 100%;
   max-width: 900px;
 
-  img {
+  .article-fragment-image {
+    display: block;
+    width: 100%;
+    height: auto;
     border-radius: 8px;
-    width: 300px;
-    @media screen and ($desktop) {
-      width: 400px;
-    }
-  }
-
-  @media screen and ($desktop) {
-    display: flex;
-    flex-direction: row;
   }
 }
 
-.article-fragment-image-wrapper {
-  display: flex;
-  justify-content: space-between;
-  gap: 24px;
+/* 2 slike - ALWAYS grid + iste visine (crop) */
+.article-fragment-images-wrapper {
+  width: 100%;
+  max-width: 900px;
 
-  img {
-    border-radius: 8px;
-    height: 100%;
-    width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+
+  @media screen and ($tablet) {
+    grid-template-columns: 1fr 1fr;
   }
+}
+
+/* “frame” koji definira visinu (isti aspect za oba) */
+.article-fragment-image-frame {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+
+  aspect-ratio: 4 / 5;
+
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* slika popuni frame i crop-a višak */
+.article-fragment-image--cover {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 0; /* frame već ima radius */
+  object-fit: cover;
+  object-position: center;
 }
 
 .article-fragment-video-wrapper {
@@ -162,4 +223,8 @@
       height: 500px;
     }
   }
+}
+
+.article-html-content:empty {
+  display: none;
 }

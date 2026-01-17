@@ -256,6 +256,44 @@ const AddArticlePage = () => {
     );
   };
 
+  const emptySection = {
+  section_subtitle: "",
+  section_text: "",
+  section_url_title: "",
+  section_url_link: "",
+  section_icon: null,
+  order: 1,
+};
+
+const handleInsertSectionAfter = (arrayHelpers: any, index: number) => {
+  // ubaci u Formik values
+  arrayHelpers.insert(index + 1, { ...emptySection });
+
+  // ubaci i prazan array slika na isto mjesto
+  setSectionImages((prev) => {
+    const copy = [...prev];
+    copy.splice(index + 1, 0, []);
+    return copy;
+  });
+};
+
+const handleMoveSection = (arrayHelpers: any, from: number, to: number) => {
+  if (to < 0) return;
+
+  // Formik: move
+  arrayHelpers.move(from, to);
+
+  // sectionImages: move na isti način
+  setSectionImages((prev) => {
+    if (to >= prev.length) return prev;
+    const copy = [...prev];
+    const [moved] = copy.splice(from, 1);
+    copy.splice(to, 0, moved);
+    return copy;
+  });
+};
+
+
   const handleAddSection = (arrayHelpers: any) => {
     arrayHelpers.push({
       section_subtitle: "",
@@ -586,6 +624,31 @@ const AddArticlePage = () => {
                                   className="add-article-section"
                                 >
                                   <legend>Odlomak {index + 1}</legend>
+                                  <div className="add-article-section-actions">
+                                    <Button
+                                      type="button"
+                                      primary
+                                      onClick={() => handleInsertSectionAfter(arrayHelpers, index)}
+                                    >
+                                      + odlomak ispod
+                                    </Button>                   
+                                    <Button
+                                      type="button"
+                                      white
+                                      onClick={() => handleMoveSection(arrayHelpers, index, index - 1)}
+                                      disabled={index === 0}
+                                    >
+                                      gore
+                                    </Button>               
+                                    <Button
+                                      type="button"
+                                      white
+                                      onClick={() => handleMoveSection(arrayHelpers, index, index + 1)}
+                                      disabled={index === sections.length - 1}
+                                    >
+                                      dolje
+                                    </Button>
+                                  </div>                  
                                   <div className="add-article-section-top">
                                     <div className="add-article-section-top-item">
                                       <Field

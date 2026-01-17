@@ -91,3 +91,17 @@
     width: 30px;
   }
 }
+
+/* “Bez odabira” opcija */
+.option-item--empty {
+  font-style: italic;
+  color: #757575;
+}
+
+/* placeholder u inputu */
+.dropdown-placeholder {
+  color: #757575;
+  font-style: italic;
+  font-weight: 400;
+  margin-left: 8px;
+}

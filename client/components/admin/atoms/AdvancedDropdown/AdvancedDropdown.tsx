@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { Dropdown } from "primereact/dropdown";
 import "./AdvancedDropdown.scss";
 import { DropdownProps } from "../../../../common/types";
@@ -20,76 +20,89 @@ const AdvancedDropdown: FC<DropdownProps> = ({
 }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
+  // 1) Dodaj "praznu" opciju na vrh (reset)
+  const optionsWithEmpty = useMemo(() => {
+    const emptyOption = {
+      id: null,
+      [filterAttribute]: "— Bez odabira —",
+      [imageAttribute]: "",
+      __isEmpty: true,
+    };
 
-  useEffect(() => {
-    if (selectedOption) onChange(selectedOption);
-  }, [selectedOption]);
+    // Ako već postoji opcija s id=null, ne dodaj duplu
+    const hasNull = Array.isArray(options) && options.some((o) => o?.id === null);
 
-  useEffect(() => {
-    // to update selected value when article section is deleted
-    const option = options.find((option) => option.id === selectedValue);
-    setSelectedOption(option || null);
-  }, [selectedValue, options]);
+    return hasNull ? options : [emptyOption, ...(options || [])];
+  }, [options, filterAttribute, imageAttribute]);
 
+  // 2) Kada parent promijeni selectedValue (npr. edit), syncaj selectedOption
   useEffect(() => {
-    if (defaultValue) {
-      onChange(defaultValue);
-    }
+    const list = optionsWithEmpty || [];
+    const option = list.find((o) => o?.id === selectedValue) || null;
+    setSelectedOption(option);
+  }, [selectedValue, optionsWithEmpty]);
+
+  // 3) Default value (ako želiš automatski postaviti na mount)
+  useEffect(() => {
+    // ako je defaultValue null -> to znači "prazno"
+    if (defaultValue === null || defaultValue === undefined) return;
+
+    const list = optionsWithEmpty || [];
+    const defaultOption = list.find((o) => o?.id === defaultValue) || null;
+    setSelectedOption(defaultOption);
+    if (onChange) onChange(defaultOption);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    // Update selectedOption with defaultValue if provided
-    if (defaultValue !== null && defaultValue !== undefined) {
-      const defaultOption = options.find(
-        (option) => option.id === defaultValue
-      );
-      console.log(defaultOption);
-
-      setSelectedOption(defaultOption);
-    }
-  }, [defaultValue, options]);
-
   const handleSelect = (option) => {
-    setSelectedOption(option);
-    if (onChange) {
-      onChange(option);
+    // klik na "— Bez odabira —" => reset (null)
+    if (option?.id === null || option?.__isEmpty) {
+      setSelectedOption(null);
+      if (onChange) onChange(null);
+      return;
     }
+
+    setSelectedOption(option);
+    if (onChange) onChange(option);
   };
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
   const selectedOptionTemplate = (option, props) => {
-    if (option) {
+    // Kad je reset (null) -> pokaži placeholder (hardcodedValue)
+    if (!option || option?.id === null || option?.__isEmpty) {
+      return <span className="dropdown-placeholder">{props.placeholder}</span>;
+    }
+
+    return (
+      <div className="option-item selected">
+        {images && option?.[imageAttribute] && (
+          <img
+            alt={option?.[filterAttribute] || ""}
+            src={option?.[imageAttribute]}
+            className="icon"
+          />
+        )}
+        {option?.[filterAttribute] && <div>{option?.[filterAttribute]}</div>}
+      </div>
+    );
+  };
+
+  const itemOptionTemplate = (option) => {
+    const isEmpty = option?.id === null || option?.__isEmpty;
+
+    if (isEmpty) {
       return (
-        <div className="option-item selected">
-          {images && (
-            <img
-              alt={option[imageAttribute]}
-              src={option[imageAttribute]}
-              className="icon"
-            />
-          )}
-          {option[filterAttribute] && <div>{option[filterAttribute]}</div>}
+        <div className="option-item option-item--empty">
+          <div>{option?.[filterAttribute] || "— Bez odabira —"}</div>
         </div>
       );
     }
 
-    return <span>{props.placeholder}</span>;
-  };
-
-  const itemOptionTemplate: FC<{ url?: string; name?: string }> = (option) => {
     return (
       <div className="option-item">
-        {images && (
-          <img
-            alt={option.name}
-            src={option[imageAttribute]}
-            className="icon"
-          />
+        {images && option?.[imageAttribute] && (
+          <img alt={option?.[filterAttribute] || ""} src={option?.[imageAttribute]} className="icon" />
         )}
-        <div>{option[filterAttribute]}</div>
+        <div>{option?.[filterAttribute]}</div>
       </div>
     );
   };
@@ -101,7 +114,7 @@ const AdvancedDropdown: FC<DropdownProps> = ({
         <Dropdown
           value={selectedOption}
           onChange={(e) => handleSelect(e.value)}
-          options={options}
+          options={optionsWithEmpty}
           optionLabel={filterAttribute}
           placeholder={hardcodedValue}
           filter={filter}

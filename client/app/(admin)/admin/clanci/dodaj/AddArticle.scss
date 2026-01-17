@@ -133,6 +133,13 @@
           justify-content: space-between;
           align-items: center;
         }
+
+        .add-article-section-actions {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+          align-items: center;
+        }
       }
     }
 

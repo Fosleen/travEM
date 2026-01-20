@@ -115,7 +115,7 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
                 className="gallery-item"
                 onClick={() => openLightbox(index)}
               >
-                <Image
+                <img
                   src={image.url.trim()}
                   alt={image.alt || "Gallery image"}
                   width={image.width || 600}

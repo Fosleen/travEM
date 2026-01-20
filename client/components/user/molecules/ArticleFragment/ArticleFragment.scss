@@ -5,6 +5,8 @@
   flex-direction: column;
   gap: 24px;
   margin-bottom: 24px;
+
+  width: 100%;
   max-width: 900px;
 
   h3 {
@@ -70,7 +72,6 @@
           }
         }
 
-        // numbered lists - only show numbers when data-list is not set
         &:not([data-list]) {
           list-style: decimal;
         }
@@ -108,35 +109,48 @@
   }
 }
 
-.article-fragment-images-wrapper {
-  flex-direction: row;
-  gap: 12px;
+.article-fragment-image-wrapper {
+  width: 100%;
   max-width: 900px;
 
-  img {
+  .article-fragment-image {
+    display: block;
+    width: 100%;
+    height: auto;
     border-radius: 8px;
-    width: 300px;
-    @media screen and ($desktop) {
-      width: 400px;
-    }
-  }
-
-  @media screen and ($desktop) {
-    display: flex;
-    flex-direction: row;
   }
 }
 
-.article-fragment-image-wrapper {
-  display: flex;
-  justify-content: space-between;
-  gap: 24px;
+.article-fragment-images-wrapper {
+  width: 100%;
+  max-width: 900px;
 
-  img {
-    border-radius: 8px;
-    height: 100%;
-    width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+
+  @media screen and ($tablet) {
+    grid-template-columns: 1fr 1fr;
   }
+}
+
+.article-fragment-image-frame {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+
+  aspect-ratio: 4 / 5;
+
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.article-fragment-image--cover {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 0; 
+  object-fit: cover;
+  object-position: center;
 }
 
 .article-fragment-video-wrapper {

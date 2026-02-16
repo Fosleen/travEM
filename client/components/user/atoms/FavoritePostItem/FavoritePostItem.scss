@@ -7,8 +7,27 @@ a {
 .favorite-post-item-container {
   position: relative;
   width: 100%;
-  padding: 12px; /* malo više "zraka" na mobu */
+  padding: 12px;
   display: block;
+
+  /* da hover sjena bude “čista” */
+  border-radius: 28px;
+
+  transition: transform 220ms ease;
+
+  /* mikro “3D” perspektiva */
+  transform: translateY(0);
+  will-change: transform;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(43, 172, 130, 0.55);
+    outline-offset: 4px;
+    transform: translateY(-3px);
+  }
 
   .favorite-post-item-content {
     width: 100%;
@@ -30,47 +49,84 @@ a {
 
     .favorite-post-item-content-image {
       width: 100%;
-      height: 170px; /* mrvicu manje na mobu */
+      height: 170px;
       position: relative;
 
-      /* KLJUČNO: uvučemo sliku da badge može "visiti" van,
-         ali da i dalje ostane unutar ekrana */
+      /* ostavi tvoj layout (badge da viri) */
       margin: 0 12px;
 
+      /* važno: sjena i highlight su na “frameu”, ne na slici */
+      border-radius: 24px;
+
+      /* default (bez hovera) jako suptilno */
+      box-shadow:
+        0 6px 14px rgba(0, 0, 0, 0.08),
+        0 1px 0 rgba(255, 255, 255, 0.7) inset;
+
+      transition:
+        box-shadow 260ms ease,
+        transform 260ms ease,
+        filter 260ms ease;
+
+      /* OVO je bitno: crop radi slika, a frame baca sjenu */
+      overflow: visible;
+
+      /* “highlight rim” – daje premium osjećaj */
+      &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+
+        /* lagani sjaj gore/lijevo */
+        background: radial-gradient(
+          120% 120% at 10% 0%,
+          rgba(255, 255, 255, 0.65),
+          rgba(255, 255, 255, 0) 55%
+        );
+        opacity: 0.55;
+        transition: opacity 260ms ease;
+      }
+
+      /* slika je cropana U SEBI, ali frame ima shadow */
       img {
-        padding: 0;
         width: 100%;
         height: 100%;
         object-fit: cover;
         border-radius: 24px;
         display: block;
+
+        /* lagani “pop” na hover */
+        transition: transform 260ms ease, filter 260ms ease;
       }
 
-      /* ===== FLAG ICON: kao desktop (malo van kuta slike) ===== */
       .favorite-post-item-icon-container {
         position: absolute;
         left: 0;
         top: 0;
-        z-index: 3;
+        z-index: 4;
 
-        /* "krug u krugu" */
         width: 64px;
         height: 64px;
         padding: 6px;
 
         background-color: $bg;
         border-radius: 50%;
-        box-shadow: 0 0 16px rgba(0, 0, 0, 0.35);
+
+        /* badge shadow */
+        box-shadow:
+          0 10px 22px rgba(0, 0, 0, 0.22),
+          0 0 0 1px rgba(0, 0, 0, 0.06);
 
         display: flex;
         justify-content: center;
         align-items: center;
 
-        /* efekt kao desktop: malo viri van slike */
         transform: translate(-35%, -35%);
-
-        z-index: 3;
         pointer-events: none;
+
+        transition: transform 260ms ease, box-shadow 260ms ease;
 
         .favorite-post-item-icon {
           width: 100%;
@@ -81,6 +137,40 @@ a {
         }
       }
     }
+  }
+
+  /* =========================
+     HOVER = directional shadow + “iskoči”
+     ========================= */
+  &:hover .favorite-post-item-content-image,
+  &:focus-visible .favorite-post-item-content-image {
+    /* baca sjenu udesno/dolje (točno to si tražio) */
+    box-shadow:
+      14px 18px 34px rgba(0, 0, 0, 0.14),
+      0 10px 20px rgba(0, 0, 0, 0.10),
+      0 1px 0 rgba(255, 255, 255, 0.7) inset;
+
+    transform: translateY(-2px);
+    filter: saturate(1.02) contrast(1.01);
+  }
+
+  &:hover .favorite-post-item-content-image::after,
+  &:focus-visible .favorite-post-item-content-image::after {
+    opacity: 0.85;
+  }
+
+  &:hover .favorite-post-item-content-image img,
+  &:focus-visible .favorite-post-item-content-image img {
+    transform: scale(1.02);
+    filter: saturate(1.02) contrast(1.02);
+  }
+
+  &:hover .favorite-post-item-icon-container,
+  &:focus-visible .favorite-post-item-icon-container {
+    transform: translate(-38%, -38%);
+    box-shadow:
+      0 14px 28px rgba(0, 0, 0, 0.26),
+      0 0 0 1px rgba(0, 0, 0, 0.08);
   }
 }
 
@@ -100,7 +190,7 @@ a {
 
       .favorite-post-item-content-image {
         height: 320px;
-        margin: 0; /* od tableta više ne trebamo uvlačenje */
+        margin: 0;
 
         .favorite-post-item-icon-container {
           width: 96px;
@@ -129,7 +219,6 @@ a {
 
       .favorite-post-item-content-image {
         height: 200px;
-        padding-left: 20px;
         margin: 0;
 
         .favorite-post-item-icon-container {
@@ -169,7 +258,7 @@ a {
   }
 }
 
-/* ===== MOBILE FIX: zadrži razmak od ruba ekrana ===== */
+/* ===== MOBILE FIX ===== */
 @media screen and (max-width: 767px) {
   .favorite-post-item-container {
     width: calc(100% - 32px);
@@ -178,6 +267,22 @@ a {
   }
 }
 
+/* ===== TOUCH DEVICES: makni hover “glitch” ===== */
+@media (hover: none) {
+  .favorite-post-item-container:hover {
+    transform: none;
+  }
 
+  .favorite-post-item-container:hover .favorite-post-item-content-image {
+    transform: none;
+    box-shadow:
+      0 6px 14px rgba(0, 0, 0, 0.08),
+      0 1px 0 rgba(255, 255, 255, 0.7) inset;
+    filter: none;
+  }
 
-
+  .favorite-post-item-container:hover .favorite-post-item-content-image img {
+    transform: none;
+    filter: none;
+  }
+}

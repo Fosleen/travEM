@@ -50,6 +50,8 @@ import {
   sendNewsletterToSubscribers,
 } from "@/utils/subscribers";
 
+import SectionActions from "@/components/admin/atoms/SectionActions/SectionActions";
+
 const EditArticle = () => {
   const params = useParams();
   const router = useRouter();
@@ -68,6 +70,7 @@ const EditArticle = () => {
   const [modalInputValue, setModalInputValue] = useState("");
   const [imageHeightValue, setImageHeightValue] = useState("");
   const [imageWidthValue, setImageWidthValue] = useState("");
+
   // images
   const [imageType, setImageType] = useState<string | null>(null);
   const [sectionSelected, setSectionSelected] = useState<number>(0);
@@ -125,6 +128,41 @@ const EditArticle = () => {
   const validateImages = () => {
     return mainArticleImage != "" && mainArticleImage;
   };
+
+  // ====== NEW: SECTION ACTION HELPERS (insert/move) ======
+  const emptySection = {
+    section_id: null, // IMPORTANT: Edit page uses section_id for update/create logic
+    section_subtitle: "",
+    section_text: "",
+    section_url_title: "",
+    section_url_link: "",
+    section_icon: null,
+  };
+
+  const handleInsertSectionAfter = (arrayHelpers: any, index: number) => {
+    arrayHelpers.insert(index + 1, { ...emptySection });
+
+    setSectionImages((prev) => {
+      const copy = [...prev];
+      copy.splice(index + 1, 0, []);
+      return copy;
+    });
+  };
+
+  const handleMoveSection = (arrayHelpers: any, from: number, to: number) => {
+    if (to < 0) return;
+
+    arrayHelpers.move(from, to);
+
+    setSectionImages((prev) => {
+      if (to >= prev.length) return prev;
+      const copy = [...prev];
+      const [moved] = copy.splice(from, 1);
+      copy.splice(to, 0, moved);
+      return copy;
+    });
+  };
+  // ======================================================
 
   const handleSave = async (values: any) => {
     console.log("=== HANDLE SAVE STARTED ===");
@@ -381,17 +419,14 @@ const EditArticle = () => {
       const existingVideo = article.video;
 
       if (hasVideo && existingVideo) {
-        // Update existing video
         console.log("   Updating existing video...", existingVideo.id);
         await updateVideo(existingVideo.id, values.article_video);
         console.log("   ✅ Video updated");
       } else if (hasVideo && !existingVideo) {
-        // Add new video
         console.log("   Adding new video...");
         await addVideo(values.article_video, article.id, null, null);
         console.log("   ✅ Video added");
       } else if (!hasVideo && existingVideo) {
-        // Delete existing video
         console.log("   Deleting existing video...", existingVideo.id);
         await deleteVideo(existingVideo.id);
         console.log("   ✅ Video deleted");
@@ -399,10 +434,7 @@ const EditArticle = () => {
         console.log("   No video changes needed");
       }
 
-      // 8. Success!
       console.log("=== UPDATE COMPLETE ===");
-      console.log("🎉 Navigating to /admin/clanci");
-
       router.push("/admin/clanci");
       notifySuccess("Uspješno uređen članak!");
     } catch (error) {
@@ -495,11 +527,11 @@ const EditArticle = () => {
       );
     } else if (type == "section") {
       setSectionImages((prevSectionImages) => [
-        ...prevSectionImages.slice(0, sectionIndex), // kopija polja prije indexa odabrane sekcije
+        ...prevSectionImages.slice(0, sectionIndex),
         prevSectionImages[sectionIndex].filter(
           (_el, index) => index !== itemIndex
-        ), // micanje slike prema indexu slike prema indexu
-        ...prevSectionImages.slice(sectionIndex + 1), // kopija polja nakon indexa odabrane sekcije
+        ),
+        ...prevSectionImages.slice(sectionIndex + 1),
       ]);
     }
     setImageType(null);
@@ -527,7 +559,7 @@ const EditArticle = () => {
       ]);
     } else if (imageType == "section") {
       setSectionImages((prevSectionImages) => [
-        ...prevSectionImages.slice(0, sectionSelected), // kopija polja prije indexa odabrane sekcije
+        ...prevSectionImages.slice(0, sectionSelected),
         [
           ...prevSectionImages[sectionSelected],
           {
@@ -536,8 +568,8 @@ const EditArticle = () => {
             width: imageWidthValue | null,
             height: imageHeightValue | null,
           },
-        ], // dodavanje slike na kraj odabrane sekcije
-        ...prevSectionImages.slice(sectionSelected + 1), // kopija polja nakon indexa odabrane sekcije
+        ],
+        ...prevSectionImages.slice(sectionSelected + 1),
       ]);
     }
     setModalInputValue("");
@@ -820,6 +852,7 @@ const EditArticle = () => {
                         </Button>
                       )}
                   </div>
+
                   <div className="edit-article-images-container">
                     {mainArticleImage ? (
                       <div
@@ -848,6 +881,7 @@ const EditArticle = () => {
                       </div>
                     )}
                   </div>
+
                   {isSubmitClicked &&
                     (mainArticleImage == "" || !mainArticleImage) && (
                       <p className="error-message">Obavezno polje!</p>
@@ -870,6 +904,33 @@ const EditArticle = () => {
                                     className="edit-article-section"
                                   >
                                     <legend>Odlomak {index + 1}</legend>
+
+                                    {/* NEW: actions block (same as add) */}
+                                    <SectionActions
+                                      index={index}
+                                      total={sections.length}
+                                      onInsertBelow={() =>
+                                        handleInsertSectionAfter(
+                                          arrayHelpers,
+                                          index
+                                        )
+                                      }
+                                      onMoveUp={() =>
+                                        handleMoveSection(
+                                          arrayHelpers,
+                                          index,
+                                          index - 1
+                                        )
+                                      }
+                                      onMoveDown={() =>
+                                        handleMoveSection(
+                                          arrayHelpers,
+                                          index,
+                                          index + 1
+                                        )
+                                      }
+                                    />
+
                                     <div className="edit-article-section-top">
                                       <div className="edit-article-section-top-item">
                                         <Field
@@ -904,6 +965,7 @@ const EditArticle = () => {
                                         />
                                       </div>
                                     </div>
+
                                     <div className="add-article-input">
                                       <Field
                                         name={`sections[${index}].section_text`}
@@ -916,6 +978,7 @@ const EditArticle = () => {
                                         className="error-message"
                                       />
                                     </div>
+
                                     <div className="edit-article-section-bottom">
                                       <Field
                                         type="text"
@@ -932,6 +995,7 @@ const EditArticle = () => {
                                         placeholder="Unesi link poveznice..."
                                       />
                                     </div>
+
                                     <div className="edit-article-bottom-container">
                                       <div className="edit-article-images-container">
                                         {sectionImages &&
@@ -1013,6 +1077,7 @@ const EditArticle = () => {
                       }}
                     />
                   </div>
+
                   <div className="edit-article-gallery-container">
                     <h6>Preostale fotografije na članku:</h6>
                     <div className="edit-article-images-container">
@@ -1042,6 +1107,7 @@ const EditArticle = () => {
                       </div>
                     </div>
                   </div>
+
                   <div className="edit-metatags-wrapper">
                     <div className="edit-metatag-outer-container">
                       <FieldArray
@@ -1099,6 +1165,7 @@ const EditArticle = () => {
                       />
                     </div>
                   </div>
+
                   <div className="edit-article-toggle-container">
                     {selectedCountryId && values.article_type == "1" && (
                       <div className="edit-article-toggle-item">
@@ -1134,6 +1201,7 @@ const EditArticle = () => {
             <p>Loading...</p>
           )}
         </div>
+
         <Modal
           ref={dialogRef}
           toggleDialog={toggleDialog}
@@ -1146,6 +1214,7 @@ const EditArticle = () => {
           setImageWidthValue={setImageWidthValue}
           isAddArticle
         />
+
         {modalInputValue.toString()}
         {imageHeightValue.toString()}
         {imageWidthValue.toString()}

@@ -25,21 +25,19 @@
 
 .airplane-tickets-row-viewport-wrap {
   position: relative;
-  //overflow: visible;
 }
 
-/* ✅ VIEWPORT */
+/* VIEWPORT */
 .airplane-tickets-row-viewport {
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
 
-  padding: 4px 0; /* ✅ flush lijevo/desno */
+  padding: 4px 0;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
 
-  /* ✅ najbitnije za mouse drag + firefox: */
   touch-action: pan-y;
   cursor: grab;
   user-select: none;
@@ -49,20 +47,23 @@
     display: none;
   }
 
+  /* spriječi “image drag” bez da ubiješ klik na linku */
+  img {
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+
   &.is-dragging {
     cursor: grabbing;
     scroll-behavior: auto;
-
-    /* ✅ ključ: dok dragaš, UGASI snap da Chrome ne “skače” */
     scroll-snap-type: none;
 
     .airplane-tickets-row-item {
-      pointer-events: none; /* ✅ linkovi ne smiju kliknuti dok dragaš */
+      pointer-events: none; /* linkovi off samo dok dragaš */
     }
   }
 }
 
-/* ✅ TRACK mora biti flex */
 .airplane-tickets-row-track {
   display: flex;
   gap: 16px;
@@ -77,7 +78,7 @@
   }
 }
 
-/* Arrow buttons unutar slidera */
+/* Arrow buttons */
 .airplane-tickets-row-arrow {
   position: absolute;
   top: 50%;
@@ -87,7 +88,7 @@
   border: 2px solid rgba(43, 172, 130, 0.25);
   background-color: rgba(255, 255, 255, 0.85);
 
-  color: #2bac82; /* ✅ */
+  color: #2bac82;
   font-weight: 900;
 
   border-radius: 999px;
@@ -129,10 +130,8 @@
   font-weight: 600;
 }
 
-/* ✅ Mobile: strelice izvan okvira slidera */
 @media screen and (max-width: 767px) {
   .airplane-tickets-row-viewport-wrap {
-    /* da strelice imaju mjesta “izvan” bez da ih reže layout */
     padding-left: 18px;
     padding-right: 18px;
   }
@@ -143,11 +142,10 @@
   }
 
   .airplane-tickets-row-arrow.left {
-    left: -6px; /* van okvira */
+    left: -6px;
   }
 
   .airplane-tickets-row-arrow.right {
-    right: -6px; /* van okvira */
+    right: -6px;
   }
 }
-

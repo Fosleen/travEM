@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import HorizontalPostItemBig from "../HorizontalPostItemBig/HorizontalPostItemBig";
 import "./AirplaneTicketsCarouselRow.scss";
 
@@ -12,27 +12,29 @@ type Props = {
 };
 
 export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
-  const data = useMemo(() => (items ?? []).slice(0, 6), [items]); // ✅ max 6
+  const data = useMemo(() => (items ?? []).slice(0, 6), [items]);
   const viewportRef = useRef<HTMLDivElement | null>(null);
 
   const GAP = 16;
-  const CLICK_CANCEL_PX = 6; // ako je drag veći od ovog, cancel click
+  const DRAG_THRESHOLD_PX = 10; // malo veće da “micro-move” ne ubije klik
 
   const [isDragging, setIsDragging] = useState(false);
+  const [canLeft, setCanLeft] = useState(false);
+  const [canRight, setCanRight] = useState(false);
+
   const dragRef = useRef({
     active: false,
     pointerId: -1,
     startX: 0,
     startScrollLeft: 0,
     moved: 0,
+    dragging: false,
+    captured: false,
   });
 
   const clickGuardRef = useRef({
-    shouldCancelClick: false,
+    cancelClick: false,
   });
-
-  const [canLeft, setCanLeft] = useState(false);
-  const [canRight, setCanRight] = useState(false);
 
   const getStepPx = () => {
     const v = viewportRef.current;
@@ -88,7 +90,6 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
   const goLeft = () => {
     const v = viewportRef.current;
     if (!v) return;
-
     const step = getStepPx();
     v.scrollBy({ left: -step, behavior: "smooth" });
   };
@@ -96,77 +97,93 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
   const goRight = () => {
     const v = viewportRef.current;
     if (!v) return;
-
     const step = getStepPx();
     v.scrollBy({ left: step, behavior: "smooth" });
   };
 
-  // ✅ CAPTURE faza: hvata pointer prije nego Link/Image krenu u svoje
   const onPointerDownCapture = (e: React.PointerEvent) => {
     const v = viewportRef.current;
     if (!v) return;
-
-    // bitno: spriječi native behavior (selection / image drag)
-    e.preventDefault();
 
     dragRef.current.active = true;
     dragRef.current.pointerId = e.pointerId;
     dragRef.current.startX = e.clientX;
     dragRef.current.startScrollLeft = v.scrollLeft;
     dragRef.current.moved = 0;
+    dragRef.current.dragging = false;
+    dragRef.current.captured = false;
 
-    clickGuardRef.current.shouldCancelClick = false;
+    clickGuardRef.current.cancelClick = false;
 
-    setIsDragging(true);
-
-    // ✅ pointer capture radi i kad izađeš iz elementa
-    v.setPointerCapture(e.pointerId);
+    // ⛔️ NAMJERNO: NE setPointerCapture ovdje.
+    // Capture palimo TEK kad stvarno krenemo draggati.
   };
 
   const onPointerMoveCapture = (e: React.PointerEvent) => {
     const v = viewportRef.current;
     if (!v) return;
-
     if (!dragRef.current.active || e.pointerId !== dragRef.current.pointerId) return;
-
-    // bitno: bez ovoga Firefox često ode u selection/drag mode
-    e.preventDefault();
 
     const dx = e.clientX - dragRef.current.startX;
     dragRef.current.moved = Math.max(dragRef.current.moved, Math.abs(dx));
 
-    if (dragRef.current.moved > CLICK_CANCEL_PX) {
-      clickGuardRef.current.shouldCancelClick = true;
+    // Kad pređe threshold -> to je drag
+    if (!dragRef.current.dragging && dragRef.current.moved > DRAG_THRESHOLD_PX) {
+      dragRef.current.dragging = true;
+      clickGuardRef.current.cancelClick = true;
+
+      setIsDragging(true);
+
+      // ✅ Capture tek sad (kad je drag stvaran)
+      if (!dragRef.current.captured) {
+        try {
+          v.setPointerCapture(e.pointerId);
+          dragRef.current.captured = true;
+        } catch {
+          // ignore - neki browseri mogu bacit error u edge caseovima
+        }
+      }
     }
 
-    // ✅ fluid scroll dok držiš miš
-    v.scrollLeft = dragRef.current.startScrollLeft - dx;
+    if (dragRef.current.dragging) {
+      // spriječi selection i “image drag”
+      e.preventDefault();
+      v.scrollLeft = dragRef.current.startScrollLeft - dx;
+    }
   };
 
-  const endDrag = (e?: React.PointerEvent) => {
+  const endDrag = (e: React.PointerEvent) => {
     const v = viewportRef.current;
     if (!v) return;
-
     if (!dragRef.current.active) return;
 
-    // ako imamo event, spriječi “ghost click”
-    e?.preventDefault();
+    const wasDragging = dragRef.current.dragging;
 
     dragRef.current.active = false;
+    dragRef.current.dragging = false;
 
-    // ✅ tek na kraju snap (i to smooth)
-    snapToNearest();
-
-    // mali delay da se scrollTo pokrene pa tek onda vrati pointer events
-    setTimeout(() => setIsDragging(false), 50);
-  };
-
-  // ✅ ako se desio drag, cancel click na linkovima
-  const onClickCapture = (e: React.MouseEvent) => {
-    if (clickGuardRef.current.shouldCancelClick) {
+    // Ako smo imali drag, ubij ghost click i snap-aj
+    if (wasDragging) {
       e.preventDefault();
       e.stopPropagation();
-      clickGuardRef.current.shouldCancelClick = false;
+
+      snapToNearest();
+
+      // malo vremena da snap krene, pa ugasi state
+      setTimeout(() => setIsDragging(false), 50);
+    } else {
+      // nije bilo draga -> klik mora proći normalno
+      setIsDragging(false);
+    }
+  };
+
+  // Ako je bio drag, cancel click (ali samo tada)
+  const onClickCapture = (e: React.MouseEvent) => {
+    if (clickGuardRef.current.cancelClick) {
+      e.preventDefault();
+      e.stopPropagation();
+      // reset
+      clickGuardRef.current.cancelClick = false;
     }
   };
 
@@ -209,7 +226,7 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
           onPointerCancelCapture={endDrag}
           onLostPointerCapture={endDrag}
           onClickCapture={onClickCapture}
-          onDragStart={(e) => e.preventDefault()} // ✅ blokira native drag slika/linkova
+          onDragStart={(e) => e.preventDefault()}
         >
           <div className="airplane-tickets-row-track">
             {data.map((article: any) => (

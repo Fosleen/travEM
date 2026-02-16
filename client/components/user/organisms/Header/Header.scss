@@ -1,65 +1,3 @@
-/*
-@use "@/utils/theme.scss" as *;
-.header-container {
-  position: relative;
-  .header-top {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-left: 8px;
-    a {
-      padding: 8px 0;
-      position: relative;
-      z-index: 2;
-      display: block;
-
-      img {
-        display: block;
-      }
-    }
-  }
-
-  .header-filter-menu-container {
-    position: absolute;
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
-    left: 0;
-    right: 0;
-    text-align: center;
-  }
-}
-
-@media screen and ($tabletMedium) {
-  .header-container {
-    z-index: 5;
-
-    .header-top {
-      max-width: 1300px;
-      margin: 0 auto;
-      justify-content: start;
-    }
-  }
-}
-
-@media screen and ($desktop) {
-  .header-container {
-    .header-top {
-      padding: 0 24px;
-    }
-  }
-}
-
-@media screen and ($desktopLarge) {
-  .header-container {
-    .header-top {
-      padding: 0;
-    }
-  }
-}
-*/
-
 /* Header.scss */
 @use "@/utils/theme.scss" as *;
 
@@ -76,7 +14,10 @@
     a {
       padding: 8px 0;
       position: relative;
-      z-index: 3000; // logo iznad overlay-a
+
+      /* ✅ DEFAULT: logo ispod search-backdrop (900), pa se zatamni kad se piše */
+      z-index: 800;
+
       display: block;
 
       img {
@@ -85,7 +26,7 @@
     }
   }
 
-  /* Dropdownovi moraju biti iznad overlay-a */
+  /* Dropdownovi moraju biti iznad overlay-a (kad je menu otvoren) */
   .header-filter-menu-container {
     position: absolute;
     width: fit-content;
@@ -95,10 +36,11 @@
     right: 0;
     text-align: center;
 
-    z-index: 3000;
+    /* ✅ DEFAULT: isto ispod search-backdrop, da se zatamni u search modu */
+    z-index: 800;
   }
 
-  /* Overlay: brzo zatamnjenje, bez “teškog” efekta */
+  /* Overlay za dropdown menije (tvoj postojeći) */
   .header-dim-overlay {
     position: fixed;
     inset: 0;
@@ -123,6 +65,17 @@
   }
 }
 
+/* ✅ Kad je dropdown menu otvoren, logo + dropdown content moraju biti iznad header overlay-a */
+.header-container:has(.header-dim-overlay.is-active) {
+  .header-top a {
+    z-index: 3000;
+  }
+
+  .header-filter-menu-container {
+    z-index: 3000;
+  }
+}
+
 @media screen and ($tabletMedium) {
   .header-container {
     z-index: 5;
@@ -150,4 +103,3 @@
     }
   }
 }
-

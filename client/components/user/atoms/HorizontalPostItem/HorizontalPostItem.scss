@@ -6,9 +6,38 @@
   align-items: center;
   gap: 8px;
   border-radius: 8px;
+  text-decoration: none;
+
+  transition: transform 180ms ease, box-shadow 180ms ease,
+    background-color 180ms ease, filter 180ms ease;
+
+  will-change: transform;
 
   &.small {
     background-color: transparent;
+  }
+
+  // 🔥 HOVER ANIMATION
+  &:hover {
+    transform: translateY(-4px) scale(1.015);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+    background-color: rgba(255, 255, 255, 0.35);
+  }
+
+  &.small:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: none;
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  &:hover .horizontal-post-item-image-container img {
+    transform: scale(1.05);
+    filter: contrast(1.05) saturate(1.05);
+  }
+
+  &:hover p {
+    text-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    transform: translateY(-1px);
   }
 
   .horizontal-post-item-image-container {
@@ -16,6 +45,8 @@
     width: 144px;
     height: 100px;
     flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 8px;
 
     &.small {
       width: 124px;
@@ -27,6 +58,8 @@
       height: 100%;
       object-fit: cover;
       border-radius: 8px;
+
+      transition: transform 220ms ease, filter 220ms ease;
     }
   }
 
@@ -38,6 +71,7 @@
       font-size: 16px;
       font-weight: 600;
       line-height: 130%;
+      transition: text-shadow 180ms ease, transform 180ms ease;
 
       &.small {
         font-size: 14px;
@@ -47,6 +81,7 @@
   }
 }
 
+// desktop širina teksta
 @media screen and ($desktop) {
   .horizontal-post-item-container {
     .horizontal-post-item-text-container {
@@ -55,6 +90,23 @@
       p {
         margin-right: 20px;
       }
+    }
+  }
+}
+
+// accessibility
+@media (prefers-reduced-motion: reduce) {
+  .horizontal-post-item-container {
+    transition: none;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    img,
+    p {
+      transition: none;
     }
   }
 }

@@ -282,7 +282,7 @@ const AirplaneTickets = ({
           </>
         }
         text="Praktični vodič za sve što trebaš znati prije nego odeš na svoj prvi let, i sve što možeš očekivati tijekom putovanja."
-        buttonText="Pročitaj vodič"
+        buttonText="Pročitaj vodič ✈︎"
         href="/clanak/356"
       />
 

@@ -71,20 +71,34 @@
   align-items: center;
   gap: 8px;
   margin-left: 16px;
+
   .article-location {
     display: flex;
     align-items: center;
     gap: 8px;
-    text-decoration: underline;
     max-width: 1300px;
+  }
+
+  .article-location-text {
     cursor: pointer;
-    h2 {
-      font-weight: bold;
+
+    &:hover {
+      text-decoration: underline;
     }
-    @media screen and ($desktop) {
+  }
+
+  h2 {
+    font-weight: bold;
+  }
+
+  @media screen and ($desktop) {
+    .article-location {
       margin-left: 0px;
     }
-    @media screen and ($desktopLarge) {
+  }
+
+  @media screen and ($desktopLarge) {
+    .article-location {
       padding: 0;
     }
   }

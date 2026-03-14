@@ -108,7 +108,7 @@ const PopUp = () => {
 
               <div className="newsletter-button-container">
                 <Button primary onClick={handleSubscriptionClick}>
-                  pretplati se
+                  pretplati se ✈︎
                 </Button>
               </div>
             </div>

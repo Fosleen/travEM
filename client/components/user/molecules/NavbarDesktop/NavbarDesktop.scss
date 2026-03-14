@@ -5,9 +5,6 @@
   display: flex;
   justify-content: space-between;
   width: 100%;
-
-  /* Ne dižemo cijeli navbar iznad overlay-a,
-     nego samo lijevi dio (navbar itemi). */
   position: relative;
 }
 
@@ -22,13 +19,10 @@
     gap: 16px;
   }
 
-  /* Lijevi dio (prvi) s itemima mora biti iznad overlay-a */
   &:first-of-type {
     z-index: 3000;
   }
 
-  /* Desni dio (zadnji) sa search + socials treba biti ispod overlay-a
-     da se zatamni kada je menu otvoren */
   &:last-of-type {
     z-index: 1;
   }
@@ -44,28 +38,27 @@
     color: $grey;
     cursor: pointer;
 
-    & svg {
+    svg {
       fill: $grey;
     }
 
     &.dark {
       color: $bg;
 
-      & svg {
+      svg {
         fill: $bg;
       }
     }
 
-    &:hover {
+    &:hover,
+    &.active {
       color: $grey;
       background-color: $bg;
       box-shadow: 0px 0px 6px 2px $limeGreen;
 
-      & svg {
+      svg {
         fill: $grey;
       }
     }
   }
 }
-
-

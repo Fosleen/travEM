@@ -64,10 +64,10 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
                 width={20}
                 height={24}
               />
-              <h4 onClick={handlePlaceClick} className="article-location">
+              <h4 onClick={handlePlaceClick} className="article-location-text">
                 {articleContent.place && `${articleContent.place.name}, `}
               </h4>
-              <h4 onClick={handleCountryClick} className="article-location">
+              <h4 onClick={handleCountryClick} className="article-location-text">
                 {articleContent.country.name}
               </h4>
             </div>
@@ -77,10 +77,8 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
 
       <ArticleTableOfContents article={articleContent} key={articleContent.id} />
 
-      {/* ✅ SENTINEL MORA BITI OVDJE (odmah ispod gornjeg TOC-a) */}
       <div className="toc-dropup-sentinel" />
 
-      {/* DropUp je “floating”, zato ga renderamo ovdje (nije bitno gdje je u DOM-u, ali sentinel je bitan) */}
       <ArticleTableOfContentsDropUp article={articleContent} />
 
       <div className="article-content">
@@ -98,18 +96,20 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
 
         {articleContent.articleTypeId === 1 && (
           <div className="article-location-container">
-            <img
-              src="/images/location.png"
-              alt="location"
-              width={20}
-              height={24}
-            />
-            <h4 onClick={handlePlaceClick} className="article-location">
-              {articleContent.place && `${articleContent.place.name}, `}
-            </h4>
-            <h4 onClick={handleCountryClick} className="article-location">
-              {articleContent.country.name}
-            </h4>
+            <div className="article-location">
+              <img
+                src="/images/location.png"
+                alt="location"
+                width={20}
+                height={24}
+              />
+              <h4 onClick={handlePlaceClick} className="article-location-text">
+                {articleContent.place && `${articleContent.place.name}, `}
+              </h4>
+              <h4 onClick={handleCountryClick} className="article-location-text">
+                {articleContent.country.name}
+              </h4>
+            </div>
           </div>
         )}
       </div>

@@ -14,6 +14,7 @@ const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
   countryName,
 }) => {
   const [isInfoShown, setInfoShown] = useState(false);
+  const [isAnimatingChange, setIsAnimatingChange] = useState(false);
   const [visaInfo, setVisaInfo] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [visaCountries, setVisaCountries] = useState([
@@ -30,8 +31,15 @@ const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
   };
 
   const handleClick = async () => {
+    if (!selectedCountry?.id) return;
+
+    if (isInfoShown) {
+      setIsAnimatingChange(true);
+    }
+
     const response = await checkIfInfoExists(countryId, selectedCountry.id);
     console.log(response);
+
     if (response === true) {
       setVisaInfo({
         documentation: "-",
@@ -41,7 +49,12 @@ const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
     } else {
       setVisaInfo(response);
     }
+
     setInfoShown(true);
+
+    setTimeout(() => {
+      setIsAnimatingChange(false);
+    }, 350);
   };
 
   const fetchData = async () => {
@@ -77,6 +90,7 @@ const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
         height={321}
         alt="passport-image"
       />
+
       <div className="visa-info-text">
         <div className="visa-info-title-container">
           <h2>Provjerite putne isprave</h2>
@@ -95,6 +109,7 @@ const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
             )}
           </span>
         </div>
+
         <div className="dropdown-container">
           <AdvancedDropdown
             images
@@ -104,6 +119,7 @@ const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
             onChange={(value) => setSelectedCountry(value)}
           />
         </div>
+
         <Button
           onClick={() => {
             handleClick();
@@ -111,31 +127,38 @@ const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
           primary
           fitText={false}
         >
-          provjeri
+          provjeri ✈︎
         </Button>
       </div>
-      {isInfoShown && visaInfo && (
-        <div className="visa-info-results">
-          <div className="visa-info-result">
-            <h4>Putna isprava:</h4>
-            <p>{visaInfo.documentation}</p>
-          </div>
-          <div className="visa-info-result">
-            <h4>Putna viza:</h4>
-            <p>
-              {visaInfo.visa_needed == "-"
-                ? "-"
-                : visaInfo.visa_needed
-                ? "Da."
-                : "Ne."}
-            </p>
-          </div>
-          <div className="visa-info-result">
-            <h4>Napomena:</h4>
-            <p>{visaInfo.additional_info}</p>
-          </div>
-        </div>
-      )}
+
+      <div
+        className={`visa-info-results ${
+          isInfoShown && visaInfo ? "visible" : ""
+        } ${isAnimatingChange ? "changing" : ""}`}
+      >
+        {visaInfo && (
+          <>
+            <div className="visa-info-result">
+              <h4>Putna isprava:</h4>
+              <p>{visaInfo.documentation}</p>
+            </div>
+            <div className="visa-info-result">
+              <h4>Putna viza:</h4>
+              <p>
+                {visaInfo.visa_needed == "-"
+                  ? "-"
+                  : visaInfo.visa_needed
+                  ? "Da."
+                  : "Ne."}
+              </p>
+            </div>
+            <div className="visa-info-result">
+              <h4>Napomena:</h4>
+              <p>{visaInfo.additional_info}</p>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 };

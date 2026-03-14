@@ -53,7 +53,6 @@ const AirplaneTicketsPromoCard = ({
             <div className="airplane-tickets-promo-bottom">
               <Link className="airplane-tickets-promo-btn" href={href}>
                 <span>{buttonText}</span>
-                <span className="arrow">→</span>
               </Link>
             </div>
           </div>

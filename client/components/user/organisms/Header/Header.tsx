@@ -73,6 +73,9 @@ const Header: FC<HeaderProps> = ({
             setIsPlaneTicketsMenuShown={setIsPlaneTicketsMenuShown}
             setIsDestinationsMenuShown={setIsDestinationsMenuShown}
             setIsTipsMenuShown={setIsTipsMenuShown}
+            isPlaneTicketsMenuShown={isPlaneTicketsMenuShown}
+            isDestinationsMenuShown={isDestinationsMenuShown}
+            isTipsMenuShown={isTipsMenuShown}
           />
         )}
       </div>
@@ -98,10 +101,11 @@ const Header: FC<HeaderProps> = ({
             setIsDestinationsMenuShown={setIsDestinationsMenuShown}
           />
         )}
-        {isTipsMenuShown && <TipsMenu setIsTipsMenuShown={setIsTipsMenuShown} />}
+        {isTipsMenuShown && (
+          <TipsMenu setIsTipsMenuShown={setIsTipsMenuShown} />
+        )}
       </div>
 
-      {/* Zatamnjenje ekrana dok je otvoren bilo koji dropdown */}
       <div
         className={`header-dim-overlay ${isAnyMenuShown ? "is-active" : ""}`}
       />

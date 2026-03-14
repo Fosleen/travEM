@@ -12,10 +12,16 @@ const NavbarDesktop: FC<{
   setIsPlaneTicketsMenuShown: React.Dispatch<React.SetStateAction<boolean>>;
   setIsDestinationsMenuShown: React.Dispatch<React.SetStateAction<boolean>>;
   setIsTipsMenuShown: React.Dispatch<React.SetStateAction<boolean>>;
+  isPlaneTicketsMenuShown: boolean;
+  isDestinationsMenuShown: boolean;
+  isTipsMenuShown: boolean;
 }> = ({
   setIsPlaneTicketsMenuShown,
   setIsDestinationsMenuShown,
   setIsTipsMenuShown,
+  isPlaneTicketsMenuShown,
+  isDestinationsMenuShown,
+  isTipsMenuShown,
 }) => {
   const pathname = usePathname();
   const router = useRouter();
@@ -46,6 +52,7 @@ const NavbarDesktop: FC<{
   useEffect(() => {
     setIsPlaneTicketsMenuShown(false);
     setIsDestinationsMenuShown(false);
+    setIsTipsMenuShown(false);
   }, [pathname]);
 
   const handleSearchChange = (e: {
@@ -62,19 +69,27 @@ const NavbarDesktop: FC<{
     <div className="navbar-desktop-container">
       <div className="navbar-desktop-inner-container">
         <div
-          className={`navbar-item ${isHomePage ? "dark" : ""}`}
+          className={`navbar-item ${isHomePage ? "dark" : ""} ${
+            isDestinationsMenuShown ? "active" : ""
+          }`}
           onMouseOver={handleDestinationsMouseOver}
         >
           Destinacije <CaretDown size={16} weight="bold" />
         </div>
+
         <div
-          className={`navbar-item ${isHomePage ? "dark" : ""}`}
+          className={`navbar-item ${isHomePage ? "dark" : ""} ${
+            isTipsMenuShown ? "active" : ""
+          }`}
           onMouseOver={handleTipsMouseOver}
         >
           Savjeti <CaretDown size={16} weight="bold" />
         </div>
+
         <div
-          className={`navbar-item ${isHomePage ? "dark" : ""}`}
+          className={`navbar-item ${isHomePage ? "dark" : ""} ${
+            isPlaneTicketsMenuShown ? "active" : ""
+          }`}
           onMouseOver={handlePlaneTicketsMouseOver}
         >
           Aviokarte <CaretDown size={16} weight="bold" />
@@ -90,4 +105,3 @@ const NavbarDesktop: FC<{
 };
 
 export default NavbarDesktop;
-

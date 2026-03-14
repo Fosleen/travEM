@@ -88,6 +88,23 @@
     flex-direction: column;
     gap: 24px;
 
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.35s ease,
+      transform 0.35s ease;
+    pointer-events: none;
+
+    &.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    &.changing {
+      animation: visaInfoRefresh 0.35s ease;
+    }
+
     .visa-info-result {
       h4 {
         font-size: 16px;
@@ -97,6 +114,17 @@
         font-size: 16px;
       }
     }
+  }
+}
+
+@keyframes visaInfoRefresh {
+  0% {
+    opacity: 0.55;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

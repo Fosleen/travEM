@@ -215,7 +215,7 @@ const FAR_AWAY_TICKET_IDS_BY_CITY: Record<string, number[]> = {
   Sarajevo: [],
   Trst: [523],
   Beč: [565],
-  Budimpešta: [],
+  Budimpešta: [568],
   Venecija: [],
   Tuzla: [524],
   "Banja Luka": [],

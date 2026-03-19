@@ -2,6 +2,10 @@
 
 .destination-item-container {
   width: fit-content;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
   background-color: $bg;
   box-shadow: 0 0 8px 2px $green;
   border-radius: 36px;
@@ -28,10 +32,12 @@
     border-radius: 50%;
     width: 36px;
     height: 36px;
+    flex: 0 0 auto;
   }
 
   &.full-width {
     width: 100%;
+    min-width: 0;
   }
 
   &.sights {
@@ -54,10 +60,48 @@
     font-size: 14px;
     color: $grey;
     text-decoration: none;
+    min-width: 0;
+    flex: 1 1 auto;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.1;
   }
 
   img {
     height: 32px;
+  }
+}
+
+/* 🔥 range 371–392 px */
+@media screen and (min-width: 371px) and (max-width: 392px) {
+  .destination-item-container.flag p {
+    font-size: 13.25px;
+    line-height: 1.08;
+  }
+}
+
+/* 🔥 range 331–344 px */
+@media screen and (min-width: 331px) and (max-width: 344px) {
+  .destination-item-container.flag p {
+    font-size: 12.6px;
+    line-height: 1.06;
+  }
+}
+
+/* manji mobiteli */
+@media screen and (max-width: 370px) {
+  .destination-item-container.flag p {
+    font-size: 13px;
+    line-height: 1.1;
+  }
+}
+
+/* baš uski */
+@media screen and (max-width: 330px) {
+  .destination-item-container.flag p {
+    font-size: 12.5px;
+    line-height: 1.05;
   }
 }
 

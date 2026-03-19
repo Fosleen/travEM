@@ -6,18 +6,23 @@
   background-color: $bg;
 
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 8px;
 
   display: flex;
   flex-direction: column;
   gap: 16px;
 
-  /* ✅ FIX: neka menu bude iznad svih badge/flag elemenata */
   position: relative;
   z-index: 9999;
-
-  /* ✅ dodatno osiguranje: izolira stacking context (super protiv "probijanja") */
   isolation: isolate;
+}
+
+.destinations-menu-container > * {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 @media screen and ($tabletMedium) {

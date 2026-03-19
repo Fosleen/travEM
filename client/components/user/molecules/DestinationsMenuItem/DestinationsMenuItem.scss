@@ -5,37 +5,42 @@
   gap: 8px;
   flex-direction: column;
   z-index: 5;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 
   .destinations-menu-item-header {
     border-radius: 16px;
+    min-width: 0;
 
     a {
       width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
 
       padding: 6px 10px;
       border-radius: 16px;
 
-      /* default stanje (desktop) */
       box-shadow: 0 0 0 0 rgba(45, 165, 128, 0);
       transition: box-shadow 120ms ease-out, transform 120ms ease-out;
       will-change: box-shadow, transform;
 
-      /* CaretRight (svg) – default */
       svg {
+        flex: 0 0 auto;
         transition:
           transform 120ms ease-out,
           filter 120ms ease-out;
-
-        /* mali delay – dolazi nakon obruba */
         transition-delay: 60ms;
         will-change: transform, filter;
       }
     }
 
-    /* DESKTOP hover/focus */
     a:hover,
     a:focus-visible {
       box-shadow:
@@ -64,17 +69,42 @@
     h2 {
       text-align: left;
       font-size: 18px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
   }
 
   .destinations-menu-items {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 8px;
+    min-width: 0;
   }
 }
 
-/* MOBITEL + TABLET: header je STALNO neon (da izgleda kao gumb) */
+/* uži mobiteli, ali još uvijek 2 stupca */
+@media screen and (max-width: 370px) {
+  .destinations-menu-item-container {
+    .destinations-menu-items {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 6px;
+    }
+  }
+}
+
+/* baš jako uski mobiteli */
+@media screen and (max-width: 330px) {
+  .destinations-menu-item-container {
+    .destinations-menu-items {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 6px;
+    }
+  }
+}
+
+/* MOBITEL + TABLET: header je STALNO neon */
 @media screen and (max-width: 1023px) {
   .destinations-menu-item-container {
     .destinations-menu-item-header {
@@ -85,15 +115,6 @@
           0 0 14px rgba(45, 165, 128, 0.25);
 
         transform: translateY(-1px);
-
-        /*
-        svg {
-          transform: translateX(4px);
-          filter:
-            drop-shadow(0 0 4px rgba(45, 165, 128, 0.6))
-            drop-shadow(0 0 6px rgba(45, 165, 128, 0.35));
-        }
-        */
       }
     }
   }
@@ -108,7 +129,7 @@
     }
 
     .destinations-menu-items {
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
     }
   }
 }

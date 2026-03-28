@@ -8,6 +8,7 @@ import Header from "@/components/user/organisms/Header";
 import Footer from "@/components/user/molecules/Footer";
 import Newsletter from "@/components/user/molecules/Newsletter";
 import ScrollToTop from "@/components/atoms/ScrollToTop";
+import PopUp from "@/components/user/molecules/PopUp";
 import { ArticleProvider } from "@/context/ArticleContext";
 import "../../components/user/templates/UserViewLayout.scss";
 import { PlaneTicketsProvider } from "@/context/PlaneTicketsMenuContext";
@@ -37,6 +38,7 @@ export default function UserViewLayout({
           <CountryProvider>
             <main className="user-view-layout-container">
               <ScrollToTop />
+              <PopUp />
               <Header
                 isPlaneTicketsMenuShown={isPlaneTicketsMenuShown}
                 setIsPlaneTicketsMenuShown={setIsPlaneTicketsMenuShown}

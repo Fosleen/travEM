@@ -147,22 +147,23 @@ const DestinationsMenuItem: FC<{
                 const countrySlug = slugify(el.name);
 
                 return (
-                  <div className="destination-country-block" key={index}>
-                    <div
-                      className={`destination-country-group-surface ${
-                        places.length > 0
-                          ? "destination-country-group-surface--with-cities"
-                          : ""
-                      }`}
-                    >
-                      <DestinationItem
-                        filterMenuItem
-                        name={el.name}
-                        iconUrl={el.flag_image_url}
-                      />
+                  <div
+                    className={`destination-country-block ${
+                      places.length > 0
+                        ? "destination-country-block--with-cities"
+                        : "destination-country-block--no-cities"
+                    }`}
+                    key={index}
+                  >
+                    {places.length > 0 ? (
+                      <div className="destination-country-group-surface destination-country-group-surface--with-cities">
+                        <DestinationItem
+                          filterMenuItem
+                          name={el.name}
+                          iconUrl={el.flag_image_url}
+                        />
 
-                      <div className="destination-city-slot">
-                        {places.length > 0 ? (
+                        <div className="destination-city-slot">
                           <div className="destination-city-chips">
                             {places.map((place: { id: number; name: string }) => (
                               <Link
@@ -176,11 +177,15 @@ const DestinationsMenuItem: FC<{
                               </Link>
                             ))}
                           </div>
-                        ) : (
-                          <div className="destination-city-placeholder" />
-                        )}
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <DestinationItem
+                        filterMenuItem
+                        name={el.name}
+                        iconUrl={el.flag_image_url}
+                      />
+                    )}
                   </div>
                 );
               }

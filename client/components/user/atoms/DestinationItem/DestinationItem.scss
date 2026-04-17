@@ -2,7 +2,6 @@
 
 .destination-item-container {
   width: fit-content;
-  //max-width: 100%;
   min-width: 0;
   box-sizing: border-box;
 
@@ -25,6 +24,7 @@
     box-shadow: none;
     background: $greyMiddle;
     justify-content: flex-start;
+    align-items: center;
     text-align: left;
   }
 
@@ -38,6 +38,14 @@
   &.full-width {
     width: 100%;
     min-width: 0;
+  }
+
+  /* ključni fix */
+  &.flag.full-width {
+    width: 100%;
+    min-width: 0;
+    justify-content: flex-start;
+    text-align: left;
   }
 
   &.sights {
@@ -63,23 +71,21 @@
     min-width: 0;
     flex: 1 1 auto;
     line-height: 1.1;
+    text-align: left;
   }
 
-  /* obični itemi mogu ostati u jednom redu */
   &:not(.flag) p {
     white-space: nowrap;
   }
 
-  /* ključni fix za države u dropdownu */
   &.flag p {
     white-space: normal;
     overflow: visible;
     text-overflow: unset;
-
-    /* lomi samo na razmacima, ne unutar riječi */
     word-break: normal;
     overflow-wrap: normal;
     hyphens: none;
+    text-align: left;
   }
 
   img {
@@ -140,9 +146,18 @@
 
 @media screen and ($desktop) {
   .destination-item-container {
-    &.full-width {
+    /* obični full-width itemi mogu ostati compact */
+    &.full-width:not(.flag) {
       width: fit-content;
       justify-content: center;
+    }
+
+    /* ali flag itemi moraju uvijek ostati lijevo */
+    &.flag.full-width {
+      width: 100%;
+      min-width: 0;
+      justify-content: flex-start;
+      text-align: left;
     }
   }
 }

@@ -31,7 +31,7 @@ export type PlaceClimate = {
 
 export const BEST_TIME_PLACES_DATA: PlaceClimate[] = [
     {
-    slug: "budimpešta",
+    slug: "budimpesta",
     title: "Najbolje vrijeme za posjet Budimpešti",
     subtitle: "Prosjeci temperature i oborine po mjesecima",
     note: "Najugodnije vrijeme za posjet: proljeće i jesen",
@@ -136,7 +136,7 @@ export const BEST_TIME_PLACES_DATA: PlaceClimate[] = [
   },
 
   {
-    slug: "varaždin",
+    slug: "varazdin",
     title: "Najbolje vrijeme za posjet Varaždinu",
     subtitle: "Umjereno toplo ljeto i hladne zime",
     note: "Proljeće i jesen su vrlo ugodni mjeseci",
@@ -197,6 +197,27 @@ export const BEST_TIME_PLACES_DATA: PlaceClimate[] = [
         { month: "dec", tempC: 2,  rainMm: 95 },
     ],
   },
+
+  {
+  slug: "prag",
+  title: "Najbolje vrijeme za posjet Pragu",
+  subtitle: "Umjerena klima s toplim ljetima i hladnim zimama",
+  note: "Proljeće i rana jesen idealni su za istraživanje grada.",
+  months: [
+      { month: "jan", tempC: 1, rainMm: 25 },
+      { month: "feb", tempC: 2, rainMm: 30 },
+      { month: "mar", tempC: 6, rainMm: 35 },
+      { month: "apr", tempC: 10, rainMm: 40 },
+      { month: "may", tempC: 15, rainMm: 70 },
+      { month: "jun", tempC: 18, rainMm: 75 },
+      { month: "jul", tempC: 20, rainMm: 85 },
+      { month: "aug", tempC: 20, rainMm: 70 },
+      { month: "sep", tempC: 16, rainMm: 40 },
+      { month: "oct", tempC: 11, rainMm: 35 },
+      { month: "nov", tempC: 6, rainMm: 30 },
+      { month: "dec", tempC: 2, rainMm: 25 },
+  ],
+},
   
   // Dodavanje dalje gradova ovako:
   // {

@@ -2,7 +2,7 @@
 
 .destination-item-container {
   width: fit-content;
-  max-width: 100%;
+  //max-width: 100%;
   min-width: 0;
   box-sizing: border-box;
 
@@ -62,10 +62,24 @@
     text-decoration: none;
     min-width: 0;
     flex: 1 1 auto;
-    white-space: normal;
-    overflow-wrap: anywhere;
-    word-break: break-word;
     line-height: 1.1;
+  }
+
+  /* obični itemi mogu ostati u jednom redu */
+  &:not(.flag) p {
+    white-space: nowrap;
+  }
+
+  /* ključni fix za države u dropdownu */
+  &.flag p {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+
+    /* lomi samo na razmacima, ne unutar riječi */
+    word-break: normal;
+    overflow-wrap: normal;
+    hyphens: none;
   }
 
   img {

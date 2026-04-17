@@ -113,7 +113,7 @@ const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
         <div className="dropdown-container">
           <AdvancedDropdown
             images
-            hardcodedValue={"Odaberi državu..."}
+            hardcodedValue={"Odaberi svoju državu..."}
             options={visaCountries}
             value={selectedCountry}
             onChange={(value) => setSelectedCountry(value)}

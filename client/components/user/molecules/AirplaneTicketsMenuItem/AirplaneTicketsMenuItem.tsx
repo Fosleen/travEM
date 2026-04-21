@@ -40,8 +40,8 @@ const AirplaneTicketsMenuItem: FC<AirplaneTicketsMenuItemProps> = ({
         {homepagePlaneTicketsContextData
           ?.filter((airportCity) =>
             isCroatia
-              ? airportCity.is_in_croatia == true
-              : airportCity.is_in_croatia != true
+              ? airportCity.is_in_croatia === true
+              : airportCity.is_in_croatia !== true
           )
           .map((airportCity) => (
             <DestinationItem

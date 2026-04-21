@@ -22,21 +22,24 @@ const HomepageBanner: FC<{
           style={{ objectFit: "cover" }}
         />
       </div>
+
       <div className="homepage-banner-wrapper">
         <div className="homepage-banner-left">
           <h4>{homepageContent.banner_small_text}</h4>
           <h2>{homepageContent.banner_title}</h2>
           <p>{homepageContent.banner_description}</p>
+
           <Button
             primary
             fitText={false}
             onClick={() => {
-              window.open(homepageContent.button_url, "_blank");
+              window.location.href = homepageContent.button_url;
             }}
           >
             {homepageContent.button_text}
           </Button>
         </div>
+
         <div className="homepage-banner-right">
           <div className="homepage-banner-right-content">
             {homepageArticles.map((el, index) => (

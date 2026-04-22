@@ -10,9 +10,14 @@
     margin: 0 auto;
     width: 100%;
     padding: 0 16px;
+    margin-bottom: 40px; // <-- KLJUČNO (razmak ispod videa)
+    
 
     h2 {
       color: $greyMiddleDark;
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0;
     }
   }
 
@@ -27,6 +32,7 @@
       font-size: 24px;
       font-weight: 700;
       color: $greyMiddleDark;
+      margin: 0;
     }
   }
 }
@@ -39,6 +45,10 @@
     .destination-place-posts-container {
       max-width: 1300px;
       margin: 0 auto;
+    }
+
+    .destination-place-videos-container {
+      margin-bottom: 24px; // malo veći razmak na desktopu
     }
   }
 }

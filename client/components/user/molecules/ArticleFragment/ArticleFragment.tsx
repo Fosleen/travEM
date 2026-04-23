@@ -1,21 +1,30 @@
 // client/components/user/molecules/ArticleFragment/ArticleFragment.tsx
 // @ts-nocheck
 import "./ArticleFragment.scss";
-import { FC } from "react";
+import { FC, useMemo, useState } from "react";
 import { ArticleProps } from "../../../../common/types";
 import DOMPurify from "isomorphic-dompurify";
 import Image from "next/image";
+import Lightbox from "yet-another-react-lightbox";
 
 const ArticleFragment: FC<ArticleProps> = ({
   section = {},
   article = {},
   index,
 }) => {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
   const sectionId = `odlomak-${index}`;
 
-  const images = section?.section_images || [];
-  const hasOne = images?.length === 1;
-  const hasTwo = images?.length === 2;
+  const images = useMemo(
+    () => (section?.section_images || []).filter((image) => image?.url?.trim?.()),
+    [section?.section_images]
+  );
+
+  const hasOne = images.length === 1;
+  const hasTwo = images.length === 2;
+  const hasMultipleImages = images.length > 1;
 
   const iconUrl = section?.section_icon?.url?.trim?.() || "";
   const hasIcon = Boolean(iconUrl);
@@ -29,13 +38,21 @@ const ArticleFragment: FC<ArticleProps> = ({
 
   const hasVideo = Boolean(article?.video?.url?.trim());
 
-  // Ako u sekciji stvarno nema ništa, nemoj renderati wrapper (da nema praznog gap-a između fragmenata)
   const hasAnything = hasTitle || hasHtmlContent || hasOne || hasTwo || hasVideo;
   if (!hasAnything) return null;
 
+  const lightboxSlides = images.map((image) => ({
+    src: image.url.trim(),
+    alt: image.alt || "Article image",
+  }));
+
+  const openLightbox = (clickedIndex: number) => {
+    setLightboxIndex(clickedIndex);
+    setLightboxOpen(true);
+  };
+
   return (
     <div className="article-wrapper" id={sectionId}>
-      {/* Title (H2 ako ima ikonu, inače H3) */}
       {hasTitle &&
         (hasIcon ? (
           <div className="article-section-title article-section-title--with-icon">
@@ -59,20 +76,28 @@ const ArticleFragment: FC<ArticleProps> = ({
 
       {hasOne && (
         <div className="article-fragment-image-wrapper">
-          <Image
-            alt={images[0]?.alt || "Article image"}
-            src={images[0]?.url?.trim()}
-            width={images[0]?.width || 1200}
-            height={images[0]?.height || 800}
-            sizes="(max-width: 768px) 100vw, (max-width: 1300px) 90vw, 900px"
-            className="article-fragment-image"
-          />
+          <div
+            className="article-fragment-image-clickable"
+            onClick={() => openLightbox(0)}
+          >
+            <Image
+              alt={images[0]?.alt || "Article image"}
+              src={images[0]?.url?.trim()}
+              width={images[0]?.width || 1200}
+              height={images[0]?.height || 800}
+              sizes="(max-width: 768px) 100vw, (max-width: 1300px) 90vw, 900px"
+              className="article-fragment-image"
+            />
+          </div>
         </div>
       )}
 
       {hasTwo && (
         <div className="article-fragment-images-wrapper">
-          <div className="article-fragment-image-frame">
+          <div
+            className="article-fragment-image-frame article-fragment-image-frame--clickable"
+            onClick={() => openLightbox(0)}
+          >
             <Image
               alt={images[0]?.alt || "Article image"}
               src={images[0]?.url?.trim()}
@@ -83,7 +108,10 @@ const ArticleFragment: FC<ArticleProps> = ({
             />
           </div>
 
-          <div className="article-fragment-image-frame">
+          <div
+            className="article-fragment-image-frame article-fragment-image-frame--clickable"
+            onClick={() => openLightbox(1)}
+          >
             <Image
               alt={images[1]?.alt || "Article image"}
               src={images[1]?.url?.trim()}
@@ -107,6 +135,25 @@ const ArticleFragment: FC<ArticleProps> = ({
             allowFullScreen
           />
         </div>
+      )}
+
+      {lightboxSlides.length > 0 && (
+        <Lightbox
+          open={lightboxOpen}
+          close={() => setLightboxOpen(false)}
+          index={lightboxIndex}
+          slides={lightboxSlides}
+          controller={{
+            closeOnBackdropClick: true,
+          }}
+          carousel={{
+            finite: !hasMultipleImages,
+          }}
+          render={{
+            buttonPrev: hasMultipleImages ? undefined : () => null,
+            buttonNext: hasMultipleImages ? undefined : () => null,
+          }}
+        />
       )}
     </div>
   );

@@ -8,7 +8,7 @@ import ArticleTableOfContents from "@/components/user/molecules/ArticleTableOfCo
 import "./Article.scss";
 import ArticleReadMore from "@/components/user/atoms/ArticleReadMore";
 import CountryPlaces from "@/components/user/molecules/CountryPlaces";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import RecommendedPosts from "@/components/user/molecules/RecommendedPosts";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -16,11 +16,19 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 
 import ArticleTableOfContentsDropUp from "@/components/user/molecules/ArticleTableOfContentsDropUp/ArticleTableOfContentsDropUp";
+import ArticleNewsletterCallToAction from "@/components/user/molecules/ArticleNewsletterCallToAction/ArticleNewsletterCallToAction";
 
 interface ArticleProps {
   initialArticle: any;
   initialCountryPlaces: any[];
 }
+
+const getNewsletterInsertIndex = (sectionsLength: number) => {
+  if (sectionsLength <= 0) return -1;
+  if (sectionsLength <= 4) return 1;
+  if (sectionsLength <= 7) return 2;
+  return 3;
+};
 
 const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
   const router = useRouter();
@@ -42,6 +50,10 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
   const galleryImages = articleContent?.gallery_images?.filter(
     (image) => image.url
   );
+
+  const newsletterInsertIndex = useMemo(() => {
+    return getNewsletterInsertIndex(articleContent?.sections?.length || 0);
+  }, [articleContent?.sections?.length]);
 
   const openLightbox = (index: number) => {
     setLightboxIndex(index);
@@ -86,6 +98,10 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
           <React.Fragment key={index}>
             <ArticleFragment section={section} index={index} />
             {section.link_title !== "" && <ArticleReadMore section={section} />}
+
+            {index === newsletterInsertIndex && (
+              <ArticleNewsletterCallToAction />
+            )}
           </React.Fragment>
         ))}
         <ArticleFragment article={articleContent} />
@@ -158,7 +174,10 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
       )}
 
       <div className="article-connected-articles-wrapper">
-        <RecommendedPosts id={articleContent.id} type={articleContent.articleTypeId} />
+        <RecommendedPosts
+          id={articleContent.id}
+          type={articleContent.articleTypeId}
+        />
       </div>
     </div>
   );

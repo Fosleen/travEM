@@ -9,22 +9,18 @@
   width: 100%;
   max-width: 900px;
 
-  /* ===== Titles ===== */
-
-  /* default h3 (kad nema ikone) */
   .article-section-title--default {
     font-weight: 800;
     font-size: 24px;
     color: $grey;
-    margin: 0; /* da bude konzistentno */
+    margin: 0;
   }
 
-  /* wrapper za title s ikonom */
   .article-section-title--with-icon {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin: 0; /* bitno jer nije h tag */
+    margin: 0;
   }
 
   .article-section-title__icon {
@@ -40,7 +36,6 @@
     }
   }
 
-  /* h2 kad ima ikonu */
   .article-section-title__text {
     font-weight: 900;
     font-size: 30px;
@@ -49,14 +44,11 @@
     margin: 0;
   }
 
-  /* malo manji h2 na mobu highlighting je i dalje tu */
   @media screen and (max-width: 520px) {
     .article-section-title__text {
       font-size: 26px;
     }
   }
-
-  /* ===== Content ===== */
 
   .article-html-content {
     display: flex;
@@ -152,20 +144,31 @@
   }
 }
 
-/* 1 slika - bez cropanja */
 .article-fragment-image-wrapper {
   width: 100%;
   max-width: 900px;
+
+  .article-fragment-image-clickable {
+    cursor: zoom-in;
+    border-radius: 8px;
+    overflow: hidden;
+  }
 
   .article-fragment-image {
     display: block;
     width: 100%;
     height: auto;
     border-radius: 8px;
+    transition: transform 0.3s ease;
+  }
+
+  .article-fragment-image-clickable:hover {
+    .article-fragment-image {
+      transform: scale(1.015);
+    }
   }
 }
 
-/* 2 slike - ALWAYS grid + iste visine (crop) */
 .article-fragment-images-wrapper {
   width: 100%;
   max-width: 900px;
@@ -179,25 +182,32 @@
   }
 }
 
-/* “frame” koji definira visinu (isti aspect za oba) */
 .article-fragment-image-frame {
   width: 100%;
   border-radius: 8px;
   overflow: hidden;
-
   aspect-ratio: 4 / 5;
-
   background: rgba(0, 0, 0, 0.02);
+
+  &.article-fragment-image-frame--clickable {
+    cursor: zoom-in;
+  }
 }
 
-/* slika popuni frame i crop-a višak */
 .article-fragment-image--cover {
   width: 100%;
   height: 100%;
   display: block;
-  border-radius: 0; /* frame već ima radius */
+  border-radius: 0;
   object-fit: cover;
   object-position: center;
+  transition: transform 0.3s ease;
+}
+
+.article-fragment-image-frame--clickable:hover {
+  .article-fragment-image--cover {
+    transform: scale(1.015);
+  }
 }
 
 .article-fragment-video-wrapper {

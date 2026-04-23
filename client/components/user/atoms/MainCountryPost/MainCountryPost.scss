@@ -62,36 +62,31 @@
       }
     }
 
-    /* ✅ IKONA - FIXIRANA POZICIJA I VELIČINA */
     .main-country-icon-container {
       position: absolute;
       left: 50%;
-      bottom: 88px;
+      bottom: 92px;
       transform: translateX(-50%);
       pointer-events: none;
 
       .main-country-icon-circle {
-        width: 100px;
-        height: 100px;
-        min-width: 100px;
-        min-height: 100px;
-
+        width: 84px;
+        height: 84px;
+        min-width: 84px;
+        min-height: 84px;
         background: $bg;
         border-radius: 50%;
-        padding: 8px;
-
+        padding: 7px;
         display: flex;
         justify-content: center;
         align-items: center;
-
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
-
         transform: translateY(0) scale(1);
         transition: transform 0.35s ease, box-shadow 0.35s ease;
 
         img {
-          width: 36px;
-          height: 36px;
+          width: 30px;
+          height: 30px;
           transition: transform 0.35s ease;
         }
       }
@@ -116,6 +111,34 @@
   }
 }
 
+@media screen and (max-width: 420px) {
+  .main-country-post-container {
+    .main-country-top-layer {
+      .main-country-icon-container {
+        bottom: 68px;
+
+        .main-country-icon-circle {
+          width: 78px;
+          height: 78px;
+          min-width: 78px;
+          min-height: 78px;
+          padding: 6px;
+
+          img {
+            width: 28px;
+            height: 28px;
+          }
+        }
+      }
+
+      .main-country-post-text-container {
+        font-size: 18px;
+        padding: 20px 14px;
+      }
+    }
+  }
+}
+
 /* TABLET */
 @media screen and ($tabletMedium) {
   .main-country-post-container {
@@ -128,17 +151,18 @@
         height: calc(100% - 120px);
       }
 
-      /* ✅ ISTA IKONA, NEMA SCALE-A */
       .main-country-icon-container {
         bottom: 88px;
 
         .main-country-icon-circle {
           width: 80px;
           height: 80px;
+          min-width: 80px;
+          min-height: 80px;
 
           img {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
           }
         }
       }
@@ -156,6 +180,21 @@
 @media screen and ($desktop) {
   .main-country-post-container {
     .main-country-top-layer {
+      .main-country-icon-container {
+        .main-country-icon-circle {
+          width: 100px;
+          height: 100px;
+          min-width: 100px;
+          min-height: 100px;
+          padding: 8px;
+
+          img {
+            width: 36px;
+            height: 36px;
+          }
+        }
+      }
+
       .main-country-post-text-container {
         font-size: 24px;
       }

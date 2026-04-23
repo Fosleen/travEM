@@ -1,15 +1,13 @@
-// client/components/user/molecules/PopUp/PopUp.tsx
-
 // @ts-nocheck
 import { useEffect, useMemo, useState } from "react";
 import Input from "../../../atoms/Input";
 import "./PopUp.scss";
-import Button from "../../../atoms/Button";
 import { notifyFailure, notifyInfo } from "../../../atoms/Toast/Toast";
 import { addSubscriber } from "../../../../utils/subscribers";
 import travemLogo from "/images/travem-logo-hero.webp";
 import popUpBg from "/images/popupbg.webp";
 import { X } from "@phosphor-icons/react";
+import NewsletterSubmitButton from "../../atoms/NewsletterSubmitButton/NewsletterSubmitButton";
 
 import {
   COMMON_DOMAINS,
@@ -22,6 +20,7 @@ const PopUp = () => {
   const [email, setEmail] = useState("");
   const [showPopup, setShowPopup] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [animateTrigger, setAnimateTrigger] = useState(0);
 
   const commonDomains = useMemo(() => COMMON_DOMAINS, []);
 
@@ -56,6 +55,8 @@ const PopUp = () => {
       notifyFailure("Molimo unesite valjanu email adresu");
       return;
     }
+
+    setAnimateTrigger((prev) => prev + 1);
 
     const suggestion = suggestEmailCorrection(normalized, commonDomains);
     const finalEmail = suggestion ?? normalized;
@@ -92,7 +93,7 @@ const PopUp = () => {
             <h2>Pretplati se na naš newsletter!</h2>
             <p>
               Pronađi najljepše destinacije, skrivene savjete i ekskluzivne
-              ponude - direktno u svom inboxu.
+              ponude direktno u svom inboxu.
             </p>
 
             <div className="newsletter-actions">
@@ -107,9 +108,11 @@ const PopUp = () => {
               </div>
 
               <div className="newsletter-button-container">
-                <Button primary onClick={handleSubscriptionClick}>
-                  pretplati se ✈︎
-                </Button>
+                <NewsletterSubmitButton
+                  onClick={handleSubscriptionClick}
+                  animateTrigger={animateTrigger}
+                  text="pretplati se"
+                />
               </div>
             </div>
           </div>

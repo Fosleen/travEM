@@ -1,6 +1,3 @@
-// client/components/user/molecules/Newsletter/Newsletter.tsx
-
-import Button from "../../../atoms/Button";
 import Input from "../../../atoms/Input";
 import "./Newsletter.scss";
 import NewsletterImage from "../../atoms/NewsletterImage";
@@ -8,6 +5,7 @@ import { useMemo, useState } from "react";
 import { notifyFailure, notifyInfo } from "../../../atoms/Toast/Toast";
 import { addSubscriber } from "../../../../utils/subscribers";
 import Image from "next/image";
+import NewsletterSubmitButton from "../../atoms/NewsletterSubmitButton/NewsletterSubmitButton";
 
 import {
   COMMON_DOMAINS,
@@ -18,8 +16,8 @@ import {
 
 const Newsletter = () => {
   const [email, setEmail] = useState("");
+  const [animateTrigger, setAnimateTrigger] = useState(0);
 
-  // memo samo da ne radimo novu referencu bezveze
   const commonDomains = useMemo(() => COMMON_DOMAINS, []);
 
   const handleSubscriptionClick = async () => {
@@ -34,6 +32,8 @@ const Newsletter = () => {
       notifyFailure("Molimo unesite valjanu email adresu");
       return;
     }
+
+    setAnimateTrigger((prev) => prev + 1);
 
     const suggestion = suggestEmailCorrection(normalized, commonDomains);
     const finalEmail = suggestion ?? normalized;
@@ -86,7 +86,8 @@ const Newsletter = () => {
           <div className="newsletter-content-text">
             <h3>Pridruži nam se</h3>
             <p>
-              Inspiriraj se. Primaj popuste na letove. Prvi saznaj sve savjete.
+              Besplatno se pretplati i primaj vodiče, savjete, obavijesti i
+              povoljne aviokarte direktno na svoju e-mail adresu.
             </p>
 
             <div className="newsletter-actions">
@@ -101,9 +102,11 @@ const Newsletter = () => {
               </div>
 
               <div className="newsletter-button-container">
-                <Button primary onClick={handleSubscriptionClick}>
-                  pretplati se ✈︎
-                </Button>
+                <NewsletterSubmitButton
+                  onClick={handleSubscriptionClick}
+                  animateTrigger={animateTrigger}
+                  text="pretplati se"
+                />
               </div>
             </div>
           </div>

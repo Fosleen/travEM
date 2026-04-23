@@ -6,72 +6,93 @@
   display: inline-block;
   height: 100%;
   width: 100%;
+  text-decoration: none;
+  transform: translateY(0);
+  transition: transform 0.35s ease;
 
   .main-country-post-bg-image-container {
+    position: relative;
     width: 100%;
     height: 256px;
-    filter: blur(4);
-    box-shadow: 0 4px 4px rgba($color: #000000, $alpha: 0.25);
     border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    z-index: 1;
 
     img {
       object-fit: cover;
       height: 100%;
       width: 100%;
       border-radius: 12px;
+      filter: blur(4px);
+      transform: scale(1);
+      transition: transform 0.5s ease;
     }
 
     &::before {
       content: "";
-      display: block;
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(256, 256, 256, 0.85);
+      inset: 0;
+      background-color: rgba(255, 255, 255, 0.85);
       border-radius: 12px;
+      z-index: 1;
+      pointer-events: none;
+      transition: background-color 0.3s ease;
     }
   }
 
   .main-country-top-layer {
     position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
+    inset: 0;
+    z-index: 2;
 
     .main-country-post-top-image-container {
-      height: calc(256px - 108px); //72
-      box-shadow: 0 4px 4px rgba($color: #000000, $alpha: 0.25);
+      height: calc(256px - 108px);
       border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
 
       img {
         object-fit: cover;
         height: 100%;
         width: 100%;
         border-radius: 12px;
+        transition: transform 0.5s ease;
       }
     }
 
+    /* ✅ IKONA - FIXIRANA POZICIJA I VELIČINA */
     .main-country-icon-container {
       position: absolute;
-      display: flex;
-      justify-content: center;
-      width: 100%;
-      bottom: 88px; //48
+      left: 50%;
+      bottom: 88px;
+      transform: translateX(-50%);
+      pointer-events: none;
 
       .main-country-icon-circle {
+        width: 100px;
+        height: 100px;
+        min-width: 100px;
+        min-height: 100px;
+
         background: $bg;
         border-radius: 50%;
-        padding: 4px;
+        padding: 8px;
+
         display: flex;
         justify-content: center;
         align-items: center;
 
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+
+        transform: translateY(0) scale(1);
+        transition: transform 0.35s ease, box-shadow 0.35s ease;
+
         img {
           width: 36px;
           height: 36px;
+          transition: transform 0.35s ease;
         }
       }
     }
@@ -80,7 +101,7 @@
       position: absolute;
       bottom: 0;
       width: 100%;
-      height: 104px; //72
+      height: 104px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -89,10 +110,13 @@
       font-size: 20px;
       text-align: center;
       color: $greyMiddleDark;
+      transform: translateY(0);
+      transition: transform 0.3s ease, color 0.3s ease;
     }
   }
 }
 
+/* TABLET */
 @media screen and ($tabletMedium) {
   .main-country-post-container {
     .main-country-post-bg-image-container {
@@ -104,15 +128,17 @@
         height: calc(100% - 120px);
       }
 
+      /* ✅ ISTA IKONA, NEMA SCALE-A */
       .main-country-icon-container {
-        bottom: 80px;
+        bottom: 88px;
 
         .main-country-icon-circle {
-          padding: 8px;
+          width: 80px;
+          height: 80px;
 
           img {
-            width: 72px;
-            height: 72px;
+            width: 36px;
+            height: 36px;
           }
         }
       }
@@ -126,11 +152,55 @@
   }
 }
 
+/* DESKTOP */
 @media screen and ($desktop) {
   .main-country-post-container {
     .main-country-top-layer {
       .main-country-post-text-container {
         font-size: 24px;
+      }
+    }
+
+    &:hover,
+    &:focus-visible {
+      transform: translateY(-8px);
+
+      .main-country-post-bg-image-container {
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.16);
+
+        img {
+          transform: scale(1.03);
+        }
+
+        &::before {
+          background-color: rgba(255, 255, 255, 0.75);
+        }
+      }
+
+      .main-country-top-layer {
+        .main-country-post-top-image-container {
+          transform: translateY(-4px);
+          box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+
+          img {
+            transform: scale(1.05);
+          }
+        }
+
+        .main-country-icon-container {
+          .main-country-icon-circle {
+            transform: translateY(-6px) scale(1.08);
+
+            img {
+              transform: rotate(6deg) scale(1.1);
+            }
+          }
+        }
+
+        .main-country-post-text-container {
+          transform: translateY(-3px);
+          color: $green;
+        }
       }
     }
   }

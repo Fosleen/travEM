@@ -1,12 +1,62 @@
+"use client";
+
 import Link from "next/link";
 import "./MainCountryPost.scss";
 import Image from "next/image";
+import { useRef } from "react";
+import Lottie, { type LottieRefCurrentProps } from "lottie-react";
+import mainPostIconAnimation from "@/public/lottie/main-post-icon.json";
 
 const MainCountryPost = ({ article }: any) => {
+  const lottieRef = useRef<LottieRefCurrentProps | null>(null);
+  const savedFrameRef = useRef(0);
+
+  const handleEnter = () => {
+    const lottie = lottieRef.current;
+    const item = lottie?.animationItem;
+
+    if (!lottie || !item) return;
+
+    const totalFrames = item.totalFrames ?? 0;
+    const savedFrame = savedFrameRef.current;
+    const isAtEnd = savedFrame >= totalFrames - 1;
+
+    if (isAtEnd) {
+      savedFrameRef.current = 0;
+      lottie.goToAndPlay(0, true);
+      return;
+    }
+
+    lottie.goToAndPlay(savedFrame, true);
+  };
+
+  const handleLeave = () => {
+    const lottie = lottieRef.current;
+    const item = lottie?.animationItem;
+
+    if (!lottie || !item) return;
+
+    savedFrameRef.current = item.currentFrame ?? 0;
+    lottie.pause();
+  };
+
+  const handleComplete = () => {
+    const lottie = lottieRef.current;
+    const item = lottie?.animationItem;
+
+    if (!item) return;
+
+    savedFrameRef.current = item.totalFrames ?? 0;
+  };
+
   return (
     <Link
       href={`/clanak/${article.id}`}
       className="main-country-post-container"
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+      onFocus={handleEnter}
+      onBlur={handleLeave}
     >
       <div className="main-country-post-bg-image-container">
         <Image
@@ -16,6 +66,7 @@ const MainCountryPost = ({ article }: any) => {
           height={2000}
         />
       </div>
+
       <div className="main-country-top-layer">
         <div className="main-country-post-top-image-container">
           <img
@@ -25,16 +76,21 @@ const MainCountryPost = ({ article }: any) => {
             style={{ objectFit: "cover" }}
           />
         </div>
+
         <div className="main-country-icon-container">
           <div className="main-country-icon-circle">
-            <Image
-              src="/images/main-post-icon.png"
-              alt="icon"
-              width={80}
-              height={40}
-            />
+            <div className="main-country-icon-lottie">
+              <Lottie
+                lottieRef={lottieRef}
+                animationData={mainPostIconAnimation}
+                autoplay={false}
+                loop={false}
+                onComplete={handleComplete}
+              />
+            </div>
           </div>
         </div>
+
         <div className="main-country-post-text-container">{article.title}</div>
       </div>
     </Link>

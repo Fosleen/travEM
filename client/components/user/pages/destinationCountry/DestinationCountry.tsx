@@ -49,14 +49,12 @@ const DestinationCountry = ({
         )}
       </div>
 
-      <div className="destination-country-visa-info-container">
-        <VisaInfo countryId={country.id} countryName={country.name} />
-      </div>
-
       {/* Best time to visit */}
       <BestTimeToVisit countrySlug={countryName} />
 
-
+      <div className="destination-country-visa-info-container">
+        <VisaInfo countryId={country.id} countryName={country.name} />
+      </div>
 
       <div className="destination-country-upper-container">
         {country.characteristics && (

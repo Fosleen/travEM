@@ -1,25 +1,30 @@
+"use client";
+
 import "./BlogStatsItem.scss";
-import { FC, useEffect, useMemo, useRef, useState } from "react";
-import Lottie, { LottieRefCurrentProps } from "lottie-react";
+import { FC, useEffect, useRef, useState } from "react";
+import Lottie, { type LottieRefCurrentProps } from "lottie-react";
 
 type BlogStatsItemProps = {
-  lottieSrc: string; // npr. "/lottie/stats-globe.json"
+  lottieSrc: string;
   value: string;
   text: string;
 };
 
 const BlogStatsItem: FC<BlogStatsItemProps> = ({ lottieSrc, value, text }) => {
-  const lottieRef = useRef<LottieRefCurrentProps>(null);
+  const lottieRef = useRef<LottieRefCurrentProps | null>(null);
+  const savedFrameRef = useRef(0);
   const [animationData, setAnimationData] = useState<any>(null);
 
-  // učitaj JSON iz public/ preko fetcha (Next radi normalno)
   useEffect(() => {
     let isMounted = true;
 
     fetch(lottieSrc)
       .then((res) => res.json())
       .then((json) => {
-        if (isMounted) setAnimationData(json);
+        if (isMounted) {
+          setAnimationData(json);
+          savedFrameRef.current = 0;
+        }
       })
       .catch((e) => console.error("Failed to load lottie:", lottieSrc, e));
 
@@ -29,14 +34,48 @@ const BlogStatsItem: FC<BlogStatsItemProps> = ({ lottieSrc, value, text }) => {
   }, [lottieSrc]);
 
   const onEnter = () => {
-    if (!lottieRef.current) return;
-    lottieRef.current.goToAndPlay(0, true);
+    const lottie = lottieRef.current;
+    const item = lottie?.animationItem;
+
+    if (!lottie || !item) return;
+
+    const totalFrames = item.totalFrames ?? 0;
+    const savedFrame = savedFrameRef.current;
+    const isAtEnd = savedFrame >= totalFrames - 1;
+
+    if (isAtEnd) {
+      savedFrameRef.current = 0;
+      lottie.goToAndPlay(0, true);
+      return;
+    }
+
+    lottie.goToAndPlay(savedFrame, true);
   };
 
   const onLeave = () => {
-    if (!lottieRef.current) return;
-    // vrati na početak i stani (da ne ostane na mid-frame)
-    lottieRef.current.goToAndStop(0, true);
+    const lottie = lottieRef.current;
+    const item = lottie?.animationItem;
+
+    if (!lottie || !item) return;
+
+    savedFrameRef.current = item.currentFrame ?? 0;
+    lottie.pause();
+  };
+
+  const handleComplete = () => {
+    const item = lottieRef.current?.animationItem;
+
+    if (!item) return;
+
+    savedFrameRef.current = item.totalFrames ?? 0;
+  };
+
+  const handleEnterFrame = () => {
+    const item = lottieRef.current?.animationItem;
+
+    if (!item) return;
+
+    savedFrameRef.current = item.currentFrame ?? 0;
   };
 
   return (
@@ -53,6 +92,8 @@ const BlogStatsItem: FC<BlogStatsItemProps> = ({ lottieSrc, value, text }) => {
               animationData={animationData}
               autoplay={false}
               loop={false}
+              onComplete={handleComplete}
+              onEnterFrame={handleEnterFrame}
               className="blog-stats-lottie"
             />
           ) : (

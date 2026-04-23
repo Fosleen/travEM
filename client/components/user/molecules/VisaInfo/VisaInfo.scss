@@ -72,31 +72,85 @@
 }
 
 .visa-info-results {
-  display: none;
+  display: flex;
   flex-direction: column;
   gap: 0;
   padding: 0;
-  border: 1px solid #dbe6ce;
-  background: #f3f8e9;
+  border: 1px solid transparent;
+  background: transparent;
   border-radius: 20px;
   overflow: hidden;
 
+  max-height: 0;
   opacity: 0;
-  transform: translateY(16px);
-  transition:
-    opacity 0.35s ease,
-    transform 0.35s ease;
+  transform: translateY(16px) scale(0.98);
+  visibility: hidden;
   pointer-events: none;
 
+  transition:
+    max-height 0.45s ease,
+    opacity 0.35s ease,
+    transform 0.35s ease,
+    background-color 0.35s ease,
+    border-color 0.35s ease,
+    visibility 0s linear 0.35s;
+
+  will-change: max-height, opacity, transform;
+
   &.visible {
-    display: flex;
+    max-height: 700px;
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+    visibility: visible;
     pointer-events: auto;
+    border-color: #dbe6ce;
+    background: #f3f8e9;
+    transition:
+      max-height 0.45s ease,
+      opacity 0.35s ease,
+      transform 0.35s ease,
+      background-color 0.35s ease,
+      border-color 0.35s ease,
+      visibility 0s linear 0s;
   }
 
   &.changing {
     animation: visaInfoRefresh 0.35s ease;
+  }
+
+  .visa-info-result,
+  .visa-info-divider {
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity 0.28s ease,
+      transform 0.28s ease;
+  }
+
+  &.visible .visa-info-result,
+  &.visible .visa-info-divider {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &.visible .visa-info-result:nth-child(1) {
+    transition-delay: 0.05s;
+  }
+
+  &.visible .visa-info-divider:nth-child(2) {
+    transition-delay: 0.08s;
+  }
+
+  &.visible .visa-info-result:nth-child(3) {
+    transition-delay: 0.11s;
+  }
+
+  &.visible .visa-info-divider:nth-child(4) {
+    transition-delay: 0.14s;
+  }
+
+  &.visible .visa-info-result:nth-child(5) {
+    transition-delay: 0.17s;
   }
 }
 
@@ -147,12 +201,12 @@
 
 @keyframes visaInfoRefresh {
   0% {
-    opacity: 0.55;
-    transform: translateY(8px);
+    opacity: 0.72;
+    transform: translateY(6px) scale(0.995);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -219,12 +273,11 @@
   }
 
   .visa-info-results {
-    display: none;
+    flex-direction: row;
+    align-items: stretch;
 
     &.visible {
-      display: flex;
-      flex-direction: row;
-      align-items: stretch;
+      max-height: 260px;
     }
   }
 

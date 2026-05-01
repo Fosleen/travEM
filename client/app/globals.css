@@ -6,6 +6,11 @@
   color: #333333;
 }
 
+html,
+body {
+  overflow-x: clip;
+}
+
 /* Font is applied via className on body, but you can override: */
 .font-testimonia {
   font-family: var(--font-testimonia);

@@ -165,36 +165,36 @@ const CITY_GENITIVE: Record<string, string> = {
 // HERO image per city (hardkodirano)
 const HERO_IMAGES: Record<string, string> = {
   Zagreb:
-    "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Zagreb%20Airport.jpg",
+    "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Zagreb%20Airport.jpg?updatedAt=1777029689876",
   Split:
-    "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Split%20Airport.jpg",
+    "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Split%20Airport.jpg?updatedAt=1777029690103",
   Dubrovnik:
-    "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Dubrovnik%20Airport.jpg",
+    "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Dubrovnik%20Airport.jpg?updatedAt=1777029690416",
   Zadar:
-    "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Zadar%20Airport.jpg",
+    "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Zadar%20Airport.jpg?updatedAt=1777029689938",
   Pula:
-    "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Pula%20Airport.jpg",
+    "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Pula%20Airport.jpg?updatedAt=1777029690253",
   Rijeka:
-    "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Rijeka%20Airport.jpg",
+    "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Rijeka%20Airport.jpg?updatedAt=1777029690715",
   Osijek:
-    "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Osijek%20Airport.jpg",
+    "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Osijek%20Airport.jpg?updatedAt=1777029689934",
 
   Beograd:
-    "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Beograd%20Airport.jpg",
+    "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Beograd%20Airport.jpg?updatedAt=1777029689995",
   Sarajevo:
-    "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Sarajevo%20Airport.jpg",
+    "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Sarajevo%20Airport.jpg?updatedAt=1777029690351",
   Trst:
-    "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Trst%20Airport.jpg",
+    "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Trst%20Airport.jpg?updatedAt=1777029690065",
   Beč:
-    "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Bec%20Airport.jpg",
+    "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Bec%20Airport.jpg?updatedAt=1777029690240",
   Budimpešta:
-    "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Budapest%20Airport.jpg",
+    "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Budapest%20Airport.jpg?updatedAt=1777029690232",
   Venecija:
-    "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Venecija%20Airport.jpg",
+    "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Venecija%20Airport.jpg?updatedAt=1777029690022",
   Tuzla:
-    "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Tuzla%20Airport.jpg",
+    "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Tuzla%20Airport.jpg?updatedAt=1777029690426",
   "Banja Luka":
-    "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Banja%20Luka%20Airport.jpg",
+    "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Banja%20Luka%20Airport.jpg?updatedAt=1777029689385",
 };
 
 // Fallback da se ne desi da Image dobije prazan string

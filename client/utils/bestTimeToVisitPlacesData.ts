@@ -31,7 +31,7 @@ export type PlaceClimate = {
 
 export const BEST_TIME_PLACES_DATA: PlaceClimate[] = [
     {
-    slug: "budimpesta",
+    slug: "budimpešta",
     title: "Najbolje vrijeme za posjet Budimpešti",
     subtitle: "Prosjeci temperature i oborine po mjesecima",
     note: "Najugodnije vrijeme za posjet: proljeće i jesen",

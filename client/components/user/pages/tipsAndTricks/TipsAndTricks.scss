@@ -1,5 +1,788 @@
 @use "@/utils/theme.scss" as *;
 
+.tips-and-tricks-parent-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding-top: 28px;
+  padding-bottom: 28px;
+}
+
+.tips-and-tricks-hero {
+  position: relative;
+  overflow: hidden;
+  width: 100vw;
+  max-width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-top: -28px;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  border-radius: 0 0 28px 28px;
+  padding: 48px 16px 32px;
+
+  @media screen and ($tablet) {
+    padding: 64px 32px 42px;
+  }
+
+  @media screen and ($desktop) {
+    padding: 76px 32px 48px;
+  }
+}
+
+.tips-and-tricks-hero-packing {
+  background:
+    radial-gradient(circle at 14% 18%, rgba(120, 164, 215, 0.2), transparent 30%),
+    radial-gradient(circle at 88% 12%, rgba(210, 235, 100, 0.2), transparent 24%),
+    linear-gradient(135deg, rgba(120, 164, 215, 0.12), rgba(248, 248, 248, 1) 54%);
+}
+
+.tips-and-tricks-hero-flight {
+  background:
+    radial-gradient(circle at 18% 14%, rgba(120, 164, 215, 0.24), transparent 32%),
+    radial-gradient(circle at 84% 18%, rgba(255, 255, 255, 0.9), transparent 22%),
+    linear-gradient(135deg, rgba(120, 164, 215, 0.16), rgba(248, 248, 248, 1) 56%);
+}
+
+.tips-and-tricks-hero-organization {
+  background:
+    radial-gradient(circle at 16% 14%, rgba(210, 235, 100, 0.24), transparent 28%),
+    radial-gradient(circle at 88% 18%, rgba(43, 172, 130, 0.14), transparent 26%),
+    linear-gradient(135deg, rgba(237, 244, 204, 0.64), rgba(248, 248, 248, 1) 58%);
+}
+
+.tips-and-tricks-hero-apps {
+  background:
+    radial-gradient(circle at 16% 18%, rgba(120, 164, 215, 0.2), transparent 30%),
+    radial-gradient(circle at 86% 12%, rgba(43, 172, 130, 0.15), transparent 28%),
+    linear-gradient(135deg, rgba(241, 241, 241, 1), rgba(248, 248, 248, 1) 58%);
+}
+
+.tips-and-tricks-hero-stay {
+  background:
+    radial-gradient(circle at 14% 16%, rgba(210, 235, 100, 0.2), transparent 28%),
+    radial-gradient(circle at 86% 16%, rgba(120, 164, 215, 0.16), transparent 28%),
+    linear-gradient(135deg, rgba(248, 248, 248, 1), rgba(237, 244, 204, 0.45) 64%);
+}
+
+.tips-and-tricks-hero-revolut {
+  background:
+    radial-gradient(circle at 15% 15%, rgba(43, 172, 130, 0.2), transparent 30%),
+    radial-gradient(circle at 88% 14%, rgba(120, 164, 215, 0.18), transparent 26%),
+    linear-gradient(135deg, rgba(237, 244, 204, 0.54), rgba(248, 248, 248, 1) 58%);
+}
+
+.tips-and-tricks-hero-content {
+  width: 100%;
+  max-width: 1316px;
+  margin: 0 auto;
+  display: grid;
+  gap: 28px;
+  align-items: center;
+
+  @media screen and ($tablet) {
+    grid-template-columns: minmax(0, 1fr) 220px;
+  }
+}
+
+.tips-and-tricks-hero-text {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+
+  @media screen and ($tablet) {
+    text-align: left;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(56px, 8vw, 108px);
+    line-height: 0.95;
+    letter-spacing: -0.06em;
+    color: $textPrimary;
+  }
+
+  h2 {
+    margin: 12px 0 0;
+    font-size: clamp(20px, 2.4vw, 30px);
+    line-height: 1.2;
+    color: $textPrimary;
+  }
+
+  p {
+    max-width: 640px;
+    margin: 18px auto 0;
+    color: rgba(51, 51, 51, 0.78);
+    font-size: 15px;
+    line-height: 1.55;
+
+    @media screen and ($tablet) {
+      margin-left: 0;
+      margin-right: 0;
+      font-size: 16px;
+    }
+  }
+}
+
+.tips-and-tricks-hero-eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  margin-bottom: 12px;
+  border-radius: 999px;
+  padding: 7px 12px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(120, 164, 215, 0.22);
+  color: $lightBlue;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tips-and-tricks-hero-visual {
+  display: none;
+
+  @media screen and ($tablet) {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.tips-and-tricks-hero-visual-card {
+  position: relative;
+  width: 164px;
+  height: 164px;
+  border-radius: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 70% 20%, rgba(210, 235, 100, 0.52), transparent 26%),
+    rgba(255, 255, 255, 0.64);
+  box-shadow: 0 20px 48px rgba(0, 32, 64, 0.1);
+  transform: rotate(-4deg);
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    border: 1px dashed rgba(120, 164, 215, 0.38);
+    border-radius: 38px;
+  }
+
+  img {
+    position: relative;
+    z-index: 2;
+    width: 82px;
+    height: 82px;
+    object-fit: contain;
+  }
+}
+
+.tips-and-tricks-chips {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 2px 0 0;
+
+  @media screen and ($tabletMedium) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @media screen and ($desktop) {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.tips-and-tricks-chip {
+  width: 100%;
+  min-width: 0;
+  min-height: 52px;
+  appearance: none;
+  border: 1px solid rgba(120, 164, 215, 0.28);
+  background: rgba(255, 255, 255, 0.86);
+  color: $textPrimary;
+  border-radius: 999px;
+  padding: 10px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+
+  span:last-child {
+    min-width: 0;
+    white-space: normal;
+    line-height: 1.2;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    border-color: rgba(45, 165, 128, 0.48);
+    box-shadow: 0 10px 24px rgba(0, 32, 64, 0.08);
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &.active {
+    background: $lightBlue;
+    border-color: $lightBlue;
+    color: #ffffff;
+    box-shadow: 0 12px 26px rgba(120, 164, 215, 0.28);
+
+    .tips-and-tricks-chip-icon {
+      background: rgba(255, 255, 255, 0.18);
+
+      img {
+        filter: brightness(0) invert(1);
+      }
+    }
+  }
+
+  @media screen and ($desktop) {
+    width: auto;
+    min-height: auto;
+    padding: 10px 18px;
+    white-space: nowrap;
+
+    span:last-child {
+      white-space: nowrap;
+    }
+  }
+}
+
+.tips-and-tricks-chip-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: rgba(120, 164, 215, 0.12);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  img {
+    width: 15px;
+    height: 15px;
+    object-fit: contain;
+  }
+}
+
+.tips-and-tricks-content {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+  transition: opacity 0.18s ease;
+}
+
+.tips-and-tricks-featured {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+
+  @media screen and ($desktop) {
+    &.has-overview {
+      grid-template-columns: minmax(0, 1fr) 340px;
+      align-items: stretch;
+    }
+  }
+}
+
+.tips-and-tricks-featured-card {
+  position: relative;
+  min-height: 320px;
+  border-radius: 18px;
+  overflow: hidden;
+  text-decoration: none;
+  color: #ffffff;
+  box-shadow: 0 14px 36px rgba(0, 32, 64, 0.12);
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 42px rgba(0, 32, 64, 0.18);
+  }
+
+  @media screen and ($tablet) {
+    min-height: 380px;
+  }
+}
+
+.tips-and-tricks-featured-image-wrapper {
+  position: absolute;
+  inset: 0;
+  background: $greyMiddle;
+  overflow: hidden;
+
+  img,
+  .tips-and-tricks-image-placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(0, 0, 0, 0.76), rgba(0, 0, 0, 0.28) 54%, rgba(0, 0, 0, 0.12)),
+      linear-gradient(0deg, rgba(0, 0, 0, 0.45), transparent 52%);
+  }
+}
+
+.tips-and-tricks-featured-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  @media screen and ($tablet) {
+    padding: 34px;
+  }
+
+  > span {
+    align-self: flex-start;
+    margin-bottom: auto;
+    background: $lightBlue;
+    color: #ffffff;
+    border-radius: 999px;
+    padding: 8px 13px;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+  }
+
+  h3 {
+    max-width: 680px;
+    margin: 28px 0 0;
+    font-size: clamp(30px, 4vw, 54px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    color: #ffffff;
+  }
+
+  p {
+    max-width: 600px;
+    margin: 14px 0 0;
+    font-size: 15px;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.9);
+
+    @media screen and ($tablet) {
+      font-size: 17px;
+    }
+  }
+}
+
+.tips-and-tricks-featured-meta {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.tips-and-tricks-overview {
+  border: 1px solid rgba(120, 164, 215, 0.22);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(120, 164, 215, 0.16), transparent 30%),
+    rgba(255, 255, 255, 0.92);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(0, 32, 64, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.tips-and-tricks-overview-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  h3 {
+    margin: 0;
+    font-size: 24px;
+    line-height: 1.1;
+    color: $textPrimary;
+  }
+
+  p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: rgba(51, 51, 51, 0.62);
+    font-weight: 700;
+  }
+}
+
+.tips-and-tricks-overview-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(120, 164, 215, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+  }
+}
+
+.tips-and-tricks-overview {
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    margin: 0;
+  }
+
+  li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 9px 10px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: $textPrimary;
+    transition:
+      background-color 0.18s ease,
+      transform 0.18s ease;
+
+    &:hover {
+      background: rgba(43, 172, 130, 0.07);
+      transform: translateX(2px);
+    }
+  }
+}
+
+.tips-and-tricks-overview-item-icon {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 2px solid $limeLight;
+  background: rgba(210, 235, 100, 0.42);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $green;
+  font-size: 13px;
+  font-weight: 900;
+
+  img {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+  }
+}
+
+.tips-and-tricks-overview-item-text {
+  font-size: 14px;
+  line-height: 1.25;
+  font-weight: 800;
+}
+
+.tips-and-tricks-overview-link {
+  margin-top: auto;
+  min-height: 42px;
+  border-radius: 999px;
+  border: 1px solid rgba(120, 164, 215, 0.28);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  color: $lightBlue;
+  font-size: 13px;
+  font-weight: 900;
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease;
+
+  &:hover {
+    background: rgba(120, 164, 215, 0.1);
+    transform: translateY(-1px);
+  }
+}
+
+.tips-and-tricks-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tips-and-tricks-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  h2 {
+    margin: 0;
+    font-weight: 900;
+    font-size: 24px;
+    color: $textPrimary;
+    letter-spacing: -0.02em;
+  }
+}
+
+.tips-and-tricks-articles-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+
+  @media screen and ($tabletMedium) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media screen and ($desktop) {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-auto-flow: row;
+    align-items: stretch;
+
+    .tips-and-tricks-article-card {
+      grid-column: span 3;
+    }
+
+    .tips-and-tricks-article-card:nth-child(6n + 1),
+    .tips-and-tricks-article-card:nth-child(6n + 2) {
+      grid-column: span 3;
+    }
+
+    .tips-and-tricks-article-card:nth-child(6n + 3) {
+      grid-column: 1 / -1;
+    }
+
+    .tips-and-tricks-article-card:nth-child(6n + 4),
+    .tips-and-tricks-article-card:nth-child(6n + 5),
+    .tips-and-tricks-article-card:nth-child(6n + 6) {
+      grid-column: span 2;
+    }
+
+    &.count-1 {
+      grid-template-columns: 1fr;
+
+      .tips-and-tricks-article-card {
+        grid-column: 1 / -1;
+      }
+    }
+
+    &.count-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+
+      .tips-and-tricks-article-card {
+        grid-column: auto;
+      }
+    }
+
+    &.count-3 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+
+      .tips-and-tricks-article-card:first-child,
+      .tips-and-tricks-article-card:nth-child(2) {
+        grid-column: span 3;
+      }
+
+      .tips-and-tricks-article-card:nth-child(3) {
+        grid-column: 1 / -1;
+      }
+    }
+
+    &.count-4 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+
+      .tips-and-tricks-article-card:first-child,
+      .tips-and-tricks-article-card:nth-child(2) {
+        grid-column: span 3;
+      }
+
+      .tips-and-tricks-article-card:nth-child(3),
+      .tips-and-tricks-article-card:nth-child(4) {
+        grid-column: span 3;
+      }
+    }
+
+    &.count-5 {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+
+      .tips-and-tricks-article-card:first-child,
+      .tips-and-tricks-article-card:nth-child(2) {
+        grid-column: span 3;
+      }
+
+      .tips-and-tricks-article-card:nth-child(3) {
+        grid-column: 1 / -1;
+      }
+
+      .tips-and-tricks-article-card:nth-child(4),
+      .tips-and-tricks-article-card:nth-child(5) {
+        grid-column: span 3;
+      }
+    }
+  }
+}
+
+.tips-and-tricks-article-card {
+  overflow: hidden;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(120, 164, 215, 0.18);
+  box-shadow: 0 10px 28px rgba(0, 32, 64, 0.06);
+  text-decoration: none;
+  color: $textPrimary;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100%;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 36px rgba(0, 32, 64, 0.11);
+
+    img {
+      transform: scale(1.04);
+    }
+  }
+}
+
+.tips-and-tricks-article-image-wrapper {
+  height: 188px;
+  overflow: hidden;
+  background: $greyMiddle;
+
+  @media screen and ($tabletMedium) {
+    height: 204px;
+  }
+
+  @media screen and ($desktop) {
+    height: 220px;
+  }
+
+  img,
+  .tips-and-tricks-image-placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.35s ease;
+  }
+}
+
+.tips-and-tricks-article-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  h3 {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.16;
+    color: $textPrimary;
+  }
+
+  p {
+    margin: 8px 0 0;
+    color: rgba(51, 51, 51, 0.68);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+}
+
+.tips-and-tricks-article-meta {
+  margin-top: auto;
+  padding-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: rgba(51, 51, 51, 0.56);
+  font-size: 12px;
+  font-weight: 800;
+
+  span:last-child {
+    color: $lightBlue;
+  }
+}
+
+.tips-and-tricks-empty {
+  padding: 36px 18px;
+  border-radius: 16px;
+  background: rgba(120, 164, 215, 0.1);
+  color: $textPrimary;
+  font-weight: 800;
+  text-align: center;
+}
+
+.tips-and-tricks-image-placeholder {
+  background:
+    linear-gradient(135deg, rgba(120, 164, 215, 0.18), rgba(210, 235, 100, 0.22)),
+    $greyMiddle;
+}
+
+.tips-and-tricks-connected-articles-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: -12px;
+
+  @media screen and ($tabletMedium) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media screen and ($desktopLarge) {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.tips-and-tricks-text-articles-wrapper {
+  margin-top: 16px;
+
+  h2 {
+    font-weight: bold;
+    font-size: 24px;
+  }
+}
+
 .tips-and-tricks-grid-wrapper {
   display: flex;
   flex-direction: column;
@@ -9,11 +792,6 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
   }
-
-  // @media screen and ($desktopLarge) {
-  //   display: grid;
-  //   grid-template-columns: repeat(4, 1fr);
-  // }
 }
 
 .tips-and-tricks-text-wrapper {
@@ -39,34 +817,4 @@
       font-size: 24px;
     }
   }
-}
-.tips-and-tricks-connected-articles-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-
-  @media screen and ($tabletMedium) {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media screen and ($desktopLarge) {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.tips-and-tricks-text-articles-wrapper {
-  h2 {
-    font-weight: bold;
-    font-size: 40px;
-  }
-}
-
-.tips-and-tricks-parent-wrapper {
-  display: flex;
-  flex-direction: column;
-  //gap: 28px;
-  padding-top: 28px;
-  padding-bottom: 28px;
 }

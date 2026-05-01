@@ -4,12 +4,31 @@ import { FC } from "react";
 import { TipsMenuProps } from "@/common/types";
 
 const menuItems = [
-  { title: "Pakiranje", icon: "/images/luggage-icon.png" },
-  { title: "Let avionom", icon: "/images/airport-icon.png" },
-  { title: "Organizacija puta", icon: "/images/travel-org-icon.png" },
-  { title: "Aplikacije", icon: "/images/travel-app-icon.png" },
-  { title: "Smještaj", icon: "/images/bed-icon.png" },
-  { title: "Revolut", icon: "/images/cards-icon.png" },
+  {
+    title: "Pakiranje",
+    icon: "/images/luggage-icon.png",
+  },
+  {
+    title: "Let avionom",
+    icon: "/images/airport-icon.png",
+  },
+  {
+    title: "Novosti i organizacija puta",
+    slugTitle: "Organizacija puta",
+    icon: "/images/travel-org-icon.png",
+  },
+  {
+    title: "Aplikacije",
+    icon: "/images/travel-app-icon.png",
+  },
+  {
+    title: "Smještaj",
+    icon: "/images/bed-icon.png",
+  },
+  {
+    title: "Revolut",
+    icon: "/images/cards-icon.png",
+  },
 ];
 
 const TipsMenu: FC<TipsMenuProps> = ({ setIsTipsMenuShown }) => {
@@ -25,6 +44,7 @@ const TipsMenu: FC<TipsMenuProps> = ({ setIsTipsMenuShown }) => {
         <TipsMenuItem
           key={item.title}
           title={item.title}
+          slugTitle={item.slugTitle}
           icon={item.icon}
           onClick={() => {
             if (setIsTipsMenuShown) {

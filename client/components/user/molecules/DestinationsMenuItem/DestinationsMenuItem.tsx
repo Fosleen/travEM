@@ -9,6 +9,9 @@ import { getCountriesByContinent } from "../../../../utils/countries";
 import { getPlacesByCountry } from "../../../../utils/places";
 import { CountryContext } from "@/context/CountryContext";
 
+const PLACES_CACHE_KEY = "destinations-menu-places-cache-v1";
+const PLACES_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 sata
+
 const slugify = (value: string) => {
   return value
     .toLowerCase()
@@ -36,6 +39,57 @@ const normalizePlacesResponse = (response: any) => {
   return [];
 };
 
+const getCachedPlaces = () => {
+  if (typeof window === "undefined") return {};
+
+  try {
+    const rawCache = localStorage.getItem(PLACES_CACHE_KEY);
+
+    if (!rawCache) return {};
+
+    const parsedCache = JSON.parse(rawCache);
+
+    if (!parsedCache?.createdAt || !parsedCache?.data) {
+      localStorage.removeItem(PLACES_CACHE_KEY);
+      return {};
+    }
+
+    const isExpired = Date.now() - parsedCache.createdAt > PLACES_CACHE_TTL;
+
+    if (isExpired) {
+      localStorage.removeItem(PLACES_CACHE_KEY);
+      return {};
+    }
+
+    return parsedCache.data;
+  } catch (error) {
+    console.error("Error while reading places cache:", error);
+    localStorage.removeItem(PLACES_CACHE_KEY);
+    return {};
+  }
+};
+
+const setCachedPlaces = (placesData: Record<number, any[]>) => {
+  if (typeof window === "undefined") return;
+
+  try {
+    const existingCache = getCachedPlaces();
+
+    localStorage.setItem(
+      PLACES_CACHE_KEY,
+      JSON.stringify({
+        createdAt: Date.now(),
+        data: {
+          ...existingCache,
+          ...placesData,
+        },
+      })
+    );
+  } catch (error) {
+    console.error("Error while saving places cache:", error);
+  }
+};
+
 const DestinationsMenuItem: FC<{
   title: string;
   id: number;
@@ -56,8 +110,36 @@ const DestinationsMenuItem: FC<{
 
   const fetchPlacesForCountries = async (countriesData: any[]) => {
     try {
+      const cachedPlaces = getCachedPlaces();
+
+      const initialPlacesFromCache = countriesData.reduce(
+        (acc: Record<number, any[]>, country) => {
+          if (cachedPlaces[country.id]) {
+            acc[country.id] = cachedPlaces[country.id];
+          }
+
+          return acc;
+        },
+        {}
+      );
+
+      if (Object.keys(initialPlacesFromCache).length > 0) {
+        setPlacesByCountry((prevState) => ({
+          ...prevState,
+          ...initialPlacesFromCache,
+        }));
+      }
+
+      const countriesWithoutCache = countriesData.filter(
+        (country) => !cachedPlaces[country.id]
+      );
+
+      if (countriesWithoutCache.length === 0) {
+        return;
+      }
+
       const entries = await Promise.all(
-        countriesData.map(async (country) => {
+        countriesWithoutCache.map(async (country) => {
           try {
             const response = await getPlacesByCountry(country.id);
             const places = normalizePlacesResponse(response);
@@ -74,7 +156,13 @@ const DestinationsMenuItem: FC<{
       );
 
       const mappedPlaces = Object.fromEntries(entries);
-      setPlacesByCountry(mappedPlaces);
+
+      setPlacesByCountry((prevState) => ({
+        ...prevState,
+        ...mappedPlaces,
+      }));
+
+      setCachedPlaces(mappedPlaces);
     } catch (error) {
       console.error("Error while fetching places:", error);
     }
@@ -165,17 +253,19 @@ const DestinationsMenuItem: FC<{
 
                         <div className="destination-city-slot">
                           <div className="destination-city-chips">
-                            {places.map((place: { id: number; name: string }) => (
-                              <Link
-                                key={place.id}
-                                href={`/destinacija/${countrySlug}/${slugify(
-                                  place.name
-                                )}`}
-                                className="destination-city-chip"
-                              >
-                                {place.name}
-                              </Link>
-                            ))}
+                            {places.map(
+                              (place: { id: number; name: string }) => (
+                                <Link
+                                  key={place.id}
+                                  href={`/destinacija/${countrySlug}/${slugify(
+                                    place.name
+                                  )}`}
+                                  className="destination-city-chip"
+                                >
+                                  {place.name}
+                                </Link>
+                              )
+                            )}
                           </div>
                         </div>
                       </div>

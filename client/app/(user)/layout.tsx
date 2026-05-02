@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Header from "@/components/user/organisms/Header";
 import Footer from "@/components/user/molecules/Footer";
 import Newsletter from "@/components/user/molecules/Newsletter";
+import PopUp from "@/components/user/molecules/PopUp";
 import ScrollToTop from "@/components/atoms/ScrollToTop";
 import { ArticleProvider } from "@/context/ArticleContext";
 import "../../components/user/templates/UserViewLayout.scss";
@@ -24,6 +25,7 @@ export default function UserViewLayout({
     pathname === "/" ||
     pathname.startsWith("/destinacija") ||
     pathname.startsWith("/clanak");
+
   const [isPlaneTicketsMenuShown, setIsPlaneTicketsMenuShown] = useState(false);
   const [isDestinationsMenuShown, setIsDestinationsMenuShown] = useState(false);
   const [isTipsMenuShown, setIsTipsMenuShown] = useState(false);
@@ -37,6 +39,7 @@ export default function UserViewLayout({
           <CountryProvider>
             <main className="user-view-layout-container">
               <ScrollToTop />
+
               <Header
                 isPlaneTicketsMenuShown={isPlaneTicketsMenuShown}
                 setIsPlaneTicketsMenuShown={setIsPlaneTicketsMenuShown}
@@ -49,6 +52,7 @@ export default function UserViewLayout({
                 selectedSubcategory={selectedSubcategory}
                 setSelectedSubcategory={setSelectedSubcategory}
               />
+
               <div
                 className={`user-view-layout-page ${
                   !isHomePage ? "max-width" : ""
@@ -56,7 +60,9 @@ export default function UserViewLayout({
               >
                 {children}
               </div>
+
               <Newsletter />
+
               <Footer
                 setIsPlaneTicketsMenuShown={setIsPlaneTicketsMenuShown}
                 setIsDestinationsMenuShown={setIsDestinationsMenuShown}
@@ -64,6 +70,9 @@ export default function UserViewLayout({
                 setOpenNav={setOpenNav}
                 setSelectedSubcategory={setSelectedSubcategory}
               />
+
+              <PopUp />
+
               <ToastContainer
                 position="top-right"
                 autoClose={3000}

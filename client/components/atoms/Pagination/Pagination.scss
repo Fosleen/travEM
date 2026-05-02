@@ -47,23 +47,50 @@
   }
 }
 
-.page-item {
-  background-color: $limeLight;
+.page-item,
+.page-item-carrot {
   border-radius: 8px;
-  color: $grey;
-  font-weight: 600;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition:
+    background-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  will-change: transform;
+}
+
+.page-item {
+  background-color: $limeLight;
+  color: $grey;
+  font-weight: 600;
+
+  &:hover {
+    background-color: $limeGreenHover;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  }
 }
 
 .page-item-carrot {
   background-color: $limeLight;
   color: $green;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+  &:hover {
+    background-color: $limeGreenHover;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  }
 }
 
 .page-link {
@@ -74,13 +101,21 @@
   align-items: center;
   display: flex;
   justify-content: center;
+  transition: color 0.25s ease;
 }
 
 .active-pagination {
   background-color: $green;
+  box-shadow: 0 8px 18px rgba(43, 172, 130, 0.22);
 
   .page-link {
     color: white;
+  }
+
+  &:hover {
+    background-color: $greenHover;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(43, 172, 130, 0.28);
   }
 }
 
@@ -94,9 +129,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: color 0.25s ease;
 
   @media screen and ($tabletMedium) {
     padding: 10px 20px;
     min-width: 56px;
+  }
+}
+
+/* ReactPaginate disabled previous/next state */
+.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Optional: malo mirnije animacije na touch uređajima */
+@media (hover: none) {
+  .page-item,
+  .page-item-carrot,
+  .active-pagination {
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
   }
 }

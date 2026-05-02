@@ -19,8 +19,14 @@ components:
           type: string
           example: https://live.staticflickr.com/65535/53458955581_b974e4603f_b.jpg
         date_written:
-          type: date
+          type: string
+          format: date
           example: "2024-02-23"
+        date_updated:
+          type: string
+          format: date
+          nullable: true
+          example: "2024-03-15"
         articleTypeId:
           type: integer
           example: 1
@@ -65,8 +71,14 @@ components:
           type: string
           example: https://live.staticflickr.com/65535/53458955581_b974e4603f_b.jpg
         date_written:
-          type: date
+          type: string
+          format: date
           example: "2024-02-23"
+        date_updated:
+          type: string
+          format: date
+          nullable: true
+          example: "2024-03-15"
         articleTypeId:
           type: integer
           example: 1
@@ -127,8 +139,14 @@ components:
           type: string
           example: https://live.staticflickr.com/65535/53458955581_b974e4603f_b.jpg
         date_written:
-          type: date
+          type: string
+          format: date
           example: "2024-02-23"
+        date_updated:
+          type: string
+          format: date
+          nullable: true
+          example: "2024-03-15"
         articleTypeId:
           type: integer
           example: 1
@@ -186,8 +204,14 @@ components:
           type: string
           example: https://live.staticflickr.com/65535/53458955581_b974e4603f_b.jpg
         date_written:
-          type: date
+          type: string
+          format: date
           example: "2024-02-23"
+        date_updated:
+          type: string
+          format: date
+          nullable: true
+          example: "2024-03-15"
         articleTypeId:
           type: integer
           example: 1
@@ -265,8 +289,14 @@ components:
           type: string
           example: https://live.staticflickr.com/65535/53458955581_b974e4603f_b.jpg
         date_written:
-          type: date
+          type: string
+          format: date
           example: "2024-02-23"
+        date_updated:
+          type: string
+          format: date
+          nullable: true
+          example: "2024-03-15"
         article_type_id:
           type: integer
           example: 1

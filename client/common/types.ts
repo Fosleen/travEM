@@ -206,7 +206,8 @@ export interface Article {
   place_id: number;
   main_image_url: string;
   user_id: number;
-  date_written: Date;
+  date_written: Date | string;
+  date_updated?: Date | string | null;
   country?: CountriesData;
   article_special_types?: Array<ArticleSpecialType>;
 }
@@ -231,7 +232,8 @@ export interface HorizontalPostItemBigProps {
     title?: string;
     name?: string;
     subtitle: string;
-    date_written: Date;
+    date_written: Date | string;
+    date_updated?: Date | string | null;
   };
 }
 

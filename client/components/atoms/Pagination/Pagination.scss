@@ -8,17 +8,21 @@
   z-index: 200;
   background-color: white;
   border-radius: 8px;
+  padding: 12px;
 
   @media screen and ($tabletMedium) {
     width: fit-content;
+    padding: 12px;
   }
 
   ul {
     display: flex;
-    justify-content: space-around;
-    width: 100%;
-    gap: 4px;
-    padding: 12px;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    gap: 12px;
+    padding: 0;
+    margin: 0;
 
     @media screen and ($tabletMedium) {
       gap: 16px;
@@ -26,14 +30,10 @@
 
     li {
       list-style: none;
-      min-width: 28px;
+      min-width: 0;
       display: flex;
-      justify-content: space-around;
+      justify-content: center;
       align-items: center;
-
-      @media screen and ($tabletMedium) {
-        padding: 0px;
-      }
 
       a {
         text-decoration: none;
@@ -54,22 +54,23 @@
   font-weight: 600;
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .page-item-carrot {
   background-color: $limeLight;
   color: $green;
-  padding: 6px 8px;
   border-radius: 8px;
   display: flex;
-  align-items: stretch;
+  align-items: center;
+  justify-content: center;
 }
 
 .page-link {
   cursor: pointer;
-  padding: 6px 8px;
-  min-width: 32px;
-  height: 100%;
+  padding: 8px 12px;
+  min-width: 40px;
+  height: 40px;
   align-items: center;
   display: flex;
   justify-content: center;
@@ -87,9 +88,15 @@
 .page-link-previous {
   font-weight: bold;
   color: $green;
-  padding: 8px;
+  padding: 8px 12px;
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   @media screen and ($tabletMedium) {
     padding: 10px 20px;
+    min-width: 56px;
   }
 }

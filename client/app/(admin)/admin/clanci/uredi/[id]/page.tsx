@@ -204,6 +204,10 @@ const EditArticle = () => {
       );
       console.log("Metatags string:", metatagsString);
 
+
+      const dateString = new Date().toJSON().slice(0, 10);
+      const todaysDate = new Date(dateString);
+
       // 1. Update main article
       console.log("1️⃣ Updating main article...", {
         id: article.id,
@@ -225,6 +229,8 @@ const EditArticle = () => {
         values.article_description,
         metatagsString,
         mainArticleImage,
+        article.date_written,
+        todaysDate,
         values.article_type,
         values.article_country,
         values.article_place,

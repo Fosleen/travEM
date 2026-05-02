@@ -12,7 +12,7 @@ const router = new Router();
  *      summary: Get all articles
  *      tags:
  *          - Article
- *      description: Returns an object with an array of articles with basic info about articles - id, title, subtitle, description, main_image_url, date_written, articleTypeId, countryId, placeId, userId, airportCityId and objects with data about article_type, airport_city, country and place.
+ *      description: Returns an object with an array of articles with basic info about articles - id, title, subtitle, description, main_image_url, date_written, date_updated, articleTypeId, countryId, placeId, userId, airportCityId and objects with data about article_type, airport_city, country and place.
  *      parameters:
  *        - in: query
  *          name: page

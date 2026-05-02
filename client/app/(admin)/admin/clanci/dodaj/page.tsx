@@ -166,6 +166,7 @@ const AddArticlePage = () => {
               mainArticleImage,
               user_id,
               todaysDate,
+              null,
               parseInt(values.article_airport_city_id)
             );
 

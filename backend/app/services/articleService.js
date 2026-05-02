@@ -97,9 +97,9 @@ class ArticleService {
     let nmbrSameCountry = 0;
 
     if (type == "article") {
-      const startingArticle = await db.models.Article.findByPk(id); // id = article id
+      const startingArticle = await db.models.Article.findByPk(id);
+
       if (startingArticle.articleTypeId == 1) {
-        // destinacija
         {
           startingArticle.placeId && (nmbrSamePlace = 2);
         }
@@ -117,12 +117,12 @@ class ArticleService {
         startingArticle.articleTypeId == 7 ||
         startingArticle.articleTypeId == 8
       ) {
-        // aviokarte ili savjeti
         nmbrSameType = 4;
       }
 
       if (nmbrSameType > 0) {
         let articlesSameType;
+
         if (
           startingArticle.articleTypeId == 3 ||
           startingArticle.articleTypeId == 4 ||
@@ -131,26 +131,25 @@ class ArticleService {
           startingArticle.articleTypeId == 7 ||
           startingArticle.articleTypeId == 8
         ) {
-          // savjeti
-          articlesSameType = await db.models.Article.findAll({
-            where: {
-              articleTypeId: startingArticle.articleTypeId,
-              id: { [Op.notIn]: [id] }, // don't return that article in result
-            },
-            order: Sequelize.literal("rand()"), // return random items, mysql dialect = rand function
-            limit: nmbrSameType,
-          });
-        } else if (startingArticle.articleTypeId == 2) {
-          // aviokarte
           articlesSameType = await db.models.Article.findAll({
             where: {
               articleTypeId: startingArticle.articleTypeId,
               id: { [Op.notIn]: [id] },
             },
-            order: [["date_written", "DESC"]], // return 4 newest articles
+            order: Sequelize.literal("rand()"),
+            limit: nmbrSameType,
+          });
+        } else if (startingArticle.articleTypeId == 2) {
+          articlesSameType = await db.models.Article.findAll({
+            where: {
+              articleTypeId: startingArticle.articleTypeId,
+              id: { [Op.notIn]: [id] },
+            },
+            order: [["date_written", "DESC"]],
             limit: nmbrSameType,
           });
         }
+
         articlesSameType.forEach((el) => {
           recommendedArticles.push(el);
         });
@@ -165,6 +164,7 @@ class ArticleService {
           order: Sequelize.literal("rand()"),
           limit: nmbrSamePlace,
         });
+
         articlesSamePlace.forEach((el) => {
           recommendedArticles.push(el);
         });
@@ -176,25 +176,26 @@ class ArticleService {
             countryId: startingArticle.countryId,
             id: {
               [Op.notIn]: [
-                id, // don't return that article in result
-                ...recommendedArticles.map((article) => article.id), // don't return already recommended articles
+                id,
+                ...recommendedArticles.map((article) => article.id),
               ],
             },
           },
           order: Sequelize.literal("rand()"),
           limit: nmbrSameCountry,
         });
+
         articlesSameCountry.forEach((el) => {
           recommendedArticles.push(el);
         });
       }
     } else if (type == "country-page" || type == "place-page") {
-      // nije clanak, nego page
       let startingDestination = null;
+
       if (type == "place-page") {
-        startingDestination = await db.models.Place.findByPk(id); // id = place id
+        startingDestination = await db.models.Place.findByPk(id);
       } else {
-        startingDestination = await db.models.Country.findByPk(id); // id = country id
+        startingDestination = await db.models.Country.findByPk(id);
       }
 
       const articlesSelectedCountry = await db.models.Article.findAll({
@@ -210,13 +211,13 @@ class ArticleService {
         order: Sequelize.literal("rand()"),
         limit: 2,
       });
+
       articlesSelectedCountry.forEach((element) => {
         recommendedArticles.push(element);
       });
     }
 
     if (recommendedArticles.length != 4) {
-      // add random destination articles if total number of articles is not 4
       const randomArticles = await db.models.Article.findAll({
         where: {
           articleTypeId: 1,
@@ -230,6 +231,7 @@ class ArticleService {
         order: Sequelize.literal("rand()"),
         limit: 4 - recommendedArticles.length,
       });
+
       randomArticles.forEach((el) => {
         recommendedArticles.push(el);
       });
@@ -244,6 +246,7 @@ class ArticleService {
     description,
     main_image_url,
     date_written,
+    date_updated,
     metatags,
     user_id,
     article_type_id,
@@ -258,8 +261,9 @@ class ArticleService {
         description: description,
         main_image_url: main_image_url,
         date_written: date_written,
+        date_updated: date_updated || null,
         metatags: metatags,
-        userId: user_id, // vanjski kljucevi se moraju pisat camelcase, makar u bazi nisu tak...
+        userId: user_id,
         articleTypeId: article_type_id,
         countryId: country_id,
         placeId: place_id,
@@ -273,7 +277,6 @@ class ArticleService {
     }
   }
 
-  // dohvati clanke koji u vise vise tablici imaju samo veze s homepageom (prema id-u special article typea)
   async getHomepageArticles() {
     try {
       const articles = await db.models.Article.findAll({
@@ -290,6 +293,7 @@ class ArticleService {
           },
         ],
       });
+
       return articles;
     } catch (error) {
       return [];
@@ -312,6 +316,7 @@ class ArticleService {
           },
         ],
       });
+
       return articles;
     } catch (error) {
       return [];
@@ -325,6 +330,7 @@ class ArticleService {
           countryId: id,
         },
       });
+
       return articles;
     } catch (error) {
       return [];
@@ -338,6 +344,7 @@ class ArticleService {
           placeId: id,
         },
       });
+
       return articles;
     } catch (error) {
       return [];
@@ -373,6 +380,7 @@ class ArticleService {
           ],
         },
       });
+
       return {
         total: articles.count,
         totalPages: Math.ceil(articles.count / pageSize),
@@ -389,11 +397,13 @@ class ArticleService {
   async updateOrCreateTopCountryArticle(article_id) {
     try {
       const article = await db.models.Article.findByPk(article_id);
+
       if (!article) {
         return "Article not found";
       } else {
         const countryId = article.toJSON().countryId;
         console.log(countryId);
+
         if (!countryId) {
           return "Article country not found";
         } else {
@@ -403,7 +413,7 @@ class ArticleService {
                 articleSpecialTypeId: 2,
               },
               include: {
-                model: db.models.Article, // ovo se moze zbog super many to many veze
+                model: db.models.Article,
                 where: {
                   countryId: countryId,
                 },
@@ -411,8 +421,8 @@ class ArticleService {
             });
 
           let response = null;
+
           if (existingArticle) {
-            //vec postoji top clanak za ovu drzavu - update
             const oldTopArticleId = existingArticle.toJSON().article.id;
 
             response = await db.models.Article_ArticleSpecialType.update(
@@ -421,12 +431,13 @@ class ArticleService {
             );
           } else {
             console.log("ne postoji");
-            // jos ne postoji top clanak za ovu drzavu - insert
+
             response = await db.models.Article_ArticleSpecialType.create({
               articleId: article_id,
-              articleSpecialTypeId: 2, // 2 = top country article
+              articleSpecialTypeId: 2,
             });
           }
+
           console.log(response);
           return article;
         }
@@ -438,14 +449,13 @@ class ArticleService {
   }
 
   async updateOrCreateTopHomepageArticles(article_ids, special_type_id) {
-    console.log(Array.isArray(article_ids)); // Outputs: true
+    console.log(Array.isArray(article_ids));
 
     try {
       console.log(special_type_id);
 
       const existingArticles =
         await db.models.Article_ArticleSpecialType.findAndCountAll({
-          // nadi sve clanke koji imaju taj poseban tip
           where: {
             articleSpecialTypeId: special_type_id,
           },
@@ -458,14 +468,13 @@ class ArticleService {
         special_type_id == 3
       ) {
         {
-          // provjeri nove vrijednosti koje nisu u bazi
           const valuesToAdd = article_ids.filter(
             (value) =>
               !existingArticles.rows.some((item) => item.articleId === value)
           );
 
-          // articli koji vise nisu u ovom novom arrayu
           const valuesToRemove = [];
+
           existingArticles.rows.map((row) => {
             const articleIdToCheck = row.toJSON().articleId;
 
@@ -474,9 +483,9 @@ class ArticleService {
             }
           });
 
-          // zamijeni ih
           console.log(valuesToRemove);
           console.log(valuesToAdd);
+
           valuesToRemove.map(async (currRemoveValue, index) => {
             await db.models.Article_ArticleSpecialType.update(
               {
@@ -493,6 +502,7 @@ class ArticleService {
           });
         }
       }
+
       return { article_ids: article_ids, special_type_id: special_type_id };
     } catch (error) {
       console.log(error.message);
@@ -508,6 +518,7 @@ class ArticleService {
     metatags,
     main_image_url,
     date_written,
+    date_updated,
     article_type_id,
     user_id,
     country_id,
@@ -525,6 +536,7 @@ class ArticleService {
           metatags: metatags,
           main_image_url: main_image_url,
           date_written: date_written,
+          date_updated: date_updated || null,
           articleTypeId: article_type_id,
           userId: user_id,
           countryId: country_id,

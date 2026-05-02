@@ -199,7 +199,8 @@ export async function addArticle(
   place_id: number | null,
   main_image_url: string,
   user_id: number,
-  date_written: Date,
+  date_written: Date | string,
+  date_updated: Date | string | null,
   airport_city_id: number | null
 ) {
   const token = getToken();
@@ -223,6 +224,7 @@ export async function addArticle(
       user_id,
       main_image_url,
       date_written,
+      date_updated,
       airport_city_id,
     }),
   });
@@ -269,6 +271,8 @@ export async function updateArticle(
   description: string,
   metatags: string,
   main_image_url: string,
+  date_written: Date | string,
+  date_updated: Date | string | null,
   article_type_id: number,
   country_id: number | null | string,
   place_id: number | null | string,
@@ -280,6 +284,8 @@ export async function updateArticle(
     description,
     metatags,
     main_image_url,
+    date_written,
+    date_updated,
     article_type_id,
     airport_city_id,
     country_id,
@@ -297,12 +303,14 @@ export async function updateArticle(
     method: "PATCH",
     body: JSON.stringify(requestBody),
   });
+
   const data = await response.json();
 
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   console.log("data", data);
 
   return data;

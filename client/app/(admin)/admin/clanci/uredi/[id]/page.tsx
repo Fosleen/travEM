@@ -84,6 +84,7 @@ const EditArticle = () => {
   const [isMainCountryPostChecked, setIsMainCountryPostChecked] =
     useState(false);
   const [isMainCountryPost, setIsMainCountryPost] = useState(false);
+  const [isFarDestinationChecked, setIsFarDestinationChecked] = useState(false);
 
   const ValidationSchema = Yup.object().shape({
     article_title: Yup.string()
@@ -129,9 +130,8 @@ const EditArticle = () => {
     return mainArticleImage != "" && mainArticleImage;
   };
 
-  // ====== NEW: SECTION ACTION HELPERS (insert/move) ======
   const emptySection = {
-    section_id: null, // IMPORTANT: Edit page uses section_id for update/create logic
+    section_id: null,
     section_subtitle: "",
     section_text: "",
     section_url_title: "",
@@ -162,7 +162,6 @@ const EditArticle = () => {
       return copy;
     });
   };
-  // ======================================================
 
   const handleSave = async (values: any) => {
     console.log("=== HANDLE SAVE STARTED ===");
@@ -196,7 +195,6 @@ const EditArticle = () => {
     try {
       console.log("=== STARTING UPDATE PROCESS ===");
 
-      // Build metatags string
       let metatagsString = "";
       values.metatags.forEach(
         (el, index) =>
@@ -204,11 +202,9 @@ const EditArticle = () => {
       );
       console.log("Metatags string:", metatagsString);
 
-
       const dateString = new Date().toJSON().slice(0, 10);
       const todaysDate = new Date(dateString);
 
-      // 1. Update main article
       console.log("1️⃣ Updating main article...", {
         id: article.id,
         title: values.article_title,
@@ -220,6 +216,7 @@ const EditArticle = () => {
         article_country: values.article_country,
         article_place: values.article_place,
         article_airport_city_id: values.article_airport_city_id,
+        is_far_destination: isFarDestinationChecked,
       });
 
       const articleResponse = await updateArticle(
@@ -234,12 +231,12 @@ const EditArticle = () => {
         values.article_type,
         values.article_country,
         values.article_place,
-        values.article_airport_city_id
+        values.article_airport_city_id,
+        isFarDestinationChecked
       );
 
       console.log("✅ Article updated:", articleResponse);
 
-      // 2. Update/Add sections
       console.log(
         "2️⃣ Updating sections...",
         values.sections.length,
@@ -254,7 +251,6 @@ const EditArticle = () => {
           );
 
           if (el.section_id) {
-            // Update existing section
             const sectionResponse = await updateSection(
               el.section_id,
               el.section_text,
@@ -266,7 +262,6 @@ const EditArticle = () => {
             );
             console.log(`   ✅ Section ${index + 1} updated:`, sectionResponse);
 
-            // Add new images to existing section
             const newImages =
               sectionImages[index]?.filter((img) => !img.id) || [];
             console.log(
@@ -286,7 +281,6 @@ const EditArticle = () => {
               })
             );
           } else {
-            // Add new section
             const response = await addSection(
               el.section_text,
               el.section_subtitle,
@@ -298,7 +292,6 @@ const EditArticle = () => {
             );
             console.log(`   ✅ Section ${index + 1} created:`, response);
 
-            // Add images to new section
             const newImages = sectionImages[index] || [];
             console.log(`   Adding ${newImages.length} images to new section`);
 
@@ -320,7 +313,6 @@ const EditArticle = () => {
 
       console.log("✅ All sections updated");
 
-      // 3. Delete removed sections
       const removedSections = article.sections
         .map((section) => section.id)
         .filter(
@@ -340,7 +332,6 @@ const EditArticle = () => {
 
       console.log("✅ Removed sections deleted");
 
-      // 4. Delete removed section images
       const removedSectionImages = article.sections.map((section, index) =>
         section.section_images
           .map((image: SectionImage) => image.id)
@@ -363,7 +354,6 @@ const EditArticle = () => {
 
       console.log("✅ Removed section images deleted");
 
-      // 5. Add new gallery images
       const newGalleryImages = otherArticleImages.filter((img) => !img.id);
       console.log("5️⃣ Adding new gallery images:", newGalleryImages.length);
 
@@ -382,7 +372,6 @@ const EditArticle = () => {
 
       console.log("✅ Gallery images added");
 
-      // 6. Delete removed gallery images
       const removedGalleryImages = article.gallery_images
         .map((image: GalleryImage) => image.id)
         .filter(
@@ -401,7 +390,6 @@ const EditArticle = () => {
 
       console.log("✅ Gallery images deleted");
 
-      // 7. Handle top country article
       console.log("7️⃣ Handling top country article...");
       console.log("   isMainCountryPostChecked:", isMainCountryPostChecked);
       console.log("   isMainCountryPost:", isMainCountryPost);
@@ -418,7 +406,6 @@ const EditArticle = () => {
 
       console.log("✅ Top country article handled");
 
-      // 8 Handle video update/add/delete
       console.log("Handling video...");
       const hasVideo =
         values.article_video && values.article_video.trim() !== "";
@@ -591,19 +578,31 @@ const EditArticle = () => {
         const countriesData = await getVisitedCountries();
         const sectionIconsData = await getSectionIcons();
         const articleData = await getArticleById(parseInt(id), true);
-        const isSetAsMainCountryPost = await getFavoriteArticleByCountry(
-          articleData.countryId,
-          true
-        );
         const airportsData = await getAirportCities();
+
+        let isSetAsMainCountryPost = null;
+
+        if (articleData.countryId) {
+          isSetAsMainCountryPost = await getFavoriteArticleByCountry(
+            articleData.countryId,
+            true
+          );
+        }
 
         setArticleTypes(articleTypesData);
         setCountries(countriesData);
         setSectionIcons(sectionIconsData);
         setArticle(articleData);
         setMainArticleImage(articleData.main_image_url);
-        setIsMainCountryPostChecked(isSetAsMainCountryPost.id == id);
-        setIsMainCountryPost(isSetAsMainCountryPost.id == id);
+        setIsMainCountryPostChecked(isSetAsMainCountryPost?.id == id);
+        setIsMainCountryPost(isSetAsMainCountryPost?.id == id);
+        setSelectedCountryId(articleData.countryId || "");
+        setIsFarDestinationChecked(
+          articleData.isFarDestination === true ||
+            articleData.isFarDestination === 1 ||
+            articleData.is_far_destination === true ||
+            articleData.is_far_destination === 1
+        );
         setSectionImages(
           articleData.sections.map((section) => section.section_images)
         );
@@ -727,7 +726,7 @@ const EditArticle = () => {
                         className="error-message"
                       />
                     </div>
-                    <div className="add-article-input">
+                    <div className="edit-article-input">
                       <Field
                         name="article_description"
                         type="text"
@@ -744,7 +743,7 @@ const EditArticle = () => {
                       />
                     </div>
                     <div className="edit-article-dropdowns">
-                      <div className="add-article-input">
+                      <div className="edit-article-input">
                         <Dropdown
                           hardcodedValue={
                             "Odaberi u kojem će se meniju prikazivat"
@@ -756,6 +755,16 @@ const EditArticle = () => {
                             setFieldValue("article_airport_city_id", null);
                             setFieldValue("article_place", null);
                             setFieldValue("article_country", null);
+                            setSelectedCountryId("");
+
+                            if (value != "2") {
+                              setIsFarDestinationChecked(false);
+                            }
+
+                            if (value != "1") {
+                              setIsMainCountryPostChecked(false);
+                              setIsMainCountryPost(false);
+                            }
                           }}
                           label="Vrsta članka *"
                         />
@@ -773,7 +782,7 @@ const EditArticle = () => {
                       />
                       {values.article_type == "1" && (
                         <>
-                          <div className="add-article-input">
+                          <div className="edit-article-input">
                             <Field
                               name="article_country"
                               type="text"
@@ -817,29 +826,46 @@ const EditArticle = () => {
                         </>
                       )}
                       {values.article_type == "2" && airportCities && (
-                        <div className="add-article-input">
-                          <Field
-                            name="article_airport_city_id"
-                            type="text"
-                            as={AdvancedDropdown}
-                            label="Aerodrom *"
-                            hardcodedValue="Odaberi aerodrom iz kojeg se kreće..."
-                            options={airportCities}
-                            onChange={(value) => {
-                              setFieldValue(
-                                "article_airport_city_id",
-                                value.id
-                              );
-                            }}
-                            selectedValue={values.article_airport_city_id}
-                            imageAttribute="flag_url"
-                            images
-                          />
-                          <ErrorMessage
-                            name="article_airport_city_id"
-                            component="div"
-                            className="error-message"
-                          />
+                        <div className="edit-article-airport-row">
+                          <div className="edit-article-input">
+                            <Field
+                              name="article_airport_city_id"
+                              type="text"
+                              as={AdvancedDropdown}
+                              label="Aerodrom *"
+                              hardcodedValue="Odaberi aerodrom iz kojeg se kreće..."
+                              options={airportCities}
+                              onChange={(value) => {
+                                setFieldValue(
+                                  "article_airport_city_id",
+                                  value.id
+                                );
+                              }}
+                              selectedValue={values.article_airport_city_id}
+                              imageAttribute="flag_url"
+                              images
+                            />
+                            <ErrorMessage
+                              name="article_airport_city_id"
+                              component="div"
+                              className="error-message"
+                            />
+                          </div>
+
+                          <div className="edit-article-airport-toggle">
+                            <div className="edit-article-toggle-item">
+                              <ToggleSwitch
+                                name={"far-destination"}
+                                description={"Daleka destinacija?"}
+                                value={isFarDestinationChecked}
+                                setter={() =>
+                                  setIsFarDestinationChecked(
+                                    !isFarDestinationChecked
+                                  )
+                                }
+                              />
+                            </div>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -911,7 +937,6 @@ const EditArticle = () => {
                                   >
                                     <legend>Odlomak {index + 1}</legend>
 
-                                    {/* NEW: actions block (same as add) */}
                                     <SectionActions
                                       index={index}
                                       total={sections.length}
@@ -972,7 +997,7 @@ const EditArticle = () => {
                                       </div>
                                     </div>
 
-                                    <div className="add-article-input">
+                                    <div className="edit-article-input">
                                       <Field
                                         name={`sections[${index}].section_text`}
                                         label="Tekst odlomka *"

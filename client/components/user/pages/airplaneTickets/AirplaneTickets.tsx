@@ -1,91 +1,3 @@
-/*
-// @ts-nocheck
-"use client";
-
-import HorizontalPostItemBig from "../../atoms/HorizontalPostItemBig/HorizontalPostItemBig";
-import RecommendedPosts from "../../molecules/RecommendedPosts";
-import "./AirplaneTickets.scss";
-
-type Article = {
-  id: number;
-  title: string;
-  subtitle: string;
-  description: string;
-  main_image_url: string;
-  airport_city: {
-    id: number;
-    name: string;
-  };
-};
-
-type AirplaneTicketsProps = {
-  initialTickets: Article[];
-  cityName: string;
-  recommendedId: number | null;
-};
-
-const AIRPORT_NAMES: Record<string, string> = {
-  Zagreb: "Zračna luka Franjo Tuđman Zagreb",
-  Split: "Zračna luka Sveti Jeronim Split",
-  Dubrovnik: "Zračna luka Ruđer Bošković Dubrovnik",
-  Zadar: "Zračna luka Zadar",
-  Pula: "Zračna luka Pula",
-  Rijeka: "Zračna luka Rijeka",
-  Osijek: "Zračna luka Osijek",
-
-  Beograd: "Zračna luka Nikola Tesla Beograd",
-  Sarajevo: "Zračna luka Sarajevo",
-  Trst: "Zračna luka Trst",
-  Beč: "Zračna luka Beč",
-  Budimpešta: "Zračna luka Liszt Ferenc Budimpešta",
-  Venecija: "Zračna luka Marco Polo Venecija",
-  Tuzla: "Zračna luka Tuzla",
-  "Banja Luka": "Zračna luka Banja Luka",
-};
-
-const AirplaneTickets = ({
-  initialTickets,
-  cityName,
-  recommendedId,
-}: AirplaneTicketsProps) => {
-  // Format city name: capitalize each word
-  const formattedCityName = cityName
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
-
-  // Pick custom airport title if exists, otherwise fallback
-  const airportTitle =
-    AIRPORT_NAMES[formattedCityName] ?? `Zračna luka ${formattedCityName}`;
-
-  return (
-    <div className="airplane-tickets-parent-wrapper">
-      <div className="airplane-tickets-text-wrapper">
-        <h1>{airportTitle}</h1>
-      </div>
-
-      <div className="airplane-tickets-grid-wrapper">
-        {initialTickets.length > 0 ? (
-          initialTickets.map((article) => (
-            <HorizontalPostItemBig key={article.id} data={article} />
-          ))
-        ) : (
-          <div className="no-tickets-message">
-            <h2>Trenutno nema aviokarti za ovo mjesto</h2>
-          </div>
-        )}
-      </div>
-
-      {recommendedId && <RecommendedPosts type="article" id={recommendedId} />}
-    </div>
-  );
-};
-
-export default AirplaneTickets;
-*/
-
-// @ts-nocheck
-
 // @ts-nocheck
 "use client";
 
@@ -112,9 +24,8 @@ type Article = {
     id: number;
     name: string;
   };
-
-  // Optional (front-only)
-  farFarAway?: boolean;
+  isFarDestination?: boolean | number;
+  is_far_destination?: boolean | number;
 };
 
 type AirplaneTicketsProps = {
@@ -202,23 +113,13 @@ const DEFAULT_HERO_IMAGE =
   HERO_IMAGES["Zagreb"] ||
   "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Zagreb%20Airport.jpg";
 
-// Front-only filtriranje bez backenda (max 5 prikaz)
-const FAR_AWAY_TICKET_IDS_BY_CITY: Record<string, number[]> = {
-  Zagreb: [544, 439],
-  Split: [556],
-  Dubrovnik: [],
-  Zadar: [],
-  Pula: [],
-  Rijeka: [],
-  Osijek: [],
-  Beograd: [],
-  Sarajevo: [],
-  Trst: [523],
-  Beč: [565],
-  Budimpešta: [568],
-  Venecija: [],
-  Tuzla: [524],
-  "Banja Luka": [],
+const isFarDestination = (ticket: Article) => {
+  return (
+    ticket.isFarDestination === true ||
+    ticket.isFarDestination === 1 ||
+    ticket.is_far_destination === true ||
+    ticket.is_far_destination === 1
+  );
 };
 
 const AirplaneTickets = ({
@@ -245,22 +146,15 @@ const AirplaneTickets = ({
   // Hero slika po gradu (fallback: Zagreb)
   const heroImageUrl = HERO_IMAGES[formattedCityName] ?? DEFAULT_HERO_IMAGE;
 
-  // Front-only split u 2 sekcije: Bliske / Daleke
+  // Split u 2 sekcije prema vrijednosti iz baze: Bliske / Daleke
   const { closeTickets, farTickets } = useMemo(() => {
-    const farIds = new Set<number>(
-      FAR_AWAY_TICKET_IDS_BY_CITY[formattedCityName] ?? []
-    );
+    const tickets = initialTickets ?? [];
 
-    const enriched = (initialTickets ?? []).map((t) => ({
-      ...t,
-      farFarAway: farIds.has(t.id),
-    }));
-
-    const close = enriched.filter((t) => !t.farFarAway).slice(0, 6);
-    const far = enriched.filter((t) => t.farFarAway).slice(0, 6);
+    const close = tickets.filter((ticket) => !isFarDestination(ticket)).slice(0, 6);
+    const far = tickets.filter((ticket) => isFarDestination(ticket)).slice(0, 6);
 
     return { closeTickets: close, farTickets: far };
-  }, [initialTickets, formattedCityName]);
+  }, [initialTickets]);
 
   return (
     <div className="airplane-tickets-parent-wrapper">
@@ -306,5 +200,3 @@ const AirplaneTickets = ({
 };
 
 export default AirplaneTickets;
-
-

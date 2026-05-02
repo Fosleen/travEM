@@ -15,6 +15,11 @@ export default (sequelize, DataTypes) => {
       metatags: { type: DataTypes.STRING },
       date_written: { type: DataTypes.DATEONLY, allowNull: false },
       date_updated: { type: DataTypes.DATEONLY, allowNull: true },
+      isFarDestination: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
     },
     {
       underscored: true,

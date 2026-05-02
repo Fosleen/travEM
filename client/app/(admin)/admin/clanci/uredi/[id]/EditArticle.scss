@@ -25,8 +25,6 @@
 
     .edit-article-inputs {
       border-radius: 8px;
-      // border: 2px solid $greyMiddle;
-      // padding: 16px;
       max-width: 1024px;
       display: flex;
       flex-direction: column;
@@ -40,11 +38,38 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 16px;
+        align-items: start;
 
         .edit-article-input {
           display: flex;
           flex-direction: column;
           gap: 8px;
+        }
+      }
+
+      .edit-article-input {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .edit-article-airport-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        align-items: start;
+        grid-column: 1 / -1;
+
+        .edit-article-airport-toggle {
+          display: flex;
+          align-items: center;
+          padding-top: 18px;
+
+          .edit-article-toggle-item {
+            display: flex;
+            align-items: center;
+            min-height: 58px;
+          }
         }
       }
     }
@@ -56,7 +81,6 @@
 
       .edit-article-image {
         height: 72px;
-        // width: 108px;
         position: relative;
         cursor: pointer;
         display: inline-block;
@@ -199,6 +223,62 @@
       display: flex;
       gap: 8px;
       margin-bottom: 64px;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .edit-article-container {
+    padding-right: 0;
+
+    .edit-article-header {
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .edit-article-form {
+      .edit-article-inputs {
+        .edit-article-dropdowns {
+          grid-template-columns: 1fr;
+        }
+
+        .edit-article-airport-row {
+          grid-template-columns: 1fr;
+
+          .edit-article-airport-toggle {
+            align-items: flex-start;
+            padding-top: 0;
+
+            .edit-article-toggle-item {
+              min-height: auto;
+            }
+          }
+        }
+      }
+
+      .edit-article-sections-container {
+        .edit-article-section {
+          .edit-article-section-top,
+          .edit-article-section-bottom,
+          .edit-article-bottom-container {
+            display: flex;
+            flex-direction: column;
+          }
+
+          .edit-article-section-top {
+            .edit-article-section-top-item {
+              &:last-of-type {
+                max-width: unset;
+              }
+            }
+          }
+        }
+      }
+
+      .edit-article-buttons {
+        flex-direction: column;
+      }
     }
   }
 }

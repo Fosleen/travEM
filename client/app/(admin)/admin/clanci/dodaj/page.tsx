@@ -68,6 +68,7 @@ const AddArticlePage = () => {
     useState(false);
   const [isNotifySubscribersChecked, setIsNotifySubscribersChecked] =
     useState(true);
+  const [isFarDestinationChecked, setIsFarDestinationChecked] = useState(false);
 
   const ValidationSchema = Yup.object().shape({
     article_title: Yup.string()
@@ -167,7 +168,8 @@ const AddArticlePage = () => {
               user_id,
               todaysDate,
               null,
-              parseInt(values.article_airport_city_id)
+              parseInt(values.article_airport_city_id),
+              isFarDestinationChecked
             );
 
             const galleryResults = await Promise.all(
@@ -449,6 +451,7 @@ const AddArticlePage = () => {
                       className="error-message"
                     />
                   </div>
+
                   <div className="add-article-input">
                     <Field
                       name="article_subtitle"
@@ -462,6 +465,7 @@ const AddArticlePage = () => {
                       className="error-message"
                     />
                   </div>
+
                   <div className="add-article-input">
                     <Field
                       name="article_description"
@@ -477,6 +481,7 @@ const AddArticlePage = () => {
                       className="error-message"
                     />
                   </div>
+
                   <div className="add-article-dropdowns">
                     <div className="add-article-input">
                       <Dropdown
@@ -490,6 +495,15 @@ const AddArticlePage = () => {
                           setFieldValue("article_airport_city_id", null);
                           setFieldValue("article_place", null);
                           setFieldValue("article_country", null);
+                          setSelectedCountryId("");
+
+                          if (value != "2") {
+                            setIsFarDestinationChecked(false);
+                          }
+
+                          if (value != "1") {
+                            setIsMainCountryPostChecked(false);
+                          }
                         }}
                         label="Vrsta članka *"
                       />
@@ -499,12 +513,14 @@ const AddArticlePage = () => {
                         className="error-message"
                       />
                     </div>
+
                     <Field
                       name="article_video"
                       as={Input}
                       label="Videozapis (opcionalno) "
                       placeholder={"Unesi link videa"}
                     />
+
                     {values.article_type == "1" && (
                       <>
                         <div className="add-article-input">
@@ -530,6 +546,7 @@ const AddArticlePage = () => {
                             className="error-message"
                           />
                         </div>
+
                         {values.article_country != "" && places && (
                           <Field
                             name="article_place"
@@ -547,27 +564,48 @@ const AddArticlePage = () => {
                         )}
                       </>
                     )}
+
                     {values.article_type == "2" && airportCities && (
-                      <div className="add-article-input">
-                        <Field
-                          name="article_airport_city_id"
-                          type="text"
-                          as={AdvancedDropdown}
-                          label="Aerodrom *"
-                          hardcodedValue="Odaberi aerodrom iz kojeg se kreće..."
-                          options={airportCities}
-                          onChange={(value) => {
-                            setFieldValue("article_airport_city_id", value.id);
-                          }}
-                          selectedValue={values.article_airport_city_id}
-                          imageAttribute="flag_url"
-                          images
-                        />
-                        <ErrorMessage
-                          name="article_airport_city_id"
-                          component="div"
-                          className="error-message"
-                        />
+                      <div className="add-article-airport-row">
+                        <div className="add-article-input">
+                          <Field
+                            name="article_airport_city_id"
+                            type="text"
+                            as={AdvancedDropdown}
+                            label="Aerodrom *"
+                            hardcodedValue="Odaberi aerodrom iz kojeg se kreće..."
+                            options={airportCities}
+                            onChange={(value) => {
+                              setFieldValue(
+                                "article_airport_city_id",
+                                value.id
+                              );
+                            }}
+                            selectedValue={values.article_airport_city_id}
+                            imageAttribute="flag_url"
+                            images
+                          />
+                          <ErrorMessage
+                            name="article_airport_city_id"
+                            component="div"
+                            className="error-message"
+                          />
+                        </div>
+
+                        <div className="add-article-airport-toggle">
+                          <div className="add-article-toggle-item">
+                            <ToggleSwitch
+                              name={"far-destination"}
+                              description={"Daleka destinacija?"}
+                              value={isFarDestinationChecked}
+                              setter={() =>
+                                setIsFarDestinationChecked(
+                                  !isFarDestinationChecked
+                                )
+                              }
+                            />
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -606,6 +644,7 @@ const AddArticlePage = () => {
                   (mainArticleImage == "" || !mainArticleImage) && (
                     <p className="error-message">Obavezno polje!</p>
                   )}
+
                 <p>* preporuča se slika u omjeru 16:9</p>
 
                 <div>
@@ -660,6 +699,7 @@ const AddArticlePage = () => {
                                         placeholder="Unesi podnaslov odlomka..."
                                       />
                                     </div>
+
                                     <div className="add-article-section-top-item">
                                       <Field
                                         type="text"
@@ -704,6 +744,7 @@ const AddArticlePage = () => {
                                       label="Naslov poveznice (opcionalno)"
                                       placeholder="Unesi naslov poveznice..."
                                     />
+
                                     <Field
                                       type="text"
                                       name={`sections.${index}.section_url_link`}
@@ -743,6 +784,7 @@ const AddArticlePage = () => {
                                             </div>
                                           )
                                         )}
+
                                       {sectionImages[index].length < 2 && (
                                         <div
                                           className="add-article-item"
@@ -760,6 +802,7 @@ const AddArticlePage = () => {
                                         </div>
                                       )}
                                     </div>
+
                                     <Button
                                       type="button"
                                       red
@@ -773,6 +816,7 @@ const AddArticlePage = () => {
                                       izbriši odlomak
                                     </Button>
                                   </div>
+
                                   <p>
                                     * preporuča se 1 slika u omjeru 16:9 ili
                                     max. 2 u omjeru 9:16
@@ -780,6 +824,7 @@ const AddArticlePage = () => {
                                 </fieldset>
                               ))
                             : null}
+
                           <Button
                             type="button"
                             primary
@@ -797,6 +842,7 @@ const AddArticlePage = () => {
 
                 <div className="add-article-gallery-container">
                   <h6>Preostale fotografije na članku:</h6>
+
                   <div className="add-article-images-container">
                     {otherArticleImages &&
                       otherArticleImages.map((el, index) => (
@@ -813,6 +859,7 @@ const AddArticlePage = () => {
                           <img src={el.url} alt="img-error" />
                         </div>
                       ))}
+
                     <div
                       className="add-article-item"
                       onClick={() => {
@@ -836,6 +883,7 @@ const AddArticlePage = () => {
                           <div className="add-metatags-container">
                             <div className="add-metatag-header">
                               <h6>Meta oznake</h6>
+
                               <Button
                                 type="button"
                                 circle
@@ -846,6 +894,7 @@ const AddArticlePage = () => {
                                 +
                               </Button>
                             </div>
+
                             {metatags && metatags.length > 0
                               ? metatags.map((_metatags, index) => (
                                   <Fragment key={index}>
@@ -857,6 +906,7 @@ const AddArticlePage = () => {
                                         label=""
                                         placeholder="Unesi meta oznaku..."
                                       />
+
                                       <div
                                         onClick={() => {
                                           handleDeleteMetatag(
@@ -868,6 +918,7 @@ const AddArticlePage = () => {
                                         <Trash color="#AC2B2B" size={32} />
                                       </div>
                                     </div>
+
                                     <ErrorMessage
                                       name={`metatags.${index}.metatag_text`}
                                       component="div"
@@ -894,6 +945,7 @@ const AddArticlePage = () => {
                       />
                     </div>
                   )}
+
                   <div className="add-article-toggle-item">
                     <ToggleSwitch
                       name={"notify-subscribers"}
@@ -912,6 +964,7 @@ const AddArticlePage = () => {
                   <Button type="submit" adminPrimary>
                     objavi članak
                   </Button>
+
                   <Button type="button" white onClick={handleCancel}>
                     Odustani
                   </Button>

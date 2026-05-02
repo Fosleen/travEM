@@ -201,7 +201,8 @@ export async function addArticle(
   user_id: number,
   date_written: Date | string,
   date_updated: Date | string | null,
-  airport_city_id: number | null
+  airport_city_id: number | null,
+  is_far_destination: boolean = false
 ) {
   const token = getToken();
 
@@ -226,6 +227,7 @@ export async function addArticle(
       date_written,
       date_updated,
       airport_city_id,
+      is_far_destination,
     }),
   });
 
@@ -276,7 +278,8 @@ export async function updateArticle(
   article_type_id: number,
   country_id: number | null | string,
   place_id: number | null | string,
-  airport_city_id: number | null
+  airport_city_id: number | null,
+  is_far_destination: boolean = false
 ) {
   const requestBody = {
     title,
@@ -290,6 +293,7 @@ export async function updateArticle(
     airport_city_id,
     country_id,
     place_id,
+    is_far_destination,
   };
 
   const token = getToken();

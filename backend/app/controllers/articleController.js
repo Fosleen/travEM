@@ -86,7 +86,8 @@ class ArticleController {
         req.body.article_type_id,
         req.body.country_id,
         req.body.place_id,
-        req.body.airport_city_id
+        req.body.airport_city_id,
+        req.body.is_far_destination
       );
 
       if (response.length == 0) {
@@ -259,7 +260,8 @@ class ArticleController {
         req.body.user_id,
         req.body.country_id,
         req.body.place_id,
-        req.body.airport_city_id
+        req.body.airport_city_id,
+        req.body.is_far_destination
       );
       if (response === "Article not found") {
         return res

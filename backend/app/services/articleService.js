@@ -1,6 +1,10 @@
 import db from "../models/index.js";
 import { Op, Sequelize } from "sequelize";
 
+const parseBooleanValue = (value) => {
+  return value === true || value === 1 || value === "1";
+};
+
 class ArticleService {
   async getArticles(page, pageSize, articleType) {
     const limit = pageSize;
@@ -252,7 +256,8 @@ class ArticleService {
     article_type_id,
     country_id,
     place_id,
-    airport_city_id
+    airport_city_id,
+    is_far_destination
   ) {
     try {
       const article = await db.models.Article.create({
@@ -268,6 +273,7 @@ class ArticleService {
         countryId: country_id,
         placeId: place_id,
         airportCityId: airport_city_id,
+        isFarDestination: parseBooleanValue(is_far_destination),
       });
 
       return article;
@@ -523,7 +529,8 @@ class ArticleService {
     user_id,
     country_id,
     place_id,
-    airport_city_id
+    airport_city_id,
+    is_far_destination
   ) {
     console.log("patchArticle");
 
@@ -542,6 +549,7 @@ class ArticleService {
           countryId: country_id,
           placeId: place_id,
           airportCityId: airport_city_id,
+          isFarDestination: parseBooleanValue(is_far_destination),
         },
         {
           where: { id: id },

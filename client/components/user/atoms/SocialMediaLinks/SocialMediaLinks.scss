@@ -1,64 +1,238 @@
 /* SocialMediaLinks.scss */
 @use "@/utils/theme.scss" as *;
 
+$femaleRose: #e891a8;
+$darkIcon: #2f2936;
+
 .socials-container {
   display: flex;
-  gap: 12px;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+
   margin-bottom: 8px;
   padding-left: 8px;
   padding-right: 8px;
 
   position: relative;
   z-index: 1;
+  overflow: visible;
+
+  .socials-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .socials-group-personal {
+    gap: 8px;
+  }
+
+  .personal-cluster {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+
+  a {
+    display: inline-flex;
+    flex-shrink: 0;
+  }
 
   .socials-item {
     border-radius: 50%;
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
 
     display: flex;
     justify-content: center;
     align-items: center;
 
+    position: relative;
+    overflow: visible;
+
     transition:
-      transform 180ms cubic-bezier(.34,1.56,.64,1),
-      box-shadow 180ms ease,
-      filter 180ms ease;
+      transform 220ms cubic-bezier(.34, 1.56, .64, 1),
+      box-shadow 220ms ease,
+      filter 220ms ease,
+      opacity 220ms ease;
 
     cursor: pointer;
 
-    &.blue {
+    svg {
+      width: 28px;
+      height: 28px;
+      color: #ffffff;
+      transition: transform 220ms ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    &.personal {
+      width: 40px;
+      height: 40px;
+
+      svg {
+        width: 26px;
+        height: 26px;
+      }
+    }
+
+    &.male {
       background-color: $lightBlue;
     }
 
-    &.green {
-      background-color: $limeGreen;
-      border: 3px solid #2f2936;
+    &.female {
+      background-color: $femaleRose;
     }
 
-    svg {
-      width: 32px;
-      height: 32px;
-      transition: transform 180ms ease;
+    &.shared {
+      background: linear-gradient(
+        135deg,
+        $lightBlue 0%,
+        $lightBlue 49.5%,
+        rgba(255, 255, 255, 0.7) 49.5%,
+        rgba(255, 255, 255, 0.7) 50.5%,
+        $femaleRose 50.5%,
+        $femaleRose 100%
+      );
     }
 
-    /* 🔥 HOVER ANIMACIJA */
+    &.youtube {
+      border: 3px solid $darkIcon;
+
+      svg {
+        color: $darkIcon;
+      }
+    }
+
+    &::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 10px);
+
+      transform: translateX(-50%) translateY(-4px);
+      opacity: 0;
+      pointer-events: none;
+
+      background-color: $darkIcon;
+      color: #ffffff;
+
+      font-size: 11px;
+      line-height: 1;
+      white-space: nowrap;
+
+      padding: 7px 9px;
+      border-radius: 999px;
+
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+
+      transition:
+        opacity 180ms ease,
+        transform 180ms ease;
+
+      z-index: 30;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 5px);
+
+      transform: translateX(-50%) translateY(-4px);
+      opacity: 0;
+      pointer-events: none;
+
+      width: 0;
+      height: 0;
+
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: 5px solid $darkIcon;
+
+      transition:
+        opacity 180ms ease,
+        transform 180ms ease;
+
+      z-index: 30;
+    }
+
     &:hover {
       transform: translateY(-4px) scale(1.08);
       box-shadow:
         0 10px 18px rgba(0, 0, 0, 0.18),
-        0 0 12px rgba($limeGreen, 0.7);
+        0 0 12px rgba($lightBlue, 0.55);
 
       svg {
         transform: scale(1.1);
       }
+
+      &::after,
+      &::before {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
     }
 
-    /* klik feedback */
+    &.female:hover {
+      box-shadow:
+        0 10px 18px rgba(0, 0, 0, 0.18),
+        0 0 12px rgba($femaleRose, 0.65);
+    }
+
+    &.shared:hover {
+      box-shadow:
+        0 10px 18px rgba(0, 0, 0, 0.18),
+        0 0 12px rgba($femaleRose, 0.45),
+        0 0 16px rgba($lightBlue, 0.45);
+    }
+
     &:active {
       transform: translateY(-1px) scale(0.96);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
+    }
+  }
+}
+
+/* ================= MOBILE SMALL ================= */
+
+@media screen and (max-width: 390px) {
+  .socials-container {
+    gap: 10px;
+
+    .socials-group {
+      gap: 6px;
+    }
+
+    .socials-group-personal {
+      gap: 6px;
+    }
+
+    .personal-cluster {
+      gap: 6px;
+    }
+
+    .socials-item {
+      width: 40px;
+      height: 40px;
+
+      svg {
+        width: 25px;
+        height: 25px;
+      }
+
+      &.personal {
+        width: 36px;
+        height: 36px;
+
+        svg {
+          width: 23px;
+          height: 23px;
+        }
+      }
     }
   }
 }
@@ -68,18 +242,41 @@
 @media screen and ($tabletMedium) {
   .socials-container {
     justify-content: start;
+    gap: 16px;
+
+    .socials-group {
+      gap: 8px;
+    }
+
+    .socials-group-personal {
+      gap: 8px;
+    }
+
+    .personal-cluster {
+      gap: 8px;
+    }
 
     .socials-item {
       width: 40px;
       height: 40px;
 
-      &.green {
-        border: 2px solid #2f2936;
+      svg {
+        width: 27px;
+        height: 27px;
       }
 
-      svg {
-        width: 28px;
-        height: 28px;
+      &.personal {
+        width: 36px;
+        height: 36px;
+
+        svg {
+          width: 24px;
+          height: 24px;
+        }
+      }
+
+      &.youtube {
+        border: 2px solid $darkIcon;
       }
     }
   }
@@ -91,15 +288,195 @@
   .socials-container {
     padding-left: 0;
     margin-bottom: 0;
+    gap: 18px;
+    overflow: visible;
+
+    .socials-group {
+      gap: 8px;
+    }
+
+    .socials-group-personal {
+      gap: 12px;
+    }
+
+    .personal-cluster {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0;
+
+      padding: 4px;
+      border-radius: 999px;
+
+      transition: gap 260ms ease 140ms;
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 999px;
+
+        opacity: 0;
+        transform: scaleX(0.78);
+        transform-origin: left center;
+
+        transition:
+          opacity 260ms ease 140ms,
+          transform 320ms ease 140ms;
+
+        z-index: 0;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 36px;
+
+        width: 0;
+        height: 3px;
+        border-radius: 999px;
+
+        transform: translateY(-50%);
+        opacity: 0;
+
+        transition:
+          width 280ms ease 140ms,
+          opacity 220ms ease 140ms;
+
+        z-index: 0;
+      }
+
+      &.male-cluster {
+        &::before {
+          background: rgba($lightBlue, 0.18);
+        }
+
+        &::after {
+          background: rgba($lightBlue, 0.55);
+          box-shadow: 0 0 8px rgba($lightBlue, 0.25);
+        }
+      }
+
+      &.female-cluster {
+        &::before {
+          background: rgba($femaleRose, 0.2);
+        }
+
+        &::after {
+          background: rgba($femaleRose, 0.55);
+          box-shadow: 0 0 8px rgba($femaleRose, 0.25);
+        }
+      }
+
+      &:hover,
+      &:focus-within {
+        gap: 8px;
+
+        transition: gap 320ms ease;
+
+        &::before {
+          opacity: 1;
+          transform: scaleX(1);
+
+          transition:
+            opacity 240ms ease,
+            transform 360ms ease;
+        }
+
+        &::after {
+          width: 12px;
+          opacity: 1;
+
+          transition:
+            width 320ms ease 60ms,
+            opacity 220ms ease 60ms;
+        }
+
+        .cluster-hidden-link {
+          max-width: 34px;
+          opacity: 1;
+          transform: translateX(0);
+          pointer-events: auto;
+          overflow: visible;
+
+          transition:
+            max-width 360ms ease 60ms,
+            opacity 240ms ease 80ms,
+            transform 360ms cubic-bezier(.34, 1.56, .64, 1) 60ms;
+        }
+
+        .cluster-hidden-item {
+          opacity: 1;
+          transform: scale(1);
+
+          transition:
+            opacity 240ms ease 90ms,
+            transform 360ms cubic-bezier(.34, 1.56, .64, 1) 70ms,
+            box-shadow 220ms ease;
+        }
+      }
+    }
+
+    .cluster-hidden-link {
+      max-width: 0;
+      opacity: 0;
+      pointer-events: none;
+      overflow: visible;
+
+      transform: translateX(-12px);
+
+      transition:
+        max-width 300ms ease 160ms,
+        opacity 220ms ease 120ms,
+        transform 300ms ease 140ms;
+
+      position: relative;
+      z-index: 2;
+    }
+
+    .cluster-hidden-item {
+      opacity: 0;
+      transform: scale(0.82);
+
+      transition:
+        opacity 220ms ease 120ms,
+        transform 300ms ease 140ms,
+        box-shadow 220ms ease;
+
+      position: relative;
+      z-index: 2;
+    }
 
     .socials-item {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
+      position: relative;
+      z-index: 2;
 
       svg {
         width: 24px;
         height: 24px;
       }
+
+      &.personal {
+        width: 34px;
+        height: 34px;
+
+        svg {
+          width: 22px;
+          height: 22px;
+        }
+      }
+
+      &.youtube {
+        border: 2px solid $darkIcon;
+      }
+    }
+
+    .socials-item::after,
+    .socials-item::before {
+      z-index: 40;
     }
   }
 }
@@ -107,12 +484,35 @@
 /* ================= ACCESSIBILITY ================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .socials-item {
-    transition: none !important;
+  .socials-container {
+    .personal-cluster,
+    .cluster-hidden-link,
+    .cluster-hidden-item,
+    .socials-item {
+      transition: none !important;
+    }
 
-    &:hover {
-      transform: none;
-      box-shadow: none;
+    .personal-cluster {
+      &::before,
+      &::after {
+        transition: none !important;
+      }
+    }
+
+    .socials-item {
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+
+      svg {
+        transition: none !important;
+      }
+
+      &::after,
+      &::before {
+        transition: none !important;
+      }
     }
   }
 }

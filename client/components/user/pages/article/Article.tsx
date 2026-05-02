@@ -37,6 +37,8 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
+  const sectionsLength = articleContent?.sections?.length || 0;
+
   const handleCountryClick = () => {
     router.push(`/destinacija/${articleContent.country.name.toLowerCase()}`);
   };
@@ -52,8 +54,10 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
   );
 
   const newsletterInsertIndex = useMemo(() => {
-    return getNewsletterInsertIndex(articleContent?.sections?.length || 0);
-  }, [articleContent?.sections?.length]);
+    return getNewsletterInsertIndex(sectionsLength);
+  }, [sectionsLength]);
+
+  const shouldShowBottomNewsletter = sectionsLength >= 10;
 
   const openLightbox = (index: number) => {
     setLightboxIndex(index);
@@ -104,6 +108,9 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
             )}
           </React.Fragment>
         ))}
+
+        {shouldShowBottomNewsletter && <ArticleNewsletterCallToAction />}
+
         <ArticleFragment article={articleContent} />
       </div>
 

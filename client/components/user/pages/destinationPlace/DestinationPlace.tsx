@@ -29,6 +29,10 @@ interface Country {
 interface Place {
   id: number;
   name: string;
+  name_genitive?: string;
+  name_dative?: string;
+  name_accusative?: string;
+  name_locative?: string;
   description: string;
   main_image_url: string;
   featured_article_id?: number | null;
@@ -44,6 +48,13 @@ interface DestinationPlaceProps {
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:25060/api/v1";
+
+const getPlaceCase = (
+  place: Place,
+  grammaticalCase: "genitive" | "dative" | "accusative" | "locative"
+) => {
+  return place?.[`name_${grammaticalCase}`] || place?.name || "";
+};
 
 const getArticleImage = (article: any) => {
   return (
@@ -231,12 +242,15 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
         main_image_url={place.main_image_url}
       />
 
-      <BestTimeToVisitPlace placeSlug={placeName} />
+      <BestTimeToVisitPlace
+        placeSlug={placeName}
+        placeNameDative={getPlaceCase(place, "dative")}
+      />
 
       {articles && articles.length > 0 && (
         <section className="destination-place-content-container">
           <div className="destination-place-section-header">
-            <h2>Krenite od ovoga</h2>
+            <h2>Planirate putovanje u {getPlaceCase(place, "accusative")}?</h2>
           </div>
 
           {featuredArticle && (
@@ -323,7 +337,7 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
           {otherArticles.length > 0 && (
             <section className="destination-place-articles-section">
               <div className="destination-place-section-header compact">
-                <h2>Još korisnih vodiča</h2>
+                <h2>Nastavite istraživati {getPlaceCase(place, "accusative")}</h2>
               </div>
 
               <div
@@ -367,7 +381,7 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
 
       {place.videos && place.videos.length > 0 && (
         <div className="destination-place-videos-container">
-          <h2>Istražite grad kroz naše videe</h2>
+          <h2>Istražite {getPlaceCase(place, "accusative")} kroz naše videe</h2>
 
           <div className="destination-place-videos">
             <DestinationVideos data={place.videos} />

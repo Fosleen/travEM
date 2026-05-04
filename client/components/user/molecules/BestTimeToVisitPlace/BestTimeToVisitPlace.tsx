@@ -37,7 +37,8 @@ const ICON: Record<WeatherIconKey, string> = {
 };
 
 type Props = {
-  placeSlug: string; // iz URL-a
+  placeSlug: string;
+  placeNameDative?: string;
 };
 
 function clamp(n: number, min: number, max: number) {
@@ -66,22 +67,34 @@ function tempComfortScore(tempC: number) {
 function rainDryScore(rainMm: number, minRain: number, maxRain: number) {
   const span = Math.max(1, maxRain - minRain);
   const norm = (rainMm - minRain) / span;
+
   return 1 - clamp(norm, 0, 1);
 }
 
-function monthScore(tempC: number, rainMm: number, minRain: number, maxRain: number) {
+function monthScore(
+  tempC: number,
+  rainMm: number,
+  minRain: number,
+  maxRain: number
+) {
   const t = tempComfortScore(tempC);
   const r = rainDryScore(rainMm, minRain, maxRain);
   const score01 = 0.65 * t + 0.35 * r;
+
   return Math.round(score01 * 100);
 }
 
 function assignRatingsByRank(monthKeysSortedBestToWorst: MonthKey[]) {
-  const ratingByMonth = new Map<MonthKey, "Najbolje" | "Dobro" | "U redu" | "Loše">();
+  const ratingByMonth = new Map<
+    MonthKey,
+    "Najbolje" | "Dobro" | "U redu" | "Loše"
+  >();
+
   const n = monthKeysSortedBestToWorst.length;
 
   for (let i = 0; i < n; i++) {
     const month = monthKeysSortedBestToWorst[i];
+
     if (i <= 1) ratingByMonth.set(month, "Najbolje");
     else if (i <= 5) ratingByMonth.set(month, "Dobro");
     else if (i <= 9) ratingByMonth.set(month, "U redu");
@@ -91,7 +104,12 @@ function assignRatingsByRank(monthKeysSortedBestToWorst: MonthKey[]) {
   return ratingByMonth;
 }
 
-function computeIcon(tempC: number, rainMm: number, minRain: number, maxRain: number): WeatherIconKey {
+function computeIcon(
+  tempC: number,
+  rainMm: number,
+  minRain: number,
+  maxRain: number
+): WeatherIconKey {
   if (tempC <= 1) return "snow";
 
   const span = Math.max(1, maxRain - minRain);
@@ -109,14 +127,20 @@ function ratingClass(r: string) {
   if (r === "Najbolje") return "best";
   if (r === "Dobro") return "good";
   if (r === "U redu") return "variable";
+
   return "poor";
 }
 
-export default function BestTimeToVisitPlace({ placeSlug }: Props) {
+export default function BestTimeToVisitPlace({
+  placeSlug,
+  placeNameDative,
+}: Props) {
   const normalizedSlug = decodeURIComponent(placeSlug).toLowerCase();
 
   const place: PlaceClimate | undefined = useMemo(() => {
-    return BEST_TIME_PLACES_DATA.find((p) => p.slug.toLowerCase() === normalizedSlug);
+    return BEST_TIME_PLACES_DATA.find(
+      (p) => p.slug.toLowerCase() === normalizedSlug
+    );
   }, [normalizedSlug]);
 
   const computed = useMemo(() => {
@@ -159,8 +183,13 @@ export default function BestTimeToVisitPlace({ placeSlug }: Props) {
     <section className="btv-place">
       <div className="btv-place-header">
         <div className="btv-place-title">
-          <h2>{place.title ?? `Najbolje vrijeme za posjet ${placeSlug}`}</h2>
-          {place.subtitle && <p className="btv-place-subtitle">{place.subtitle}</p>}
+          <h2>
+            Najbolje vrijeme za posjet {placeNameDative || placeSlug}
+          </h2>
+
+          {place.subtitle && (
+            <p className="btv-place-subtitle">{place.subtitle}</p>
+          )}
         </div>
 
         <div className="btv-place-legend">
@@ -195,7 +224,10 @@ export default function BestTimeToVisitPlace({ placeSlug }: Props) {
             <div className="btv-place-month-temp">{m.tempC}°C</div>
 
             <div className="btv-place-bar-wrap">
-              <div className="btv-place-bar" style={{ height: `${m.heightPct}%` }} />
+              <div
+                className="btv-place-bar"
+                style={{ height: `${m.heightPct}%` }}
+              />
             </div>
 
             <div className="btv-place-month-label">{MONTH_LABEL[m.month]}</div>

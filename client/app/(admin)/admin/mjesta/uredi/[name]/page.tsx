@@ -59,6 +59,68 @@ const grammarRows = [
   },
 ];
 
+const bestTimeMonths = [
+  { month_key: "jan", label: "Siječanj" },
+  { month_key: "feb", label: "Veljača" },
+  { month_key: "mar", label: "Ožujak" },
+  { month_key: "apr", label: "Travanj" },
+  { month_key: "may", label: "Svibanj" },
+  { month_key: "jun", label: "Lipanj" },
+  { month_key: "jul", label: "Srpanj" },
+  { month_key: "aug", label: "Kolovoz" },
+  { month_key: "sep", label: "Rujan" },
+  { month_key: "oct", label: "Listopad" },
+  { month_key: "nov", label: "Studeni" },
+  { month_key: "dec", label: "Prosinac" },
+];
+
+const getDefaultBestTimeMonths = () =>
+  bestTimeMonths.map((month) => ({
+    month_key: month.month_key,
+    avg_temp_c: "",
+    avg_rain_mm: "",
+  }));
+
+const normalizeNumberForInput = (value) => {
+  if (value === null || value === undefined) return "";
+  return String(value).replace(".", ",");
+};
+
+const getInitialBestTimeToVisit = (place) => {
+  const bestTime = place?.best_time_to_visit;
+
+  if (!bestTime) {
+    return {
+      slug: "",
+      subtitle: "",
+      note: "",
+      is_enabled: true,
+      months: getDefaultBestTimeMonths(),
+    };
+  }
+
+  const existingMonths = bestTime.months || [];
+
+  return {
+    slug: bestTime.slug || "",
+    subtitle: bestTime.subtitle || "",
+    note: bestTime.note || "",
+    is_enabled:
+      bestTime.is_enabled === undefined ? true : Boolean(bestTime.is_enabled),
+    months: bestTimeMonths.map((month) => {
+      const foundMonth = existingMonths.find(
+        (item) => item.month_key === month.month_key
+      );
+
+      return {
+        month_key: month.month_key,
+        avg_temp_c: normalizeNumberForInput(foundMonth?.avg_temp_c),
+        avg_rain_mm: normalizeNumberForInput(foundMonth?.avg_rain_mm),
+      };
+    }),
+  };
+};
+
 const EditPlace = () => {
   const params = useParams();
   const router = useRouter();
@@ -139,6 +201,7 @@ const EditPlace = () => {
             featured_article_id: values.featured_article_id
               ? parseInt(values.featured_article_id)
               : null,
+            best_time_to_visit: values.best_time_to_visit,
           });
 
           console.log(placeResponse);
@@ -255,6 +318,13 @@ const EditPlace = () => {
     }
   }, [name]);
 
+  const numberValidation = Yup.string()
+    .required("Obavezno polje!")
+    .test("is-valid-number", "Vrijednost mora biti validan broj!", (value) => {
+      if (value === undefined || value === null || value === "") return false;
+      return !Number.isNaN(Number(value.toString().replace(",", ".")));
+    });
+
   const ValidationSchema = Yup.object().shape({
     place_name: Yup.string()
       .required("Obavezno polje!")
@@ -288,6 +358,21 @@ const EditPlace = () => {
     place_description: Yup.string().required("Obavezno polje!"),
     place_country: Yup.number().required("Obavezno polje!").integer(),
     featured_article_id: Yup.mixed().nullable(),
+    best_time_to_visit: Yup.object().shape({
+      slug: Yup.string().required("Obavezno polje!"),
+      subtitle: Yup.string().required("Obavezno polje!"),
+      note: Yup.string().nullable(),
+      is_enabled: Yup.boolean(),
+      months: Yup.array()
+        .of(
+          Yup.object().shape({
+            month_key: Yup.string().required("Obavezno polje!"),
+            avg_temp_c: numberValidation,
+            avg_rain_mm: numberValidation,
+          })
+        )
+        .min(12, "Potrebno je unijeti svih 12 mjeseci."),
+    }),
     videos: Yup.array().of(
       Yup.object().shape({
         video_url: Yup.string().required("Obavezno polje!"),
@@ -329,6 +414,7 @@ const EditPlace = () => {
               place_longitude: place.longitude,
               place_icon_url: place.map_icon,
               featured_article_id: place.featured_article_id || null,
+              best_time_to_visit: getInitialBestTimeToVisit(place),
               videos: place.videos
                 ? place.videos.map((el) => ({
                     id: el.id,
@@ -539,6 +625,124 @@ const EditPlace = () => {
                               />
                             </>
                           )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="edit-place-best-time-wrapper">
+                  <div className="edit-place-best-time-header">
+                    <div>
+                      <h6>Najbolje vrijeme za posjet *</h6>
+                      <p>
+                        Unesite prosječnu temperaturu i količinu kiše za svaki
+                        mjesec.
+                      </p>
+                    </div>
+
+                    <ToggleSwitch
+                      name={"best-time-enabled"}
+                      description={"Prikaži ovu sekciju na stranici grada"}
+                      value={values.best_time_to_visit.is_enabled}
+                      setter={(value) => {
+                        setFieldValue("best_time_to_visit.is_enabled", value);
+                      }}
+                    />
+                  </div>
+
+                  <div className="edit-place-best-time-inputs">
+                    <div className="edit-place-input">
+                      <Field
+                        name="best_time_to_visit.slug"
+                        type="text"
+                        as={Input}
+                        label="Slug *"
+                        placeholder="npr. ljubljana"
+                      />
+                      <ErrorMessage
+                        name="best_time_to_visit.slug"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
+
+                    <div className="edit-place-input">
+                      <Field
+                        name="best_time_to_visit.subtitle"
+                        type="text"
+                        as={Input}
+                        label="Podnaslov *"
+                        placeholder="npr. Umjerena kontinentalna klima..."
+                      />
+                      <ErrorMessage
+                        name="best_time_to_visit.subtitle"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
+
+                    <div className="edit-place-input">
+                      <Field
+                        name="best_time_to_visit.note"
+                        type="text"
+                        as={Textarea}
+                        rows={2}
+                        label="Napomena"
+                        placeholder="npr. Svibanj, lipanj i rujan nude najbolji balans..."
+                      />
+                      <ErrorMessage
+                        name="best_time_to_visit.note"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="edit-place-best-time-table">
+                    <div className="edit-place-best-time-row edit-place-best-time-row-head">
+                      <div>Mjesec</div>
+                      <div>Prosj. temp. °C</div>
+                      <div>Kiša mm</div>
+                    </div>
+
+                    {bestTimeMonths.map((month, index) => (
+                      <div
+                        className="edit-place-best-time-row"
+                        key={month.month_key}
+                      >
+                        <div className="edit-place-best-time-month">
+                          {month.label}
+                        </div>
+
+                        <div>
+                          <Field
+                            name={`best_time_to_visit.months.${index}.avg_temp_c`}
+                            type="text"
+                            as={Input}
+                            label=""
+                            placeholder="npr. 17"
+                          />
+                          <ErrorMessage
+                            name={`best_time_to_visit.months.${index}.avg_temp_c`}
+                            component="div"
+                            className="error-message"
+                          />
+                        </div>
+
+                        <div>
+                          <Field
+                            name={`best_time_to_visit.months.${index}.avg_rain_mm`}
+                            type="text"
+                            as={Input}
+                            label=""
+                            placeholder="npr. 120"
+                          />
+                          <ErrorMessage
+                            name={`best_time_to_visit.months.${index}.avg_rain_mm`}
+                            component="div"
+                            className="error-message"
+                          />
                         </div>
                       </div>
                     ))}

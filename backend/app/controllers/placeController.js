@@ -1,4 +1,3 @@
-import video from "../models/video.js";
 import service from "../services/placeService.js";
 import videoService from "../services/videoService.js";
 
@@ -85,24 +84,35 @@ class PlacesController {
       req.body.is_above_homepage_map,
       req.body.latitude,
       req.body.longitude,
-      req.body.country_id
+      req.body.country_id,
+      req.body.best_time_to_visit
     );
 
-    console.log(response.toJSON());
+    if (!response) {
+      res.status(500).json({ error: "Error inserting place" });
+      return;
+    }
+
+    if (response.error) {
+      res.status(400).json({ error: response.error });
+      return;
+    }
 
     let response2;
 
     if (req.body.videos) {
       const videos = req.body.videos;
 
-      videos.map(
-        async (el) =>
-          await videoService.addVideo(
-            el.video_url,
-            null,
-            response.toJSON().id,
-            null
-          )
+      await Promise.all(
+        videos.map(
+          async (el) =>
+            await videoService.addVideo(
+              el.video_url,
+              null,
+              response.toJSON().id,
+              null
+            )
+        )
       );
 
       response2 = videos;
@@ -135,7 +145,8 @@ class PlacesController {
       req.body.latitude,
       req.body.longitude,
       req.body.country_id,
-      req.body.featured_article_id
+      req.body.featured_article_id,
+      req.body.best_time_to_visit
     );
 
     if (!response) {

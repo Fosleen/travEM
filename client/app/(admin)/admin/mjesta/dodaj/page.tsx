@@ -58,6 +58,35 @@ const grammarRows = [
   },
 ];
 
+const bestTimeMonths = [
+  { month_key: "jan", label: "Siječanj" },
+  { month_key: "feb", label: "Veljača" },
+  { month_key: "mar", label: "Ožujak" },
+  { month_key: "apr", label: "Travanj" },
+  { month_key: "may", label: "Svibanj" },
+  { month_key: "jun", label: "Lipanj" },
+  { month_key: "jul", label: "Srpanj" },
+  { month_key: "aug", label: "Kolovoz" },
+  { month_key: "sep", label: "Rujan" },
+  { month_key: "oct", label: "Listopad" },
+  { month_key: "nov", label: "Studeni" },
+  { month_key: "dec", label: "Prosinac" },
+];
+
+const getDefaultBestTimeMonths = () =>
+  bestTimeMonths.map((month) => ({
+    month_key: month.month_key,
+    avg_temp_c: "",
+    avg_rain_mm: "",
+  }));
+
+const slugifyPlaceName = (value: string) => {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-");
+};
+
 const AddPlace = () => {
   const router = useRouter();
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -131,7 +160,8 @@ const AddPlace = () => {
             values.name_genitive,
             values.name_dative,
             values.name_accusative,
-            values.name_locative
+            values.name_locative,
+            values.best_time_to_visit
           );
 
           console.log(placeResponse);
@@ -163,6 +193,13 @@ const AddPlace = () => {
         : dialogRef.current.showModal();
     }
   };
+
+  const numberValidation = Yup.string()
+    .required("Obavezno polje!")
+    .test("is-valid-number", "Vrijednost mora biti validan broj!", (value) => {
+      if (value === undefined || value === null || value === "") return false;
+      return !Number.isNaN(Number(value.toString().replace(",", ".")));
+    });
 
   const ValidationSchema = Yup.object().shape({
     place_name: Yup.string()
@@ -196,6 +233,21 @@ const AddPlace = () => {
       ),
     place_description: Yup.string().required("Obavezno polje!"),
     place_country: Yup.number().required("Obavezno polje!").integer(),
+    best_time_to_visit: Yup.object().shape({
+      slug: Yup.string().required("Obavezno polje!"),
+      subtitle: Yup.string().required("Obavezno polje!"),
+      note: Yup.string().nullable(),
+      is_enabled: Yup.boolean(),
+      months: Yup.array()
+        .of(
+          Yup.object().shape({
+            month_key: Yup.string().required("Obavezno polje!"),
+            avg_temp_c: numberValidation,
+            avg_rain_mm: numberValidation,
+          })
+        )
+        .min(12, "Potrebno je unijeti svih 12 mjeseci."),
+    }),
     videos: Yup.array().of(
       Yup.object().shape({
         video_url: Yup.string().required("Obavezno polje!"),
@@ -224,6 +276,13 @@ const AddPlace = () => {
               place_latitude: "",
               place_longitude: "",
               place_icon_url: "",
+              best_time_to_visit: {
+                slug: "",
+                subtitle: "",
+                note: "",
+                is_enabled: true,
+                months: getDefaultBestTimeMonths(),
+              },
               videos: [{ video_url: "" }],
             }}
             validationSchema={ValidationSchema}
@@ -239,6 +298,14 @@ const AddPlace = () => {
                       as={Input}
                       label="Naziv mjesta *"
                       placeholder="Unesi naziv..."
+                      onBlur={() => {
+                        if (!values.best_time_to_visit.slug) {
+                          setFieldValue(
+                            "best_time_to_visit.slug",
+                            slugifyPlaceName(values.place_name)
+                          );
+                        }
+                      }}
                     />
                     <ErrorMessage
                       name="place_name"
@@ -398,6 +465,124 @@ const AddPlace = () => {
                               />
                             </>
                           )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="add-place-best-time-wrapper">
+                  <div className="add-place-best-time-header">
+                    <div>
+                      <h6>Najbolje vrijeme za posjet *</h6>
+                      <p>
+                        Unesite prosječnu temperaturu i količinu kiše za svaki
+                        mjesec.
+                      </p>
+                    </div>
+
+                    <ToggleSwitch
+                      name={"best-time-enabled"}
+                      description={"Prikaži ovu sekciju na stranici grada"}
+                      value={values.best_time_to_visit.is_enabled}
+                      setter={(value) => {
+                        setFieldValue("best_time_to_visit.is_enabled", value);
+                      }}
+                    />
+                  </div>
+
+                  <div className="add-place-best-time-inputs">
+                    <div className="add-place-input">
+                      <Field
+                        name="best_time_to_visit.slug"
+                        type="text"
+                        as={Input}
+                        label="Slug *"
+                        placeholder="npr. ljubljana"
+                      />
+                      <ErrorMessage
+                        name="best_time_to_visit.slug"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
+
+                    <div className="add-place-input">
+                      <Field
+                        name="best_time_to_visit.subtitle"
+                        type="text"
+                        as={Input}
+                        label="Podnaslov *"
+                        placeholder="npr. Umjerena kontinentalna klima..."
+                      />
+                      <ErrorMessage
+                        name="best_time_to_visit.subtitle"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
+
+                    <div className="add-place-input">
+                      <Field
+                        name="best_time_to_visit.note"
+                        type="text"
+                        as={Textarea}
+                        rows={2}
+                        label="Napomena"
+                        placeholder="npr. Svibanj, lipanj i rujan nude najbolji balans..."
+                      />
+                      <ErrorMessage
+                        name="best_time_to_visit.note"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="add-place-best-time-table">
+                    <div className="add-place-best-time-row add-place-best-time-row-head">
+                      <div>Mjesec</div>
+                      <div>Prosj. temp. °C</div>
+                      <div>Kiša mm</div>
+                    </div>
+
+                    {bestTimeMonths.map((month, index) => (
+                      <div
+                        className="add-place-best-time-row"
+                        key={month.month_key}
+                      >
+                        <div className="add-place-best-time-month">
+                          {month.label}
+                        </div>
+
+                        <div>
+                          <Field
+                            name={`best_time_to_visit.months.${index}.avg_temp_c`}
+                            type="text"
+                            as={Input}
+                            label=""
+                            placeholder="npr. 17"
+                          />
+                          <ErrorMessage
+                            name={`best_time_to_visit.months.${index}.avg_temp_c`}
+                            component="div"
+                            className="error-message"
+                          />
+                        </div>
+
+                        <div>
+                          <Field
+                            name={`best_time_to_visit.months.${index}.avg_rain_mm`}
+                            type="text"
+                            as={Input}
+                            label=""
+                            placeholder="npr. 120"
+                          />
+                          <ErrorMessage
+                            name={`best_time_to_visit.months.${index}.avg_rain_mm`}
+                            component="div"
+                            className="error-message"
+                          />
                         </div>
                       </div>
                     ))}

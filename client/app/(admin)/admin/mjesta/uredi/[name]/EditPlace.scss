@@ -117,7 +117,8 @@
       line-height: 1.4;
     }
 
-    .edit-place-grammar-wrapper {
+    .edit-place-grammar-wrapper,
+    .edit-place-best-time-wrapper {
       max-width: 1024px;
       display: flex;
       flex-direction: column;
@@ -128,7 +129,8 @@
       background: rgba(120, 164, 215, 0.05);
     }
 
-    .edit-place-grammar-header {
+    .edit-place-grammar-header,
+    .edit-place-best-time-header {
       display: flex;
       flex-direction: column;
       gap: 2px;
@@ -145,7 +147,12 @@
       }
     }
 
-    .edit-place-grammar-table {
+    .edit-place-best-time-header {
+      gap: 12px;
+    }
+
+    .edit-place-grammar-table,
+    .edit-place-best-time-table {
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -162,7 +169,8 @@
       }
     }
 
-    .edit-place-grammar-row-head {
+    .edit-place-grammar-row-head,
+    .edit-place-best-time-row-head {
       font-size: 13px;
       font-weight: 800;
       color: $greyMiddleDark;
@@ -170,7 +178,8 @@
       border-bottom: 1px solid rgba(120, 164, 215, 0.25);
     }
 
-    .edit-place-grammar-case {
+    .edit-place-grammar-case,
+    .edit-place-best-time-month {
       font-weight: 800;
     }
 
@@ -184,6 +193,23 @@
       background: rgba(255, 255, 255, 0.6);
       font-weight: 700;
       color: $greyMiddleDark;
+    }
+
+    .edit-place-best-time-inputs {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .edit-place-best-time-row {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr) minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+
+      > div {
+        min-width: 0;
+      }
     }
 
     .edit-place-videos-wrapper {

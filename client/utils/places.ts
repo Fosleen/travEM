@@ -95,7 +95,8 @@ export async function addPlace(
   name_genitive: string,
   name_dative: string,
   name_accusative: string,
-  name_locative: string
+  name_locative: string,
+  best_time_to_visit: any
 ) {
   const token = getAuthToken();
 
@@ -121,6 +122,7 @@ export async function addPlace(
       main_image_url,
       country_id,
       videos,
+      best_time_to_visit,
     }),
   });
 
@@ -254,7 +256,7 @@ export async function deletePlaceById(id: number) {
   return data;
 }
 
-export async function updatePlace(place: PlacesData) {
+export async function updatePlace(place: PlacesData & { best_time_to_visit?: any }) {
   const token = getAuthToken();
 
   const response = await fetch(`${apiUrl}/places/${place.id}`, {
@@ -279,6 +281,7 @@ export async function updatePlace(place: PlacesData) {
       longitude: place.longitude,
       country_id: place.country_id,
       featured_article_id: place.featured_article_id ?? null,
+      best_time_to_visit: place.best_time_to_visit,
     }),
   });
 

@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { apiUrl } from "@/utils/api";
+import { getCountryAccusative } from "@/utils/countryGrammar";
 import "./BestTimeToVisit.scss";
 
 type MonthKey =
@@ -72,7 +73,7 @@ type ComputedMonth = {
 
 type Props = {
   countrySlug: string;
-  countryId?: number | string;
+  countryId?: number;
 };
 
 const MONTH_LABEL: Record<MonthKey, string> = {
@@ -118,14 +119,6 @@ const ICON: Record<WeatherIconKey, string> = {
 
 function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
-}
-
-function normalizeSlug(slug: string) {
-  return decodeURIComponent(slug).toLowerCase();
-}
-
-function normalizeNumber(value: string | number) {
-  return Number(value);
 }
 
 function tempComfortScore(tempC: number) {
@@ -214,6 +207,10 @@ function ratingClass(r: string) {
   return "poor";
 }
 
+function normalizeSlug(slug: string) {
+  return decodeURIComponent(slug).toLowerCase();
+}
+
 export default function BestTimeToVisit({ countrySlug, countryId }: Props) {
   const normalizedSlug = normalizeSlug(countrySlug);
 
@@ -250,7 +247,7 @@ export default function BestTimeToVisit({ countrySlug, countryId }: Props) {
 
         if (isMounted) {
           setCountryClimate(data);
-          setActiveRegionId(data?.regions?.[0]?.region_key ?? null);
+          setActiveRegionId(data?.regions?.[0]?.region_key || null);
         }
       } catch (error) {
         console.warn("Failed to fetch country best time to visit data:", error);
@@ -273,21 +270,24 @@ export default function BestTimeToVisit({ countrySlug, countryId }: Props) {
     };
   }, [countryId, normalizedSlug]);
 
-  const region: ApiCountryBestTimeRegion | undefined = useMemo(() => {
+  const region = useMemo(() => {
     if (!countryClimate?.regions || countryClimate.regions.length === 0) {
-      return undefined;
+      return null;
     }
 
     const sortedRegions = [...countryClimate.regions].sort(
-      (a, b) => Number(a.sort_order) - Number(b.sort_order)
+      (a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0)
     );
 
     const fallback = sortedRegions[0];
 
-    if (!activeRegionId) return fallback;
+    if (!activeRegionId) {
+      return fallback;
+    }
 
     return (
-      sortedRegions.find((r) => r.region_key === activeRegionId) ?? fallback
+      sortedRegions.find((item) => item.region_key === activeRegionId) ||
+      fallback
     );
   }, [countryClimate, activeRegionId]);
 
@@ -301,14 +301,14 @@ export default function BestTimeToVisit({ countrySlug, countryId }: Props) {
       )
       .map((month) => ({
         month: month.month_key,
-        tempC: normalizeNumber(month.avg_temp_c),
-        rainMm: normalizeNumber(month.avg_rain_mm),
+        tempC: Number(month.avg_temp_c),
+        rainMm: Number(month.avg_rain_mm),
       }))
       .filter(
         (month) =>
-          MONTH_ORDER.includes(month.month) &&
           !Number.isNaN(month.tempC) &&
-          !Number.isNaN(month.rainMm)
+          !Number.isNaN(month.rainMm) &&
+          MONTH_ORDER.includes(month.month)
       );
 
     if (normalizedMonths.length === 0) return null;
@@ -338,12 +338,7 @@ export default function BestTimeToVisit({ countrySlug, countryId }: Props) {
       const h = ((m.tempC - minT) / range) * 100;
       const heightPct = clamp(h, 12, 100);
 
-      return {
-        ...m,
-        rating,
-        icon,
-        heightPct,
-      };
+      return { ...m, rating, icon, heightPct };
     });
 
     return { months, minT, maxT };
@@ -352,18 +347,20 @@ export default function BestTimeToVisit({ countrySlug, countryId }: Props) {
   if (isLoading) return null;
   if (!countryClimate || !region || !computed) return null;
 
+  const countryName = countryClimate.country?.name || countrySlug;
+  const title =
+    countryClimate.title ||
+    `Kada je najbolje posjetiti ${getCountryAccusative(countryName)}?`;
+
   const sortedRegions = [...countryClimate.regions].sort(
-    (a, b) => Number(a.sort_order) - Number(b.sort_order)
+    (a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0)
   );
 
   return (
     <section className="btv">
       <div className="btv-header">
         <div className="btv-title">
-          <h2>
-            {countryClimate.title ??
-              `Najbolje vrijeme za posjet ${countryClimate.country?.name ?? countrySlug}`}
-          </h2>
+          <h2>{title}</h2>
 
           {countryClimate.subtitle && (
             <p className="btv-subtitle">{countryClimate.subtitle}</p>
@@ -388,16 +385,16 @@ export default function BestTimeToVisit({ countrySlug, countryId }: Props) {
 
       {sortedRegions.length > 1 && (
         <div className="btv-tabs">
-          {sortedRegions.map((r) => (
+          {sortedRegions.map((item) => (
             <button
-              key={r.id}
+              key={item.region_key}
               type="button"
               className={`btv-tab ${
-                r.region_key === region.region_key ? "active" : ""
+                item.region_key === region.region_key ? "active" : ""
               }`}
-              onClick={() => setActiveRegionId(r.region_key)}
+              onClick={() => setActiveRegionId(item.region_key)}
             >
-              {r.label}
+              {item.label}
             </button>
           ))}
         </div>

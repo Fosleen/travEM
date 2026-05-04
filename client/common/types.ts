@@ -134,6 +134,46 @@ export interface EditBannerData {
   recommended_post_3: number;
 }
 
+export interface CountryBestTimeToVisitMonthData {
+  id?: number;
+  country_best_time_to_visit_region_id?: number;
+  month_key:
+    | "jan"
+    | "feb"
+    | "mar"
+    | "apr"
+    | "may"
+    | "jun"
+    | "jul"
+    | "aug"
+    | "sep"
+    | "oct"
+    | "nov"
+    | "dec";
+  avg_temp_c: string | number;
+  avg_rain_mm: string | number;
+}
+
+export interface CountryBestTimeToVisitRegionData {
+  id?: number;
+  country_best_time_to_visit_id?: number;
+  region_key: string;
+  label: string;
+  note?: string | null;
+  sort_order?: number;
+  months: Array<CountryBestTimeToVisitMonthData>;
+}
+
+export interface CountryBestTimeToVisitData {
+  id?: number;
+  country_id?: number;
+  slug: string;
+  title?: string | null;
+  subtitle?: string | null;
+  is_enabled?: boolean;
+  regions: Array<CountryBestTimeToVisitRegionData>;
+}
+
 export interface CountriesData {
   id: number;
   name: string;
@@ -148,6 +188,7 @@ export interface CountriesData {
   places?: Array<PlacesData>;
   specificities?: Array<SpecificityProps>;
   videos?: Array<VideoProps>;
+  best_time_to_visit?: CountryBestTimeToVisitData | null;
 }
 
 export interface VideoProps {

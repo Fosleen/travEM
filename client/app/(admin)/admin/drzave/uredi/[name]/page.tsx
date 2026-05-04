@@ -39,18 +39,138 @@ import {
 } from "@/utils/specificityItems";
 import { updateSpecificityImage } from "@/utils/specificityImages";
 import { useParams, useRouter } from "next/navigation";
+import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
+import { getCountryAccusative } from "@/utils/countryGrammar";
+
+const bestTimeMonths = [
+  { month_key: "jan", label: "Siječanj" },
+  { month_key: "feb", label: "Veljača" },
+  { month_key: "mar", label: "Ožujak" },
+  { month_key: "apr", label: "Travanj" },
+  { month_key: "may", label: "Svibanj" },
+  { month_key: "jun", label: "Lipanj" },
+  { month_key: "jul", label: "Srpanj" },
+  { month_key: "aug", label: "Kolovoz" },
+  { month_key: "sep", label: "Rujan" },
+  { month_key: "oct", label: "Listopad" },
+  { month_key: "nov", label: "Studeni" },
+  { month_key: "dec", label: "Prosinac" },
+];
+
+const getDefaultBestTimeMonths = () =>
+  bestTimeMonths.map((month) => ({
+    month_key: month.month_key,
+    avg_temp_c: "",
+    avg_rain_mm: "",
+  }));
+
+const getDefaultBestTimeRegion = (sortOrder = 1) => ({
+  region_key: "",
+  label: "",
+  note: "",
+  sort_order: sortOrder,
+  months: getDefaultBestTimeMonths(),
+});
+
+const normalizeNumberForInput = (value) => {
+  if (value === null || value === undefined) return "";
+  return String(value).replace(".", ",");
+};
+
+const normalizeSlug = (value: string) => {
+  return value
+    ?.toString()
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-");
+};
+
+const safeDecodeURIComponent = (value: string) => {
+  if (!value) return "";
+
+  try {
+    return decodeURIComponent(value);
+  } catch (error) {
+    return value;
+  }
+};
+
+const getBestTimeTitle = (countryName: string) => {
+  if (!countryName) return "";
+  return `Kada je najbolje posjetiti ${getCountryAccusative(countryName)}?`;
+};
+
+const getInitialBestTimeToVisit = (country) => {
+  const bestTime = country?.best_time_to_visit;
+  const countryRealName = country?.country_real_name || "";
+  const defaultTitle = getBestTimeTitle(countryRealName);
+
+  if (!bestTime) {
+    return {
+      title: defaultTitle,
+      subtitle: "",
+      is_enabled: true,
+      regions: [getDefaultBestTimeRegion(1)],
+    };
+  }
+
+  const existingRegions = bestTime.regions || [];
+
+  return {
+    title: bestTime.title || defaultTitle,
+    subtitle: bestTime.subtitle || "",
+    is_enabled:
+      bestTime.is_enabled === undefined ? true : Boolean(bestTime.is_enabled),
+    regions:
+      existingRegions.length > 0
+        ? existingRegions.map((region, regionIndex) => {
+            const existingMonths = region.months || [];
+
+            return {
+              region_key: region.region_key || "",
+              label: region.label || "",
+              note: region.note || "",
+              sort_order: region.sort_order || regionIndex + 1,
+              months: bestTimeMonths.map((month) => {
+                const foundMonth = existingMonths.find(
+                  (item) => item.month_key === month.month_key
+                );
+
+                return {
+                  month_key: month.month_key,
+                  avg_temp_c: normalizeNumberForInput(foundMonth?.avg_temp_c),
+                  avg_rain_mm: normalizeNumberForInput(foundMonth?.avg_rain_mm),
+                };
+              }),
+            };
+          })
+        : [getDefaultBestTimeRegion(1)],
+  };
+};
+
+const numberValidation = Yup.string()
+  .required("Obavezno polje!")
+  .test("is-valid-number", "Vrijednost mora biti validan broj!", (value) => {
+    if (value === undefined || value === null || value === "") return false;
+    return !Number.isNaN(Number(value.toString().replace(",", ".")));
+  });
 
 const EditCountry = () => {
   const params = useParams();
   const router = useRouter();
-  const name = params?.name as string;
+
+  const rawName = params?.name as string;
+  const name = safeDecodeURIComponent(rawName);
+  const normalizedName = name.toLowerCase();
 
   const [colors, setColors] = useState(null);
   const [country, setCountry] = useState<CountriesData | null>(null);
-  const [countries, setCountries] = useState<Array<{
-    id: number;
-    name: string;
-  }> | null>(null);
+  const [countries, setCountries] = useState<
+    Array<{
+      id: number;
+      name: string;
+    }> | null
+  >(null);
   const [alreadyAddedCountries, setAlreadyAddedCountries] = useState(null);
   const [countryArrayId, setCountryArrayId] = useState(null);
   const [continents, setContinents] = useState(null);
@@ -59,7 +179,6 @@ const EditCountry = () => {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [modalInputValue, setModalInputValue] = useState("");
 
-  // images
   const [imageType, setImageType] = useState<string | null>(null);
   const [mainCountryImage, setMainCountryImage] = useState<string>("");
   const [flagImage, setFlagImage] = useState<string>("");
@@ -87,6 +206,31 @@ const EditCountry = () => {
       .required("Obavezno polje!")
       .max(100, "Opis smije imati max 100 znakova!"),
     country_color: Yup.string().required("Obavezno polje!"),
+    country_continent: Yup.string().required("Obavezno polje!"),
+    best_time_to_visit: Yup.object().shape({
+      title: Yup.string().nullable(),
+      subtitle: Yup.string().required("Obavezno polje!"),
+      is_enabled: Yup.boolean(),
+      regions: Yup.array()
+        .of(
+          Yup.object().shape({
+            region_key: Yup.string().nullable(),
+            label: Yup.string().required("Obavezno polje!"),
+            note: Yup.string().nullable(),
+            sort_order: Yup.number(),
+            months: Yup.array()
+              .of(
+                Yup.object().shape({
+                  month_key: Yup.string().required("Obavezno polje!"),
+                  avg_temp_c: numberValidation,
+                  avg_rain_mm: numberValidation,
+                })
+              )
+              .min(12, "Potrebno je unijeti svih 12 mjeseci."),
+          })
+        )
+        .min(1, "Potrebno je unijeti barem jednu regiju."),
+    }),
     characteristics: Yup.array().of(
       Yup.object().shape({
         icon: Yup.string().required("Obavezno polje!"),
@@ -145,6 +289,23 @@ const EditCountry = () => {
     return areAllImagesFilledIn;
   };
 
+  const prepareBestTimeToVisitPayload = (values, selectedCountry) => {
+    return {
+      ...values.best_time_to_visit,
+      slug: normalizeSlug(selectedCountry.name),
+      title:
+        values.best_time_to_visit.title || getBestTimeTitle(selectedCountry.name),
+      subtitle: values.best_time_to_visit.subtitle,
+      is_enabled: values.best_time_to_visit.is_enabled,
+      regions: values.best_time_to_visit.regions.map((region, index) => ({
+        ...region,
+        region_key: normalizeSlug(region.label),
+        sort_order: index + 1,
+        months: region.months,
+      })),
+    };
+  };
+
   const handleSave = async (values) => {
     setIsSubmitClicked(true);
 
@@ -164,15 +325,27 @@ const EditCountry = () => {
             (el) => el.id == values.country_name
           );
 
+          if (!selectedCountry) {
+            console.error("Selected country not found");
+            return;
+          }
+
+          const bestTimeToVisitPayload = prepareBestTimeToVisitPayload(
+            values,
+            selectedCountry
+          );
+
           const countryResponse = await updateCountry({
             id: country.id,
-            name: selectedCountry!.name,
+            name: selectedCountry.name,
             description: values.country_description,
             main_image_url: mainCountryImage,
             flag_image_url: flagImage,
             continentId: values.country_continent,
             colorId: values.country_color,
+            best_time_to_visit: bestTimeToVisitPayload,
           });
+
           console.log(countryResponse);
 
           if (values.characteristics) {
@@ -189,12 +362,11 @@ const EditCountry = () => {
           if (values.specificities && country.specificities) {
             values.specificities.map(async (el: SpecificityProps) => {
               let specificityResponse;
+
               if (el.id) {
-                // update specificity
                 specificityResponse = await updateSpecificity(el.id, el.title);
                 console.log(specificityResponse);
 
-                // update specificity items
                 el.specificity_items.map(async (item) => {
                   if (item.id) {
                     await updateSpecificityItem(
@@ -211,7 +383,6 @@ const EditCountry = () => {
                   }
                 });
 
-                // update specificity images
                 specificityImages.map(async (imageGroup, groupIndex) => {
                   imageGroup.map(async (image, imageIndex) => {
                     await updateSpecificityImage(
@@ -224,9 +395,9 @@ const EditCountry = () => {
               }
             });
 
-            // delete removed specificities
             const array1: (number | undefined)[] = [];
             const array2: (number | undefined)[] = [];
+
             country.specificities.map((specificity) => {
               specificity.specificity_items.map((item) => {
                 array1.push(item.id);
@@ -244,12 +415,12 @@ const EditCountry = () => {
             const removedValues = array1.filter(
               (item) => !array2.includes(item)
             );
+
             removedValues.map(
               async (el: number) => await deleteSpecificityItem(el)
             );
           }
 
-          // add, update (if it has id attibute already) and delete videos
           if (country.videos) {
             const removedVideoIds = country.videos.filter(
               (el) =>
@@ -257,10 +428,13 @@ const EditCountry = () => {
                   (video: { id: number }) => video.id === el.id
                 )
             );
+
             removedVideoIds.map(async (el) => await deleteVideo(el.id));
           }
+
           values.videos.map(async (el: { id: number; video_url: string }) => {
             let videoResponse;
+
             if (el.id) {
               videoResponse = await updateVideo(el.id, el.video_url);
             } else {
@@ -271,6 +445,7 @@ const EditCountry = () => {
                 country.id
               );
             }
+
             console.log(videoResponse);
           });
 
@@ -301,9 +476,8 @@ const EditCountry = () => {
     } else if (imageType == "spec") {
       setSpecificityImages((prevSectionImages) => {
         return [
-          ...prevSectionImages.slice(0, selectedSpecificityImage[1]), // ostavi subarraye prije
+          ...prevSectionImages.slice(0, selectedSpecificityImage[1]),
           [
-            // u odabranom subarrayu ostavi elemente prije odabranog
             ...prevSectionImages[selectedSpecificityImage[1]].slice(
               0,
               selectedSpecificityImage[0]
@@ -314,16 +488,15 @@ const EditCountry = () => {
               ],
               url: modalInputValue,
             },
-            // dodaj url na to mjesto, id je stari (samo se url mijenja jer ce uvijek morat bit 3 slike tu)
-            // u odabranom subarrayu ostavi elemente nakon odabranog
             ...prevSectionImages[selectedSpecificityImage[1]].slice(
               selectedSpecificityImage[0] + 1
             ),
           ],
-          ...prevSectionImages.slice(selectedSpecificityImage[1] + 1), // ostavi subarraye nakon
+          ...prevSectionImages.slice(selectedSpecificityImage[1] + 1),
         ];
       });
     }
+
     setModalInputValue("");
   };
 
@@ -380,7 +553,7 @@ const EditCountry = () => {
 
   const fetchData = async () => {
     try {
-      const alreadyAddedCountriesData = await getCountries(1, 300, true); // no pagination
+      const alreadyAddedCountriesData = await getCountries(1, 300, true);
       const colorsData = await getColors();
       const characteristicIconsData = await getCharacteristicIcons();
       const continentsData = await getContinents(true);
@@ -396,19 +569,18 @@ const EditCountry = () => {
 
   useEffect(() => {
     reorganizeArrays();
-  }, [alreadyAddedCountries]);
+  }, [alreadyAddedCountries, normalizedName]);
 
   const reorganizeArrays = async () => {
     if (alreadyAddedCountries) {
       const allCountries = countryList.map((el, index) => ({
         id: index,
-        name: el.cro_name, // for correct data display in dropdown
+        name: el.cro_name,
       }));
 
-      // remove countries that are already in database (if the same name attribute exists in both arrays) except for the initial country name (from url name parameter)
       const filtered = allCountries.filter((el) => {
         return (
-          el.name.toLowerCase() === name ||
+          el.name.toLowerCase() === normalizedName ||
           !alreadyAddedCountries.some((existingCountry) => {
             return existingCountry.name === el.name;
           })
@@ -416,10 +588,11 @@ const EditCountry = () => {
       });
 
       setCountries(filtered);
-      // find initial country name and its id so it shows in dropdown correctly
+
       const foundCountryElement = filtered.find(
-        (el) => el.name.toLowerCase() === name
+        (el) => el.name.toLowerCase() === normalizedName
       );
+
       if (foundCountryElement) {
         setCountryArrayId(foundCountryElement.id);
       }
@@ -427,50 +600,70 @@ const EditCountry = () => {
   };
 
   useEffect(() => {
-    if (countries) {
+    if (countries && countryArrayId !== null) {
       fetchSelectedCountryData();
     }
-  }, [countries]);
+  }, [countries, countryArrayId]);
 
   const fetchSelectedCountryData = async () => {
     if (name) {
       const _country = await getCountriesByName(name, 1, 1, 0, true);
-      const _countryData = await getCountryById(_country?.data[0]?.id, true);
+
+      if (!_country?.data?.[0]?.id) {
+        console.error("Country not found by name:", name);
+        return;
+      }
+
+      const _countryData = await getCountryById(_country.data[0].id, true);
 
       setCountry({
         ..._countryData,
-        name: countryArrayId, // name is in db saved as a string, but here is needed id of that country in filtered countries array
+        country_real_name: _countryData.name,
+        name: countryArrayId,
       });
+
       setMainCountryImage(_countryData.main_image_url);
       setFlagImage(_countryData.flag_image_url);
 
       setSpecificityImages([
         [
           {
-            id: _countryData.specificities[0].specificity_images[0].id || 0,
-            url: _countryData.specificities[0].specificity_images[0].url || "",
+            id: _countryData.specificities?.[0]?.specificity_images?.[0]?.id || 0,
+            url:
+              _countryData.specificities?.[0]?.specificity_images?.[0]?.url ||
+              "",
           },
           {
-            id: _countryData.specificities[0].specificity_images[1].id || 0,
-            url: _countryData.specificities[0].specificity_images[1].url || "",
+            id: _countryData.specificities?.[0]?.specificity_images?.[1]?.id || 0,
+            url:
+              _countryData.specificities?.[0]?.specificity_images?.[1]?.url ||
+              "",
           },
           {
-            id: _countryData.specificities[0].specificity_images[2].id || 0,
-            url: _countryData.specificities[0].specificity_images[2].url || "",
+            id: _countryData.specificities?.[0]?.specificity_images?.[2]?.id || 0,
+            url:
+              _countryData.specificities?.[0]?.specificity_images?.[2]?.url ||
+              "",
           },
         ],
         [
           {
-            id: _countryData.specificities[1].specificity_images[0].id || 0,
-            url: _countryData.specificities[1].specificity_images[0].url || "",
+            id: _countryData.specificities?.[1]?.specificity_images?.[0]?.id || 0,
+            url:
+              _countryData.specificities?.[1]?.specificity_images?.[0]?.url ||
+              "",
           },
           {
-            id: _countryData.specificities[1].specificity_images[1].id || 0,
-            url: _countryData.specificities[1].specificity_images[1].url || "",
+            id: _countryData.specificities?.[1]?.specificity_images?.[1]?.id || 0,
+            url:
+              _countryData.specificities?.[1]?.specificity_images?.[1]?.url ||
+              "",
           },
           {
-            id: _countryData.specificities[1].specificity_images[2].id || 0,
-            url: _countryData.specificities[1].specificity_images[2].url || "",
+            id: _countryData.specificities?.[1]?.specificity_images?.[2]?.id || 0,
+            url:
+              _countryData.specificities?.[1]?.specificity_images?.[2]?.url ||
+              "",
           },
         ],
       ]);
@@ -481,17 +674,19 @@ const EditCountry = () => {
     <>
       <div className="edit-country-container">
         <h2>Uredi državu</h2>
+
         {country &&
         characteristicIcons &&
         colors &&
         countries &&
-        countryArrayId ? (
+        countryArrayId !== null ? (
           <Formik
             initialValues={{
               country_name: country.name,
-              country_description: country.description,
+              country_description: country.description || "",
               country_continent: country.continentId,
               country_color: country.colorId,
+              best_time_to_visit: getInitialBestTimeToVisit(country),
               characteristics: Array.from({ length: 6 }, (_, index) => ({
                 id:
                   country.characteristics && country.characteristics[index]?.id,
@@ -545,8 +740,12 @@ const EditCountry = () => {
                         label="Naziv države *"
                         hardcodedValue="Odaberi naziv..."
                         options={countries}
-                        onChange={(value: { id: number }) => {
-                          setFieldValue(`country_name`, value.id);
+                        onChange={(value: { id: number; name: string }) => {
+                          setFieldValue("country_name", value.id);
+                          setFieldValue(
+                            "best_time_to_visit.title",
+                            getBestTimeTitle(value.name)
+                          );
                         }}
                         selectedValue={values.country_name}
                         filter
@@ -557,6 +756,7 @@ const EditCountry = () => {
                         className="error-message"
                       />
                     </div>
+
                     <div className="edit-country-input">
                       <Field
                         name="country_color"
@@ -566,7 +766,7 @@ const EditCountry = () => {
                         hardcodedValue="Odaberi boju..."
                         options={colors}
                         onChange={(value: { id: number }) => {
-                          setFieldValue(`country_color`, value.id);
+                          setFieldValue("country_color", value.id);
                         }}
                         selectedValue={values.country_color}
                         images
@@ -577,6 +777,7 @@ const EditCountry = () => {
                         className="error-message"
                       />
                     </div>
+
                     <div className="edit-country-input">
                       <Field
                         name="country_continent"
@@ -586,7 +787,7 @@ const EditCountry = () => {
                         hardcodedValue="Odaberi kontinent..."
                         options={continents}
                         onChange={(value: { id: number }) => {
-                          setFieldValue(`country_continent`, value.id);
+                          setFieldValue("country_continent", value.id);
                         }}
                         selectedValue={values.country_continent}
                       />
@@ -597,11 +798,12 @@ const EditCountry = () => {
                       />
                     </div>
                   </div>
+
                   <div className="edit-country-input">
                     <Field
                       name="country_description"
                       type="text"
-                      value={values.country_description}
+                      value={values.country_description || ""}
                       as={Textarea}
                       rows={4}
                       label="Opis države *"
@@ -614,6 +816,7 @@ const EditCountry = () => {
                     />
                   </div>
                 </div>
+
                 <div className="edit-country-images-container">
                   <div className="edit-country-images-item">
                     <h6>Zastava države *</h6>
@@ -640,10 +843,12 @@ const EditCountry = () => {
                         <Plus size={32} color="#616161" weight="bold" />
                       </div>
                     )}
+
                     {isSubmitClicked && (flagImage == "" || !flagImage) && (
                       <p className="error-message">Obavezno polje!</p>
                     )}
                   </div>
+
                   <div className="edit-country-images-item">
                     <h6>Glavna fotografija države *</h6>
                     {mainCountryImage ? (
@@ -672,14 +877,200 @@ const EditCountry = () => {
                         <Plus size={32} color="#616161" weight="bold" />
                       </div>
                     )}
+
                     {isSubmitClicked &&
                       (mainCountryImage == "" || !mainCountryImage) && (
                         <p className="error-message">Obavezno polje!</p>
                       )}
                   </div>
                 </div>
+
                 <p>* preporuča se okrugla slika zastave</p>
                 <p>* preporuča se slika u omjeru 16:9 za glavnu fotografiju</p>
+
+                <div className="edit-country-best-time-wrapper">
+                  <div className="edit-country-best-time-header">
+                    <div>
+                      <h6>Najbolje vrijeme za posjet *</h6>
+                      <p>
+                        Unesite klimatske regije i prosječne mjesečne
+                        vrijednosti temperature i kiše.
+                      </p>
+                    </div>
+
+                    <ToggleSwitch
+                      name={"country-best-time-enabled"}
+                      description={"Prikaži ovu sekciju na stranici države"}
+                      value={values.best_time_to_visit.is_enabled}
+                      setter={(value) => {
+                        setFieldValue("best_time_to_visit.is_enabled", value);
+                      }}
+                    />
+                  </div>
+
+                  <div className="edit-country-best-time-inputs">
+                    <div className="edit-country-input">
+                      <Field
+                        name="best_time_to_visit.title"
+                        type="text"
+                        as={Input}
+                        label="Naslov sekcije"
+                        placeholder="npr. Kada je najbolje posjetiti Sloveniju?"
+                      />
+                      <ErrorMessage
+                        name="best_time_to_visit.title"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
+
+                    <div className="edit-country-input">
+                      <Field
+                        name="best_time_to_visit.subtitle"
+                        type="text"
+                        as={Input}
+                        label="Podnaslov *"
+                        placeholder="npr. Obala je blaža, unutrašnjost svježija..."
+                      />
+                      <ErrorMessage
+                        name="best_time_to_visit.subtitle"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
+                  </div>
+
+                  <FieldArray
+                    name="best_time_to_visit.regions"
+                    render={(regionArrayHelpers) => {
+                      const regions = values.best_time_to_visit.regions;
+
+                      return (
+                        <div className="edit-country-best-time-regions">
+                          <div className="edit-country-best-time-regions-header">
+                            <h6>Regije</h6>
+
+                            <Button
+                              type="button"
+                              circle
+                              onClick={() => {
+                                regionArrayHelpers.push(
+                                  getDefaultBestTimeRegion(regions.length + 1)
+                                );
+                              }}
+                            >
+                              +
+                            </Button>
+                          </div>
+
+                          {regions.map((region, regionIndex) => (
+                            <div
+                              className="edit-country-best-time-region"
+                              key={regionIndex}
+                            >
+                              <div className="edit-country-best-time-region-header">
+                                <h6>Regija {regionIndex + 1}</h6>
+
+                                {regions.length > 1 && (
+                                  <div
+                                    className="edit-country-best-time-region-delete"
+                                    onClick={() => {
+                                      regionArrayHelpers.remove(regionIndex);
+                                    }}
+                                  >
+                                    <Trash color="#AC2B2B" size={28} />
+                                  </div>
+                                )}
+                              </div>
+
+                              <div className="edit-country-best-time-region-inputs">
+                                <div className="edit-country-input">
+                                  <Field
+                                    name={`best_time_to_visit.regions.${regionIndex}.label`}
+                                    type="text"
+                                    as={Input}
+                                    label="Naziv regije *"
+                                    placeholder="npr. Ljubljana i unutrašnjost"
+                                  />
+                                  <ErrorMessage
+                                    name={`best_time_to_visit.regions.${regionIndex}.label`}
+                                    component="div"
+                                    className="error-message"
+                                  />
+                                </div>
+
+                                <div className="edit-country-input">
+                                  <Field
+                                    name={`best_time_to_visit.regions.${regionIndex}.note`}
+                                    type="text"
+                                    as={Textarea}
+                                    rows={2}
+                                    label="Napomena"
+                                    placeholder="npr. Najugodnije: svibanj-lipanj i rujan..."
+                                  />
+                                  <ErrorMessage
+                                    name={`best_time_to_visit.regions.${regionIndex}.note`}
+                                    component="div"
+                                    className="error-message"
+                                  />
+                                </div>
+                              </div>
+
+                              <div className="edit-country-best-time-table">
+                                <div className="edit-country-best-time-row edit-country-best-time-row-head">
+                                  <div>Mjesec</div>
+                                  <div>Prosj. temp. °C</div>
+                                  <div>Kiša mm</div>
+                                </div>
+
+                                {bestTimeMonths.map((month, monthIndex) => (
+                                  <div
+                                    className="edit-country-best-time-row"
+                                    key={`${regionIndex}-${month.month_key}`}
+                                  >
+                                    <div className="edit-country-best-time-month">
+                                      {month.label}
+                                    </div>
+
+                                    <div>
+                                      <Field
+                                        name={`best_time_to_visit.regions.${regionIndex}.months.${monthIndex}.avg_temp_c`}
+                                        type="text"
+                                        as={Input}
+                                        label=""
+                                        placeholder="npr. 18"
+                                      />
+                                      <ErrorMessage
+                                        name={`best_time_to_visit.regions.${regionIndex}.months.${monthIndex}.avg_temp_c`}
+                                        component="div"
+                                        className="error-message"
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <Field
+                                        name={`best_time_to_visit.regions.${regionIndex}.months.${monthIndex}.avg_rain_mm`}
+                                        type="text"
+                                        as={Input}
+                                        label=""
+                                        placeholder="npr. 120"
+                                      />
+                                      <ErrorMessage
+                                        name={`best_time_to_visit.regions.${regionIndex}.months.${monthIndex}.avg_rain_mm`}
+                                        component="div"
+                                        className="error-message"
+                                      />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    }}
+                  />
+                </div>
 
                 <div className="edit-country-characteristics-container">
                   <h6>Da Vas ne iznenadi</h6>
@@ -758,7 +1149,7 @@ const EditCountry = () => {
 
                 <div className="edit-country-specificities-container">
                   <h6>Specifičnosti</h6>
-                  {/* array of specificities (2) */}
+
                   <FieldArray
                     name="specificities"
                     render={() => {
@@ -769,7 +1160,7 @@ const EditCountry = () => {
                           {specificities && specificities.length > 0
                             ? specificities.map((_specificity, index) => (
                                 <div key={index}>
-                                  <div className="add-country-specificities-inner-item">
+                                  <div className="edit-country-specificities-inner-item">
                                     <Field
                                       type="text"
                                       name={`specificities[${index}].title`}
@@ -782,13 +1173,14 @@ const EditCountry = () => {
                                     component="div"
                                     className="error-message"
                                   />
+
                                   <fieldset>
                                     <legend>
                                       {index === 0 ? "Lijevo" : "Desno"}
                                     </legend>
-                                    {/* array of specificity items (1-4) */}
+
                                     <FieldArray
-                                      name={`specificities[${index}].specificity_items`} // this has to be connected to initial values array and subarray names
+                                      name={`specificities[${index}].specificity_items`}
                                       render={(subarrayHelpers) => {
                                         const specificityItems =
                                           values.specificities[index]
@@ -868,6 +1260,7 @@ const EditCountry = () => {
                                                 dodaj
                                               </Button>
                                             )}
+
                                             <div className="edit-country-specificities-images-container">
                                               {specificityImagesTemplate.map(
                                                 (el, imageIndex) => (
@@ -929,6 +1322,7 @@ const EditCountry = () => {
                                                 )
                                               )}
                                             </div>
+
                                             {isSubmitClicked &&
                                               (!specificityImages[index][0] ||
                                                 specificityImages[index][0]
@@ -1016,6 +1410,7 @@ const EditCountry = () => {
                     />
                   </div>
                 </div>
+
                 <div className="edit-country-buttons">
                   <Button type="submit" adminPrimary>
                     uredi državu
@@ -1031,6 +1426,7 @@ const EditCountry = () => {
           <p>Loading...</p>
         )}
       </div>
+
       <Modal
         ref={dialogRef}
         toggleDialog={toggleDialog}

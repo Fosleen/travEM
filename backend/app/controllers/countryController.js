@@ -11,6 +11,7 @@ class CountriesController {
     const pageSize = parseInt(req.query.pageSize) || 200;
     const useCache = req.query.noCache !== "true";
     const cacheKey = `countries-page:${page}-size:${pageSize}`;
+
     const response = await getOrSetCache(
       cacheKey,
       async () => {
@@ -18,6 +19,7 @@ class CountriesController {
       },
       useCache
     );
+
     if (response == undefined) {
       res.status(404).json({ error: "No countries found" });
     } else {
@@ -29,6 +31,7 @@ class CountriesController {
     const { id } = req.params;
     const useCache = req.query.noCache !== "true";
     const cacheKey = `country:${id}`;
+
     const response = await getOrSetCache(
       cacheKey,
       async () => {
@@ -36,6 +39,7 @@ class CountriesController {
       },
       useCache
     );
+
     if (!response || response.length == 0) {
       res.status(404).json({ error: `No country found by id ${id}` });
     } else {
@@ -51,6 +55,7 @@ class CountriesController {
 
     const useCache = req.query.noCache !== "true";
     const cacheKey = `country-name:${name}-page${page}-size:${pageSize}`;
+
     const response = await getOrSetCache(
       cacheKey,
       async () => {
@@ -76,6 +81,7 @@ class CountriesController {
       page,
       pageSize
     );
+
     if (!response || response.length == 0) {
       res
         .status(404)
@@ -89,6 +95,7 @@ class CountriesController {
     const { id } = req.params;
     const useCache = req.query.noCache !== "true";
     const cacheKey = `country-places:${id}`;
+
     const response = await getOrSetCache(
       cacheKey,
       async () => {
@@ -96,6 +103,7 @@ class CountriesController {
       },
       useCache
     );
+
     if (response == undefined) {
       res
         .status(404)
@@ -106,22 +114,28 @@ class CountriesController {
   }
 
   async patchCountry(req, res) {
+    const { id } = req.params;
+
     const response = await service.patchCountry(
-      req.params.id,
+      id,
       req.body.name,
       req.body.description,
       req.body.main_image_url,
       req.body.flag_image_url,
       req.body.user_id,
       req.body.color_id,
-      req.body.continent_id
+      req.body.continent_id,
+      req.body.best_time_to_visit
     );
-    if (response.length == 0) {
+
+    if (!response) {
       res.status(500).json({ error: `Error updating country ${id}` });
     } else {
-      await clearCache(`country-places:${req.params.id}`);
-      await clearCache(`country:${req.params.id}`);
+      await clearCache(`country-places:${id}`);
+      await clearCache(`country:${id}`);
       await clearCacheByPattern(`country-name:${req.body.name}-page*`);
+      await clearCache(`country-best-time-to-visit-country:${id}`);
+      await clearCache(`country-best-time-to-visit-slug:${req.body.name}`);
       res.status(200).json(response);
     }
   }
@@ -129,9 +143,11 @@ class CountriesController {
   async deleteCountry(req, res) {
     const { id } = req.params;
     const response = await service.deleteCountry(id);
+
     if (response) {
       await clearCache(`country:${id}`);
       await clearCache(`country-places:${id}`);
+      await clearCache(`country-best-time-to-visit-country:${id}`);
       res.status(200).json({});
     } else {
       res
@@ -147,10 +163,9 @@ class CountriesController {
       req.body.main_image_url,
       req.body.flag_image_url,
       req.body.continent_id,
-      req.body.color_id
+      req.body.color_id,
+      req.body.best_time_to_visit
     );
-
-    console.log(response.toJSON());
 
     if (response == undefined) {
       res.status(500).json({ error: "Error inserting country" });

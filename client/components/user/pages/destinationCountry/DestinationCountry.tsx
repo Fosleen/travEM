@@ -18,8 +18,18 @@ import BestTimeToVisit from "../../molecules/BestTimeToVisit/BestTimeToVisit";
 interface DestinationCountryProps {
   initialCountry: CountriesData;
   initialFavoriteArticle: any;
-  countryName: string; // slug (npr. "italija")
+  countryName: string;
 }
+
+const safeDecodeURIComponent = (value: string) => {
+  if (!value) return "";
+
+  try {
+    return decodeURIComponent(value);
+  } catch (error) {
+    return value;
+  }
+};
 
 const DestinationCountry = ({
   initialCountry,
@@ -28,6 +38,8 @@ const DestinationCountry = ({
 }: DestinationCountryProps) => {
   const country = initialCountry;
   const favoriteArticle = initialFavoriteArticle;
+
+  const decodedCountryName = safeDecodeURIComponent(countryName);
 
   return (
     <div className="destination-country-page-container">
@@ -46,7 +58,10 @@ const DestinationCountry = ({
         )}
       </div>
 
-      <BestTimeToVisit countrySlug={countryName} countryId={country.id} />
+      <BestTimeToVisit
+        countrySlug={decodedCountryName || country.name}
+        countryId={country.id}
+      />
 
       <div className="destination-country-visa-info-container">
         <VisaInfo countryId={country.id} countryName={country.name} />
@@ -89,7 +104,6 @@ const DestinationCountry = ({
             iconNmbr={"1"}
             specificities={country.specificities[0]}
           />
-
           <Specificities
             iconNmbr={"2"}
             specificities={country.specificities[1]}

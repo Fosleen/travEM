@@ -14,7 +14,9 @@ class PlacesService {
         ],
         where: { is_on_homepage_map: 1 },
       });
+
       console.log("res je", favoritePlaces);
+
       return favoritePlaces;
     } catch (error) {
       return [];
@@ -32,6 +34,7 @@ class PlacesService {
         ],
         where: { is_above_homepage_map: 1 },
       });
+
       return featuredPlaces;
     } catch (error) {
       return [];
@@ -43,6 +46,7 @@ class PlacesService {
       const featuredPlaces = await db.models.Place.findAll({
         where: { map_icon: { [Op.not]: null || "" } },
       });
+
       return featuredPlaces;
     } catch (error) {
       return [];
@@ -81,7 +85,9 @@ class PlacesService {
       const continentCountries = await db.models.Country.findAll({
         where: { continent_id: id },
       });
+
       console.log("res je", continentCountries);
+
       return continentCountries;
     } catch (error) {
       return [];
@@ -103,6 +109,7 @@ class PlacesService {
           },
         ],
       });
+
       return place;
     } catch (error) {
       console.log(error);
@@ -135,6 +142,7 @@ class PlacesService {
           },
         },
       });
+
       return {
         total: places.count,
         totalPages: Math.ceil(places.count / pageSize),
@@ -189,11 +197,32 @@ class PlacesService {
     is_above_homepage_map,
     latitude,
     longitude,
-    country_id
+    country_id,
+    featured_article_id
   ) {
-    console.log(id);
-
     try {
+      const parsedFeaturedArticleId =
+        featured_article_id === null ||
+        featured_article_id === undefined ||
+        featured_article_id === ""
+          ? null
+          : Number(featured_article_id);
+
+      if (parsedFeaturedArticleId) {
+        const featuredArticle = await db.models.Article.findOne({
+          where: {
+            id: parsedFeaturedArticleId,
+            placeId: id,
+          },
+        });
+
+        if (!featuredArticle) {
+          return {
+            error: "Odabrani istaknuti članak ne pripada ovom mjestu.",
+          };
+        }
+      }
+
       await db.models.Place.update(
         {
           name: name,
@@ -205,13 +234,27 @@ class PlacesService {
           latitude: latitude,
           longitude: longitude,
           countryId: country_id,
+          featured_article_id: parsedFeaturedArticleId,
         },
         {
           where: { id: id },
         }
       );
 
-      const updatedPlace = await db.models.Place.findByPk(id);
+      const updatedPlace = await db.models.Place.findByPk(id, {
+        include: [
+          {
+            model: db.models.Video,
+          },
+          {
+            model: db.models.Country,
+          },
+          {
+            model: db.models.Article,
+          },
+        ],
+      });
+
       return updatedPlace;
     } catch (error) {
       console.log(error);

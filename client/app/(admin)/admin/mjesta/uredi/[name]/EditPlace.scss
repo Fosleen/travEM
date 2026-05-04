@@ -49,6 +49,13 @@
       }
     }
 
+    .edit-place-input {
+      max-width: 1024px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
     .edit-place-images-container {
       display: flex;
       gap: 12px;
@@ -97,6 +104,17 @@
         align-items: center;
         cursor: pointer;
       }
+    }
+
+    .edit-place-featured-article-wrapper {
+      margin-top: 8px;
+    }
+
+    .edit-place-helper-text {
+      margin: 4px 0 0;
+      color: $greyMiddleDark;
+      font-size: 14px;
+      line-height: 1.4;
     }
 
     .edit-place-videos-wrapper {

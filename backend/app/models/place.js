@@ -18,6 +18,10 @@ export default (sequelize, DataTypes) => {
         default: 0,
       },
       map_icon: { type: DataTypes.STRING },
+      featured_article_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
     },
     {
       underscored: true,

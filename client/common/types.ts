@@ -166,8 +166,19 @@ export interface PlacesData {
   map_icon: string;
   main_image_url: string;
   country_id: number;
+  featured_article_id?: number | null;
   country?: { name: string };
   countryId?: number;
+  articles?: Array<{
+    id: number;
+    title: string;
+    subtitle?: string;
+    description?: string;
+    main_image_url?: string;
+    date_written?: Date | string;
+    date_updated?: Date | string | null;
+    place_id?: number;
+  }>;
   videos?: Array<{
     id: number;
     url: string;

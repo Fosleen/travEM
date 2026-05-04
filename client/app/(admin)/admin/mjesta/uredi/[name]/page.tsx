@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 "use client";
+
 import { Fragment, useEffect, useRef, useState } from "react";
 import { getVisitedCountries } from "@/utils/map";
 import { PlacesData } from "@/common/types";
@@ -32,7 +33,6 @@ const EditPlace = () => {
   const [selectedCountryId, setSelectedCountryId] = useState("");
   const [mainPlaceImage, setMainPlaceImage] = useState<string>("");
 
-  // toggle state
   const [isFeaturedChecked, setIsFeaturedChecked] = useState(false);
   const [isOnMapChecked, setIsOnMapChecked] = useState(false);
 
@@ -49,8 +49,24 @@ const EditPlace = () => {
     arrayHelpers.remove(videoIndex);
   };
 
+  const getArticleOptions = () => {
+    const placeArticles = place?.articles || [];
+
+    return [
+      {
+        id: null,
+        name: "Bez istaknutog članka",
+      },
+      ...placeArticles.map((article) => ({
+        id: article.id,
+        name: article.title,
+      })),
+    ];
+  };
+
   const handleSave = async (values) => {
     setIsSubmitClicked(true);
+
     if (validateImages()) {
       Swal.fire({
         title: "Jeste li sigurni?",
@@ -67,7 +83,7 @@ const EditPlace = () => {
             id: place.id,
             description: values.place_description,
             name: values.place_name,
-            country_id: parseInt(selectedCountryId),
+            country_id: parseInt(values.place_country),
             map_icon: values.place_icon_url,
             latitude: parseFloat(
               values.place_latitude.toString().replace(",", ".")
@@ -78,10 +94,13 @@ const EditPlace = () => {
             main_image_url: mainPlaceImage,
             is_on_homepage_map: isOnMapChecked,
             is_above_homepage_map: isFeaturedChecked,
+            featured_article_id: values.featured_article_id
+              ? parseInt(values.featured_article_id)
+              : null,
           });
+
           console.log(placeResponse);
 
-          // add, update (if it has id attibute already) and delete videos
           if (place.videos) {
             const removedVideoIds = place.videos.filter(
               (el) =>
@@ -89,10 +108,13 @@ const EditPlace = () => {
                   (video: { id: number }) => video.id === el.id
                 )
             );
+
             removedVideoIds.map(async (el) => await deleteVideo(el.id));
           }
+
           values.videos.map(async (el: { id: number; video_url: string }) => {
             let videoResponse;
+
             if (el.id) {
               videoResponse = await updateVideo(el.id, el.video_url);
             } else {
@@ -103,11 +125,12 @@ const EditPlace = () => {
                 null
               );
             }
+
             console.log(videoResponse);
           });
 
           router.push("/admin/mjesta");
-          notifySuccess("Uspješno dodano mjesto!");
+          notifySuccess("Uspješno uređeno mjesto!");
         }
       });
     }
@@ -158,6 +181,7 @@ const EditPlace = () => {
   const fetchData = async () => {
     try {
       const countriesData = await getVisitedCountries();
+
       const newArray = countriesData.map(
         (el: { id: number; flag_image_url: string; name: string }) => ({
           id: el.id,
@@ -165,14 +189,18 @@ const EditPlace = () => {
           name: el.name,
         })
       );
+
       setCountries(newArray);
 
       if (name) {
         const _place = await getPlacesByName(name, 1, 1);
-        setPlace(_place.data[0]);
-        setMainPlaceImage(_place.data[0].main_image_url);
-        setIsOnMapChecked(_place.data[0].is_on_homepage_map);
-        setIsFeaturedChecked(_place.data[0].is_above_homepage_map);
+        const selectedPlace = _place.data[0];
+
+        setPlace(selectedPlace);
+        setMainPlaceImage(selectedPlace.main_image_url);
+        setIsOnMapChecked(selectedPlace.is_on_homepage_map);
+        setIsFeaturedChecked(selectedPlace.is_above_homepage_map);
+        setSelectedCountryId(selectedPlace.countryId);
       }
     } catch (error) {
       console.error("Error occured while fetching data:", error);
@@ -205,6 +233,7 @@ const EditPlace = () => {
       ),
     place_description: Yup.string().required("Obavezno polje!"),
     place_country: Yup.number().required("Obavezno polje!").integer(),
+    featured_article_id: Yup.mixed().nullable(),
     videos: Yup.array().of(
       Yup.object().shape({
         video_url: Yup.string().required("Obavezno polje!"),
@@ -231,6 +260,7 @@ const EditPlace = () => {
             IZBRIŠI MJESTO I SVE ČLANKE O NJEMU
           </Button>
         </div>
+
         {countries && place ? (
           <Formik
             initialValues={{
@@ -240,6 +270,7 @@ const EditPlace = () => {
               place_latitude: place.latitude,
               place_longitude: place.longitude,
               place_icon_url: place.map_icon,
+              featured_article_id: place.featured_article_id || null,
               videos: place.videos
                 ? place.videos.map((el) => ({
                     id: el.id,
@@ -268,7 +299,8 @@ const EditPlace = () => {
                       className="error-message"
                     />
                   </div>
-                  <div className="add-place-input">
+
+                  <div className="edit-place-input">
                     <AdvancedDropdown
                       filter
                       images
@@ -289,6 +321,7 @@ const EditPlace = () => {
                       className="error-message"
                     />
                   </div>
+
                   <div className="edit-place-row">
                     <div className="edit-place-row-item">
                       <Field
@@ -303,6 +336,7 @@ const EditPlace = () => {
                         className="error-message"
                       />
                     </div>
+
                     <div className="edit-place-row-item">
                       <Field
                         name="place_longitude"
@@ -317,7 +351,8 @@ const EditPlace = () => {
                       />
                     </div>
                   </div>
-                  <div className="add-place-input">
+
+                  <div className="edit-place-input">
                     <Field
                       name="place_description"
                       value={values.place_description}
@@ -334,7 +369,8 @@ const EditPlace = () => {
                     />
                   </div>
                 </div>
-                <div className="add-place-input">
+
+                <div className="edit-place-input">
                   <div className="edit-place-images-container">
                     {mainPlaceImage ? (
                       <div
@@ -346,6 +382,7 @@ const EditPlace = () => {
                         <div className="edit-place-image-remove-icon">
                           <X size={32} color="#e70101" weight="bold" />
                         </div>
+
                         <img
                           src={mainPlaceImage}
                           alt={`image-error-${mainPlaceImage}`}
@@ -362,12 +399,43 @@ const EditPlace = () => {
                       </div>
                     )}
                   </div>
+
                   {isSubmitClicked &&
                     (mainPlaceImage == "" || !mainPlaceImage) && (
                       <p className="error-message">Obavezno polje!</p>
                     )}
+
                   <p>* preporuča se slika u omjeru 16:9</p>
                 </div>
+
+                <div className="edit-place-input edit-place-featured-article-wrapper">
+                  <AdvancedDropdown
+                    filter
+                    hardcodedValue={"Odaberi istaknuti članak za ovaj grad"}
+                    options={getArticleOptions()}
+                    value={values.featured_article_id}
+                    selectedValue={values.featured_article_id}
+                    onChange={(value) => {
+                      setFieldValue("featured_article_id", value.id);
+                    }}
+                    isDisabled={!place?.articles || place.articles.length === 0}
+                    label="Istaknuti članak"
+                  />
+
+                  {(!place?.articles || place.articles.length === 0) && (
+                    <p className="edit-place-helper-text">
+                      Još nema članaka vezanih uz ovo mjesto. Istaknuti članak
+                      moći ćete odabrati nakon što dodate članak s ovim mjestom.
+                    </p>
+                  )}
+
+                  <ErrorMessage
+                    name="featured_article_id"
+                    component="div"
+                    className="error-message"
+                  />
+                </div>
+
                 <div className="edit-place-videos-wrapper">
                   <div className="edit-place-video-outer-container">
                     <FieldArray
@@ -391,6 +459,7 @@ const EditPlace = () => {
                                 </Button>
                               )}
                             </div>
+
                             {videos && videos.length > 0
                               ? videos.map((_videos, index) => (
                                   <Fragment key={index}>
@@ -402,6 +471,7 @@ const EditPlace = () => {
                                         label=""
                                         placeholder="Unesi URL videa..."
                                       />
+
                                       <div
                                         onClick={() => {
                                           handleDeleteVideo(
@@ -413,6 +483,7 @@ const EditPlace = () => {
                                         <Trash color="#AC2B2B" size={32} />
                                       </div>
                                     </div>
+
                                     <ErrorMessage
                                       name={`videos.${index}.video_url`}
                                       component="div"
@@ -437,6 +508,7 @@ const EditPlace = () => {
                       setter={setIsOnMapChecked}
                     />
                   </div>
+
                   <div className="edit-place-toggle-item">
                     <ToggleSwitch
                       name={"featured-place"}
@@ -445,6 +517,7 @@ const EditPlace = () => {
                       setter={setIsFeaturedChecked}
                     />
                   </div>
+
                   {isFeaturedChecked && (
                     <div className="edit-place-toggle-input">
                       <Field
@@ -462,6 +535,7 @@ const EditPlace = () => {
                   <Button type="submit" adminPrimary>
                     uredi mjesto
                   </Button>
+
                   <Button type="button" white onClick={handleCancel}>
                     Odustani
                   </Button>
@@ -473,6 +547,7 @@ const EditPlace = () => {
           <p>Loading...</p>
         )}
       </div>
+
       <Modal
         ref={dialogRef}
         toggleDialog={toggleDialog}

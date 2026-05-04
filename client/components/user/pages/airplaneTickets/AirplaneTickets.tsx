@@ -20,6 +20,8 @@ type Article = {
   description: string;
   main_image_url: string;
   date_written?: string;
+  articleTypeId?: number;
+  article_type_id?: number;
   airport_city: {
     id: number;
     name: string;
@@ -33,6 +35,8 @@ type AirplaneTicketsProps = {
   cityName: string;
   recommendedId: number | null;
 };
+
+const AIRPLANE_TICKETS_ARTICLE_TYPE_ID = 2;
 
 const AIRPORT_NAMES: Record<string, string> = {
   Zagreb: "Zračna luka Franjo Tuđman Zagreb",
@@ -113,6 +117,13 @@ const DEFAULT_HERO_IMAGE =
   HERO_IMAGES["Zagreb"] ||
   "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Zagreb%20Airport.jpg";
 
+const isAirplaneTicketArticle = (ticket: Article) => {
+  return (
+    ticket.articleTypeId === AIRPLANE_TICKETS_ARTICLE_TYPE_ID ||
+    ticket.article_type_id === AIRPLANE_TICKETS_ARTICLE_TYPE_ID
+  );
+};
+
 const isFarDestination = (ticket: Article) => {
   return (
     ticket.isFarDestination === true ||
@@ -148,9 +159,12 @@ const AirplaneTickets = ({
 
   // Split u 2 sekcije prema vrijednosti iz baze: Bliske / Daleke
   const { closeTickets, farTickets } = useMemo(() => {
-    const tickets = initialTickets ?? [];
+    const tickets = (initialTickets ?? []).filter(isAirplaneTicketArticle);
 
-    const close = tickets.filter((ticket) => !isFarDestination(ticket)).slice(0, 6);
+    const close = tickets
+      .filter((ticket) => !isFarDestination(ticket))
+      .slice(0, 6);
+
     const far = tickets.filter((ticket) => isFarDestination(ticket)).slice(0, 6);
 
     return { closeTickets: close, farTickets: far };

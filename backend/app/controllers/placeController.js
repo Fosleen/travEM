@@ -5,6 +5,7 @@ import videoService from "../services/videoService.js";
 class PlacesController {
   async getFavoritePlaces(req, res) {
     const response = await service.getFavoritePlaces();
+
     if (response == undefined) {
       res.status(404).json({ error: "No favorite places found" });
     } else {
@@ -14,6 +15,7 @@ class PlacesController {
 
   async getFeaturedPlaces(req, res) {
     const response = await service.getFeaturedPlaces();
+
     if (response == undefined) {
       res.status(404).json({ error: "No featured places found" });
     } else {
@@ -36,6 +38,7 @@ class PlacesController {
 
   async getPlacesWithImage(req, res) {
     const response = await service.getPlacesWithImage();
+
     if (response == undefined) {
       res.status(404).json({ error: "No places with image found" });
     } else {
@@ -46,6 +49,7 @@ class PlacesController {
   async getPlaceById(req, res) {
     const { id } = req.params;
     const response = await service.getPlaceById(id);
+
     if (!response || response.length == 0) {
       res.status(404).json({ error: `No place found by id ${id}` });
     } else {
@@ -59,6 +63,7 @@ class PlacesController {
     const pageSize = parseInt(req.query.pageSize) || 200;
 
     const response = await service.getPlaceByName(name, page, pageSize);
+
     if (!response || response.length == 0) {
       res.status(404).json({ error: `No place found by name ${name}` });
     } else {
@@ -82,6 +87,7 @@ class PlacesController {
     console.log(response.toJSON());
 
     let response2;
+
     if (req.body.videos) {
       const videos = req.body.videos;
 
@@ -94,6 +100,7 @@ class PlacesController {
             null
           )
       );
+
       response2 = videos;
     } else {
       response2 = null;
@@ -107,8 +114,10 @@ class PlacesController {
   }
 
   async patchPlace(req, res) {
+    const { id } = req.params;
+
     const response = await service.patchPlace(
-      req.params.id,
+      id,
       req.body.name,
       req.body.description,
       req.body.main_image_url,
@@ -117,10 +126,14 @@ class PlacesController {
       req.body.is_above_homepage_map,
       req.body.latitude,
       req.body.longitude,
-      req.body.country_id
+      req.body.country_id,
+      req.body.featured_article_id
     );
-    if (response.length == 0) {
+
+    if (!response) {
       res.status(500).json({ error: `Error updating place ${id}` });
+    } else if (response.error) {
+      res.status(400).json({ error: response.error });
     } else {
       res.status(200).json(response);
     }
@@ -129,6 +142,7 @@ class PlacesController {
   async deletePlaceAndArticles(req, res) {
     const { id } = req.params;
     const response = await service.deletePlaceAndArticles(id);
+
     if (response) {
       res.status(200).json({});
     } else {

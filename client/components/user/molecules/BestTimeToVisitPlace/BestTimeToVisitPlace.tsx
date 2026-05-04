@@ -1,14 +1,73 @@
 // client/components/user/molecules/BestTimeToVisitPlace/BestTimeToVisitPlace.tsx
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { apiUrl } from "@/utils/api";
 import "./BestTimeToVisitPlace.scss";
-import {
-  BEST_TIME_PLACES_DATA,
-  MonthKey,
-  PlaceClimate,
-  WeatherIconKey,
-} from "@/utils/bestTimeToVisitPlacesData";
+
+type MonthKey =
+  | "jan"
+  | "feb"
+  | "mar"
+  | "apr"
+  | "may"
+  | "jun"
+  | "jul"
+  | "aug"
+  | "sep"
+  | "oct"
+  | "nov"
+  | "dec";
+
+type WeatherIconKey =
+  | "sunny"
+  | "partly_cloudy"
+  | "cloudy"
+  | "rain"
+  | "showers"
+  | "snow"
+  | "wind"
+  | "fog";
+
+type ApiBestTimeMonth = {
+  id: number;
+  place_best_time_to_visit_id: number;
+  month_key: MonthKey;
+  avg_temp_c: string | number;
+  avg_rain_mm: string | number;
+};
+
+type ApiBestTimePlace = {
+  id: number;
+  place_id: number;
+  slug: string;
+  subtitle?: string | null;
+  note?: string | null;
+  is_enabled: boolean;
+  months: ApiBestTimeMonth[];
+  place?: {
+    id: number;
+    name: string;
+    name_genitive?: string | null;
+    name_dative?: string | null;
+    name_accusative?: string | null;
+    name_locative?: string | null;
+  };
+};
+
+type ComputedMonth = {
+  month: MonthKey;
+  tempC: number;
+  rainMm: number;
+  rating: "Najbolje" | "Dobro" | "U redu" | "Loše";
+  icon: WeatherIconKey;
+  heightPct: number;
+};
+
+type Props = {
+  placeSlug: string;
+  placeNameDative?: string;
+};
 
 const MONTH_LABEL: Record<MonthKey, string> = {
   jan: "Sij",
@@ -25,6 +84,21 @@ const MONTH_LABEL: Record<MonthKey, string> = {
   dec: "Pro",
 };
 
+const MONTH_ORDER: MonthKey[] = [
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "may",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "oct",
+  "nov",
+  "dec",
+];
+
 const ICON: Record<WeatherIconKey, string> = {
   sunny: "☀️",
   partly_cloudy: "⛅",
@@ -34,11 +108,6 @@ const ICON: Record<WeatherIconKey, string> = {
   snow: "❄️",
   wind: "💨",
   fog: "🌫️",
-};
-
-type Props = {
-  placeSlug: string;
-  placeNameDative?: string;
 };
 
 function clamp(n: number, min: number, max: number) {
@@ -131,31 +200,100 @@ function ratingClass(r: string) {
   return "poor";
 }
 
+function normalizeSlug(slug: string) {
+  return decodeURIComponent(slug).toLowerCase();
+}
+
 export default function BestTimeToVisitPlace({
   placeSlug,
   placeNameDative,
 }: Props) {
-  const normalizedSlug = decodeURIComponent(placeSlug).toLowerCase();
+  const normalizedSlug = normalizeSlug(placeSlug);
 
-  const place: PlaceClimate | undefined = useMemo(() => {
-    return BEST_TIME_PLACES_DATA.find(
-      (p) => p.slug.toLowerCase() === normalizedSlug
-    );
+  const [placeClimate, setPlaceClimate] = useState<ApiBestTimePlace | null>(
+    null
+  );
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchBestTimeData = async () => {
+      try {
+        setIsLoading(true);
+
+        const response = await fetch(
+          `${apiUrl}/place-best-time-to-visit/${normalizedSlug}`,
+          {
+            cache: "no-store",
+          }
+        );
+
+        if (!response.ok) {
+          if (isMounted) {
+            setPlaceClimate(null);
+          }
+
+          return;
+        }
+
+        const data = await response.json();
+
+        if (isMounted) {
+          setPlaceClimate(data);
+        }
+      } catch (error) {
+        console.warn("Failed to fetch best time to visit data:", error);
+
+        if (isMounted) {
+          setPlaceClimate(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchBestTimeData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [normalizedSlug]);
 
   const computed = useMemo(() => {
-    if (!place) return null;
+    if (!placeClimate?.months || placeClimate.months.length === 0) return null;
 
-    const temps = place.months.map((m) => m.tempC);
+    const normalizedMonths = [...placeClimate.months]
+      .sort(
+        (a, b) =>
+          MONTH_ORDER.indexOf(a.month_key) - MONTH_ORDER.indexOf(b.month_key)
+      )
+      .map((month) => ({
+        month: month.month_key,
+        tempC: Number(month.avg_temp_c),
+        rainMm: Number(month.avg_rain_mm),
+      }))
+      .filter(
+        (month) =>
+          !Number.isNaN(month.tempC) &&
+          !Number.isNaN(month.rainMm) &&
+          MONTH_ORDER.includes(month.month)
+      );
+
+    if (normalizedMonths.length === 0) return null;
+
+    const temps = normalizedMonths.map((m) => m.tempC);
     const maxT = Math.max(...temps);
     const minT = Math.min(...temps);
     const range = Math.max(10, maxT - minT);
 
-    const rains = place.months.map((m) => m.rainMm);
+    const rains = normalizedMonths.map((m) => m.rainMm);
     const minRain = Math.min(...rains);
     const maxRain = Math.max(...rains);
 
-    const scored = place.months.map((m) => ({
+    const scored = normalizedMonths.map((m) => ({
       month: m.month,
       score: monthScore(m.tempC, m.rainMm, minRain, maxRain),
     }));
@@ -164,9 +302,9 @@ export default function BestTimeToVisitPlace({
     const monthOrder = sorted.map((s) => s.month);
     const ratingByMonth = assignRatingsByRank(monthOrder);
 
-    const months = place.months.map((m) => {
+    const months: ComputedMonth[] = normalizedMonths.map((m) => {
       const rating = ratingByMonth.get(m.month) ?? "U redu";
-      const icon = m.icon ?? computeIcon(m.tempC, m.rainMm, minRain, maxRain);
+      const icon = computeIcon(m.tempC, m.rainMm, minRain, maxRain);
 
       const h = ((m.tempC - minT) / range) * 100;
       const heightPct = clamp(h, 12, 100);
@@ -175,20 +313,25 @@ export default function BestTimeToVisitPlace({
     });
 
     return { months, minT, maxT };
-  }, [place]);
+  }, [placeClimate]);
 
-  if (!place || !computed) return null;
+  if (isLoading) return null;
+  if (!placeClimate || !computed) return null;
+
+  const titlePlaceName =
+    placeClimate.place?.name_dative ||
+    placeNameDative ||
+    placeClimate.place?.name ||
+    placeSlug;
 
   return (
     <section className="btv-place">
       <div className="btv-place-header">
         <div className="btv-place-title">
-          <h2>
-            Najbolje vrijeme za posjet {placeNameDative || placeSlug}
-          </h2>
+          <h2>Najbolje vrijeme za posjet {titlePlaceName}</h2>
 
-          {place.subtitle && (
-            <p className="btv-place-subtitle">{place.subtitle}</p>
+          {placeClimate.subtitle && (
+            <p className="btv-place-subtitle">{placeClimate.subtitle}</p>
           )}
         </div>
 
@@ -208,7 +351,9 @@ export default function BestTimeToVisitPlace({
         </div>
       </div>
 
-      {place.note && <div className="btv-place-note">{place.note}</div>}
+      {placeClimate.note && (
+        <div className="btv-place-note">{placeClimate.note}</div>
+      )}
 
       <div className="btv-place-grid" role="list">
         {computed.months.map((m) => (

@@ -22,6 +22,7 @@ import video from "./videoRoute.js";
 import airportCity from "./airportCityRoute.js";
 import { verifyToken } from "../middleware/jwt_verify.js";
 import subscriber from "./subscriberRoute.js";
+import placeBestTimeToVisit from "./placeBestTimeToVisitRoute.js";
 
 const router = new Router();
 
@@ -49,5 +50,6 @@ router.use("/continents", continent);
 router.use("/videos", video);
 router.use("/airport-cities", airportCity);
 router.use("/subscribers", subscriber);
+router.use("/place-best-time-to-visit", placeBestTimeToVisit);
 
 export default router;

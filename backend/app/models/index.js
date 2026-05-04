@@ -25,11 +25,14 @@ import VisaInfo from "./visaInfo.js";
 import sequelizeConnection from "../sequelize.js";
 import AirportCity from "./airportCity.js";
 import Subscriber from "./subscriber.js";
+import PlaceBestTimeToVisit from "./placeBestTimeToVisit.js";
+import PlaceBestTimeToVisitMonth from "./placeBestTimeToVisitMonth.js";
 
 const db = {};
 
 db.sequelize = sequelizeConnection;
 db.models = {};
+
 db.models.User = User(sequelizeConnection, Sequelize.DataTypes);
 db.models.ArticleType = ArticleType(sequelizeConnection, Sequelize.DataTypes);
 db.models.Article = Article(sequelizeConnection, Sequelize.DataTypes);
@@ -69,12 +72,42 @@ db.models.ArticleSpecialType = ArticleSpecialType(
 );
 
 db.models.AirportCity = AirportCity(sequelizeConnection, Sequelize.DataTypes);
-
 db.models.Subscriber = Subscriber(sequelizeConnection, Sequelize.DataTypes);
+
+db.models.PlaceBestTimeToVisit = PlaceBestTimeToVisit(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+
+db.models.PlaceBestTimeToVisitMonth = PlaceBestTimeToVisitMonth(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
 
 db.models.Article_ArticleSpecialType =
   article_articleSpecialType(sequelizeConnection);
 
-// Export the db object after all models are initialized
+/**
+ * Best time to visit associations
+ */
+db.models.Place.hasOne(db.models.PlaceBestTimeToVisit, {
+  foreignKey: "place_id",
+  as: "best_time_to_visit",
+});
+
+db.models.PlaceBestTimeToVisit.belongsTo(db.models.Place, {
+  foreignKey: "place_id",
+  as: "place",
+});
+
+db.models.PlaceBestTimeToVisit.hasMany(db.models.PlaceBestTimeToVisitMonth, {
+  foreignKey: "place_best_time_to_visit_id",
+  as: "months",
+});
+
+db.models.PlaceBestTimeToVisitMonth.belongsTo(db.models.PlaceBestTimeToVisit, {
+  foreignKey: "place_best_time_to_visit_id",
+  as: "best_time_to_visit",
+});
 
 export default db;

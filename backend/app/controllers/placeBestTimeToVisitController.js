@@ -14,6 +14,20 @@ class PlaceBestTimeToVisitController {
       res.status(200).json(response);
     }
   }
+
+  async getByPlaceId(req, res) {
+    const { placeId } = req.params;
+
+    const response = await service.getByPlaceId(placeId);
+
+    if (!response) {
+      res.status(404).json({
+        error: `No best time to visit data found for place id ${placeId}`,
+      });
+    } else {
+      res.status(200).json(response);
+    }
+  }
 }
 
 export default new PlaceBestTimeToVisitController();

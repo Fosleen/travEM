@@ -32,29 +32,25 @@ const grammarRows = [
     key: "name_genitive",
     label: "Genitiv",
     question: "koga? čega?",
-    example: "nema",
-    placeholder: "npr. Ljubljane",
+    example: "nema"
   },
   {
     key: "name_dative",
     label: "Dativ",
     question: "komu? čemu?",
-    example: "idem",
-    placeholder: "npr. Ljubljani",
+    example: "idem"
   },
   {
     key: "name_accusative",
     label: "Akuzativ",
     question: "koga? što?",
-    example: "vidim",
-    placeholder: "npr. Ljubljanu",
+    example: "vidim"
   },
   {
     key: "name_locative",
     label: "Lokativ",
     question: "o komu? o čemu?",
-    example: "govorim",
-    placeholder: "npr. Ljubljani",
+    example: "govorim"
   },
 ];
 
@@ -81,10 +77,7 @@ const getDefaultBestTimeMonths = () =>
   }));
 
 const slugifyPlaceName = (value: string) => {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "-");
+  return value.trim().toLowerCase().replace(/\s+/g, "-");
 };
 
 const AddPlace = () => {
@@ -134,6 +127,11 @@ const AddPlace = () => {
   const handleSave = async (values) => {
     setIsSubmitClicked(true);
 
+    const bestTimeToVisitPayload = {
+      ...values.best_time_to_visit,
+      slug: slugifyPlaceName(values.place_name),
+    };
+
     if (validateImages()) {
       Swal.fire({
         title: "Jeste li sigurni?",
@@ -161,7 +159,7 @@ const AddPlace = () => {
             values.name_dative,
             values.name_accusative,
             values.name_locative,
-            values.best_time_to_visit
+            bestTimeToVisitPayload
           );
 
           console.log(placeResponse);
@@ -234,7 +232,6 @@ const AddPlace = () => {
     place_description: Yup.string().required("Obavezno polje!"),
     place_country: Yup.number().required("Obavezno polje!").integer(),
     best_time_to_visit: Yup.object().shape({
-      slug: Yup.string().required("Obavezno polje!"),
       subtitle: Yup.string().required("Obavezno polje!"),
       note: Yup.string().nullable(),
       is_enabled: Yup.boolean(),
@@ -277,7 +274,6 @@ const AddPlace = () => {
               place_longitude: "",
               place_icon_url: "",
               best_time_to_visit: {
-                slug: "",
                 subtitle: "",
                 note: "",
                 is_enabled: true,
@@ -298,14 +294,6 @@ const AddPlace = () => {
                       as={Input}
                       label="Naziv mjesta *"
                       placeholder="Unesi naziv..."
-                      onBlur={() => {
-                        if (!values.best_time_to_visit.slug) {
-                          setFieldValue(
-                            "best_time_to_visit.slug",
-                            slugifyPlaceName(values.place_name)
-                          );
-                        }
-                      }}
                     />
                     <ErrorMessage
                       name="place_name"
@@ -492,21 +480,6 @@ const AddPlace = () => {
                   </div>
 
                   <div className="add-place-best-time-inputs">
-                    <div className="add-place-input">
-                      <Field
-                        name="best_time_to_visit.slug"
-                        type="text"
-                        as={Input}
-                        label="Slug *"
-                        placeholder="npr. ljubljana"
-                      />
-                      <ErrorMessage
-                        name="best_time_to_visit.slug"
-                        component="div"
-                        className="error-message"
-                      />
-                    </div>
-
                     <div className="add-place-input">
                       <Field
                         name="best_time_to_visit.subtitle"

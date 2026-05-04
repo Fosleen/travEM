@@ -243,7 +243,7 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
       />
 
       <BestTimeToVisitPlace
-        placeSlug={placeName}
+        placeId={place.id}
         placeNameDative={getPlaceCase(place, "dative")}
       />
 
@@ -337,7 +337,9 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
           {otherArticles.length > 0 && (
             <section className="destination-place-articles-section">
               <div className="destination-place-section-header compact">
-                <h2>Nastavite istraživati {getPlaceCase(place, "accusative")}</h2>
+                <h2>
+                  Nastavite istraživati {getPlaceCase(place, "accusative")}
+                </h2>
               </div>
 
               <div

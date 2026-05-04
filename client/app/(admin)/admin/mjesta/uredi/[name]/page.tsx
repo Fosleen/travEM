@@ -33,29 +33,25 @@ const grammarRows = [
     key: "name_genitive",
     label: "Genitiv",
     question: "koga? čega?",
-    example: "nema",
-    placeholder: "npr. Ljubljane",
+    example: "nema"
   },
   {
     key: "name_dative",
     label: "Dativ",
     question: "komu? čemu?",
-    example: "idem",
-    placeholder: "npr. Ljubljani",
+    example: "idem"
   },
   {
     key: "name_accusative",
     label: "Akuzativ",
     question: "koga? što?",
-    example: "vidim",
-    placeholder: "npr. Ljubljanu",
+    example: "vidim"
   },
   {
     key: "name_locative",
     label: "Lokativ",
     question: "o komu? o čemu?",
-    example: "govorim",
-    placeholder: "npr. Ljubljani",
+    example: "govorim"
   },
 ];
 
@@ -86,12 +82,15 @@ const normalizeNumberForInput = (value) => {
   return String(value).replace(".", ",");
 };
 
+const slugifyPlaceName = (value: string) => {
+  return value.trim().toLowerCase().replace(/\s+/g, "-");
+};
+
 const getInitialBestTimeToVisit = (place) => {
   const bestTime = place?.best_time_to_visit;
 
   if (!bestTime) {
     return {
-      slug: "",
       subtitle: "",
       note: "",
       is_enabled: true,
@@ -102,7 +101,6 @@ const getInitialBestTimeToVisit = (place) => {
   const existingMonths = bestTime.months || [];
 
   return {
-    slug: bestTime.slug || "",
     subtitle: bestTime.subtitle || "",
     note: bestTime.note || "",
     is_enabled:
@@ -167,6 +165,11 @@ const EditPlace = () => {
   const handleSave = async (values) => {
     setIsSubmitClicked(true);
 
+    const bestTimeToVisitPayload = {
+      ...values.best_time_to_visit,
+      slug: slugifyPlaceName(values.place_name),
+    };
+
     if (validateImages()) {
       Swal.fire({
         title: "Jeste li sigurni?",
@@ -201,7 +204,7 @@ const EditPlace = () => {
             featured_article_id: values.featured_article_id
               ? parseInt(values.featured_article_id)
               : null,
-            best_time_to_visit: values.best_time_to_visit,
+            best_time_to_visit: bestTimeToVisitPayload,
           });
 
           console.log(placeResponse);
@@ -359,7 +362,6 @@ const EditPlace = () => {
     place_country: Yup.number().required("Obavezno polje!").integer(),
     featured_article_id: Yup.mixed().nullable(),
     best_time_to_visit: Yup.object().shape({
-      slug: Yup.string().required("Obavezno polje!"),
       subtitle: Yup.string().required("Obavezno polje!"),
       note: Yup.string().nullable(),
       is_enabled: Yup.boolean(),
@@ -652,21 +654,6 @@ const EditPlace = () => {
                   </div>
 
                   <div className="edit-place-best-time-inputs">
-                    <div className="edit-place-input">
-                      <Field
-                        name="best_time_to_visit.slug"
-                        type="text"
-                        as={Input}
-                        label="Slug *"
-                        placeholder="npr. ljubljana"
-                      />
-                      <ErrorMessage
-                        name="best_time_to_visit.slug"
-                        component="div"
-                        className="error-message"
-                      />
-                    </div>
-
                     <div className="edit-place-input">
                       <Field
                         name="best_time_to_visit.subtitle"

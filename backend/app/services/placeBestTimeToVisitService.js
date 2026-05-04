@@ -1,5 +1,54 @@
 import db from "../models/index.js";
 
+const MONTH_ORDER = [
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "may",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "oct",
+  "nov",
+  "dec",
+];
+
+const BEST_TIME_INCLUDE = [
+  {
+    model: db.models.PlaceBestTimeToVisitMonth,
+    as: "months",
+  },
+  {
+    model: db.models.Place,
+    as: "place",
+    attributes: [
+      "id",
+      "name",
+      "name_genitive",
+      "name_dative",
+      "name_accusative",
+      "name_locative",
+    ],
+  },
+];
+
+const sortMonths = (data) => {
+  if (!data) {
+    return null;
+  }
+
+  const plainData = data.toJSON ? data.toJSON() : data;
+
+  plainData.months = [...(plainData.months || [])].sort(
+    (a, b) =>
+      MONTH_ORDER.indexOf(a.month_key) - MONTH_ORDER.indexOf(b.month_key)
+  );
+
+  return plainData;
+};
+
 class PlaceBestTimeToVisitService {
   async getBySlug(slug) {
     try {
@@ -10,37 +59,27 @@ class PlaceBestTimeToVisitService {
           slug: normalizedSlug,
           is_enabled: 1,
         },
-        include: [
-          {
-            model: db.models.PlaceBestTimeToVisitMonth,
-            as: "months",
-          },
-          {
-            model: db.models.Place,
-            as: "place",
-            attributes: [
-              "id",
-              "name",
-              "name_genitive",
-              "name_dative",
-              "name_accusative",
-              "name_locative",
-            ],
-          },
-        ],
-        order: [
-          [
-            {
-              model: db.models.PlaceBestTimeToVisitMonth,
-              as: "months",
-            },
-            "id",
-            "ASC",
-          ],
-        ],
+        include: BEST_TIME_INCLUDE,
       });
 
-      return data;
+      return sortMonths(data);
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async getByPlaceId(placeId) {
+    try {
+      const data = await db.models.PlaceBestTimeToVisit.findOne({
+        where: {
+          place_id: placeId,
+          is_enabled: 1,
+        },
+        include: BEST_TIME_INCLUDE,
+      });
+
+      return sortMonths(data);
     } catch (error) {
       console.log(error);
       return null;

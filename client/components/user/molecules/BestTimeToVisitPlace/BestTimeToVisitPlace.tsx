@@ -65,7 +65,7 @@ type ComputedMonth = {
 };
 
 type Props = {
-  placeSlug: string;
+  placeId: number | string;
   placeNameDative?: string;
 };
 
@@ -200,16 +200,10 @@ function ratingClass(r: string) {
   return "poor";
 }
 
-function normalizeSlug(slug: string) {
-  return decodeURIComponent(slug).toLowerCase();
-}
-
 export default function BestTimeToVisitPlace({
-  placeSlug,
+  placeId,
   placeNameDative,
 }: Props) {
-  const normalizedSlug = normalizeSlug(placeSlug);
-
   const [placeClimate, setPlaceClimate] = useState<ApiBestTimePlace | null>(
     null
   );
@@ -223,7 +217,7 @@ export default function BestTimeToVisitPlace({
         setIsLoading(true);
 
         const response = await fetch(
-          `${apiUrl}/place-best-time-to-visit/${normalizedSlug}`,
+          `${apiUrl}/place-best-time-to-visit/place/${placeId}`,
           {
             cache: "no-store",
           }
@@ -255,12 +249,17 @@ export default function BestTimeToVisitPlace({
       }
     };
 
-    fetchBestTimeData();
+    if (placeId) {
+      fetchBestTimeData();
+    } else {
+      setIsLoading(false);
+      setPlaceClimate(null);
+    }
 
     return () => {
       isMounted = false;
     };
-  }, [normalizedSlug]);
+  }, [placeId]);
 
   const computed = useMemo(() => {
     if (!placeClimate?.months || placeClimate.months.length === 0) return null;
@@ -322,7 +321,7 @@ export default function BestTimeToVisitPlace({
     placeClimate.place?.name_dative ||
     placeNameDative ||
     placeClimate.place?.name ||
-    placeSlug;
+    "";
 
   return (
     <section className="btv-place">

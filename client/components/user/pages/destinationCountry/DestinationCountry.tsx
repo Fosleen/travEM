@@ -39,18 +39,14 @@ const DestinationCountry = ({
           color={country.color.hex_value}
         />
       )}
-      
+
       <div className="destination-country-places-container">
         {country && country.places && country.places.length > 0 && (
-          <CountryPlaces
-            places={country.places}
-            countryName={country.name} // 👈 BITNO
-          />
+          <CountryPlaces places={country.places} countryName={country.name} />
         )}
       </div>
 
-      {/* Best time to visit */}
-      <BestTimeToVisit countrySlug={countryName} />
+      <BestTimeToVisit countrySlug={countryName} countryId={country.id} />
 
       <div className="destination-country-visa-info-container">
         <VisaInfo countryId={country.id} countryName={country.name} />
@@ -87,14 +83,13 @@ const DestinationCountry = ({
         </div>
       )}
 
-
-
       {country.specificities && country.specificities.length > 0 && (
         <div className="destination-country-highlights-container">
           <Specificities
             iconNmbr={"1"}
             specificities={country.specificities[0]}
           />
+
           <Specificities
             iconNmbr={"2"}
             specificities={country.specificities[1]}

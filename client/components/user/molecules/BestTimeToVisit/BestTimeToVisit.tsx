@@ -1,17 +1,80 @@
 // client/components/user/molecules/BestTimeToVisit/BestTimeToVisit.tsx
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { apiUrl } from "@/utils/api";
 import "./BestTimeToVisit.scss";
-import {
-  BEST_TIME_DATA,
-  CountryClimate,
-  MonthKey,
-  RegionClimate,
-  WeatherIconKey,
-} from "@/utils/bestTimeToVisitData";
 
-// Mjeseci (label na dnu stupca)
+type MonthKey =
+  | "jan"
+  | "feb"
+  | "mar"
+  | "apr"
+  | "may"
+  | "jun"
+  | "jul"
+  | "aug"
+  | "sep"
+  | "oct"
+  | "nov"
+  | "dec";
+
+type WeatherIconKey =
+  | "sunny"
+  | "partly_cloudy"
+  | "cloudy"
+  | "rain"
+  | "showers"
+  | "snow"
+  | "wind"
+  | "fog";
+
+type ApiCountryBestTimeMonth = {
+  id: number;
+  country_best_time_to_visit_region_id: number;
+  month_key: MonthKey;
+  avg_temp_c: string | number;
+  avg_rain_mm: string | number;
+};
+
+type ApiCountryBestTimeRegion = {
+  id: number;
+  country_best_time_to_visit_id: number;
+  region_key: string;
+  label: string;
+  note?: string | null;
+  sort_order: number;
+  months: ApiCountryBestTimeMonth[];
+};
+
+type ApiCountryBestTime = {
+  id: number;
+  country_id: number;
+  slug: string;
+  title?: string | null;
+  subtitle?: string | null;
+  is_enabled: boolean;
+  regions: ApiCountryBestTimeRegion[];
+  country?: {
+    id: number;
+    name: string;
+  };
+};
+
+type ComputedMonth = {
+  month: MonthKey;
+  tempC: number;
+  rainMm: number;
+  rating: "Najbolje" | "Dobro" | "U redu" | "Loše";
+  icon: WeatherIconKey;
+  heightPct: number;
+};
+
+type Props = {
+  countrySlug: string;
+  countryId?: number | string;
+};
+
 const MONTH_LABEL: Record<MonthKey, string> = {
   jan: "Sij",
   feb: "Velj",
@@ -27,7 +90,21 @@ const MONTH_LABEL: Record<MonthKey, string> = {
   dec: "Pro",
 };
 
-// Ikonice vremena
+const MONTH_ORDER: MonthKey[] = [
+  "jan",
+  "feb",
+  "mar",
+  "apr",
+  "may",
+  "jun",
+  "jul",
+  "aug",
+  "sep",
+  "oct",
+  "nov",
+  "dec",
+];
+
 const ICON: Record<WeatherIconKey, string> = {
   sunny: "☀️",
   partly_cloudy: "⛅",
@@ -39,20 +116,18 @@ const ICON: Record<WeatherIconKey, string> = {
   fog: "🌫️",
 };
 
-type Props = {
-  countrySlug: string; // npr. "hrvatska" iz URL-a
-};
-
 function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
 }
 
-/**
- * TEMP SCORE (0..1)
- * Idealan raspon: 18–26°C (1.0)
- * Ok raspon: 12–30°C (linear drop)
- * Izvan toga brzo pada prema 0.
- */
+function normalizeSlug(slug: string) {
+  return decodeURIComponent(slug).toLowerCase();
+}
+
+function normalizeNumber(value: string | number) {
+  return Number(value);
+}
+
 function tempComfortScore(tempC: number) {
   const idealMin = 18;
   const idealMax = 26;
@@ -62,85 +137,72 @@ function tempComfortScore(tempC: number) {
   if (tempC >= idealMin && tempC <= idealMax) return 1;
 
   if (tempC >= okMin && tempC < idealMin) {
-    // 12 -> 0, 18 -> 1
     return (tempC - okMin) / (idealMin - okMin);
   }
 
   if (tempC > idealMax && tempC <= okMax) {
-    // 26 -> 1, 30 -> 0
     return 1 - (tempC - idealMax) / (okMax - idealMax);
   }
 
-  // izvan ok raspona
   return 0;
 }
 
-/**
- * RAIN SCORE (0..1)
- * Relativno po regiji: min kiše = 1, max kiše = 0.
- * (Bolje nego fiksni pragovi jer razne klime imaju različite “normalne” količine kiše.)
- */
 function rainDryScore(rainMm: number, minRain: number, maxRain: number) {
   const span = Math.max(1, maxRain - minRain);
-  const norm = (rainMm - minRain) / span; // 0..1
+  const norm = (rainMm - minRain) / span;
+
   return 1 - clamp(norm, 0, 1);
 }
 
-/**
- * FINAL SCORE 0..100
- * Temp je bitnija (npr. 65%), kiša malo manje (35%).
- * Ovo možeš kasnije tweakati po želji.
- */
-function monthScore(tempC: number, rainMm: number, minRain: number, maxRain: number) {
+function monthScore(
+  tempC: number,
+  rainMm: number,
+  minRain: number,
+  maxRain: number
+) {
   const t = tempComfortScore(tempC);
   const r = rainDryScore(rainMm, minRain, maxRain);
   const score01 = 0.65 * t + 0.35 * r;
+
   return Math.round(score01 * 100);
 }
 
-/**
- * Dodjela ocjena po RANK-u (uvijek bude 2 Najbolje i 2 Loše).
- * Split koji želiš:
- * - 2 Najbolje
- * - 4 Dobro
- * - 4 U redu
- * - 2 Loše
- */
 function assignRatingsByRank(monthKeysSortedBestToWorst: MonthKey[]) {
-  const ratingByMonth = new Map<MonthKey, "Najbolje" | "Dobro" | "U redu" | "Loše">();
+  const ratingByMonth = new Map<
+    MonthKey,
+    "Najbolje" | "Dobro" | "U redu" | "Loše"
+  >();
 
-  // zaštita: ako iz nekog razloga nema 12 mjeseci, radi koliko može
   const n = monthKeysSortedBestToWorst.length;
 
-  // Top 2
   for (let i = 0; i < n; i++) {
     const month = monthKeysSortedBestToWorst[i];
 
     if (i <= 1) ratingByMonth.set(month, "Najbolje");
-    else if (i <= 5) ratingByMonth.set(month, "Dobro"); // 2..5 = 4 mjeseca
-    else if (i <= 9) ratingByMonth.set(month, "U redu"); // 6..9 = 4 mjeseca
-    else ratingByMonth.set(month, "Loše"); // 10.. = bottom 2
+    else if (i <= 5) ratingByMonth.set(month, "Dobro");
+    else if (i <= 9) ratingByMonth.set(month, "U redu");
+    else ratingByMonth.set(month, "Loše");
   }
 
   return ratingByMonth;
 }
 
-/**
- * Ikona = heuristika iz temp + RELATIVNE kiše.
- * (Ocjena i ikona su odvojene stvari – ikona opisuje “kakav je mjesec”, ocjena je “koliko je dobar za posjet”.)
- */
-function computeIcon(tempC: number, rainMm: number, minRain: number, maxRain: number): WeatherIconKey {
+function computeIcon(
+  tempC: number,
+  rainMm: number,
+  minRain: number,
+  maxRain: number
+): WeatherIconKey {
   if (tempC <= 1) return "snow";
 
   const span = Math.max(1, maxRain - minRain);
-  const rainNorm = clamp((rainMm - minRain) / span, 0, 1); // 0..1
+  const rainNorm = clamp((rainMm - minRain) / span, 0, 1);
 
   if (rainNorm >= 0.85) return "rain";
   if (rainNorm >= 0.65) return "showers";
   if (rainNorm >= 0.45) return "cloudy";
   if (rainNorm >= 0.25) return "partly_cloudy";
 
-  // vrlo suho
   return "sunny";
 }
 
@@ -148,55 +210,130 @@ function ratingClass(r: string) {
   if (r === "Najbolje") return "best";
   if (r === "Dobro") return "good";
   if (r === "U redu") return "variable";
+
   return "poor";
 }
 
-export default function BestTimeToVisit({ countrySlug }: Props) {
-  const normalizedSlug = decodeURIComponent(countrySlug).toLowerCase();
+export default function BestTimeToVisit({ countrySlug, countryId }: Props) {
+  const normalizedSlug = normalizeSlug(countrySlug);
 
-  const country: CountryClimate | undefined = useMemo(() => {
-    return BEST_TIME_DATA.find((c) => c.slug.toLowerCase() === normalizedSlug);
-  }, [normalizedSlug]);
+  const [countryClimate, setCountryClimate] =
+    useState<ApiCountryBestTime | null>(null);
+  const [activeRegionId, setActiveRegionId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [activeRegionId, setActiveRegionId] = useState<string | null>(
-    country?.regions?.[0]?.id ?? null
-  );
+  useEffect(() => {
+    let isMounted = true;
 
-  const region: RegionClimate | undefined = useMemo(() => {
-    if (!country) return undefined;
-    const fallback = country.regions?.[0];
+    const fetchBestTimeData = async () => {
+      try {
+        setIsLoading(true);
+
+        const endpoint = countryId
+          ? `${apiUrl}/country-best-time-to-visit/country/${countryId}`
+          : `${apiUrl}/country-best-time-to-visit/${normalizedSlug}`;
+
+        const response = await fetch(endpoint, {
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          if (isMounted) {
+            setCountryClimate(null);
+            setActiveRegionId(null);
+          }
+
+          return;
+        }
+
+        const data = await response.json();
+
+        if (isMounted) {
+          setCountryClimate(data);
+          setActiveRegionId(data?.regions?.[0]?.region_key ?? null);
+        }
+      } catch (error) {
+        console.warn("Failed to fetch country best time to visit data:", error);
+
+        if (isMounted) {
+          setCountryClimate(null);
+          setActiveRegionId(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchBestTimeData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [countryId, normalizedSlug]);
+
+  const region: ApiCountryBestTimeRegion | undefined = useMemo(() => {
+    if (!countryClimate?.regions || countryClimate.regions.length === 0) {
+      return undefined;
+    }
+
+    const sortedRegions = [...countryClimate.regions].sort(
+      (a, b) => Number(a.sort_order) - Number(b.sort_order)
+    );
+
+    const fallback = sortedRegions[0];
+
     if (!activeRegionId) return fallback;
-    return country.regions.find((r) => r.id === activeRegionId) ?? fallback;
-  }, [country, activeRegionId]);
+
+    return (
+      sortedRegions.find((r) => r.region_key === activeRegionId) ?? fallback
+    );
+  }, [countryClimate, activeRegionId]);
 
   const computed = useMemo(() => {
-    if (!region) return null;
+    if (!region?.months || region.months.length === 0) return null;
 
-    // --- bar height (temp) ---
-    const temps = region.months.map((m) => m.tempC);
+    const normalizedMonths = [...region.months]
+      .sort(
+        (a, b) =>
+          MONTH_ORDER.indexOf(a.month_key) - MONTH_ORDER.indexOf(b.month_key)
+      )
+      .map((month) => ({
+        month: month.month_key,
+        tempC: normalizeNumber(month.avg_temp_c),
+        rainMm: normalizeNumber(month.avg_rain_mm),
+      }))
+      .filter(
+        (month) =>
+          MONTH_ORDER.includes(month.month) &&
+          !Number.isNaN(month.tempC) &&
+          !Number.isNaN(month.rainMm)
+      );
+
+    if (normalizedMonths.length === 0) return null;
+
+    const temps = normalizedMonths.map((m) => m.tempC);
     const maxT = Math.max(...temps);
     const minT = Math.min(...temps);
     const range = Math.max(10, maxT - minT);
 
-    // --- rain stats (relative) ---
-    const rains = region.months.map((m) => m.rainMm);
+    const rains = normalizedMonths.map((m) => m.rainMm);
     const minRain = Math.min(...rains);
     const maxRain = Math.max(...rains);
 
-    // --- score + ranking ---
-    const scored = region.months.map((m) => ({
+    const scored = normalizedMonths.map((m) => ({
       month: m.month,
       score: monthScore(m.tempC, m.rainMm, minRain, maxRain),
     }));
 
-    // best -> worst
     const sorted = [...scored].sort((a, b) => b.score - a.score);
     const monthOrder = sorted.map((s) => s.month);
     const ratingByMonth = assignRatingsByRank(monthOrder);
 
-    const months = region.months.map((m) => {
+    const months: ComputedMonth[] = normalizedMonths.map((m) => {
       const rating = ratingByMonth.get(m.month) ?? "U redu";
-      const icon = m.icon ?? computeIcon(m.tempC, m.rainMm, minRain, maxRain);
+      const icon = computeIcon(m.tempC, m.rainMm, minRain, maxRain);
 
       const h = ((m.tempC - minT) / range) * 100;
       const heightPct = clamp(h, 12, 100);
@@ -212,14 +349,25 @@ export default function BestTimeToVisit({ countrySlug }: Props) {
     return { months, minT, maxT };
   }, [region]);
 
-  if (!country || !region || !computed) return null;
+  if (isLoading) return null;
+  if (!countryClimate || !region || !computed) return null;
+
+  const sortedRegions = [...countryClimate.regions].sort(
+    (a, b) => Number(a.sort_order) - Number(b.sort_order)
+  );
 
   return (
     <section className="btv">
       <div className="btv-header">
         <div className="btv-title">
-          <h2>{country.title ?? `Najbolje vrijeme za posjet ${countrySlug}`}</h2>
-          {country.subtitle && <p className="btv-subtitle">{country.subtitle}</p>}
+          <h2>
+            {countryClimate.title ??
+              `Najbolje vrijeme za posjet ${countryClimate.country?.name ?? countrySlug}`}
+          </h2>
+
+          {countryClimate.subtitle && (
+            <p className="btv-subtitle">{countryClimate.subtitle}</p>
+          )}
         </div>
 
         <div className="btv-legend">
@@ -238,15 +386,16 @@ export default function BestTimeToVisit({ countrySlug }: Props) {
         </div>
       </div>
 
-      {/* REGIJE (tabovi) */}
-      {country.regions.length > 1 && (
+      {sortedRegions.length > 1 && (
         <div className="btv-tabs">
-          {country.regions.map((r) => (
+          {sortedRegions.map((r) => (
             <button
               key={r.id}
               type="button"
-              className={`btv-tab ${r.id === region.id ? "active" : ""}`}
-              onClick={() => setActiveRegionId(r.id)}
+              className={`btv-tab ${
+                r.region_key === region.region_key ? "active" : ""
+              }`}
+              onClick={() => setActiveRegionId(r.region_key)}
             >
               {r.label}
             </button>
@@ -256,7 +405,6 @@ export default function BestTimeToVisit({ countrySlug }: Props) {
 
       {region.note && <div className="btv-note">{region.note}</div>}
 
-      {/* GRID 12 mjeseci L->R */}
       <div className="btv-grid" role="list">
         {computed.months.map((m) => (
           <div
@@ -270,7 +418,6 @@ export default function BestTimeToVisit({ countrySlug }: Props) {
 
             <div className="btv-month-temp">{m.tempC}°C</div>
 
-            {/* stupić = temperatura */}
             <div className="btv-bar-wrap">
               <div className="btv-bar" style={{ height: `${m.heightPct}%` }} />
             </div>

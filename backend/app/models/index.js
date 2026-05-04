@@ -27,6 +27,9 @@ import AirportCity from "./airportCity.js";
 import Subscriber from "./subscriber.js";
 import PlaceBestTimeToVisit from "./placeBestTimeToVisit.js";
 import PlaceBestTimeToVisitMonth from "./placeBestTimeToVisitMonth.js";
+import CountryBestTimeToVisit from "./countryBestTimeToVisit.js";
+import CountryBestTimeToVisitRegion from "./countryBestTimeToVisitRegion.js";
+import CountryBestTimeToVisitMonth from "./countryBestTimeToVisitMonth.js";
 
 const db = {};
 
@@ -84,11 +87,26 @@ db.models.PlaceBestTimeToVisitMonth = PlaceBestTimeToVisitMonth(
   Sequelize.DataTypes
 );
 
+db.models.CountryBestTimeToVisit = CountryBestTimeToVisit(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+
+db.models.CountryBestTimeToVisitRegion = CountryBestTimeToVisitRegion(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+
+db.models.CountryBestTimeToVisitMonth = CountryBestTimeToVisitMonth(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+
 db.models.Article_ArticleSpecialType =
   article_articleSpecialType(sequelizeConnection);
 
 /**
- * Best time to visit associations
+ * Best time to visit associations - place
  */
 db.models.Place.hasOne(db.models.PlaceBestTimeToVisit, {
   foreignKey: "place_id",
@@ -109,5 +127,50 @@ db.models.PlaceBestTimeToVisitMonth.belongsTo(db.models.PlaceBestTimeToVisit, {
   foreignKey: "place_best_time_to_visit_id",
   as: "best_time_to_visit",
 });
+
+/**
+ * Best time to visit associations - country
+ */
+db.models.Country.hasOne(db.models.CountryBestTimeToVisit, {
+  foreignKey: "country_id",
+  as: "best_time_to_visit",
+});
+
+db.models.CountryBestTimeToVisit.belongsTo(db.models.Country, {
+  foreignKey: "country_id",
+  as: "country",
+});
+
+db.models.CountryBestTimeToVisit.hasMany(
+  db.models.CountryBestTimeToVisitRegion,
+  {
+    foreignKey: "country_best_time_to_visit_id",
+    as: "regions",
+  }
+);
+
+db.models.CountryBestTimeToVisitRegion.belongsTo(
+  db.models.CountryBestTimeToVisit,
+  {
+    foreignKey: "country_best_time_to_visit_id",
+    as: "best_time_to_visit",
+  }
+);
+
+db.models.CountryBestTimeToVisitRegion.hasMany(
+  db.models.CountryBestTimeToVisitMonth,
+  {
+    foreignKey: "country_best_time_to_visit_region_id",
+    as: "months",
+  }
+);
+
+db.models.CountryBestTimeToVisitMonth.belongsTo(
+  db.models.CountryBestTimeToVisitRegion,
+  {
+    foreignKey: "country_best_time_to_visit_region_id",
+    as: "region",
+  }
+);
 
 export default db;

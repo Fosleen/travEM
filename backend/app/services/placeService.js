@@ -158,6 +158,10 @@ class PlacesService {
 
   async addPlace(
     name,
+    name_genitive,
+    name_dative,
+    name_accusative,
+    name_locative,
     description,
     main_image_url,
     map_icon,
@@ -170,6 +174,10 @@ class PlacesService {
     try {
       const place = await db.models.Place.create({
         name: name,
+        name_genitive: name_genitive,
+        name_dative: name_dative,
+        name_accusative: name_accusative,
+        name_locative: name_locative,
         description: description,
         main_image_url: main_image_url,
         map_icon: map_icon,
@@ -190,6 +198,10 @@ class PlacesService {
   async patchPlace(
     id,
     name,
+    name_genitive,
+    name_dative,
+    name_accusative,
+    name_locative,
     description,
     main_image_url,
     map_icon,
@@ -226,6 +238,10 @@ class PlacesService {
       await db.models.Place.update(
         {
           name: name,
+          name_genitive: name_genitive,
+          name_dative: name_dative,
+          name_accusative: name_accusative,
+          name_locative: name_locative,
           description: description,
           main_image_url: main_image_url,
           map_icon: map_icon,

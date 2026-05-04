@@ -91,7 +91,11 @@ export async function addPlace(
   longitude: number,
   main_image_url: string,
   country_id: number,
-  videos: Array<string>
+  videos: Array<string>,
+  name_genitive: string,
+  name_dative: string,
+  name_accusative: string,
+  name_locative: string
 ) {
   const token = getAuthToken();
 
@@ -104,6 +108,10 @@ export async function addPlace(
     method: "POST",
     body: JSON.stringify({
       name,
+      name_genitive,
+      name_dative,
+      name_accusative,
+      name_locative,
       description,
       map_icon,
       is_on_homepage_map,
@@ -259,6 +267,10 @@ export async function updatePlace(place: PlacesData) {
     body: JSON.stringify({
       description: place.description,
       name: place.name,
+      name_genitive: place.name_genitive,
+      name_dative: place.name_dative,
+      name_accusative: place.name_accusative,
+      name_locative: place.name_locative,
       main_image_url: place.main_image_url,
       map_icon: place.map_icon,
       is_on_homepage_map: place.is_on_homepage_map,

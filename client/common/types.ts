@@ -158,6 +158,10 @@ export interface VideoProps {
 export interface PlacesData {
   id: number;
   name: string;
+  name_genitive?: string;
+  name_dative?: string;
+  name_accusative?: string;
+  name_locative?: string;
   description: string;
   latitude: number;
   longitude: number;
@@ -178,6 +182,7 @@ export interface PlacesData {
     date_written?: Date | string;
     date_updated?: Date | string | null;
     place_id?: number;
+    placeId?: number;
   }>;
   videos?: Array<{
     id: number;

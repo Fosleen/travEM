@@ -21,6 +21,44 @@ import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
 import { addVideo, deleteVideo, updateVideo } from "@/utils/videos";
 import { useParams, useRouter } from "next/navigation";
 
+const grammarRows = [
+  {
+    key: "place_name",
+    label: "Nominativ",
+    question: "tko? što?",
+    example: "radi",
+    isPreview: true,
+  },
+  {
+    key: "name_genitive",
+    label: "Genitiv",
+    question: "koga? čega?",
+    example: "nema",
+    placeholder: "npr. Ljubljane",
+  },
+  {
+    key: "name_dative",
+    label: "Dativ",
+    question: "komu? čemu?",
+    example: "idem",
+    placeholder: "npr. Ljubljani",
+  },
+  {
+    key: "name_accusative",
+    label: "Akuzativ",
+    question: "koga? što?",
+    example: "vidim",
+    placeholder: "npr. Ljubljanu",
+  },
+  {
+    key: "name_locative",
+    label: "Lokativ",
+    question: "o komu? o čemu?",
+    example: "govorim",
+    placeholder: "npr. Ljubljani",
+  },
+];
+
 const EditPlace = () => {
   const params = useParams();
   const router = useRouter();
@@ -83,6 +121,10 @@ const EditPlace = () => {
             id: place.id,
             description: values.place_description,
             name: values.place_name,
+            name_genitive: values.name_genitive,
+            name_dative: values.name_dative,
+            name_accusative: values.name_accusative,
+            name_locative: values.name_locative,
             country_id: parseInt(values.place_country),
             map_icon: values.place_icon_url,
             latitude: parseFloat(
@@ -216,7 +258,19 @@ const EditPlace = () => {
   const ValidationSchema = Yup.object().shape({
     place_name: Yup.string()
       .required("Obavezno polje!")
-      .max(100, "Naslov smije imati max 100 znakova!"),
+      .max(100, "Naziv smije imati max 100 znakova!"),
+    name_genitive: Yup.string()
+      .required("Obavezno polje!")
+      .max(100, "Genitiv smije imati max 100 znakova!"),
+    name_dative: Yup.string()
+      .required("Obavezno polje!")
+      .max(100, "Dativ smije imati max 100 znakova!"),
+    name_accusative: Yup.string()
+      .required("Obavezno polje!")
+      .max(100, "Akuzativ smije imati max 100 znakova!"),
+    name_locative: Yup.string()
+      .required("Obavezno polje!")
+      .max(100, "Lokativ smije imati max 100 znakova!"),
     place_latitude: Yup.string()
       .required("Obavezno polje!")
       .test(
@@ -265,6 +319,10 @@ const EditPlace = () => {
           <Formik
             initialValues={{
               place_name: place.name,
+              name_genitive: place.name_genitive || "",
+              name_dative: place.name_dative || "",
+              name_accusative: place.name_accusative || "",
+              name_locative: place.name_locative || "",
               place_description: place.description,
               place_country: place.countryId,
               place_latitude: place.latitude,
@@ -434,6 +492,57 @@ const EditPlace = () => {
                     component="div"
                     className="error-message"
                   />
+                </div>
+
+                <div className="edit-place-grammar-wrapper">
+                  <div className="edit-place-grammar-header">
+                    <h6>Padeži naziva mjesta *</h6>
+                    <p>
+                      Unesite oblike koji će se koristiti u tekstovima na
+                      stranici grada.
+                    </p>
+                  </div>
+
+                  <div className="edit-place-grammar-table">
+                    <div className="edit-place-grammar-row edit-place-grammar-row-head">
+                      <div>Padež</div>
+                      <div>Pitanje</div>
+                      <div>Glagol</div>
+                      <div>Naziv mjesta</div>
+                    </div>
+
+                    {grammarRows.map((row) => (
+                      <div className="edit-place-grammar-row" key={row.key}>
+                        <div className="edit-place-grammar-case">
+                          {row.label}
+                        </div>
+                        <div>{row.question}</div>
+                        <div>{row.example}</div>
+                        <div>
+                          {row.isPreview ? (
+                            <div className="edit-place-grammar-preview">
+                              {values.place_name || "Naziv mjesta"}
+                            </div>
+                          ) : (
+                            <>
+                              <Field
+                                name={row.key}
+                                type="text"
+                                as={Input}
+                                label=""
+                                placeholder={row.placeholder}
+                              />
+                              <ErrorMessage
+                                name={row.key}
+                                component="div"
+                                className="error-message"
+                              />
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="edit-place-videos-wrapper">

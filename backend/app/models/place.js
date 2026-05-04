@@ -3,6 +3,10 @@ export default (sequelize, DataTypes) => {
     "place",
     {
       name: { type: DataTypes.STRING(100), allowNull: false },
+      name_genitive: { type: DataTypes.STRING(100), allowNull: true },
+      name_dative: { type: DataTypes.STRING(100), allowNull: true },
+      name_accusative: { type: DataTypes.STRING(100), allowNull: true },
+      name_locative: { type: DataTypes.STRING(100), allowNull: true },
       description: { type: DataTypes.TEXT, allowNull: false },
       main_image_url: { type: DataTypes.STRING, allowNull: false },
       latitude: { type: DataTypes.DOUBLE, allowNull: false },

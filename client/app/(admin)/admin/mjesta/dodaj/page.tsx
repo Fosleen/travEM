@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 "use client";
+
 import Button from "@/components/atoms/Button";
 import "./AddPlace.scss";
 import { CountriesData } from "@/common/types";
@@ -18,6 +19,44 @@ import Modal from "@/components/atoms/Modal";
 import AdvancedDropdown from "@/components/admin/atoms/AdvancedDropdown";
 import { addPlace } from "@/utils/places";
 import { useRouter } from "next/navigation";
+
+const grammarRows = [
+  {
+    key: "place_name",
+    label: "Nominativ",
+    question: "tko? što?",
+    example: "radi",
+    isPreview: true,
+  },
+  {
+    key: "name_genitive",
+    label: "Genitiv",
+    question: "koga? čega?",
+    example: "nema",
+    placeholder: "npr. Ljubljane",
+  },
+  {
+    key: "name_dative",
+    label: "Dativ",
+    question: "komu? čemu?",
+    example: "idem",
+    placeholder: "npr. Ljubljani",
+  },
+  {
+    key: "name_accusative",
+    label: "Akuzativ",
+    question: "koga? što?",
+    example: "vidim",
+    placeholder: "npr. Ljubljanu",
+  },
+  {
+    key: "name_locative",
+    label: "Lokativ",
+    question: "o komu? o čemu?",
+    example: "govorim",
+    placeholder: "npr. Ljubljani",
+  },
+];
 
 const AddPlace = () => {
   const router = useRouter();
@@ -39,7 +78,7 @@ const AddPlace = () => {
       const newArray = countriesData.map(
         (el: { id: number; flag_image_url: string; name: string }) => ({
           id: el.id,
-          url: el.flag_image_url, // because of this new array is needed (for image display in dropdown)
+          url: el.flag_image_url,
           name: el.name,
         })
       );
@@ -87,9 +126,14 @@ const AddPlace = () => {
             parseFloat(values.place_latitude.replace(",", ".")),
             parseFloat(values.place_longitude.replace(",", ".")),
             mainPlaceImage,
-            parseInt(selectedCountryId),
-            values.videos
+            parseInt(values.place_country),
+            values.videos,
+            values.name_genitive,
+            values.name_dative,
+            values.name_accusative,
+            values.name_locative
           );
+
           console.log(placeResponse);
 
           router.push("/admin/mjesta");
@@ -123,7 +167,19 @@ const AddPlace = () => {
   const ValidationSchema = Yup.object().shape({
     place_name: Yup.string()
       .required("Obavezno polje!")
-      .max(100, "Naslov smije imati max 100 znakova!"),
+      .max(100, "Naziv smije imati max 100 znakova!"),
+    name_genitive: Yup.string()
+      .required("Obavezno polje!")
+      .max(100, "Genitiv smije imati max 100 znakova!"),
+    name_dative: Yup.string()
+      .required("Obavezno polje!")
+      .max(100, "Dativ smije imati max 100 znakova!"),
+    name_accusative: Yup.string()
+      .required("Obavezno polje!")
+      .max(100, "Akuzativ smije imati max 100 znakova!"),
+    name_locative: Yup.string()
+      .required("Obavezno polje!")
+      .max(100, "Lokativ smije imati max 100 znakova!"),
     place_latitude: Yup.string()
       .required("Obavezno polje!")
       .test(
@@ -159,6 +215,10 @@ const AddPlace = () => {
           <Formik
             initialValues={{
               place_name: "",
+              name_genitive: "",
+              name_dative: "",
+              name_accusative: "",
+              name_locative: "",
               place_description: "",
               place_country: null,
               place_latitude: "",
@@ -186,6 +246,7 @@ const AddPlace = () => {
                       className="error-message"
                     />
                   </div>
+
                   <div className="add-place-input">
                     <AdvancedDropdown
                       filter
@@ -207,6 +268,7 @@ const AddPlace = () => {
                       className="error-message"
                     />
                   </div>
+
                   <div className="add-place-row">
                     <div className="add-place-row-item">
                       <Field
@@ -221,6 +283,7 @@ const AddPlace = () => {
                         className="error-message"
                       />
                     </div>
+
                     <div className="add-place-row-item">
                       <Field
                         name="place_longitude"
@@ -235,6 +298,7 @@ const AddPlace = () => {
                       />
                     </div>
                   </div>
+
                   <div className="add-place-input">
                     <Field
                       name="place_description"
@@ -251,6 +315,7 @@ const AddPlace = () => {
                     />
                   </div>
                 </div>
+
                 <div className="add-place-input">
                   <div className="add-place-images-container">
                     {mainPlaceImage ? (
@@ -279,12 +344,66 @@ const AddPlace = () => {
                       </div>
                     )}
                   </div>
+
                   {isSubmitClicked &&
                     (mainPlaceImage == "" || !mainPlaceImage) && (
                       <p className="error-message">Obavezno polje!</p>
                     )}
+
                   <p>* preporuča se slika u omjeru 16:9</p>
                 </div>
+
+                <div className="add-place-grammar-wrapper">
+                  <div className="add-place-grammar-header">
+                    <h6>Padeži naziva mjesta *</h6>
+                    <p>
+                      Unesite oblike koji će se koristiti u tekstovima na
+                      stranici grada.
+                    </p>
+                  </div>
+
+                  <div className="add-place-grammar-table">
+                    <div className="add-place-grammar-row add-place-grammar-row-head">
+                      <div>Padež</div>
+                      <div>Pitanje</div>
+                      <div>Glagol</div>
+                      <div>Naziv mjesta</div>
+                    </div>
+
+                    {grammarRows.map((row) => (
+                      <div className="add-place-grammar-row" key={row.key}>
+                        <div className="add-place-grammar-case">
+                          {row.label}
+                        </div>
+                        <div>{row.question}</div>
+                        <div>{row.example}</div>
+                        <div>
+                          {row.isPreview ? (
+                            <div className="add-place-grammar-preview">
+                              {values.place_name || "Naziv mjesta"}
+                            </div>
+                          ) : (
+                            <>
+                              <Field
+                                name={row.key}
+                                type="text"
+                                as={Input}
+                                label=""
+                                placeholder={row.placeholder}
+                              />
+                              <ErrorMessage
+                                name={row.key}
+                                component="div"
+                                className="error-message"
+                              />
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="add-place-videos-wrapper">
                   <div className="add-place-video-outer-container">
                     <FieldArray
@@ -308,6 +427,7 @@ const AddPlace = () => {
                                 </Button>
                               )}
                             </div>
+
                             {videos && videos.length > 0
                               ? videos.map((_videos, index) => (
                                   <Fragment key={index}>
@@ -344,6 +464,7 @@ const AddPlace = () => {
                     />
                   </div>
                 </div>
+
                 <div className="add-place-toggle-container">
                   <div className="add-place-toggle-item">
                     <ToggleSwitch
@@ -353,6 +474,7 @@ const AddPlace = () => {
                       setter={setIsOnMapChecked}
                     />
                   </div>
+
                   <div className="add-place-toggle-item">
                     <ToggleSwitch
                       name={"featured-place"}
@@ -361,6 +483,7 @@ const AddPlace = () => {
                       setter={setIsFeaturedChecked}
                     />
                   </div>
+
                   {isFeaturedChecked && (
                     <div className="add-place-toggle-input">
                       <Field
@@ -373,6 +496,7 @@ const AddPlace = () => {
                     </div>
                   )}
                 </div>
+
                 <div className="add-place-buttons">
                   <Button type="submit" adminPrimary>
                     dodaj mjesto
@@ -388,6 +512,7 @@ const AddPlace = () => {
           <p>Loading...</p>
         )}
       </div>
+
       <Modal
         ref={dialogRef}
         toggleDialog={toggleDialog}

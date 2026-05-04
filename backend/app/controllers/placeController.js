@@ -74,6 +74,10 @@ class PlacesController {
   async addPlace(req, res) {
     const response = await service.addPlace(
       req.body.name,
+      req.body.name_genitive,
+      req.body.name_dative,
+      req.body.name_accusative,
+      req.body.name_locative,
       req.body.description,
       req.body.main_image_url,
       req.body.map_icon,
@@ -119,6 +123,10 @@ class PlacesController {
     const response = await service.patchPlace(
       id,
       req.body.name,
+      req.body.name_genitive,
+      req.body.name_dative,
+      req.body.name_accusative,
+      req.body.name_locative,
       req.body.description,
       req.body.main_image_url,
       req.body.map_icon,

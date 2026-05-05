@@ -154,8 +154,22 @@ const getArticleDescription = (article: any) => {
   );
 };
 
-const getArticleDate = (article: any) => {
-  return (
+const getArticleDateInfo = (article: any) => {
+  const updatedDate =
+    article?.date_updated ||
+    article?.dateUpdated ||
+    article?.updated_at ||
+    article?.updatedAt ||
+    "";
+
+  if (updatedDate) {
+    return {
+      label: "Ažurirano",
+      value: updatedDate,
+    };
+  }
+
+  const writtenDate =
     article?.date_written ||
     article?.dateWritten ||
     article?.date ||
@@ -167,12 +181,23 @@ const getArticleDate = (article: any) => {
     article?.createdAt ||
     article?.published_at ||
     article?.publishedAt ||
-    article?.updated_at ||
-    article?.updatedAt ||
-    article?.date_updated ||
-    article?.dateUpdated ||
-    ""
-  );
+    "";
+
+  if (writtenDate) {
+    return {
+      label: "Objavljeno",
+      value: writtenDate,
+    };
+  }
+
+  return {
+    label: "",
+    value: "",
+  };
+};
+
+const getArticleDate = (article: any) => {
+  return getArticleDateInfo(article).value;
 };
 
 const formatArticleDate = (dateValue: string) => {
@@ -325,6 +350,8 @@ const TipsAndTricks = ({
   const featuredArticlePreview =
     initialFeaturedArticle || getFeaturedArticle(articles);
   const featuredArticle = fullFeaturedArticle || featuredArticlePreview;
+
+  const featuredDateInfo = getArticleDateInfo(featuredArticle);
 
   const otherArticles = featuredArticlePreview
     ? articles.filter(
@@ -501,11 +528,9 @@ const TipsAndTricks = ({
                       <p>{getArticleDescription(featuredArticle)}</p>
                     )}
 
-                    {getArticleDate(featuredArticle) && (
+                    {featuredDateInfo.value && (
                       <div className="tips-and-tricks-featured-meta">
-                        <span>
-                          {formatArticleDate(getArticleDate(featuredArticle))}
-                        </span>
+                        <span>{formatArticleDate(featuredDateInfo.value)}</span>
                       </div>
                     )}
                   </div>
@@ -564,41 +589,43 @@ const TipsAndTricks = ({
               <div
                 className={`tips-and-tricks-articles-grid count-${otherArticles.length}`}
               >
-                {otherArticles.map((article: any, index) => (
-                  <Link
-                    href={getArticleHref(article)}
-                    className="tips-and-tricks-article-card"
-                    key={article.id || index}
-                  >
-                    <div className="tips-and-tricks-article-image-wrapper">
-                      {getArticleImage(article) ? (
-                        <img
-                          src={getArticleImage(article)}
-                          alt={getArticleTitle(article)}
-                        />
-                      ) : (
-                        <div className="tips-and-tricks-image-placeholder" />
-                      )}
-                    </div>
+                {otherArticles.map((article: any, index) => {
+                  const articleDateInfo = getArticleDateInfo(article);
 
-                    <div className="tips-and-tricks-article-content">
-                      <h3>{getArticleTitle(article)}</h3>
-
-                      {getArticleDescription(article) && (
-                        <p>{getArticleDescription(article)}</p>
-                      )}
-
-                      <div className="tips-and-tricks-article-meta">
-                        {getArticleDate(article) && (
-                          <span>
-                            {formatArticleDate(getArticleDate(article))}
-                          </span>
+                  return (
+                    <Link
+                      href={getArticleHref(article)}
+                      className="tips-and-tricks-article-card"
+                      key={article.id || index}
+                    >
+                      <div className="tips-and-tricks-article-image-wrapper">
+                        {getArticleImage(article) ? (
+                          <img
+                            src={getArticleImage(article)}
+                            alt={getArticleTitle(article)}
+                          />
+                        ) : (
+                          <div className="tips-and-tricks-image-placeholder" />
                         )}
-                        <span>Pročitaj više →</span>
                       </div>
-                    </div>
-                  </Link>
-                ))}
+
+                      <div className="tips-and-tricks-article-content">
+                        <h3>{getArticleTitle(article)}</h3>
+
+                        {getArticleDescription(article) && (
+                          <p>{getArticleDescription(article)}</p>
+                        )}
+
+                        <div className="tips-and-tricks-article-meta">
+                          {articleDateInfo.value && (
+                            <span>{formatArticleDate(articleDateInfo.value)}</span>
+                          )}
+                          <span>Pročitaj više →</span>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </section>
           )}

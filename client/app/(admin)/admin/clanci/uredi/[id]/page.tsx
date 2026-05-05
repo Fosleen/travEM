@@ -52,6 +52,29 @@ import {
 
 import SectionActions from "@/components/admin/atoms/SectionActions/SectionActions";
 
+const TIPS_ARTICLE_TYPE_IDS = [3, 4, 5, 6, 7, 8];
+
+const TIPS_ARTICLE_TYPE_TITLES: Record<number, string> = {
+  3: "Pakiranje",
+  4: "Let avionom",
+  5: "Organizacija puta",
+  6: "Aplikacije",
+  7: "Smještaj",
+  8: "Revolut",
+};
+
+const isTipsArticleType = (articleTypeId: string | number | null) => {
+  return TIPS_ARTICLE_TYPE_IDS.includes(Number(articleTypeId));
+};
+
+const getTipsArticleTypeTitle = (articleTypeId: string | number | null) => {
+  return TIPS_ARTICLE_TYPE_TITLES[Number(articleTypeId)] || "odabrane rubrike";
+};
+
+const parseBooleanValue = (value: any) => {
+  return value === true || value === 1 || value === "1";
+};
+
 const EditArticle = () => {
   const params = useParams();
   const router = useRouter();
@@ -85,6 +108,7 @@ const EditArticle = () => {
     useState(false);
   const [isMainCountryPost, setIsMainCountryPost] = useState(false);
   const [isFarDestinationChecked, setIsFarDestinationChecked] = useState(false);
+  const [isTipsFeaturedChecked, setIsTipsFeaturedChecked] = useState(false);
 
   const ValidationSchema = Yup.object().shape({
     article_title: Yup.string()
@@ -217,6 +241,8 @@ const EditArticle = () => {
         article_place: values.article_place,
         article_airport_city_id: values.article_airport_city_id,
         is_far_destination: isFarDestinationChecked,
+        is_tips_featured:
+          isTipsArticleType(values.article_type) && isTipsFeaturedChecked,
       });
 
       const articleResponse = await updateArticle(
@@ -232,7 +258,8 @@ const EditArticle = () => {
         values.article_country,
         values.article_place,
         values.article_airport_city_id,
-        isFarDestinationChecked
+        isFarDestinationChecked,
+        isTipsArticleType(values.article_type) && isTipsFeaturedChecked
       );
 
       console.log("✅ Article updated:", articleResponse);
@@ -603,6 +630,10 @@ const EditArticle = () => {
             articleData.is_far_destination === true ||
             articleData.is_far_destination === 1
         );
+        setIsTipsFeaturedChecked(
+          parseBooleanValue(articleData.isTipsFeatured) ||
+            parseBooleanValue(articleData.is_tips_featured)
+        );
         setSectionImages(
           articleData.sections.map((section) => section.section_images)
         );
@@ -764,6 +795,10 @@ const EditArticle = () => {
                             if (value != "1") {
                               setIsMainCountryPostChecked(false);
                               setIsMainCountryPost(false);
+                            }
+
+                            if (!isTipsArticleType(value)) {
+                              setIsTipsFeaturedChecked(false);
                             }
                           }}
                           label="Vrsta članka *"
@@ -1206,6 +1241,27 @@ const EditArticle = () => {
                           value={isMainCountryPostChecked}
                           setter={setIsMainCountryPostChecked}
                         />
+                      </div>
+                    )}
+
+                    {isTipsArticleType(values.article_type) && (
+                      <div className="edit-article-toggle-item edit-article-toggle-item-highlight">
+                        <ToggleSwitch
+                          name={"tips-featured"}
+                          description={`Postavi kao istaknuti članak rubrike ${getTipsArticleTypeTitle(
+                            values.article_type
+                          )}`}
+                          value={isTipsFeaturedChecked}
+                          setter={() =>
+                            setIsTipsFeaturedChecked(!isTipsFeaturedChecked)
+                          }
+                        />
+
+                        <p>
+                          Ako označite ovu opciju, ovaj članak će biti prikazan
+                          kao istaknuti članak za rubriku{" "}
+                          {getTipsArticleTypeTitle(values.article_type)}.
+                        </p>
                       </div>
                     )}
                   </div>

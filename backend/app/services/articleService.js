@@ -11,8 +11,27 @@ const isTipsArticleType = (articleTypeId) => {
   return TIPS_ARTICLE_TYPE_IDS.includes(Number(articleTypeId));
 };
 
+const normalizeNullableId = (value) => {
+  const parsedValue = Number(value);
+
+  if (
+    value === null ||
+    value === undefined ||
+    value === "" ||
+    Number.isNaN(parsedValue)
+  ) {
+    return null;
+  }
+
+  return parsedValue;
+};
+
 class ArticleService {
-  async resetOtherTipsFeaturedArticles(articleTypeId, currentArticleId, transaction) {
+  async resetOtherTipsFeaturedArticles(
+    articleTypeId,
+    currentArticleId,
+    transaction
+  ) {
     if (!isTipsArticleType(articleTypeId)) {
       return;
     }
@@ -75,6 +94,7 @@ class ArticleService {
         data: articles.rows,
       };
     } catch (error) {
+      console.log(error);
       return [];
     }
   }
@@ -135,6 +155,10 @@ class ArticleService {
 
     if (type == "article") {
       const startingArticle = await db.models.Article.findByPk(id);
+
+      if (!startingArticle) {
+        return "No starting article found";
+      }
 
       if (startingArticle.articleTypeId == 1) {
         {
@@ -296,12 +320,14 @@ class ArticleService {
     const transaction = await db.sequelize.transaction();
 
     try {
+      const normalizedArticleTypeId = Number(article_type_id);
       const shouldBeTipsFeatured =
-        isTipsArticleType(article_type_id) && parseBooleanValue(is_tips_featured);
+        isTipsArticleType(normalizedArticleTypeId) &&
+        parseBooleanValue(is_tips_featured);
 
       if (shouldBeTipsFeatured) {
         await this.resetOtherTipsFeaturedArticles(
-          article_type_id,
+          normalizedArticleTypeId,
           null,
           transaction
         );
@@ -316,11 +342,11 @@ class ArticleService {
           date_written: date_written,
           date_updated: date_updated || null,
           metatags: metatags,
-          userId: user_id,
-          articleTypeId: article_type_id,
-          countryId: country_id,
-          placeId: place_id,
-          airportCityId: airport_city_id,
+          userId: normalizeNullableId(user_id),
+          articleTypeId: normalizedArticleTypeId,
+          countryId: normalizeNullableId(country_id),
+          placeId: normalizeNullableId(place_id),
+          airportCityId: normalizeNullableId(airport_city_id),
           isFarDestination: parseBooleanValue(is_far_destination),
           isTipsFeatured: shouldBeTipsFeatured,
         },
@@ -604,12 +630,14 @@ class ArticleService {
         return "Article not found";
       }
 
+      const normalizedArticleTypeId = Number(article_type_id);
       const shouldBeTipsFeatured =
-        isTipsArticleType(article_type_id) && parseBooleanValue(is_tips_featured);
+        isTipsArticleType(normalizedArticleTypeId) &&
+        parseBooleanValue(is_tips_featured);
 
       if (shouldBeTipsFeatured) {
         await this.resetOtherTipsFeaturedArticles(
-          article_type_id,
+          normalizedArticleTypeId,
           id,
           transaction
         );
@@ -624,11 +652,11 @@ class ArticleService {
           main_image_url: main_image_url,
           date_written: date_written,
           date_updated: date_updated || null,
-          articleTypeId: article_type_id,
-          userId: user_id,
-          countryId: country_id,
-          placeId: place_id,
-          airportCityId: airport_city_id,
+          articleTypeId: normalizedArticleTypeId,
+          userId: normalizeNullableId(user_id) || articleToUpdate.userId,
+          countryId: normalizeNullableId(country_id),
+          placeId: normalizeNullableId(place_id),
+          airportCityId: normalizeNullableId(airport_city_id),
           isFarDestination: parseBooleanValue(is_far_destination),
           isTipsFeatured: shouldBeTipsFeatured,
         },
@@ -670,8 +698,10 @@ class ArticleService {
   async deleteTopCountryArticle(id) {
     try {
       await db.models.Article_ArticleSpecialType.destroy({
-        where: { article_id: id },
-        where: { article_special_type_id: 2 },
+        where: {
+          articleId: id,
+          articleSpecialTypeId: 2,
+        },
       });
 
       return [];

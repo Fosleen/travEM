@@ -40,6 +40,25 @@ import {
 
 import SectionActions from "@/components/admin/atoms/SectionActions/SectionActions";
 
+const TIPS_ARTICLE_TYPE_IDS = [3, 4, 5, 6, 7, 8];
+
+const TIPS_ARTICLE_TYPE_TITLES: Record<number, string> = {
+  3: "Pakiranje",
+  4: "Let avionom",
+  5: "Organizacija puta",
+  6: "Aplikacije",
+  7: "Smještaj",
+  8: "Revolut",
+};
+
+const isTipsArticleType = (articleTypeId: string | number | null) => {
+  return TIPS_ARTICLE_TYPE_IDS.includes(Number(articleTypeId));
+};
+
+const getTipsArticleTypeTitle = (articleTypeId: string | number | null) => {
+  return TIPS_ARTICLE_TYPE_TITLES[Number(articleTypeId)] || "odabrane rubrike";
+};
+
 const AddArticlePage = () => {
   const router = useRouter();
   const [articleTypes, setArticleTypes] = useState<ArticleType | string>("");
@@ -69,6 +88,7 @@ const AddArticlePage = () => {
   const [isNotifySubscribersChecked, setIsNotifySubscribersChecked] =
     useState(true);
   const [isFarDestinationChecked, setIsFarDestinationChecked] = useState(false);
+  const [isTipsFeaturedChecked, setIsTipsFeaturedChecked] = useState(false);
 
   const ValidationSchema = Yup.object().shape({
     article_title: Yup.string()
@@ -169,7 +189,8 @@ const AddArticlePage = () => {
               todaysDate,
               null,
               parseInt(values.article_airport_city_id),
-              isFarDestinationChecked
+              isFarDestinationChecked,
+              isTipsArticleType(values.article_type) && isTipsFeaturedChecked
             );
 
             const galleryResults = await Promise.all(
@@ -503,6 +524,10 @@ const AddArticlePage = () => {
 
                           if (value != "1") {
                             setIsMainCountryPostChecked(false);
+                          }
+
+                          if (!isTipsArticleType(value)) {
+                            setIsTipsFeaturedChecked(false);
                           }
                         }}
                         label="Vrsta članka *"
@@ -943,6 +968,27 @@ const AddArticlePage = () => {
                         value={isMainCountryPostChecked}
                         setter={setIsMainCountryPostChecked}
                       />
+                    </div>
+                  )}
+
+                  {isTipsArticleType(values.article_type) && (
+                    <div className="add-article-toggle-item add-article-toggle-item-highlight">
+                      <ToggleSwitch
+                        name={"tips-featured"}
+                        description={`Postavi kao istaknuti članak rubrike ${getTipsArticleTypeTitle(
+                          values.article_type
+                        )}`}
+                        value={isTipsFeaturedChecked}
+                        setter={() =>
+                          setIsTipsFeaturedChecked(!isTipsFeaturedChecked)
+                        }
+                      />
+
+                      <p>
+                        Ako označite ovu opciju, ovaj članak će biti prikazan
+                        kao istaknuti članak za rubriku{" "}
+                        {getTipsArticleTypeTitle(values.article_type)}.
+                      </p>
                     </div>
                   )}
 

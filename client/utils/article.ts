@@ -19,7 +19,7 @@ export async function getArticleById(id: number, noCache: boolean = false) {
     const response = await fetch(
       `${apiUrl}/articles/${id}?noCache=${noCache}`,
       {
-        cache: "no-store", // ← Always fetch from server (Redis will cache it)
+        cache: "no-store",
         headers: {
           Accept: "application/json",
         },
@@ -51,7 +51,7 @@ export async function getArticlesByType(
     const response = await fetch(
       `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${article_type}`,
       {
-        cache: "no-store", // ← Disable Next.js cache
+        cache: "no-store",
       }
     );
 
@@ -73,7 +73,7 @@ export async function getRecommendedArticles(id: number, type: string) {
     const response = await fetch(
       `${apiUrl}/articles/recommended/${id}?type=${type}`,
       {
-        cache: "no-store", // ← Disable Next.js cache
+        cache: "no-store",
       }
     );
 
@@ -95,7 +95,7 @@ export async function getArticlesByName(name: string, page = 1, pageSize = 12) {
     const response = await fetch(
       `${apiUrl}/articles/search/${name}?page=${page}&pageSize=${pageSize}`,
       {
-        cache: "no-store", // ← Disable Next.js cache
+        cache: "no-store",
       }
     );
 
@@ -121,7 +121,7 @@ export async function getArticles(
     const response = await fetch(
       `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${articleType}`,
       {
-        cache: "no-store", // ← Disable Next.js cache
+        cache: "no-store",
       }
     );
 
@@ -143,7 +143,7 @@ export async function getHomepageArticles(noCache: boolean = false) {
     const response = await fetch(
       `${apiUrl}/articles/homepage?noCache=${noCache}`,
       {
-        cache: "no-store", // ← Disable Next.js cache, rely on Redis
+        cache: "no-store",
       }
     );
 
@@ -168,7 +168,7 @@ export async function getFavoriteArticleByCountry(
     const response = await fetch(
       `${apiUrl}/articles/country/top/${id}?noCache=${noCache}`,
       {
-        cache: "no-store", // ← Disable Next.js cache
+        cache: "no-store",
       }
     );
 
@@ -185,9 +185,6 @@ export async function getFavoriteArticleByCountry(
   }
 }
 
-// Keep the rest of your mutations (POST, PATCH, DELETE) as they are
-// They already don't use caching
-
 export async function addArticle(
   title: string,
   subtitle: string,
@@ -202,7 +199,8 @@ export async function addArticle(
   date_written: Date | string,
   date_updated: Date | string | null,
   airport_city_id: number | null,
-  is_far_destination: boolean = false
+  is_far_destination: boolean = false,
+  is_tips_featured: boolean = false
 ) {
   const token = getToken();
 
@@ -228,6 +226,7 @@ export async function addArticle(
       date_updated,
       airport_city_id,
       is_far_destination,
+      is_tips_featured,
     }),
   });
 
@@ -237,6 +236,7 @@ export async function addArticle(
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
@@ -257,12 +257,14 @@ export async function updateOrCreateTopHomepageArticles(
       article_id: articleIds,
     }),
   });
+
   const data = await response.json();
 
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
@@ -279,7 +281,8 @@ export async function updateArticle(
   country_id: number | null | string,
   place_id: number | null | string,
   airport_city_id: number | null,
-  is_far_destination: boolean = false
+  is_far_destination: boolean = false,
+  is_tips_featured: boolean = false
 ) {
   const requestBody = {
     title,
@@ -294,6 +297,7 @@ export async function updateArticle(
     country_id,
     place_id,
     is_far_destination,
+    is_tips_featured,
   };
 
   const token = getToken();
@@ -329,12 +333,14 @@ export async function deleteArticleById(id: number) {
     },
     method: "DELETE",
   });
+
   const data = await response.json();
 
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
@@ -352,12 +358,14 @@ export async function createTopCountryArticle(articleId: number) {
       article_id: articleId,
     }),
   });
+
   const data = await response.json();
 
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
@@ -372,11 +380,13 @@ export async function removeTopCountryArticle(articleId: number) {
     },
     method: "DELETE",
   });
+
   const data = await response.json();
 
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }

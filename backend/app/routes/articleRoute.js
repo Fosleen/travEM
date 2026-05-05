@@ -57,6 +57,9 @@ router.get("/", controller.getArticles);
 // GET /api/v1/articles/homepage
 router.get("/homepage", controller.getHomepageArticles);
 
+// GET /api/v1/articles/tips-featured/3
+router.get("/tips-featured/:articleTypeId", controller.getTipsFeaturedArticle);
+
 // GET /api/v1/articles/recommended/1?type=article
 /**
  * @openapi
@@ -445,7 +448,7 @@ router.put(
 router.put(
   "/homepage/:specialTypeId",
   verifyToken,
-  controller.updateOrCreateTopHomepageArticles // update articles on any homepage part
+  controller.updateOrCreateTopHomepageArticles
 );
 
 // DELETE /api/v1/articles/4

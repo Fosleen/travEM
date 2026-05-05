@@ -13,6 +13,7 @@ interface TipsAndTricksProps {
   initialArticleTypes: Array<ArticleType>;
   initialSelectedType: ArticleType;
   initialArticles: Nullable<Array<Article>>;
+  initialFeaturedArticle?: any;
   initialTotalPages: number;
   initialRecommendedArticles: Nullable<Array<Article>>;
   initialPage: number;
@@ -298,6 +299,7 @@ const TipsAndTricks = ({
   initialArticleTypes,
   initialSelectedType,
   initialArticles,
+  initialFeaturedArticle,
   initialTotalPages,
   initialRecommendedArticles,
   initialPage,
@@ -320,7 +322,8 @@ const TipsAndTricks = ({
   );
 
   const currentTipVisual = tipVisualMap[tip] || tipVisualMap.pakiranje;
-  const featuredArticlePreview = getFeaturedArticle(articles);
+  const featuredArticlePreview =
+    initialFeaturedArticle || getFeaturedArticle(articles);
   const featuredArticle = fullFeaturedArticle || featuredArticlePreview;
 
   const otherArticles = featuredArticlePreview

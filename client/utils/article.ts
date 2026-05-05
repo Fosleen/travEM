@@ -138,6 +138,28 @@ export async function getArticles(
   }
 }
 
+export async function getTipsFeaturedArticle(articleTypeId: number) {
+  try {
+    const response = await fetch(
+      `${apiUrl}/articles/tips-featured/${articleTypeId}`,
+      {
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return null;
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching tips featured article:", error);
+    return null;
+  }
+}
+
 export async function getHomepageArticles(noCache: boolean = false) {
   try {
     const response = await fetch(

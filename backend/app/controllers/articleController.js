@@ -25,6 +25,24 @@ class ArticleController {
     }
   }
 
+  async getTipsFeaturedArticle(req, res) {
+    try {
+      const { articleTypeId } = req.params;
+
+      const response = await articleService.getTipsFeaturedArticle(
+        articleTypeId
+      );
+
+      if (!response) {
+        res.status(404).json({ error: "No featured tips article found" });
+      } else {
+        res.status(200).json(response);
+      }
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
   async getArticleBySearchTerm(req, res) {
     try {
       const { name } = req.params;

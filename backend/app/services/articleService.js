@@ -99,6 +99,68 @@ class ArticleService {
     }
   }
 
+  async getTipsFeaturedArticle(articleTypeId) {
+    try {
+      const normalizedArticleTypeId = Number(articleTypeId);
+
+      if (!isTipsArticleType(normalizedArticleTypeId)) {
+        return null;
+      }
+
+      const featuredArticle = await db.models.Article.findOne({
+        where: {
+          articleTypeId: normalizedArticleTypeId,
+          isTipsFeatured: true,
+        },
+        include: [
+          {
+            model: db.models.ArticleType,
+          },
+          {
+            model: db.models.AirportCity,
+          },
+          {
+            model: db.models.Country,
+          },
+          {
+            model: db.models.Place,
+          },
+        ],
+        order: [["date_written", "DESC"]],
+      });
+
+      if (featuredArticle) {
+        return featuredArticle;
+      }
+
+      const newestArticle = await db.models.Article.findOne({
+        where: {
+          articleTypeId: normalizedArticleTypeId,
+        },
+        include: [
+          {
+            model: db.models.ArticleType,
+          },
+          {
+            model: db.models.AirportCity,
+          },
+          {
+            model: db.models.Country,
+          },
+          {
+            model: db.models.Place,
+          },
+        ],
+        order: [["date_written", "DESC"]],
+      });
+
+      return newestArticle;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
   async getArticleById(id) {
     try {
       const article = await db.models.Article.findByPk(id, {

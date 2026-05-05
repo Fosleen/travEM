@@ -36,6 +36,7 @@ class ArticleController {
         page,
         pageSize
       );
+
       if (!response || response.length == 0 || response.total === 0) {
         res.status(404).json({ error: `No article found by name ${name}` });
       } else {
@@ -87,7 +88,8 @@ class ArticleController {
         req.body.country_id,
         req.body.place_id,
         req.body.airport_city_id,
-        req.body.is_far_destination
+        req.body.is_far_destination,
+        req.body.is_tips_featured
       );
 
       if (response.length == 0) {
@@ -121,6 +123,7 @@ class ArticleController {
   async getHomepageArticles(req, res) {
     const useCache = req.query.noCache !== "true";
     const cacheKey = `homepage-articles`;
+
     const response = await getOrSetCache(
       cacheKey,
       async () => {
@@ -128,6 +131,7 @@ class ArticleController {
       },
       useCache
     );
+
     if (response.length == 0) {
       res.status(404).json({ error: "No articles for homepage found" });
     } else {
@@ -140,6 +144,7 @@ class ArticleController {
       const { id } = req.params;
       const useCache = req.query.noCache !== "true";
       const cacheKey = `top-country-article:${id}`;
+
       const response = await getOrSetCache(
         cacheKey,
         async () => {
@@ -147,6 +152,7 @@ class ArticleController {
         },
         useCache
       );
+
       if (!response || response.length == 0) {
         res.status(200).json({ error: "No top article found for country" });
       } else {
@@ -161,6 +167,7 @@ class ArticleController {
     try {
       const { id } = req.params;
       const response = await articleService.getArticlesByCountryId(id);
+
       if (!response || response.length == 0) {
         res
           .status(404)
@@ -177,6 +184,7 @@ class ArticleController {
     try {
       const { id } = req.params;
       const response = await articleService.getArticlesByPlaceId(id);
+
       if (!response || response.length == 0) {
         res
           .status(404)
@@ -194,6 +202,7 @@ class ArticleController {
       const { id } = req.params;
       const { type } = req.query;
       const response = await articleService.getRecommendedArticles(id, type);
+
       if (response == "No starting article found") {
         res
           .status(404)
@@ -223,7 +232,7 @@ class ArticleController {
       } else if (!response || response.length == 0) {
         res.status(500).json({ error: "Internal server error" });
       } else {
-        await clearCache(`top-country-article:${id}`);
+        await clearCache(`top-country-article:${response.countryId}`);
         res.status(200).json(response);
       }
     } catch (error) {
@@ -261,8 +270,10 @@ class ArticleController {
         req.body.country_id,
         req.body.place_id,
         req.body.airport_city_id,
-        req.body.is_far_destination
+        req.body.is_far_destination,
+        req.body.is_tips_featured
       );
+
       if (response === "Article not found") {
         return res
           .status(404)
@@ -280,6 +291,7 @@ class ArticleController {
     try {
       const { id } = req.params;
       const response = await articleService.deleteArticle(id);
+
       if (response) {
         await clearCache(`article:${id}`);
         res.status(200).json({});
@@ -295,6 +307,7 @@ class ArticleController {
     try {
       const { id } = req.params;
       const response = await articleService.deleteTopCountryArticle(id);
+
       if (response) {
         res.status(200).json({});
       } else {

@@ -110,31 +110,14 @@ const tipVisualMap: Record<
   },
 };
 
-const featuredArticleConfig: Record<
-  string,
-  {
-    id?: number;
-    fallbackToNewest?: boolean;
-  }
-> = {
-  pakiranje: {
-    id: 399,
-  },
-  "let-avionom": {
-    id: 356,
-  },
-  "organizacija-puta": {
-    fallbackToNewest: true,
-  },
-  aplikacije: {
-    fallbackToNewest: true,
-  },
-  smjestaj: {
-    id: 562,
-  },
-  revolut: {
-    id: 400,
-  },
+const parseBooleanValue = (value: any) => {
+  return value === true || value === 1 || value === "1";
+};
+
+const isTipsFeaturedArticle = (article: any) => {
+  return parseBooleanValue(
+    article?.is_tips_featured || article?.isTipsFeatured
+  );
 };
 
 const getArticleImage = (article: any) => {
@@ -148,6 +131,7 @@ const getArticleImage = (article: any) => {
     article?.coverImage?.url ||
     article?.cover_image_url ||
     article?.main_image_url ||
+    article?.mainImageUrl ||
     article?.image_url ||
     article?.imageUrl ||
     ""
@@ -171,6 +155,8 @@ const getArticleDescription = (article: any) => {
 
 const getArticleDate = (article: any) => {
   return (
+    article?.date_written ||
+    article?.dateWritten ||
     article?.date ||
     article?.published_date ||
     article?.publishedDate ||
@@ -182,6 +168,8 @@ const getArticleDate = (article: any) => {
     article?.publishedAt ||
     article?.updated_at ||
     article?.updatedAt ||
+    article?.date_updated ||
+    article?.dateUpdated ||
     ""
   );
 };
@@ -227,7 +215,9 @@ const getSectionIcon = (section: any) => {
     section?.sectionIcon?.url?.trim?.() ||
     section?.icon?.url?.trim?.() ||
     section?.section_icon_url ||
+    section?.sectionIconUrl ||
     section?.icon_url ||
+    section?.iconUrl ||
     ""
   );
 };
@@ -266,30 +256,18 @@ const getNewestArticle = (articles: Array<Article>) => {
   })[0];
 };
 
-const getFeaturedArticle = (articles: Array<Article>, tip: string) => {
+const getFeaturedArticle = (articles: Array<Article>) => {
   if (!articles || articles.length === 0) return null;
 
-  const config = featuredArticleConfig[tip];
+  const featuredArticle = articles.find((article: any) =>
+    isTipsFeaturedArticle(article)
+  );
 
-  if (!config) {
-    return articles[0];
+  if (featuredArticle) {
+    return featuredArticle;
   }
 
-  if (config.id) {
-    const articleById = articles.find(
-      (article: any) => Number(article?.id) === config.id
-    );
-
-    if (articleById) {
-      return articleById;
-    }
-  }
-
-  if (config.fallbackToNewest) {
-    return getNewestArticle(articles);
-  }
-
-  return articles[0];
+  return getNewestArticle(articles);
 };
 
 const normalizeFetchedArticle = (data: any) => {
@@ -342,7 +320,7 @@ const TipsAndTricks = ({
   );
 
   const currentTipVisual = tipVisualMap[tip] || tipVisualMap.pakiranje;
-  const featuredArticlePreview = getFeaturedArticle(articles, tip);
+  const featuredArticlePreview = getFeaturedArticle(articles);
   const featuredArticle = fullFeaturedArticle || featuredArticlePreview;
 
   const otherArticles = featuredArticlePreview

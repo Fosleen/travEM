@@ -1,11 +1,43 @@
 import db from "../models/index.js";
 import { Op, Sequelize } from "sequelize";
 
+const TIPS_ARTICLE_TYPE_IDS = [3, 4, 5, 6, 7, 8];
+
 const parseBooleanValue = (value) => {
   return value === true || value === 1 || value === "1";
 };
 
+const isTipsArticleType = (articleTypeId) => {
+  return TIPS_ARTICLE_TYPE_IDS.includes(Number(articleTypeId));
+};
+
 class ArticleService {
+  async resetOtherTipsFeaturedArticles(articleTypeId, currentArticleId, transaction) {
+    if (!isTipsArticleType(articleTypeId)) {
+      return;
+    }
+
+    const where = {
+      articleTypeId: Number(articleTypeId),
+    };
+
+    if (currentArticleId) {
+      where.id = {
+        [Op.ne]: Number(currentArticleId),
+      };
+    }
+
+    await db.models.Article.update(
+      {
+        isTipsFeatured: false,
+      },
+      {
+        where,
+        transaction,
+      }
+    );
+  }
+
   async getArticles(page, pageSize, articleType) {
     const limit = pageSize;
     const offset = (page - 1) * pageSize;
@@ -87,6 +119,7 @@ class ArticleService {
         ],
         order: [[{ model: db.models.Section }, "order", "ASC"]],
       });
+
       return article;
     } catch (error) {
       console.log(error);
@@ -257,27 +290,50 @@ class ArticleService {
     country_id,
     place_id,
     airport_city_id,
-    is_far_destination
+    is_far_destination,
+    is_tips_featured
   ) {
+    const transaction = await db.sequelize.transaction();
+
     try {
-      const article = await db.models.Article.create({
-        title: title,
-        subtitle: subtitle,
-        description: description,
-        main_image_url: main_image_url,
-        date_written: date_written,
-        date_updated: date_updated || null,
-        metatags: metatags,
-        userId: user_id,
-        articleTypeId: article_type_id,
-        countryId: country_id,
-        placeId: place_id,
-        airportCityId: airport_city_id,
-        isFarDestination: parseBooleanValue(is_far_destination),
-      });
+      const shouldBeTipsFeatured =
+        isTipsArticleType(article_type_id) && parseBooleanValue(is_tips_featured);
+
+      if (shouldBeTipsFeatured) {
+        await this.resetOtherTipsFeaturedArticles(
+          article_type_id,
+          null,
+          transaction
+        );
+      }
+
+      const article = await db.models.Article.create(
+        {
+          title: title,
+          subtitle: subtitle,
+          description: description,
+          main_image_url: main_image_url,
+          date_written: date_written,
+          date_updated: date_updated || null,
+          metatags: metatags,
+          userId: user_id,
+          articleTypeId: article_type_id,
+          countryId: country_id,
+          placeId: place_id,
+          airportCityId: airport_city_id,
+          isFarDestination: parseBooleanValue(is_far_destination),
+          isTipsFeatured: shouldBeTipsFeatured,
+        },
+        {
+          transaction,
+        }
+      );
+
+      await transaction.commit();
 
       return article;
     } catch (error) {
+      await transaction.rollback();
       console.log(error);
       return [];
     }
@@ -363,6 +419,7 @@ class ArticleService {
 
     try {
       const searchTermWithoutLastLetter = `%${name.slice(0, -1)}%`;
+
       const articles = await db.models.Article.findAndCountAll({
         limit: limit,
         offset: offset,
@@ -530,11 +587,34 @@ class ArticleService {
     country_id,
     place_id,
     airport_city_id,
-    is_far_destination
+    is_far_destination,
+    is_tips_featured
   ) {
     console.log("patchArticle");
 
+    const transaction = await db.sequelize.transaction();
+
     try {
+      const articleToUpdate = await db.models.Article.findByPk(id, {
+        transaction,
+      });
+
+      if (!articleToUpdate) {
+        await transaction.rollback();
+        return "Article not found";
+      }
+
+      const shouldBeTipsFeatured =
+        isTipsArticleType(article_type_id) && parseBooleanValue(is_tips_featured);
+
+      if (shouldBeTipsFeatured) {
+        await this.resetOtherTipsFeaturedArticles(
+          article_type_id,
+          id,
+          transaction
+        );
+      }
+
       await db.models.Article.update(
         {
           title: title,
@@ -550,17 +630,25 @@ class ArticleService {
           placeId: place_id,
           airportCityId: airport_city_id,
           isFarDestination: parseBooleanValue(is_far_destination),
+          isTipsFeatured: shouldBeTipsFeatured,
         },
         {
           where: { id: id },
+          transaction,
         }
       );
 
-      const updatedArticle = await db.models.Article.findByPk(id);
+      const updatedArticle = await db.models.Article.findByPk(id, {
+        transaction,
+      });
+
+      await transaction.commit();
+
       console.log("updatedArticle", updatedArticle);
 
       return updatedArticle;
     } catch (error) {
+      await transaction.rollback();
       console.log(error);
       return null;
     }

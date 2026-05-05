@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { getCountriesByName, getCountryById } from "@/utils/countries";
 import { getFavoriteArticleByCountry } from "@/utils/article";
 import { Metadata } from "next";
@@ -18,12 +19,22 @@ const safeDecodeURIComponent = (value: string) => {
   }
 };
 
+const getCachedCountriesByName = cache(
+  async (countryName: string, page: number, pageSize: number) => {
+    return getCountriesByName(countryName, page, pageSize);
+  }
+);
+
+const getCachedCountryById = cache(async (countryId: number) => {
+  return getCountryById(countryId);
+});
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { countryName } = await params;
   const decodedCountryName = safeDecodeURIComponent(countryName);
 
   try {
-    const tempData = await getCountriesByName(decodedCountryName, 1, 1);
+    const tempData = await getCachedCountriesByName(decodedCountryName, 1, 1);
 
     if (!tempData || !tempData.data || tempData.data.length === 0) {
       return {
@@ -32,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
 
     const countryId = tempData.data[0].id;
-    const country = await getCountryById(countryId);
+    const country = await getCachedCountryById(countryId);
 
     if (!country || country.error) {
       return {
@@ -79,14 +90,14 @@ export default async function Page({ params }: Props) {
   const { countryName } = await params;
   const decodedCountryName = safeDecodeURIComponent(countryName);
 
-  const tempData = await getCountriesByName(decodedCountryName, 1, 1);
+  const tempData = await getCachedCountriesByName(decodedCountryName, 1, 1);
 
   if (!tempData || !tempData.data || tempData.data.length === 0) {
     notFound();
   }
 
   const countryId = tempData.data[0].id;
-  const countryData = await getCountryById(countryId);
+  const countryData = await getCachedCountryById(countryId);
 
   if (!countryData || countryData.error) {
     notFound();

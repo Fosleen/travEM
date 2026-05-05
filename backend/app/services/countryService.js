@@ -76,23 +76,29 @@ class CountriesService {
           },
           {
             model: db.models.Specificity,
+            separate: true,
             include: [
               {
                 model: db.models.SpecificityImage,
+                separate: true,
               },
               {
                 model: db.models.SpecificityItem,
+                separate: true,
               },
             ],
           },
           {
             model: db.models.Place,
+            separate: true,
           },
           {
             model: db.models.Video,
+            separate: true,
           },
           {
             model: db.models.Characteristic,
+            separate: true,
             include: [
               {
                 model: db.models.CharacteristicIcon,
@@ -101,7 +107,9 @@ class CountriesService {
           },
           {
             model: db.models.Article,
+            separate: true,
             limit: 8,
+            order: [["date_written", "DESC"]],
           },
           {
             model: db.models.CountryBestTimeToVisit,
@@ -110,45 +118,19 @@ class CountriesService {
               {
                 model: db.models.CountryBestTimeToVisitRegion,
                 as: "regions",
+                separate: true,
+                order: [["sort_order", "ASC"]],
                 include: [
                   {
                     model: db.models.CountryBestTimeToVisitMonth,
                     as: "months",
+                    separate: true,
+                    order: [["id", "ASC"]],
                   },
                 ],
               },
             ],
           },
-        ],
-        order: [
-          [
-            {
-              model: db.models.CountryBestTimeToVisit,
-              as: "best_time_to_visit",
-            },
-            {
-              model: db.models.CountryBestTimeToVisitRegion,
-              as: "regions",
-            },
-            "sort_order",
-            "ASC",
-          ],
-          [
-            {
-              model: db.models.CountryBestTimeToVisit,
-              as: "best_time_to_visit",
-            },
-            {
-              model: db.models.CountryBestTimeToVisitRegion,
-              as: "regions",
-            },
-            {
-              model: db.models.CountryBestTimeToVisitMonth,
-              as: "months",
-            },
-            "id",
-            "ASC",
-          ],
         ],
       });
 
@@ -363,10 +345,14 @@ class CountriesService {
               {
                 model: db.models.CountryBestTimeToVisitRegion,
                 as: "regions",
+                separate: true,
+                order: [["sort_order", "ASC"]],
                 include: [
                   {
                     model: db.models.CountryBestTimeToVisitMonth,
                     as: "months",
+                    separate: true,
+                    order: [["id", "ASC"]],
                   },
                 ],
               },
@@ -459,10 +445,14 @@ class CountriesService {
               {
                 model: db.models.CountryBestTimeToVisitRegion,
                 as: "regions",
+                separate: true,
+                order: [["sort_order", "ASC"]],
                 include: [
                   {
                     model: db.models.CountryBestTimeToVisitMonth,
                     as: "months",
+                    separate: true,
+                    order: [["id", "ASC"]],
                   },
                 ],
               },

@@ -25,6 +25,7 @@ import { addCharacteristic } from "@/utils/characteristics";
 import { addVideo } from "@/utils/videos";
 import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
 import { getCountryAccusative } from "@/utils/countryGrammar";
+import { addCountryLanguage } from "@/utils/countryLanguage";
 
 const bestTimeMonths = [
   { month_key: "jan", label: "Siječanj" },
@@ -41,6 +42,15 @@ const bestTimeMonths = [
   { month_key: "dec", label: "Prosinac" },
 ];
 
+const countryLanguagePhraseLabels = [
+  { order_index: 1, label: "Bok / pozdrav" },
+  { order_index: 2, label: "Hvala" },
+  { order_index: 3, label: "Molim" },
+  { order_index: 4, label: "Oprostite" },
+  { order_index: 5, label: "Da" },
+  { order_index: 6, label: "Ne" },
+];
+
 const getDefaultBestTimeMonths = () =>
   bestTimeMonths.map((month) => ({
     month_key: month.month_key,
@@ -55,6 +65,13 @@ const getDefaultBestTimeRegion = (sortOrder = 1) => ({
   sort_order: sortOrder,
   months: getDefaultBestTimeMonths(),
 });
+
+const getDefaultCountryLanguagePhrases = () =>
+  countryLanguagePhraseLabels.map((item) => ({
+    order_index: item.order_index,
+    phrase: "",
+    pronunciation: "",
+  }));
 
 const normalizeSlug = (value: string) => {
   return value
@@ -109,6 +126,25 @@ const AddCountry = () => {
       .max(100, "Opis smije imati max 100 znakova!"),
     country_color: Yup.string().required("Obavezno polje!"),
     country_continent: Yup.string().required("Obavezno polje!"),
+    country_language: Yup.object().shape({
+      language_name: Yup.string()
+        .required("Obavezno polje!")
+        .max(100, "Naziv jezika smije imati max 100 znakova!"),
+      is_active: Yup.boolean(),
+      phrases: Yup.array()
+        .of(
+          Yup.object().shape({
+            order_index: Yup.number().required("Obavezno polje!"),
+            phrase: Yup.string()
+              .required("Obavezno polje!")
+              .max(100, "Riječ/fraza smije imati max 100 znakova!"),
+            pronunciation: Yup.string()
+              .required("Obavezno polje!")
+              .max(100, "Izgovor smije imati max 100 znakova!"),
+          })
+        )
+        .min(6, "Potrebno je unijeti svih 6 riječi."),
+    }),
     best_time_to_visit: Yup.object().shape({
       title: Yup.string().nullable(),
       subtitle: Yup.string().required("Obavezno polje!"),
@@ -209,6 +245,18 @@ const AddCountry = () => {
     };
   };
 
+  const prepareCountryLanguagePayload = (values) => {
+    return {
+      language_name: values.country_language.language_name,
+      is_active: values.country_language.is_active,
+      phrases: values.country_language.phrases.map((phraseItem, index) => ({
+        order_index: index + 1,
+        phrase: phraseItem.phrase,
+        pronunciation: phraseItem.pronunciation,
+      })),
+    };
+  };
+
   const handleSave = async (values) => {
     setIsSubmitClicked(true);
 
@@ -233,6 +281,8 @@ const AddCountry = () => {
             selectedCountry
           );
 
+          const countryLanguagePayload = prepareCountryLanguagePayload(values);
+
           const countryResponse = await addCountry(
             selectedCountry.name,
             values.country_description,
@@ -244,7 +294,13 @@ const AddCountry = () => {
           );
 
           console.log("countryResponse", countryResponse);
-          console.log("values.specificities", values.specificities);
+
+          await addCountryLanguage(
+            countryResponse.id,
+            countryLanguagePayload.language_name,
+            countryLanguagePayload.is_active,
+            countryLanguagePayload.phrases
+          );
 
           values.specificities.map(async (el, index) => {
             return await addSpecificity(
@@ -255,8 +311,6 @@ const AddCountry = () => {
             );
           });
 
-          console.log("values.characteristics", values.characteristics);
-
           values.characteristics.map(
             async (el) =>
               await addCharacteristic(
@@ -266,8 +320,6 @@ const AddCountry = () => {
                 el.characteristic_icon
               )
           );
-
-          console.log("values.videos", values.videos);
 
           values.videos.map(
             async (el) =>
@@ -418,6 +470,11 @@ const AddCountry = () => {
               country_description: "",
               country_continent: null,
               country_color: null,
+              country_language: {
+                language_name: "",
+                is_active: true,
+                phrases: getDefaultCountryLanguagePhrases(),
+              },
               best_time_to_visit: {
                 title: "",
                 subtitle: "",
@@ -814,6 +871,90 @@ const AddCountry = () => {
                       );
                     }}
                   />
+                </div>
+
+                <div className="add-country-language-wrapper">
+                  <div className="add-country-language-header">
+                    <div>
+                      <h6>Osnovne riječi za putnike *</h6>
+                      <p>
+                        Unesite naziv jezika i prijevode za 6 osnovnih riječi
+                        koje se prikazuju na stranici države.
+                      </p>
+                    </div>
+
+                    <ToggleSwitch
+                      name={"country-language-enabled"}
+                      description={"Prikaži ovu sekciju na stranici države"}
+                      value={values.country_language.is_active}
+                      setter={(value) => {
+                        setFieldValue("country_language.is_active", value);
+                      }}
+                    />
+                  </div>
+
+                  <div className="add-country-language-inputs">
+                    <div className="add-country-input">
+                      <Field
+                        name="country_language.language_name"
+                        type="text"
+                        as={Input}
+                        label="Naziv jezika *"
+                        placeholder="npr. Talijanski"
+                      />
+                      <ErrorMessage
+                        name="country_language.language_name"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="add-country-language-phrases">
+                    <div className="add-country-language-row add-country-language-row-head">
+                      <div>Hrvatski label</div>
+                      <div>Riječ/fraza *</div>
+                      <div>Izgovor *</div>
+                    </div>
+
+                    {countryLanguagePhraseLabels.map((item, index) => (
+                      <div className="add-country-language-row" key={item.order_index}>
+                        <div className="add-country-language-label">
+                          {item.order_index}. {item.label}
+                        </div>
+
+                        <div>
+                          <Field
+                            name={`country_language.phrases.${index}.phrase`}
+                            type="text"
+                            as={Input}
+                            label=""
+                            placeholder="npr. Ciao"
+                          />
+                          <ErrorMessage
+                            name={`country_language.phrases.${index}.phrase`}
+                            component="div"
+                            className="error-message"
+                          />
+                        </div>
+
+                        <div>
+                          <Field
+                            name={`country_language.phrases.${index}.pronunciation`}
+                            type="text"
+                            as={Input}
+                            label=""
+                            placeholder="npr. čao"
+                          />
+                          <ErrorMessage
+                            name={`country_language.phrases.${index}.pronunciation`}
+                            component="div"
+                            className="error-message"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="add-country-characteristics-container">

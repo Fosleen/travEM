@@ -1,4 +1,4 @@
-// client/components/user/templates/DestinationPlace/DestinationPlace.tsx
+// client/components/user/pages/destinationPlace/DestinationPlace.tsx
 // @ts-nocheck
 "use client";
 
@@ -8,6 +8,7 @@ import DestinationHero from "../../molecules/DestinationHero";
 import DestinationVideos from "../../molecules/DestinationVideos";
 import RecommendedPosts from "../../molecules/RecommendedPosts";
 import BestTimeToVisitPlace from "../../molecules/BestTimeToVisitPlace/BestTimeToVisitPlace";
+import CountryLanguage from "../../molecules/CountryLanguage/CountryLanguage";
 import "./DestinationPlace.scss";
 
 interface Article {
@@ -43,7 +44,7 @@ interface Place {
 
 interface DestinationPlaceProps {
   initialPlace: Place;
-  placeName: string; // slug iz URL-a
+  placeName: string;
 }
 
 const API_URL =
@@ -242,11 +243,6 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
         main_image_url={place.main_image_url}
       />
 
-      <BestTimeToVisitPlace
-        placeId={place.id}
-        placeNameDative={getPlaceCase(place, "dative")}
-      />
-
       {articles && articles.length > 0 && (
         <section className="destination-place-content-container">
           <div className="destination-place-section-header">
@@ -379,6 +375,17 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
             </section>
           )}
         </section>
+      )}
+
+      <BestTimeToVisitPlace
+        placeId={place.id}
+        placeNameDative={getPlaceCase(place, "dative")}
+      />
+
+      {place?.country?.id && (
+        <div className="destination-place-language-container">
+          <CountryLanguage countryId={place.country.id} />
+        </div>
       )}
 
       {place.videos && place.videos.length > 0 && (

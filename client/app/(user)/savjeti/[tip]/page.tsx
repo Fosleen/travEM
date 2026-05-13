@@ -1,5 +1,6 @@
 import { getArticleTypes } from "@/utils/articleTypes";
 import {
+  getArticleById,
   getArticles,
   getRecommendedArticles,
   getTipsFeaturedArticle,
@@ -100,7 +101,17 @@ export default async function Page({ params, searchParams }: Props) {
     }
 
     if (featuredArticleData && !featuredArticleData.error) {
-      initialFeaturedArticle = featuredArticleData;
+      const fullFeaturedArticle = await getArticleById(
+        featuredArticleData.id,
+        true
+      );
+
+      if (fullFeaturedArticle && !fullFeaturedArticle.error) {
+        initialFeaturedArticle = fullFeaturedArticle;
+      } else {
+        initialFeaturedArticle = featuredArticleData;
+      }
+
       recommendedBaseArticleId = featuredArticleData.id;
     }
 

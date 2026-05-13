@@ -452,7 +452,7 @@ class ArticleService {
 
   async getTopCountryArticle(id) {
     try {
-      const articles = await db.models.Article.findOne({
+      const article = await db.models.Article.findOne({
         where: {
           countryId: id,
         },
@@ -464,11 +464,21 @@ class ArticleService {
               id: 2,
             },
           },
+          {
+            model: db.models.Section,
+            include: [
+              {
+                model: db.models.SectionIcon,
+              },
+            ],
+          },
         ],
+        order: [[{ model: db.models.Section }, "order", "ASC"]],
       });
 
-      return articles;
+      return article;
     } catch (error) {
+      console.log(error);
       return [];
     }
   }

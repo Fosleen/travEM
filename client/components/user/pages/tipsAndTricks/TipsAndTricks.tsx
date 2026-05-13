@@ -164,7 +164,6 @@ const getArticleDateInfo = (article: any) => {
 
   if (updatedDate) {
     return {
-      label: "Ažurirano",
       value: updatedDate,
     };
   }
@@ -185,13 +184,11 @@ const getArticleDateInfo = (article: any) => {
 
   if (writtenDate) {
     return {
-      label: "Objavljeno",
       value: writtenDate,
     };
   }
 
   return {
-    label: "",
     value: "",
   };
 };
@@ -225,14 +222,15 @@ const getReadableTipTitle = (selectedArticleType: ArticleType) => {
 };
 
 const getArticleSections = (article: any) => {
-  return (
+  const sections =
     article?.sections ||
     article?.article_sections ||
     article?.articleSections ||
     article?.content_sections ||
     article?.contentSections ||
-    []
-  );
+    [];
+
+  return Array.isArray(sections) ? sections : [];
 };
 
 const getSectionIcon = (section: any) => {
@@ -249,7 +247,7 @@ const getSectionIcon = (section: any) => {
 };
 
 const getSectionSubtitle = (section: any) => {
-  return section?.subtitle || "";
+  return section?.subtitle?.trim?.() || "";
 };
 
 const getFeaturedOverviewItems = (featuredArticle: any) => {
@@ -302,7 +300,7 @@ const normalizeFetchedArticle = (data: any) => {
 
 const fetchFullArticleById = async (articleId: number | string) => {
   try {
-    const response = await fetch(`${API_URL}/articles/${articleId}`, {
+    const response = await fetch(`${API_URL}/articles/${articleId}?noCache=true`, {
       cache: "no-store",
     });
 
@@ -349,9 +347,14 @@ const TipsAndTricks = ({
   const currentTipVisual = tipVisualMap[tip] || tipVisualMap.pakiranje;
   const featuredArticlePreview =
     initialFeaturedArticle || getFeaturedArticle(articles);
-  const featuredArticle = fullFeaturedArticle || featuredArticlePreview;
+
+  const featuredArticle =
+    fullFeaturedArticle && getArticleSections(fullFeaturedArticle).length > 0
+      ? fullFeaturedArticle
+      : featuredArticlePreview;
 
   const featuredDateInfo = getArticleDateInfo(featuredArticle);
+  const featuredOverviewItems = getFeaturedOverviewItems(featuredArticle);
 
   const otherArticles = featuredArticlePreview
     ? articles.filter(
@@ -359,8 +362,6 @@ const TipsAndTricks = ({
           Number(article?.id) !== Number((featuredArticlePreview as any)?.id)
       )
     : articles;
-
-  const featuredOverviewItems = getFeaturedOverviewItems(featuredArticle);
 
   const selectedTitle = selectedArticleType
     ? getReadableTipTitle(selectedArticleType)
@@ -376,13 +377,6 @@ const TipsAndTricks = ({
       setFullFeaturedArticle(null);
 
       if (!featuredArticlePreview?.id) {
-        return;
-      }
-
-      const previewSections = getArticleSections(featuredArticlePreview);
-
-      if (previewSections && previewSections.length > 0) {
-        setFullFeaturedArticle(featuredArticlePreview);
         return;
       }
 
@@ -618,7 +612,9 @@ const TipsAndTricks = ({
 
                         <div className="tips-and-tricks-article-meta">
                           {articleDateInfo.value && (
-                            <span>{formatArticleDate(articleDateInfo.value)}</span>
+                            <span>
+                              {formatArticleDate(articleDateInfo.value)}
+                            </span>
                           )}
                           <span>Pročitaj više →</span>
                         </div>

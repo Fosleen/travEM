@@ -60,6 +60,23 @@
         max-width: 600px;
         word-spacing: 32px;
       }
+
+      &.destination-hero-titles--crna-gora {
+        .bold-grey,
+        .bold-color {
+          line-height: 80%;
+          white-space: nowrap;
+        }
+
+        .cursive-black {
+          word-spacing: normal;
+          letter-spacing: 0;
+          line-height: 82%;
+          padding-top: 6px;
+          transform: translate(-4px, 14px);
+          white-space: nowrap;
+        }
+      }
     }
 
     .destination-hero-description {
@@ -103,6 +120,20 @@
           letter-spacing: 8px;
           line-height: 130%;
         }
+
+        &.destination-hero-titles--crna-gora {
+          .bold-grey,
+          .bold-color {
+            line-height: 95%;
+          }
+
+          .cursive-black {
+            word-spacing: normal;
+            line-height: 95%;
+            letter-spacing: 2px;
+            transform: translate(-6px, 16px);
+          }
+        }
       }
 
       .destination-hero-description {
@@ -135,6 +166,19 @@
         .cursive-black {
           font-size: 96px;
           line-height: 110%;
+        }
+
+        &.destination-hero-titles--crna-gora {
+          .bold-grey,
+          .bold-color {
+            line-height: 88%;
+          }
+
+          .cursive-black {
+            line-height: 82%;
+            letter-spacing: 2px;
+            transform: translate(-8px, 18px);
+          }
         }
       }
 
@@ -181,6 +225,20 @@
           width: 1024px;
           line-height: 130%;
         }
+
+        &.destination-hero-titles--crna-gora {
+          .bold-grey,
+          .bold-color {
+            line-height: 88%;
+          }
+
+          .cursive-black {
+            width: auto;
+            line-height: 86%;
+            letter-spacing: 3px;
+            transform: translate(-10px, 20px);
+          }
+        }
       }
 
       .destination-hero-description {
@@ -201,18 +259,32 @@
       .destination-hero-titles {
         .bold-grey {
           font-size: 140px;
-          max-width: 840;
+          max-width: 840px;
         }
 
         .bold-color {
           font-size: 140px;
-          max-width: 840;
+          max-width: 840px;
         }
 
         .cursive-black {
           font-size: 140px;
           max-width: 760px;
           line-height: 135%;
+        }
+
+        &.destination-hero-titles--crna-gora {
+          .bold-grey,
+          .bold-color {
+            line-height: 86%;
+          }
+
+          .cursive-black {
+            max-width: none;
+            line-height: 86%;
+            letter-spacing: 3px;
+            transform: translate(-12px, 22px);
+          }
         }
       }
 

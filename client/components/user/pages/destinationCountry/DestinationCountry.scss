@@ -47,6 +47,7 @@
   }
 
   .destination-country-visa-info-container,
+  .destination-country-language-container,
   .destination-country-videos-container {
     max-width: 1300px;
     margin: 0 auto;
@@ -57,6 +58,10 @@
       color: $greyMiddleDark;
     }
   }
+}
+
+.destination-country-best-time-container {
+  width: 100%;
 }
 
 @media screen and ($tablet) {
@@ -125,12 +130,9 @@
     .destination-country-highlights-container,
     .destination-country-posts-container,
     .destination-country-visa-info-container,
+    .destination-country-language-container,
     .destination-country-videos-container {
       padding: 0;
     }
   }
 }
-
-  .destination-country-best-time-container {
-    width: 100%;
-  }

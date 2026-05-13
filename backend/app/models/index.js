@@ -30,6 +30,8 @@ import PlaceBestTimeToVisitMonth from "./placeBestTimeToVisitMonth.js";
 import CountryBestTimeToVisit from "./countryBestTimeToVisit.js";
 import CountryBestTimeToVisitRegion from "./countryBestTimeToVisitRegion.js";
 import CountryBestTimeToVisitMonth from "./countryBestTimeToVisitMonth.js";
+import CountryLanguage from "./countryLanguage.js";
+import CountryLanguagePhrase from "./countryLanguagePhrase.js";
 
 const db = {};
 
@@ -98,6 +100,16 @@ db.models.CountryBestTimeToVisitRegion = CountryBestTimeToVisitRegion(
 );
 
 db.models.CountryBestTimeToVisitMonth = CountryBestTimeToVisitMonth(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+
+db.models.CountryLanguage = CountryLanguage(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+
+db.models.CountryLanguagePhrase = CountryLanguagePhrase(
   sequelizeConnection,
   Sequelize.DataTypes
 );
@@ -172,5 +184,28 @@ db.models.CountryBestTimeToVisitMonth.belongsTo(
     as: "region",
   }
 );
+
+/**
+ * Country language associations
+ */
+db.models.Country.hasOne(db.models.CountryLanguage, {
+  foreignKey: "countryId",
+  as: "language",
+});
+
+db.models.CountryLanguage.belongsTo(db.models.Country, {
+  foreignKey: "countryId",
+  as: "country",
+});
+
+db.models.CountryLanguage.hasMany(db.models.CountryLanguagePhrase, {
+  foreignKey: "countryLanguageId",
+  as: "phrases",
+});
+
+db.models.CountryLanguagePhrase.belongsTo(db.models.CountryLanguage, {
+  foreignKey: "countryLanguageId",
+  as: "language",
+});
 
 export default db;

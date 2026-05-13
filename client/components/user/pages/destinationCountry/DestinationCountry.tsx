@@ -12,6 +12,7 @@ import RecommendedPosts from "../../molecules/RecommendedPosts";
 import Characteristics from "../../atoms/Characteristics";
 import Specificities from "../../atoms/Specificities";
 import { CountriesData } from "@/common/types";
+import CountryLanguage from "../../molecules/CountryLanguage/CountryLanguage";
 
 import BestTimeToVisit from "../../molecules/BestTimeToVisit/BestTimeToVisit";
 
@@ -65,6 +66,10 @@ const DestinationCountry = ({
 
       <div className="destination-country-visa-info-container">
         <VisaInfo countryId={country.id} countryName={country.name} />
+      </div>
+
+      <div className="destination-country-language-container">
+        <CountryLanguage countryId={country.id} />
       </div>
 
       <div className="destination-country-upper-container">

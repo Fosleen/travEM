@@ -24,6 +24,7 @@ import { verifyToken } from "../middleware/jwt_verify.js";
 import subscriber from "./subscriberRoute.js";
 import placeBestTimeToVisit from "./placeBestTimeToVisitRoute.js";
 import countryBestTimeToVisit from "./countryBestTimeToVisitRoute.js";
+import countryLanguage from "./countryLanguageRoute.js";
 
 const router = new Router();
 
@@ -54,5 +55,6 @@ router.use("/subscribers", subscriber);
 
 router.use("/place-best-time-to-visit", placeBestTimeToVisit);
 router.use("/country-best-time-to-visit", countryBestTimeToVisit);
+router.use("/country-language", countryLanguage);
 
 export default router;

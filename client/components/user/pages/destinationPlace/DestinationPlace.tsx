@@ -3,7 +3,6 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import DestinationHero from "../../molecules/DestinationHero";
 import DestinationVideos from "../../molecules/DestinationVideos";
 import RecommendedPosts from "../../molecules/RecommendedPosts";
@@ -38,6 +37,8 @@ interface Place {
   main_image_url: string;
   featured_article_id?: number | null;
   featuredArticleId?: number | null;
+  featured_article?: Article | null;
+  featuredArticle?: Article | null;
   articles: Article[];
   videos: string[];
   country: Country;
@@ -47,9 +48,6 @@ interface DestinationPlaceProps {
   initialPlace: Place;
   placeName: string;
 }
-
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:25060/api/v1";
 
 const getPlaceCase = (
   place: Place,
@@ -102,15 +100,25 @@ const getArticleSections = (article: any) => {
     article?.articleSections ||
     article?.content_sections ||
     article?.contentSections ||
+    article?.ArticleSections ||
+    article?.Sections ||
     [];
 
-  return Array.isArray(sections) ? sections : [];
+  if (!Array.isArray(sections)) {
+    return [];
+  }
+
+  return sections
+    .map((item: any) => item?.section || item?.Section || item)
+    .filter(Boolean);
 };
 
 const getSectionIcon = (section: any) => {
   return (
     section?.section_icon?.url?.trim?.() ||
     section?.sectionIcon?.url?.trim?.() ||
+    section?.section_icon?.icon_url?.trim?.() ||
+    section?.sectionIcon?.iconUrl?.trim?.() ||
     section?.icon?.url?.trim?.() ||
     section?.section_icon_url ||
     section?.sectionIconUrl ||
@@ -121,7 +129,12 @@ const getSectionIcon = (section: any) => {
 };
 
 const getSectionSubtitle = (section: any) => {
-  return section?.subtitle?.trim?.() || "";
+  return (
+    section?.subtitle?.trim?.() ||
+    section?.title?.trim?.() ||
+    section?.name?.trim?.() ||
+    ""
+  );
 };
 
 const getFeaturedOverviewItems = (featuredArticle: any) => {
@@ -141,34 +154,14 @@ const getFeaturedOverviewItems = (featuredArticle: any) => {
     .slice(0, 5);
 };
 
-const normalizeFetchedArticle = (data: any) => {
-  return data?.data || data?.article || data;
-};
-
-const fetchFullArticleById = async (articleId: number | string) => {
-  try {
-    const response = await fetch(`${API_URL}/articles/${articleId}?noCache=true`, {
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      console.warn(
-        "Failed to fetch full featured place article:",
-        response.status
-      );
-      return null;
-    }
-
-    const data = await response.json();
-
-    return normalizeFetchedArticle(data);
-  } catch (error) {
-    console.warn("Failed to fetch full featured place article:", error);
-    return null;
-  }
-};
-
 const getFeaturedArticlePreview = (place: Place, articles: Article[]) => {
+  const featuredArticleFromPlace =
+    place?.featured_article || place?.featuredArticle || null;
+
+  if (featuredArticleFromPlace) {
+    return featuredArticleFromPlace;
+  }
+
   if (!articles || articles.length === 0) {
     return null;
   }
@@ -191,59 +184,14 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
   const place = initialPlace;
   const articles = place?.articles || [];
 
-  const [fullFeaturedArticle, setFullFeaturedArticle] = useState<any>(null);
-
-  const featuredArticlePreview = getFeaturedArticlePreview(place, articles);
-
-  const featuredArticle =
-    fullFeaturedArticle && getArticleSections(fullFeaturedArticle).length > 0
-      ? fullFeaturedArticle
-      : featuredArticlePreview;
-
+  const featuredArticle = getFeaturedArticlePreview(place, articles);
   const featuredOverviewItems = getFeaturedOverviewItems(featuredArticle);
-  
 
-  const otherArticles = featuredArticlePreview
+  const otherArticles = featuredArticle
     ? articles.filter(
-        (article: any) =>
-          Number(article?.id) !== Number((featuredArticlePreview as any)?.id)
+        (article: any) => Number(article?.id) !== Number(featuredArticle?.id)
       )
     : articles;
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadFullFeaturedArticle = async () => {
-      setFullFeaturedArticle(null);
-
-      if (!featuredArticlePreview?.id) {
-        return;
-      }
-
-      const previewSections = getArticleSections(featuredArticlePreview);
-
-      if (previewSections && previewSections.length > 0) {
-        setFullFeaturedArticle(featuredArticlePreview);
-        return;
-      }
-
-      const fullArticle = await fetchFullArticleById(
-        (featuredArticlePreview as any).id
-      );
-
-      if (!isMounted) return;
-
-      if (fullArticle) {
-        setFullFeaturedArticle(fullArticle);
-      }
-    };
-
-    loadFullFeaturedArticle();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [featuredArticlePreview?.id]);
 
   return (
     <div className="destination-place-page-container">

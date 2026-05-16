@@ -27,6 +27,8 @@ const MONTH_ORDER = [
   "dec",
 ];
 
+const FEATURED_ARTICLE_OVERVIEW_SECTION_LIMIT = 5;
+
 const sortBestTimeMonths = (place) => {
   if (!place) return place;
 
@@ -64,6 +66,94 @@ const normalizeMonthValue = (value) => {
 };
 
 class PlacesService {
+  async getFeaturedArticleOverview(place) {
+    if (!place) return null;
+
+    const plainPlace = place.toJSON ? place.toJSON() : place;
+
+    const featuredArticleId =
+      plainPlace.featured_article_id || plainPlace.featuredArticleId || null;
+
+    if (!featuredArticleId) {
+      return null;
+    }
+
+    try {
+      const featuredArticle = await db.models.Article.findOne({
+        where: {
+          id: featuredArticleId,
+          placeId: plainPlace.id,
+        },
+        attributes: [
+          "id",
+          "title",
+          "subtitle",
+          "description",
+          "main_image_url",
+          "date_written",
+          "date_updated",
+          "isFarDestination",
+          "isTipsFeatured",
+          "articleTypeId",
+          "countryId",
+          "placeId",
+          "userId",
+          "airportCityId",
+        ],
+        include: [
+          {
+            model: db.models.Section,
+            attributes: [
+              "id",
+              "subtitle",
+              "order",
+              "sectionIconId",
+              "articleId",
+            ],
+            include: [
+              {
+                model: db.models.SectionIcon,
+                attributes: ["id", "url"],
+              },
+            ],
+          },
+        ],
+        order: [[{ model: db.models.Section }, "order", "ASC"]],
+      });
+
+      if (!featuredArticle) {
+        return null;
+      }
+
+      const plainFeaturedArticle = featuredArticle.toJSON
+        ? featuredArticle.toJSON()
+        : featuredArticle;
+
+      if (Array.isArray(plainFeaturedArticle.sections)) {
+        plainFeaturedArticle.sections = plainFeaturedArticle.sections
+          .filter((section) => section?.subtitle)
+          .slice(0, FEATURED_ARTICLE_OVERVIEW_SECTION_LIMIT);
+      }
+
+      return plainFeaturedArticle;
+    } catch (error) {
+      console.log("Error fetching featured article overview:", error);
+      return null;
+    }
+  }
+
+  async enrichPlaceWithFeaturedArticleOverview(place) {
+    if (!place) return place;
+
+    const plainPlace = sortBestTimeMonths(place);
+    const featuredArticle = await this.getFeaturedArticleOverview(plainPlace);
+
+    return {
+      ...plainPlace,
+      featured_article: featuredArticle,
+    };
+  }
+
   async upsertBestTimeToVisit(placeId, bestTimeToVisit, transaction) {
     if (!shouldSaveBestTimeToVisit(bestTimeToVisit)) {
       return null;
@@ -255,7 +345,7 @@ class PlacesService {
         ],
       });
 
-      return sortBestTimeMonths(place);
+      return await this.enrichPlaceWithFeaturedArticleOverview(place);
     } catch (error) {
       console.log(error);
       return `not found place with PK ${id}`;
@@ -289,7 +379,11 @@ class PlacesService {
         },
       });
 
-      const rows = places.rows.map((place) => sortBestTimeMonths(place));
+      const rows = await Promise.all(
+        places.rows.map((place) =>
+          this.enrichPlaceWithFeaturedArticleOverview(place)
+        )
+      );
 
       return {
         total: places.count,
@@ -460,7 +554,7 @@ class PlacesService {
         ],
       });
 
-      return sortBestTimeMonths(updatedPlace);
+      return await this.enrichPlaceWithFeaturedArticleOverview(updatedPlace);
     } catch (error) {
       await transaction.rollback();
       console.log(error);

@@ -37,6 +37,7 @@ interface Place {
   description: string;
   main_image_url: string;
   featured_article_id?: number | null;
+  featuredArticleId?: number | null;
   articles: Article[];
   videos: string[];
   country: Country;
@@ -68,6 +69,7 @@ const getArticleImage = (article: any) => {
     article?.coverImage?.url ||
     article?.cover_image_url ||
     article?.main_image_url ||
+    article?.mainImageUrl ||
     article?.image_url ||
     article?.imageUrl ||
     ""
@@ -94,14 +96,15 @@ const getArticleHref = (article: any) => {
 };
 
 const getArticleSections = (article: any) => {
-  return (
+  const sections =
     article?.sections ||
     article?.article_sections ||
     article?.articleSections ||
     article?.content_sections ||
     article?.contentSections ||
-    []
-  );
+    [];
+
+  return Array.isArray(sections) ? sections : [];
 };
 
 const getSectionIcon = (section: any) => {
@@ -110,13 +113,15 @@ const getSectionIcon = (section: any) => {
     section?.sectionIcon?.url?.trim?.() ||
     section?.icon?.url?.trim?.() ||
     section?.section_icon_url ||
+    section?.sectionIconUrl ||
     section?.icon_url ||
+    section?.iconUrl ||
     ""
   );
 };
 
 const getSectionSubtitle = (section: any) => {
-  return section?.subtitle || "";
+  return section?.subtitle?.trim?.() || "";
 };
 
 const getFeaturedOverviewItems = (featuredArticle: any) => {
@@ -142,7 +147,7 @@ const normalizeFetchedArticle = (data: any) => {
 
 const fetchFullArticleById = async (articleId: number | string) => {
   try {
-    const response = await fetch(`${API_URL}/articles/${articleId}`, {
+    const response = await fetch(`${API_URL}/articles/${articleId}?noCache=true`, {
       cache: "no-store",
     });
 
@@ -189,7 +194,14 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
   const [fullFeaturedArticle, setFullFeaturedArticle] = useState<any>(null);
 
   const featuredArticlePreview = getFeaturedArticlePreview(place, articles);
-  const featuredArticle = fullFeaturedArticle || featuredArticlePreview;
+
+  const featuredArticle =
+    fullFeaturedArticle && getArticleSections(fullFeaturedArticle).length > 0
+      ? fullFeaturedArticle
+      : featuredArticlePreview;
+
+  const featuredOverviewItems = getFeaturedOverviewItems(featuredArticle);
+  
 
   const otherArticles = featuredArticlePreview
     ? articles.filter(
@@ -197,8 +209,6 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
           Number(article?.id) !== Number((featuredArticlePreview as any)?.id)
       )
     : articles;
-
-  const featuredOverviewItems = getFeaturedOverviewItems(featuredArticle);
 
   useEffect(() => {
     let isMounted = true;
@@ -322,7 +332,7 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
                     href={getArticleHref(featuredArticle)}
                     className="destination-place-overview-link"
                   >
-                    Pogledaj cijeli članak
+                    Pogledaj cijeli vodič
                     <span>→</span>
                   </Link>
                 </aside>

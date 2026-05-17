@@ -8,6 +8,7 @@ import DestinationVideos from "../../molecules/DestinationVideos";
 import RecommendedPosts from "../../molecules/RecommendedPosts";
 import BestTimeToVisitPlace from "../../molecules/BestTimeToVisitPlace/BestTimeToVisitPlace";
 import CountryLanguage from "../../molecules/CountryLanguage/CountryLanguage";
+import { getCountryLocative } from "@/utils/countryGrammar";
 import "./DestinationPlace.scss";
 
 interface Article {
@@ -91,6 +92,10 @@ const getArticleDescription = (article: any) => {
 
 const getArticleHref = (article: any) => {
   return `/clanak/${article?.id}`;
+};
+
+const getCountryHref = (country: Country) => {
+  return `/destinacija/${country?.name?.toLowerCase()}`;
 };
 
 const getArticleSections = (article: any) => {
@@ -200,6 +205,23 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
         description={place.description}
         main_image_url={place.main_image_url}
       />
+
+      {place?.country?.name && (
+        <div className="destination-place-breadcrumb-wrapper">
+          <Link
+            href={getCountryHref(place.country)}
+            className="destination-place-breadcrumb"
+            aria-label={`Povratak na stranicu o ${getCountryLocative(
+              place.country.name
+            )}`}
+          >
+            <span className="destination-place-breadcrumb-arrow">←</span>
+            <span>
+              Povratak na stranicu o {getCountryLocative(place.country.name)}
+            </span>
+          </Link>
+        </div>
+      )}
 
       {articles && articles.length > 0 && (
         <section className="destination-place-content-container">

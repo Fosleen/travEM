@@ -10,9 +10,61 @@
 .destination-place-content-container,
 .destination-place-language-container,
 .destination-place-videos-container,
-.destination-place-recommended-container {
+.destination-place-recommended-container,
+.destination-place-breadcrumb-wrapper {
   width: 100%;
   padding: 0 16px;
+}
+
+.destination-place-breadcrumb-wrapper {
+  margin-top: -8px;
+  margin-bottom: -8px;
+}
+
+.destination-place-breadcrumb {
+  width: fit-content;
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(120, 164, 215, 0.24);
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      rgba(210, 235, 100, 0.28),
+      transparent 38%
+    ),
+    rgba(255, 255, 255, 0.92);
+  color: $textPrimary;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 900;
+  box-shadow: 0 8px 24px rgba(0, 32, 64, 0.06);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
+
+  &:hover {
+    transform: translateX(-2px);
+    border-color: rgba(120, 164, 215, 0.42);
+    box-shadow: 0 12px 28px rgba(0, 32, 64, 0.1);
+    background-color: #ffffff;
+
+    .destination-place-breadcrumb-arrow {
+      transform: translateX(-2px);
+    }
+  }
+}
+
+.destination-place-breadcrumb-arrow {
+  color: $green;
+  font-size: 18px;
+  line-height: 1;
+  transition: transform 0.18s ease;
 }
 
 .destination-place-content-container {
@@ -505,9 +557,15 @@
   .destination-place-content-container,
   .destination-place-language-container,
   .destination-place-videos-container,
-  .destination-place-recommended-container {
+  .destination-place-recommended-container,
+  .destination-place-breadcrumb-wrapper {
     max-width: 1300px;
     margin: 0 auto;
+  }
+
+  .destination-place-breadcrumb-wrapper {
+    margin-top: -12px;
+    margin-bottom: -12px;
   }
 
   .destination-place-featured {
@@ -618,7 +676,8 @@
   .destination-place-content-container,
   .destination-place-language-container,
   .destination-place-videos-container,
-  .destination-place-recommended-container {
+  .destination-place-recommended-container,
+  .destination-place-breadcrumb-wrapper {
     padding: 0;
   }
 }

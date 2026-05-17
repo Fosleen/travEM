@@ -4,333 +4,403 @@ export type CountryGrammar = {
   nominative: string;
   accusative: string;
   genitive: string;
+  locative: string;
 };
 
 const makeForms = (
   nominative: string,
   accusative: string,
-  genitive: string
+  genitive: string,
+  locative: string
 ): CountryGrammar => ({
   nominative,
   accusative,
   genitive,
+  locative,
 });
 
 export const countryGrammarMap: Record<string, CountryGrammar> = {
   // EUROPA
-  Albanija: makeForms("Albanija", "Albaniju", "Albanije"),
-  Andora: makeForms("Andora", "Andoru", "Andore"),
-  Armenija: makeForms("Armenija", "Armeniju", "Armenije"),
-  Austrija: makeForms("Austrija", "Austriju", "Austrije"),
-  Azerbajdžan: makeForms("Azerbajdžan", "Azerbajdžan", "Azerbajdžana"),
-  Belgija: makeForms("Belgija", "Belgiju", "Belgije"),
-  Bjelorusija: makeForms("Bjelorusija", "Bjelorusiju", "Bjelorusije"),
+  Albanija: makeForms("Albanija", "Albaniju", "Albanije", "Albaniji"),
+  Andora: makeForms("Andora", "Andoru", "Andore", "Andori"),
+  Armenija: makeForms("Armenija", "Armeniju", "Armenije", "Armeniji"),
+  Austrija: makeForms("Austrija", "Austriju", "Austrije", "Austriji"),
+  Azerbajdžan: makeForms(
+    "Azerbajdžan",
+    "Azerbajdžan",
+    "Azerbajdžana",
+    "Azerbajdžanu"
+  ),
+  Belgija: makeForms("Belgija", "Belgiju", "Belgije", "Belgiji"),
+  Bjelorusija: makeForms(
+    "Bjelorusija",
+    "Bjelorusiju",
+    "Bjelorusije",
+    "Bjelorusiji"
+  ),
   "Bosna i Hercegovina": makeForms(
     "Bosna i Hercegovina",
     "Bosnu i Hercegovinu",
-    "Bosne i Hercegovine"
+    "Bosne i Hercegovine",
+    "Bosni i Hercegovini"
   ),
-  Bugarska: makeForms("Bugarska", "Bugarsku", "Bugarske"),
-  Cipar: makeForms("Cipar", "Cipar", "Cipra"),
-  "Crna Gora": makeForms("Crna Gora", "Crnu Goru", "Crne Gore"),
-  Češka: makeForms("Češka", "Češku", "Češke"),
-  Danska: makeForms("Danska", "Dansku", "Danske"),
-  Estonija: makeForms("Estonija", "Estoniju", "Estonije"),
-  Finska: makeForms("Finska", "Finsku", "Finske"),
-  Francuska: makeForms("Francuska", "Francusku", "Francuske"),
-  Gruzija: makeForms("Gruzija", "Gruziju", "Gruzije"),
-  Grčka: makeForms("Grčka", "Grčku", "Grčke"),
-  Hrvatska: makeForms("Hrvatska", "Hrvatsku", "Hrvatske"),
-  Irska: makeForms("Irska", "Irsku", "Irske"),
-  Island: makeForms("Island", "Island", "Islanda"),
-  Italija: makeForms("Italija", "Italiju", "Italije"),
-  Kazahstan: makeForms("Kazahstan", "Kazahstan", "Kazahstana"),
-  Kosovo: makeForms("Kosovo", "Kosovo", "Kosova"),
-  Latvija: makeForms("Latvija", "Latviju", "Latvije"),
-  Lihtenštajn: makeForms("Lihtenštajn", "Lihtenštajn", "Lihtenštajna"),
-  Litva: makeForms("Litva", "Litvu", "Litve"),
-  Luksemburg: makeForms("Luksemburg", "Luksemburg", "Luksemburga"),
-  Mađarska: makeForms("Mađarska", "Mađarsku", "Mađarske"),
-  Malta: makeForms("Malta", "Maltu", "Malte"),
-  Moldavija: makeForms("Moldavija", "Moldaviju", "Moldavije"),
-  Monako: makeForms("Monako", "Monako", "Monaka"),
-  Nizozemska: makeForms("Nizozemska", "Nizozemsku", "Nizozemske"),
-  Njemačka: makeForms("Njemačka", "Njemačku", "Njemačke"),
-  Norveška: makeForms("Norveška", "Norvešku", "Norveške"),
-  Poljska: makeForms("Poljska", "Poljsku", "Poljske"),
-  Portugal: makeForms("Portugal", "Portugal", "Portugala"),
-  Rumunjska: makeForms("Rumunjska", "Rumunjsku", "Rumunjske"),
-  Rusija: makeForms("Rusija", "Rusiju", "Rusije"),
-  "San Marino": makeForms("San Marino", "San Marino", "San Marina"),
-  Slovačka: makeForms("Slovačka", "Slovačku", "Slovačke"),
-  Slovenija: makeForms("Slovenija", "Sloveniju", "Slovenije"),
-  Srbija: makeForms("Srbija", "Srbiju", "Srbije"),
+  Bugarska: makeForms("Bugarska", "Bugarsku", "Bugarske", "Bugarskoj"),
+  Cipar: makeForms("Cipar", "Cipar", "Cipra", "Cipru"),
+  "Crna Gora": makeForms("Crna Gora", "Crnu Goru", "Crne Gore", "Crnoj Gori"),
+  Češka: makeForms("Češka", "Češku", "Češke", "Češkoj"),
+  Danska: makeForms("Danska", "Dansku", "Danske", "Danskoj"),
+  Estonija: makeForms("Estonija", "Estoniju", "Estonije", "Estoniji"),
+  Finska: makeForms("Finska", "Finsku", "Finske", "Finskoj"),
+  Francuska: makeForms("Francuska", "Francusku", "Francuske", "Francuskoj"),
+  Gruzija: makeForms("Gruzija", "Gruziju", "Gruzije", "Gruziji"),
+  Grčka: makeForms("Grčka", "Grčku", "Grčke", "Grčkoj"),
+  Hrvatska: makeForms("Hrvatska", "Hrvatsku", "Hrvatske", "Hrvatskoj"),
+  Irska: makeForms("Irska", "Irsku", "Irske", "Irskoj"),
+  Island: makeForms("Island", "Island", "Islanda", "Islandu"),
+  Italija: makeForms("Italija", "Italiju", "Italije", "Italiji"),
+  Kazahstan: makeForms("Kazahstan", "Kazahstan", "Kazahstana", "Kazahstanu"),
+  Kosovo: makeForms("Kosovo", "Kosovo", "Kosova", "Kosovu"),
+  Latvija: makeForms("Latvija", "Latviju", "Latvije", "Latviji"),
+  Lihtenštajn: makeForms(
+    "Lihtenštajn",
+    "Lihtenštajn",
+    "Lihtenštajna",
+    "Lihtenštajnu"
+  ),
+  Litva: makeForms("Litva", "Litvu", "Litve", "Litvi"),
+  Luksemburg: makeForms("Luksemburg", "Luksemburg", "Luksemburga", "Luksemburgu"),
+  Mađarska: makeForms("Mađarska", "Mađarsku", "Mađarske", "Mađarskoj"),
+  Malta: makeForms("Malta", "Maltu", "Malte", "Malti"),
+  Moldavija: makeForms("Moldavija", "Moldaviju", "Moldavije", "Moldaviji"),
+  Monako: makeForms("Monako", "Monako", "Monaka", "Monaku"),
+  Nizozemska: makeForms(
+    "Nizozemska",
+    "Nizozemsku",
+    "Nizozemske",
+    "Nizozemskoj"
+  ),
+  Njemačka: makeForms("Njemačka", "Njemačku", "Njemačke", "Njemačkoj"),
+  Norveška: makeForms("Norveška", "Norvešku", "Norveške", "Norveškoj"),
+  Poljska: makeForms("Poljska", "Poljsku", "Poljske", "Poljskoj"),
+  Portugal: makeForms("Portugal", "Portugal", "Portugala", "Portugalu"),
+  Rumunjska: makeForms("Rumunjska", "Rumunjsku", "Rumunjske", "Rumunjskoj"),
+  Rusija: makeForms("Rusija", "Rusiju", "Rusije", "Rusiji"),
+  "San Marino": makeForms("San Marino", "San Marino", "San Marina", "San Marinu"),
+  Slovačka: makeForms("Slovačka", "Slovačku", "Slovačke", "Slovačkoj"),
+  Slovenija: makeForms("Slovenija", "Sloveniju", "Slovenije", "Sloveniji"),
+  Srbija: makeForms("Srbija", "Srbiju", "Srbije", "Srbiji"),
   "Sjeverna Makedonija": makeForms(
     "Sjeverna Makedonija",
     "Sjevernu Makedoniju",
-    "Sjeverne Makedonije"
+    "Sjeverne Makedonije",
+    "Sjevernoj Makedoniji"
   ),
-  Španjolska: makeForms("Španjolska", "Španjolsku", "Španjolske"),
-  Švedska: makeForms("Švedska", "Švedsku", "Švedske"),
-  Švicarska: makeForms("Švicarska", "Švicarsku", "Švicarske"),
-  Turska: makeForms("Turska", "Tursku", "Turske"),
-  Ukrajina: makeForms("Ukrajina", "Ukrajinu", "Ukrajine"),
-  Vatikan: makeForms("Vatikan", "Vatikan", "Vatikana"),
+  Španjolska: makeForms(
+    "Španjolska",
+    "Španjolsku",
+    "Španjolske",
+    "Španjolskoj"
+  ),
+  Švedska: makeForms("Švedska", "Švedsku", "Švedske", "Švedskoj"),
+  Švicarska: makeForms("Švicarska", "Švicarsku", "Švicarske", "Švicarskoj"),
+  Turska: makeForms("Turska", "Tursku", "Turske", "Turskoj"),
+  Ukrajina: makeForms("Ukrajina", "Ukrajinu", "Ukrajine", "Ukrajini"),
+  Vatikan: makeForms("Vatikan", "Vatikan", "Vatikana", "Vatikanu"),
   "Ujedinjeno Kraljevstvo": makeForms(
     "Ujedinjeno Kraljevstvo",
     "Ujedinjeno Kraljevstvo",
-    "Ujedinjenog Kraljevstva"
+    "Ujedinjenog Kraljevstva",
+    "Ujedinjenom Kraljevstvu"
   ),
 
   // AZIJA
-  Afganistan: makeForms("Afganistan", "Afganistan", "Afganistana"),
-  Bahrein: makeForms("Bahrein", "Bahrein", "Bahreina"),
-  Bangladeš: makeForms("Bangladeš", "Bangladeš", "Bangladeša"),
-  Butan: makeForms("Butan", "Butan", "Butana"),
-  Brunej: makeForms("Brunej", "Brunej", "Bruneja"),
-  Filipini: makeForms("Filipini", "Filipine", "Filipina"),
-  Indija: makeForms("Indija", "Indiju", "Indije"),
-  Indonezija: makeForms("Indonezija", "Indoneziju", "Indonezije"),
-  Irak: makeForms("Irak", "Irak", "Iraka"),
-  Iran: makeForms("Iran", "Iran", "Irana"),
-  Izrael: makeForms("Izrael", "Izrael", "Izraela"),
-  Japan: makeForms("Japan", "Japan", "Japana"),
-  Jemen: makeForms("Jemen", "Jemen", "Jemena"),
-  Jordan: makeForms("Jordan", "Jordan", "Jordana"),
-  Kambodža: makeForms("Kambodža", "Kambodžu", "Kambodže"),
-  Katar: makeForms("Katar", "Katar", "Katara"),
-  Kina: makeForms("Kina", "Kinu", "Kine"),
-  Kirgistan: makeForms("Kirgistan", "Kirgistan", "Kirgistana"),
-  Kuvajt: makeForms("Kuvajt", "Kuvajt", "Kuvajta"),
-  Laos: makeForms("Laos", "Laos", "Laosa"),
-  Libanon: makeForms("Libanon", "Libanon", "Libanona"),
-  Malezija: makeForms("Malezija", "Maleziju", "Malezije"),
-  Maldivi: makeForms("Maldivi", "Maldive", "Maldiva"),
-  Mongolija: makeForms("Mongolija", "Mongoliju", "Mongolije"),
-  Mjanmar: makeForms("Mjanmar", "Mjanmar", "Mjanmara"),
-  Nepal: makeForms("Nepal", "Nepal", "Nepala"),
-  Oman: makeForms("Oman", "Oman", "Omana"),
-  Pakistan: makeForms("Pakistan", "Pakistan", "Pakistana"),
-  Palestina: makeForms("Palestina", "Palestinu", "Palestine"),
+  Afganistan: makeForms("Afganistan", "Afganistan", "Afganistana", "Afganistanu"),
+  Bahrein: makeForms("Bahrein", "Bahrein", "Bahreina", "Bahreinu"),
+  Bangladeš: makeForms("Bangladeš", "Bangladeš", "Bangladeša", "Bangladešu"),
+  Butan: makeForms("Butan", "Butan", "Butana", "Butanu"),
+  Brunej: makeForms("Brunej", "Brunej", "Bruneja", "Bruneju"),
+  Filipini: makeForms("Filipini", "Filipine", "Filipina", "Filipinima"),
+  Indija: makeForms("Indija", "Indiju", "Indije", "Indiji"),
+  Indonezija: makeForms("Indonezija", "Indoneziju", "Indonezije", "Indoneziji"),
+  Irak: makeForms("Irak", "Irak", "Iraka", "Iraku"),
+  Iran: makeForms("Iran", "Iran", "Irana", "Iranu"),
+  Izrael: makeForms("Izrael", "Izrael", "Izraela", "Izraelu"),
+  Japan: makeForms("Japan", "Japan", "Japana", "Japanu"),
+  Jemen: makeForms("Jemen", "Jemen", "Jemena", "Jemenu"),
+  Jordan: makeForms("Jordan", "Jordan", "Jordana", "Jordanu"),
+  Kambodža: makeForms("Kambodža", "Kambodžu", "Kambodže", "Kambodži"),
+  Katar: makeForms("Katar", "Katar", "Katara", "Kataru"),
+  Kina: makeForms("Kina", "Kinu", "Kine", "Kini"),
+  Kirgistan: makeForms("Kirgistan", "Kirgistan", "Kirgistana", "Kirgistanu"),
+  Kuvajt: makeForms("Kuvajt", "Kuvajt", "Kuvajta", "Kuvajtu"),
+  Laos: makeForms("Laos", "Laos", "Laosa", "Laosu"),
+  Libanon: makeForms("Libanon", "Libanon", "Libanona", "Libanonu"),
+  Malezija: makeForms("Malezija", "Maleziju", "Malezije", "Maleziji"),
+  Maldivi: makeForms("Maldivi", "Maldive", "Maldiva", "Maldivima"),
+  Mongolija: makeForms("Mongolija", "Mongoliju", "Mongolije", "Mongoliji"),
+  Mjanmar: makeForms("Mjanmar", "Mjanmar", "Mjanmara", "Mjanmaru"),
+  Nepal: makeForms("Nepal", "Nepal", "Nepala", "Nepalu"),
+  Oman: makeForms("Oman", "Oman", "Omana", "Omanu"),
+  Pakistan: makeForms("Pakistan", "Pakistan", "Pakistana", "Pakistanu"),
+  Palestina: makeForms("Palestina", "Palestinu", "Palestine", "Palestini"),
   "Saudijska Arabija": makeForms(
     "Saudijska Arabija",
     "Saudijsku Arabiju",
-    "Saudijske Arabije"
+    "Saudijske Arabije",
+    "Saudijskoj Arabiji"
   ),
-  Singapur: makeForms("Singapur", "Singapur", "Singapura"),
-  Sirija: makeForms("Sirija", "Siriju", "Sirije"),
+  Singapur: makeForms("Singapur", "Singapur", "Singapura", "Singapuru"),
+  Sirija: makeForms("Sirija", "Siriju", "Sirije", "Siriji"),
   "Sjeverna Koreja": makeForms(
     "Sjeverna Koreja",
     "Sjevernu Koreju",
-    "Sjeverne Koreje"
+    "Sjeverne Koreje",
+    "Sjevernoj Koreji"
   ),
   "Južna Koreja": makeForms(
     "Južna Koreja",
     "Južnu Koreju",
-    "Južne Koreje"
+    "Južne Koreje",
+    "Južnoj Koreji"
   ),
-  "Šri Lanka": makeForms("Šri Lanka", "Šri Lanku", "Šri Lanke"),
-  Tadžikistan: makeForms("Tadžikistan", "Tadžikistan", "Tadžikistana"),
-  Tajland: makeForms("Tajland", "Tajland", "Tajlanda"),
-  Tajvan: makeForms("Tajvan", "Tajvan", "Tajvana"),
-  Turkmenistan: makeForms("Turkmenistan", "Turkmenistan", "Turkmenistana"),
+  "Šri Lanka": makeForms("Šri Lanka", "Šri Lanku", "Šri Lanke", "Šri Lanki"),
+  Tadžikistan: makeForms(
+    "Tadžikistan",
+    "Tadžikistan",
+    "Tadžikistana",
+    "Tadžikistanu"
+  ),
+  Tajland: makeForms("Tajland", "Tajland", "Tajlanda", "Tajlandu"),
+  Tajvan: makeForms("Tajvan", "Tajvan", "Tajvana", "Tajvanu"),
+  Turkmenistan: makeForms(
+    "Turkmenistan",
+    "Turkmenistan",
+    "Turkmenistana",
+    "Turkmenistanu"
+  ),
   "Ujedinjeni Arapski Emirati": makeForms(
     "Ujedinjeni Arapski Emirati",
     "Ujedinjene Arapske Emirate",
-    "Ujedinjenih Arapskih Emirata"
+    "Ujedinjenih Arapskih Emirata",
+    "Ujedinjenim Arapskim Emiratima"
   ),
-  Uzbekistan: makeForms("Uzbekistan", "Uzbekistan", "Uzbekistana"),
-  Vijetnam: makeForms("Vijetnam", "Vijetnam", "Vijetnama"),
+  Uzbekistan: makeForms("Uzbekistan", "Uzbekistan", "Uzbekistana", "Uzbekistanu"),
+  Vijetnam: makeForms("Vijetnam", "Vijetnam", "Vijetnama", "Vijetnamu"),
 
   // AFRIKA
-  Alžir: makeForms("Alžir", "Alžir", "Alžira"),
-  Angola: makeForms("Angola", "Angolu", "Angole"),
-  Benin: makeForms("Benin", "Benin", "Benina"),
-  Bocvana: makeForms("Bocvana", "Bocvanu", "Bocvane"),
+  Alžir: makeForms("Alžir", "Alžir", "Alžira", "Alžiru"),
+  Angola: makeForms("Angola", "Angolu", "Angole", "Angoli"),
+  Benin: makeForms("Benin", "Benin", "Benina", "Beninu"),
+  Bocvana: makeForms("Bocvana", "Bocvanu", "Bocvane", "Bocvani"),
   "Burkina Faso": makeForms(
     "Burkina Faso",
     "Burkina Faso",
-    "Burkine Faso"
+    "Burkine Faso",
+    "Burkini Faso"
   ),
-  Burundi: makeForms("Burundi", "Burundi", "Burundija"),
-  Čad: makeForms("Čad", "Čad", "Čada"),
-  Džibuti: makeForms("Džibuti", "Džibuti", "Džibutija"),
-  Egipat: makeForms("Egipat", "Egipat", "Egipta"),
-  Eritreja: makeForms("Eritreja", "Eritreju", "Eritreje"),
-  Esvatini: makeForms("Esvatini", "Esvatini", "Esvatinija"),
-  Etiopija: makeForms("Etiopija", "Etiopiju", "Etiopije"),
-  Gabon: makeForms("Gabon", "Gabon", "Gabona"),
-  Gambija: makeForms("Gambija", "Gambiju", "Gambije"),
-  Gana: makeForms("Gana", "Ganu", "Gane"),
-  Gvineja: makeForms("Gvineja", "Gvineju", "Gvineje"),
+  Burundi: makeForms("Burundi", "Burundi", "Burundija", "Burundiju"),
+  Čad: makeForms("Čad", "Čad", "Čada", "Čadu"),
+  Džibuti: makeForms("Džibuti", "Džibuti", "Džibutija", "Džibutiju"),
+  Egipat: makeForms("Egipat", "Egipat", "Egipta", "Egiptu"),
+  Eritreja: makeForms("Eritreja", "Eritreju", "Eritreje", "Eritreji"),
+  Esvatini: makeForms("Esvatini", "Esvatini", "Esvatinija", "Esvatiniju"),
+  Etiopija: makeForms("Etiopija", "Etiopiju", "Etiopije", "Etiopiji"),
+  Gabon: makeForms("Gabon", "Gabon", "Gabona", "Gabonu"),
+  Gambija: makeForms("Gambija", "Gambiju", "Gambije", "Gambiji"),
+  Gana: makeForms("Gana", "Ganu", "Gane", "Gani"),
+  Gvineja: makeForms("Gvineja", "Gvineju", "Gvineje", "Gvineji"),
   "Gvineja Bisau": makeForms(
     "Gvineja Bisau",
     "Gvineju Bisau",
-    "Gvineje Bisau"
+    "Gvineje Bisau",
+    "Gvineji Bisau"
   ),
-  Kamerun: makeForms("Kamerun", "Kamerun", "Kameruna"),
-  Kenija: makeForms("Kenija", "Keniju", "Kenije"),
-  Komori: makeForms("Komori", "Komore", "Komora"),
-  Kongo: makeForms("Kongo", "Kongo", "Konga"),
-  Lesoto: makeForms("Lesoto", "Lesoto", "Lesota"),
-  Liberija: makeForms("Liberija", "Liberiju", "Liberije"),
-  Libija: makeForms("Libija", "Libiju", "Libije"),
-  Madagaskar: makeForms("Madagaskar", "Madagaskar", "Madagaskara"),
-  Malavi: makeForms("Malavi", "Malavi", "Malavija"),
-  Mali: makeForms("Mali", "Mali", "Malija"),
-  Maroko: makeForms("Maroko", "Maroko", "Maroka"),
-  Mauricijus: makeForms("Mauricijus", "Mauricijus", "Mauricijusa"),
-  Mauritanija: makeForms("Mauritanija", "Mauritaniju", "Mauritanije"),
-  Mozambik: makeForms("Mozambik", "Mozambik", "Mozambika"),
-  Namibija: makeForms("Namibija", "Namibiju", "Namibije"),
-  Niger: makeForms("Niger", "Niger", "Nigera"),
-  Nigerija: makeForms("Nigerija", "Nigeriju", "Nigerije"),
+  Kamerun: makeForms("Kamerun", "Kamerun", "Kameruna", "Kamerunu"),
+  Kenija: makeForms("Kenija", "Keniju", "Kenije", "Keniji"),
+  Komori: makeForms("Komori", "Komore", "Komora", "Komorima"),
+  Kongo: makeForms("Kongo", "Kongo", "Konga", "Kongu"),
+  Lesoto: makeForms("Lesoto", "Lesoto", "Lesota", "Lesotu"),
+  Liberija: makeForms("Liberija", "Liberiju", "Liberije", "Liberiji"),
+  Libija: makeForms("Libija", "Libiju", "Libije", "Libiji"),
+  Madagaskar: makeForms("Madagaskar", "Madagaskar", "Madagaskara", "Madagaskaru"),
+  Malavi: makeForms("Malavi", "Malavi", "Malavija", "Malaviju"),
+  Mali: makeForms("Mali", "Mali", "Malija", "Maliju"),
+  Maroko: makeForms("Maroko", "Maroko", "Maroka", "Maroku"),
+  Mauricijus: makeForms("Mauricijus", "Mauricijus", "Mauricijusa", "Mauricijusu"),
+  Mauritanija: makeForms(
+    "Mauritanija",
+    "Mauritaniju",
+    "Mauritanije",
+    "Mauritaniji"
+  ),
+  Mozambik: makeForms("Mozambik", "Mozambik", "Mozambika", "Mozambiku"),
+  Namibija: makeForms("Namibija", "Namibiju", "Namibije", "Namibiji"),
+  Niger: makeForms("Niger", "Niger", "Nigera", "Nigeru"),
+  Nigerija: makeForms("Nigerija", "Nigeriju", "Nigerije", "Nigeriji"),
   "Obala Bjelokosti": makeForms(
     "Obala Bjelokosti",
     "Obalu Bjelokosti",
-    "Obale Bjelokosti"
+    "Obale Bjelokosti",
+    "Obali Bjelokosti"
   ),
-  Ruanda: makeForms("Ruanda", "Ruandu", "Ruande"),
+  Ruanda: makeForms("Ruanda", "Ruandu", "Ruande", "Ruandi"),
   "Sao Tome i Principe": makeForms(
     "Sao Tome i Principe",
     "Sao Tome i Principe",
-    "Sao Tome i Principa"
+    "Sao Tome i Principa",
+    "Sao Tomeu i Principeu"
   ),
-  Senegal: makeForms("Senegal", "Senegal", "Senegala"),
-  Sejšeli: makeForms("Sejšeli", "Sejšele", "Sejšela"),
+  Senegal: makeForms("Senegal", "Senegal", "Senegala", "Senegalu"),
+  Sejšeli: makeForms("Sejšeli", "Sejšele", "Sejšela", "Sejšelima"),
   "Sierra Leone": makeForms(
     "Sierra Leone",
     "Sierra Leone",
-    "Sierre Leone"
+    "Sierre Leone",
+    "Sierri Leone"
   ),
-  Somalija: makeForms("Somalija", "Somaliju", "Somalije"),
+  Somalija: makeForms("Somalija", "Somaliju", "Somalije", "Somaliji"),
   "Srednjoafrička Republika": makeForms(
     "Srednjoafrička Republika",
     "Srednjoafričku Republiku",
-    "Srednjoafričke Republike"
+    "Srednjoafričke Republike",
+    "Srednjoafričkoj Republici"
   ),
-  Sudan: makeForms("Sudan", "Sudan", "Sudana"),
-  Tanzanija: makeForms("Tanzanija", "Tanzaniju", "Tanzanije"),
-  Togo: makeForms("Togo", "Togo", "Toga"),
-  Tunis: makeForms("Tunis", "Tunis", "Tunisa"),
-  Uganda: makeForms("Uganda", "Ugandu", "Ugande"),
-  Zambija: makeForms("Zambija", "Zambiju", "Zambije"),
-  Zimbabve: makeForms("Zimbabve", "Zimbabve", "Zimbabvea"),
+  Sudan: makeForms("Sudan", "Sudan", "Sudana", "Sudanu"),
+  Tanzanija: makeForms("Tanzanija", "Tanzaniju", "Tanzanije", "Tanzaniji"),
+  Togo: makeForms("Togo", "Togo", "Toga", "Togu"),
+  Tunis: makeForms("Tunis", "Tunis", "Tunisa", "Tunisu"),
+  Uganda: makeForms("Uganda", "Ugandu", "Ugande", "Ugandi"),
+  Zambija: makeForms("Zambija", "Zambiju", "Zambije", "Zambiji"),
+  Zimbabve: makeForms("Zimbabve", "Zimbabve", "Zimbabvea", "Zimbabveu"),
   "Južni Sudan": makeForms(
     "Južni Sudan",
     "Južni Sudan",
-    "Južnog Sudana"
+    "Južnog Sudana",
+    "Južnom Sudanu"
   ),
   "Južnoafrička Republika": makeForms(
     "Južnoafrička Republika",
     "Južnoafričku Republiku",
-    "Južnoafričke Republike"
+    "Južnoafričke Republike",
+    "Južnoafričkoj Republici"
   ),
   "Demokratska Republika Kongo": makeForms(
     "Demokratska Republika Kongo",
     "Demokratsku Republiku Kongo",
-    "Demokratske Republike Kongo"
+    "Demokratske Republike Kongo",
+    "Demokratskoj Republici Kongo"
   ),
   "Ekvatorska Gvineja": makeForms(
     "Ekvatorska Gvineja",
     "Ekvatorsku Gvineju",
-    "Ekvatorske Gvineje"
+    "Ekvatorske Gvineje",
+    "Ekvatorskoj Gvineji"
   ),
 
   // SJEVERNA AMERIKA
   "Antigua i Barbuda": makeForms(
     "Antigua i Barbuda",
     "Antiguu i Barbudu",
-    "Antigue i Barbude"
+    "Antigue i Barbude",
+    "Antigvi i Barbudi"
   ),
-  Bahami: makeForms("Bahami", "Bahame", "Bahama"),
-  Barbados: makeForms("Barbados", "Barbados", "Barbadosa"),
-  Belize: makeForms("Belize", "Belize", "Belizea"),
-  Kanada: makeForms("Kanada", "Kanadu", "Kanade"),
-  Kostarika: makeForms("Kostarika", "Kostariku", "Kostarike"),
-  Kuba: makeForms("Kuba", "Kubu", "Kube"),
-  Dominika: makeForms("Dominika", "Dominiku", "Dominike"),
+  Bahami: makeForms("Bahami", "Bahame", "Bahama", "Bahamima"),
+  Barbados: makeForms("Barbados", "Barbados", "Barbadosa", "Barbadosu"),
+  Belize: makeForms("Belize", "Belize", "Belizea", "Belizeu"),
+  Kanada: makeForms("Kanada", "Kanadu", "Kanade", "Kanadi"),
+  Kostarika: makeForms("Kostarika", "Kostariku", "Kostarike", "Kostariki"),
+  Kuba: makeForms("Kuba", "Kubu", "Kube", "Kubi"),
+  Dominika: makeForms("Dominika", "Dominiku", "Dominike", "Dominiki"),
   "Dominikanska Republika": makeForms(
     "Dominikanska Republika",
     "Dominikansku Republiku",
-    "Dominikanske Republike"
+    "Dominikanske Republike",
+    "Dominikanskoj Republici"
   ),
-  Salvador: makeForms("Salvador", "Salvador", "Salvadora"),
-  Grenada: makeForms("Grenada", "Grenadu", "Grenade"),
-  Gvatemala: makeForms("Gvatemala", "Gvatemalu", "Gvatemale"),
-  Haiti: makeForms("Haiti", "Haiti", "Haitija"),
-  Honduras: makeForms("Honduras", "Honduras", "Hondurasa"),
-  Jamajka: makeForms("Jamajka", "Jamajku", "Jamajke"),
-  Meksiko: makeForms("Meksiko", "Meksiko", "Meksika"),
-  Nikaragva: makeForms("Nikaragva", "Nikaragvu", "Nikaragve"),
-  Panama: makeForms("Panama", "Panamu", "Paname"),
-  "SAD": makeForms("SAD", "SAD", "SAD-a"),
+  Salvador: makeForms("Salvador", "Salvador", "Salvadora", "Salvadoru"),
+  Grenada: makeForms("Grenada", "Grenadu", "Grenade", "Grenadi"),
+  Gvatemala: makeForms("Gvatemala", "Gvatemalu", "Gvatemale", "Gvatemali"),
+  Haiti: makeForms("Haiti", "Haiti", "Haitija", "Haitiju"),
+  Honduras: makeForms("Honduras", "Honduras", "Hondurasa", "Hondurasu"),
+  Jamajka: makeForms("Jamajka", "Jamajku", "Jamajke", "Jamajci"),
+  Meksiko: makeForms("Meksiko", "Meksiko", "Meksika", "Meksiku"),
+  Nikaragva: makeForms("Nikaragva", "Nikaragvu", "Nikaragve", "Nikaragvi"),
+  Panama: makeForms("Panama", "Panamu", "Paname", "Panami"),
+  SAD: makeForms("SAD", "SAD", "SAD-a", "SAD-u"),
   "Sveti Kristofor i Nevis": makeForms(
     "Sveti Kristofor i Nevis",
     "Sveti Kristofor i Nevis",
-    "Svetog Kristofora i Nevisa"
+    "Svetog Kristofora i Nevisa",
+    "Svetom Kristoforu i Nevisu"
   ),
   "Sveta Lucija": makeForms(
     "Sveta Lucija",
     "Svetu Luciju",
-    "Svete Lucije"
+    "Svete Lucije",
+    "Svetoj Luciji"
   ),
   "Sveti Vincent i Grenadini": makeForms(
     "Sveti Vincent i Grenadini",
     "Sveti Vincent i Grenadine",
-    "Svetog Vincenta i Grenadina"
+    "Svetog Vincenta i Grenadina",
+    "Svetom Vincentu i Grenadinima"
   ),
   "Trinidad i Tobago": makeForms(
     "Trinidad i Tobago",
     "Trinidad i Tobago",
-    "Trinidada i Tobaga"
+    "Trinidada i Tobaga",
+    "Trinidadu i Tobagu"
   ),
 
   // JUŽNA AMERIKA
-  Argentina: makeForms("Argentina", "Argentinu", "Argentine"),
-  Bolivija: makeForms("Bolivija", "Boliviju", "Bolivije"),
-  Brazil: makeForms("Brazil", "Brazil", "Brazila"),
-  Čile: makeForms("Čile", "Čile", "Čilea"),
-  Ekvador: makeForms("Ekvador", "Ekvador", "Ekvadora"),
-  Gvajana: makeForms("Gvajana", "Gvajanu", "Gvajane"),
-  Kolumbija: makeForms("Kolumbija", "Kolumbiju", "Kolumbije"),
-  Paragvaj: makeForms("Paragvaj", "Paragvaj", "Paragvaja"),
-  Peru: makeForms("Peru", "Peru", "Perua"),
-  Surinam: makeForms("Surinam", "Surinam", "Surinama"),
-  Urugvaj: makeForms("Urugvaj", "Urugvaj", "Urugvaja"),
-  Venezuela: makeForms("Venezuela", "Venezuelu", "Venezuele"),
+  Argentina: makeForms("Argentina", "Argentinu", "Argentine", "Argentini"),
+  Bolivija: makeForms("Bolivija", "Boliviju", "Bolivije", "Boliviji"),
+  Brazil: makeForms("Brazil", "Brazil", "Brazila", "Brazilu"),
+  Čile: makeForms("Čile", "Čile", "Čilea", "Čileu"),
+  Ekvador: makeForms("Ekvador", "Ekvador", "Ekvadora", "Ekvadoru"),
+  Gvajana: makeForms("Gvajana", "Gvajanu", "Gvajane", "Gvajani"),
+  Kolumbija: makeForms("Kolumbija", "Kolumbiju", "Kolumbije", "Kolumbiji"),
+  Paragvaj: makeForms("Paragvaj", "Paragvaj", "Paragvaja", "Paragvaju"),
+  Peru: makeForms("Peru", "Peru", "Perua", "Peruu"),
+  Surinam: makeForms("Surinam", "Surinam", "Surinama", "Surinamu"),
+  Urugvaj: makeForms("Urugvaj", "Urugvaj", "Urugvaja", "Urugvaju"),
+  Venezuela: makeForms("Venezuela", "Venezuelu", "Venezuele", "Venezueli"),
 
   // OCEANIJA
-  Australija: makeForms("Australija", "Australiju", "Australije"),
-  Fidži: makeForms("Fidži", "Fidži", "Fidžija"),
-  Kiribati: makeForms("Kiribati", "Kiribati", "Kiribatija"),
+  Australija: makeForms("Australija", "Australiju", "Australije", "Australiji"),
+  Fidži: makeForms("Fidži", "Fidži", "Fidžija", "Fidžiju"),
+  Kiribati: makeForms("Kiribati", "Kiribati", "Kiribatija", "Kiribatiju"),
   "Maršalovi Otoci": makeForms(
     "Maršalovi Otoci",
     "Maršalove Otoke",
-    "Maršalovih Otoka"
+    "Maršalovih Otoka",
+    "Maršalovim Otocima"
   ),
-  Mikronezija: makeForms("Mikronezija", "Mikroneziju", "Mikronezije"),
-  Nauru: makeForms("Nauru", "Nauru", "Naurua"),
+  Mikronezija: makeForms("Mikronezija", "Mikroneziju", "Mikronezije", "Mikroneziji"),
+  Nauru: makeForms("Nauru", "Nauru", "Naurua", "Nauruu"),
   "Novi Zeland": makeForms(
     "Novi Zeland",
     "Novi Zeland",
-    "Novog Zelanda"
+    "Novog Zelanda",
+    "Novom Zelandu"
   ),
-  Palau: makeForms("Palau", "Palau", "Palaua"),
+  Palau: makeForms("Palau", "Palau", "Palaua", "Palauu"),
   "Papua Nova Gvineja": makeForms(
     "Papua Nova Gvineja",
     "Papuu Novu Gvineju",
-    "Papue Nove Gvineje"
+    "Papue Nove Gvineje",
+    "Papui Novoj Gvineji"
   ),
-  Samoa: makeForms("Samoa", "Samou", "Samoe"),
+  Samoa: makeForms("Samoa", "Samou", "Samoe", "Samoi"),
   "Solomonovi Otoci": makeForms(
     "Solomonovi Otoci",
     "Solomonove Otoke",
-    "Solomonovih Otoka"
+    "Solomonovih Otoka",
+    "Solomonovim Otocima"
   ),
-  Tonga: makeForms("Tonga", "Tongu", "Tonge"),
-  Tuvalu: makeForms("Tuvalu", "Tuvalu", "Tuvalua"),
-  Vanuatu: makeForms("Vanuatu", "Vanuatu", "Vanuatua"),
+  Tonga: makeForms("Tonga", "Tongu", "Tonge", "Tongi"),
+  Tuvalu: makeForms("Tuvalu", "Tuvalu", "Tuvalua", "Tuvaluu"),
+  Vanuatu: makeForms("Vanuatu", "Vanuatu", "Vanuatua", "Vanuatuu"),
 };
 
 const countryAliases: Record<string, string> = {
@@ -569,6 +639,11 @@ export const getCountryAccusative = (countryName: string): string => {
 export const getCountryGenitive = (countryName: string): string => {
   const normalized = normalizeCountryName(countryName);
   return countryGrammarMap[normalized]?.genitive || normalized || countryName;
+};
+
+export const getCountryLocative = (countryName: string): string => {
+  const normalized = normalizeCountryName(countryName);
+  return countryGrammarMap[normalized]?.locative || normalized || countryName;
 };
 
 export const getCountryGrammar = (

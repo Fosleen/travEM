@@ -11,6 +11,23 @@ type Props = {
   items: Item[];
 };
 
+const PRICE_PATTERNS = [
+  /(?:već\s+)?od\s+(\d{1,4}(?:[.,]\d{1,2})?)\s*€/i,
+  /za\s+(\d{1,4}(?:[.,]\d{1,2})?)\s*€/i,
+];
+
+const extractPriceLabel = (title?: string) => {
+  if (!title) return null;
+
+  const odMatch = title.match(PRICE_PATTERNS[0]);
+  if (odMatch?.[1]) return `od ${odMatch[1]} €`;
+
+  const zaMatch = title.match(PRICE_PATTERNS[1]);
+  if (zaMatch?.[1]) return `od ${zaMatch[1]} €`;
+
+  return null;
+};
+
 export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
   const data = useMemo(() => (items ?? []).slice(0, 6), [items]);
   const viewportRef = useRef<HTMLDivElement | null>(null);
@@ -245,6 +262,7 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
         <div className="airplane-tickets-row-header">
           <h2>{title}</h2>
         </div>
+
         <div className="airplane-tickets-row-empty">
           Trenutno nema aviokarata za ovu rubriku.
         </div>
@@ -261,7 +279,9 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
       <div className="airplane-tickets-row-viewport-wrap">
         <button
           type="button"
-          className={`airplane-tickets-row-arrow left ${!canLeft ? "disabled" : ""}`}
+          className={`airplane-tickets-row-arrow left ${
+            !canLeft ? "disabled" : ""
+          }`}
           onClick={goLeft}
           disabled={!canLeft}
           aria-label="Prethodno"
@@ -271,7 +291,9 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
 
         <div
           ref={viewportRef}
-          className={`airplane-tickets-row-viewport ${isDragging ? "is-dragging" : ""}`}
+          className={`airplane-tickets-row-viewport ${
+            isDragging ? "is-dragging" : ""
+          }`}
           onPointerDownCapture={onPointerDownCapture}
           onPointerMoveCapture={onPointerMoveCapture}
           onPointerUpCapture={endPointerDrag}
@@ -285,21 +307,33 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
           onDragStart={(e) => e.preventDefault()}
         >
           <div className="airplane-tickets-row-track">
-            {data.map((article: any) => (
-              <div key={article.id} className="airplane-tickets-row-item">
-                <HorizontalPostItemBig
-                  data={article}
-                  stretched={false}
-                  thin={true}
-                />
-              </div>
-            ))}
+            {data.map((article: any) => {
+              const priceLabel = extractPriceLabel(article.title);
+
+              return (
+                <div key={article.id} className="airplane-tickets-row-item">
+                  <HorizontalPostItemBig
+                    data={article}
+                    stretched={false}
+                    thin={true}
+                  />
+
+                  {priceLabel && (
+                    <span className="airplane-tickets-row-price-badge">
+                      {priceLabel}
+                    </span>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
         <button
           type="button"
-          className={`airplane-tickets-row-arrow right ${!canRight ? "disabled" : ""}`}
+          className={`airplane-tickets-row-arrow right ${
+            !canRight ? "disabled" : ""
+          }`}
           onClick={goRight}
           disabled={!canRight}
           aria-label="Sljedeće"

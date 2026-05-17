@@ -70,6 +70,7 @@
 }
 
 .airplane-tickets-row-item {
+  position: relative;
   scroll-snap-align: start;
   flex: 0 0 100%;
   min-width: 0;
@@ -82,6 +83,36 @@
   @media screen and ($tablet) {
     flex: 0 0 calc(50% - 8px);
   }
+}
+
+.airplane-tickets-row-price-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 4;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: fit-content;
+  max-width: calc(100% - 32px);
+  padding: 9px 16px;
+  border-radius: 999px;
+
+  background: linear-gradient(135deg, $limeGreen 0%, $limeGreenHover 100%);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow:
+    0 10px 24px rgba(18, 27, 32, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.38);
+
+  color: $grey;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
 /* Arrow buttons */
@@ -138,21 +169,28 @@
 
 @media screen and (max-width: 767px) {
   .airplane-tickets-row-viewport-wrap {
-    padding-left: 14px;
+    padding-left: 10px;
     padding-right: 0;
   }
 
   .airplane-tickets-row-viewport {
-    padding-right: 14px;
+    padding-right: 10px;
   }
 
   .airplane-tickets-row-track {
-    gap: 12px;
-    padding-right: 14px;
+    gap: 10px;
+    padding-right: 10px;
   }
 
   .airplane-tickets-row-item {
-    flex: 0 0 calc(100% - 34px);
+    flex: 0 0 calc(100% - 14px);
+  }
+
+  .airplane-tickets-row-price-badge {
+    top: 14px;
+    right: 14px;
+    padding: 8px 14px;
+    font-size: 14px;
   }
 
   .airplane-tickets-row-arrow {
@@ -171,20 +209,27 @@
 
 @media screen and (max-width: 430px) {
   .airplane-tickets-row-viewport-wrap {
-    padding-left: 10px;
+    padding-left: 8px;
   }
 
   .airplane-tickets-row-viewport {
-    padding-right: 10px;
+    padding-right: 8px;
   }
 
   .airplane-tickets-row-track {
-    gap: 10px;
-    padding-right: 10px;
+    gap: 8px;
+    padding-right: 8px;
   }
 
   .airplane-tickets-row-item {
-    flex: 0 0 calc(100% - 22px);
+    flex: 0 0 calc(100% - 10px);
+  }
+
+  .airplane-tickets-row-price-badge {
+    top: 12px;
+    right: 12px;
+    padding: 8px 13px;
+    font-size: 13px;
   }
 
   .airplane-tickets-row-arrow.left {

@@ -7,6 +7,7 @@ import RecommendedPosts from "../../molecules/RecommendedPosts";
 import AirplaneTicketsHero from "../../atoms/AirplaneTicketsHero/AirplaneTicketsHero";
 import AirplaneTicketsPromoCard from "../../atoms/AirplaneTicketsPromoCard/AirplaneTicketsPromoCard";
 import AirplaneTicketsCarouselRow from "../../atoms/AirplaneTicketsCarouselRow/AirplaneTicketsCarouselRow";
+import AirplaneTicketsNewsletterCallToAction from "../../molecules/AirplaneTicketsNewsletterCallToAction/AirplaneTicketsNewsletterCallToAction";
 
 const PROMO_IMAGE_URL =
   "https://live.staticflickr.com/65535/54231796537_ee931fd0bb_b.jpg";
@@ -36,6 +37,12 @@ type AirplaneTicketsProps = {
   recommendedId: number | null;
 };
 
+type AirplaneTicketsSectionProps = {
+  title: string;
+  items: Article[];
+  cityGenitive?: string;
+};
+
 const AIRPLANE_TICKETS_ARTICLE_TYPE_ID = 2;
 
 const AIRPORT_NAMES: Record<string, string> = {
@@ -57,7 +64,6 @@ const AIRPORT_NAMES: Record<string, string> = {
   "Banja Luka": "Zračna luka Banja Luka",
 };
 
-// “iz Zagreba / iz Zadra / ...”
 const CITY_GENITIVE: Record<string, string> = {
   Zagreb: "Zagreba",
   Split: "Splita",
@@ -77,7 +83,6 @@ const CITY_GENITIVE: Record<string, string> = {
   "Banja Luka": "Banje Luke",
 };
 
-// HERO image per city (hardkodirano)
 const HERO_IMAGES: Record<string, string> = {
   Zagreb:
     "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Zagreb%20Airport.jpg?updatedAt=1777029689876",
@@ -112,7 +117,6 @@ const HERO_IMAGES: Record<string, string> = {
     "https://ik.imagekit.io/travEM/Aviokarte%20redizajn/Banja%20Luka%20Airport.jpg?updatedAt=1777029689385",
 };
 
-// Fallback da se ne desi da Image dobije prazan string
 const DEFAULT_HERO_IMAGE =
   HERO_IMAGES["Zagreb"] ||
   "https://divovzeyblkexoqlwiqy.supabase.co/storage/v1/object/public/Aviokarte%20redizajn/Zagreb%20Airport.jpg";
@@ -133,31 +137,45 @@ const isFarDestination = (ticket: Article) => {
   );
 };
 
+const AirplaneTicketsSection = ({
+  title,
+  items,
+  cityGenitive,
+}: AirplaneTicketsSectionProps) => {
+  if (items.length > 0) {
+    return <AirplaneTicketsCarouselRow title={title} items={items} />;
+  }
+
+  return (
+    <section className="airplane-tickets-section">
+      <h2 className="airplane-tickets-section-title">{title}</h2>
+
+      <AirplaneTicketsNewsletterCallToAction cityGenitive={cityGenitive} />
+    </section>
+  );
+};
+
 const AirplaneTickets = ({
   initialTickets,
   cityName,
   recommendedId,
 }: AirplaneTicketsProps) => {
-  // Format city name: capitalize each word
   const formattedCityName = cityName
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
 
-  // Naslov aerodroma
   const airportTitle =
     AIRPORT_NAMES[formattedCityName] ?? `Zračna luka ${formattedCityName}`;
 
-  // Subtitle s padežom (fallback: iz {City})
   const cityGenitive = CITY_GENITIVE[formattedCityName];
+
   const heroSubtitle = cityGenitive
     ? `Najnovije ponude i povoljni letovi iz ${cityGenitive}.`
     : `Najnovije ponude i povoljni letovi iz ${formattedCityName}.`;
 
-  // Hero slika po gradu (fallback: Zagreb)
   const heroImageUrl = HERO_IMAGES[formattedCityName] ?? DEFAULT_HERO_IMAGE;
 
-  // Split u 2 sekcije prema vrijednosti iz baze: Bliske / Daleke
   const { closeTickets, farTickets } = useMemo(() => {
     const tickets = (initialTickets ?? []).filter(isAirplaneTicketArticle);
 
@@ -172,14 +190,12 @@ const AirplaneTickets = ({
 
   return (
     <div className="airplane-tickets-parent-wrapper">
-      {/* HERO (slika + naslov + podnaslov u overlayu na VRHU) */}
       <AirplaneTicketsHero
         imageUrl={heroImageUrl}
         title={airportTitle}
         subtitle={heroSubtitle}
       />
 
-      {/* PROMO (statika ispod hero, zatamnjena slika + CTA button) */}
       <AirplaneTicketsPromoCard
         imageUrl={PROMO_IMAGE_URL}
         title={
@@ -194,20 +210,20 @@ const AirplaneTickets = ({
         href="/clanak/356"
       />
 
-      {/* SEKCIJE: Bliske / Daleke */}
       <div className="airplane-tickets-sections-wrapper">
-        <AirplaneTicketsCarouselRow
+        <AirplaneTicketsSection
           title="Bliske destinacije"
           items={closeTickets}
+          cityGenitive={cityGenitive}
         />
 
-        <AirplaneTicketsCarouselRow
+        <AirplaneTicketsSection
           title="Daleke destinacije"
           items={farTickets}
+          cityGenitive={cityGenitive}
         />
       </div>
 
-      {/* Povezani članci ostaju kao prije */}
       {recommendedId && <RecommendedPosts type="article" id={recommendedId} />}
     </div>
   );

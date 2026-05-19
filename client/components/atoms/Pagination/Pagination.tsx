@@ -3,15 +3,24 @@ import "./Pagination.scss";
 import { FC } from "react";
 import { PaginationProps } from "../../../common/types";
 
-const Pagination: FC<PaginationProps> = ({
+type ExtendedPaginationProps = PaginationProps & {
+  scrollToTop?: boolean;
+};
+
+const Pagination: FC<ExtendedPaginationProps> = ({
   setPage,
   onPageChange,
   totalPages,
   currentPage,
+  scrollToTop = true,
 }) => {
   const handlePageClick = (event: { selected: number }) => {
-    window.scrollTo({ top: 0, behavior: "instant" });
+    if (scrollToTop) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+
     const pageHandler = onPageChange || setPage;
+
     if (pageHandler) {
       pageHandler(event.selected + 1);
     }

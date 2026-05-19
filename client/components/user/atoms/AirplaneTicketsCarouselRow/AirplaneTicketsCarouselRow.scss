@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  scroll-margin-top: 84px;
 }
 
 .airplane-tickets-row-header {
@@ -167,23 +168,52 @@
   font-weight: 600;
 }
 
+.airplane-tickets-row-mobile-pagination {
+  display: none;
+}
+
 @media screen and (max-width: 767px) {
+  .airplane-tickets-row {
+    gap: 12px;
+  }
+
+  .airplane-tickets-row-header {
+    padding: 0;
+
+    h2 {
+      font-size: 26px;
+      line-height: 1.15;
+    }
+  }
+
   .airplane-tickets-row-viewport-wrap {
-    padding-left: 10px;
+    padding-left: 0;
     padding-right: 0;
   }
 
   .airplane-tickets-row-viewport {
-    padding-right: 10px;
+    overflow: visible;
+    padding: 0;
+    scroll-snap-type: none;
+    touch-action: pan-y;
+    user-select: auto;
   }
 
   .airplane-tickets-row-track {
-    gap: 10px;
-    padding-right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-right: 0;
   }
 
   .airplane-tickets-row-item {
-    flex: 0 0 calc(100% - 14px);
+    flex: none;
+    width: 100%;
+    scroll-snap-align: none;
+  }
+
+  .airplane-tickets-row-arrow {
+    display: none;
   }
 
   .airplane-tickets-row-price-badge {
@@ -193,36 +223,45 @@
     font-size: 14px;
   }
 
-  .airplane-tickets-row-arrow {
-    width: 42px;
-    height: 42px;
-  }
+  .airplane-tickets-row-mobile-pagination {
+    display: block;
+    margin-top: 2px;
 
-  .airplane-tickets-row-arrow.left {
-    left: -2px;
-  }
+    .pagination-wrapper {
+      margin-top: 0;
+    }
 
-  .airplane-tickets-row-arrow.right {
-    right: 2px;
+    .pagination {
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .page-item,
+    .page-item-carrot {
+      min-width: 34px;
+      height: 34px;
+    }
+
+    .page-link,
+    .page-link-previous,
+    .page-link-next {
+      min-width: 34px;
+      height: 34px;
+      font-size: 13px;
+    }
   }
 }
 
 @media screen and (max-width: 430px) {
-  .airplane-tickets-row-viewport-wrap {
-    padding-left: 8px;
-  }
-
-  .airplane-tickets-row-viewport {
-    padding-right: 8px;
+  .airplane-tickets-row-header {
+    h2 {
+      font-size: 25px;
+    }
   }
 
   .airplane-tickets-row-track {
-    gap: 8px;
-    padding-right: 8px;
-  }
-
-  .airplane-tickets-row-item {
-    flex: 0 0 calc(100% - 10px);
+    gap: 12px;
   }
 
   .airplane-tickets-row-price-badge {
@@ -230,14 +269,6 @@
     right: 12px;
     padding: 8px 13px;
     font-size: 13px;
-  }
-
-  .airplane-tickets-row-arrow.left {
-    left: 0;
-  }
-
-  .airplane-tickets-row-arrow.right {
-    right: 0;
   }
 }
 

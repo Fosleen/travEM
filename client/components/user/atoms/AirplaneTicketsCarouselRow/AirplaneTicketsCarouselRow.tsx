@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import HorizontalPostItemBig from "../HorizontalPostItemBig/HorizontalPostItemBig";
+import Pagination from "@/components/atoms/Pagination";
 import "./AirplaneTicketsCarouselRow.scss";
 
 type Item = any;
@@ -16,6 +17,9 @@ const PRICE_PATTERNS = [
   /za\s+(\d{1,4}(?:[.,]\d{1,2})?)\s*€/i,
 ];
 
+const DESKTOP_VISIBLE_ITEMS = 6;
+const MOBILE_ITEMS_PER_PAGE = 3;
+
 const extractPriceLabel = (title?: string) => {
   if (!title) return null;
 
@@ -28,16 +32,39 @@ const extractPriceLabel = (title?: string) => {
   return null;
 };
 
+const getIsMobileLayout = () => {
+  if (typeof window === "undefined") return false;
+
+  return window.matchMedia("(max-width: 767px)").matches;
+};
+
 export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
-  const data = useMemo(() => (items ?? []).slice(0, 6), [items]);
   const viewportRef = useRef<HTMLDivElement | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
 
   const GAP = 16;
   const DRAG_THRESHOLD_PX = 10;
 
+  const [isMobileLayout, setIsMobileLayout] = useState(false);
+  const [mobilePage, setMobilePage] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
   const [canLeft, setCanLeft] = useState(false);
   const [canRight, setCanRight] = useState(false);
+
+  const allItems = useMemo(() => items ?? [], [items]);
+
+  const mobileTotalPages = Math.ceil(allItems.length / MOBILE_ITEMS_PER_PAGE);
+
+  const data = useMemo(() => {
+    if (isMobileLayout) {
+      const startIndex = (mobilePage - 1) * MOBILE_ITEMS_PER_PAGE;
+      const endIndex = startIndex + MOBILE_ITEMS_PER_PAGE;
+
+      return allItems.slice(startIndex, endIndex);
+    }
+
+    return allItems.slice(0, DESKTOP_VISIBLE_ITEMS);
+  }, [allItems, isMobileLayout, mobilePage]);
 
   const dragRef = useRef({
     active: false,
@@ -53,6 +80,34 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
   const clickGuardRef = useRef({
     cancelClick: false,
   });
+
+  useEffect(() => {
+    const updateLayout = () => {
+      setIsMobileLayout(getIsMobileLayout());
+    };
+
+    updateLayout();
+
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", updateLayout);
+    } else {
+      mediaQuery.addListener(updateLayout);
+    }
+
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener("change", updateLayout);
+      } else {
+        mediaQuery.removeListener(updateLayout);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    setMobilePage(1);
+  }, [items]);
 
   const getItemWidth = () => {
     const v = viewportRef.current;
@@ -75,7 +130,12 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
 
   const updateArrows = () => {
     const v = viewportRef.current;
-    if (!v) return;
+
+    if (!v || isMobileLayout) {
+      setCanLeft(false);
+      setCanRight(false);
+      return;
+    }
 
     const maxScroll = v.scrollWidth - v.clientWidth;
     const left = v.scrollLeft;
@@ -100,11 +160,11 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
       v.removeEventListener("scroll", onScroll);
       ro.disconnect();
     };
-  }, [data.length]);
+  }, [data.length, isMobileLayout]);
 
   const snapToNearest = () => {
     const v = viewportRef.current;
-    if (!v) return;
+    if (!v || isMobileLayout) return;
 
     const step = getStepPx();
     if (!step) return;
@@ -115,19 +175,34 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
 
   const goLeft = () => {
     const v = viewportRef.current;
-    if (!v) return;
+    if (!v || isMobileLayout) return;
+
     const step = getStepPx();
     v.scrollBy({ left: -step, behavior: "smooth" });
   };
 
   const goRight = () => {
     const v = viewportRef.current;
-    if (!v) return;
+    if (!v || isMobileLayout) return;
+
     const step = getStepPx();
     v.scrollBy({ left: step, behavior: "smooth" });
   };
 
+  const handleMobilePageChange = (newPage: number) => {
+    setMobilePage(newPage);
+
+    requestAnimationFrame(() => {
+      sectionRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  };
+
   const startDrag = (clientX: number, pointerId = -1, isTouch = false) => {
+    if (isMobileLayout) return;
+
     const v = viewportRef.current;
     if (!v) return;
 
@@ -147,6 +222,8 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
     clientX: number,
     e?: React.PointerEvent | React.TouchEvent
   ) => {
+    if (isMobileLayout) return;
+
     const v = viewportRef.current;
     if (!v || !dragRef.current.active) return;
 
@@ -166,6 +243,11 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
   };
 
   const finishDrag = (e?: React.SyntheticEvent) => {
+    if (isMobileLayout) {
+      setIsDragging(false);
+      return;
+    }
+
     const v = viewportRef.current;
     if (!v || !dragRef.current.active) return;
 
@@ -189,12 +271,12 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
   };
 
   const onPointerDownCapture = (e: React.PointerEvent) => {
-    if (e.pointerType === "touch") return;
+    if (isMobileLayout || e.pointerType === "touch") return;
     startDrag(e.clientX, e.pointerId, false);
   };
 
   const onPointerMoveCapture = (e: React.PointerEvent) => {
-    if (e.pointerType === "touch") return;
+    if (isMobileLayout || e.pointerType === "touch") return;
     if (!dragRef.current.active || e.pointerId !== dragRef.current.pointerId)
       return;
 
@@ -226,25 +308,27 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
   };
 
   const endPointerDrag = (e: React.PointerEvent) => {
-    if (e.pointerType === "touch") return;
+    if (isMobileLayout || e.pointerType === "touch") return;
     finishDrag(e);
   };
 
   const onTouchStartCapture = (e: React.TouchEvent) => {
-    if (!e.touches.length) return;
+    if (isMobileLayout || !e.touches.length) return;
     startDrag(e.touches[0].clientX, -1, true);
   };
 
   const onTouchMoveCapture = (e: React.TouchEvent) => {
-    if (!dragRef.current.active || !e.touches.length) return;
+    if (isMobileLayout || !dragRef.current.active || !e.touches.length) return;
     moveDrag(e.touches[0].clientX, e);
   };
 
   const onTouchEndCapture = (e: React.TouchEvent) => {
+    if (isMobileLayout) return;
     finishDrag(e);
   };
 
   const onTouchCancelCapture = (e: React.TouchEvent) => {
+    if (isMobileLayout) return;
     finishDrag(e);
   };
 
@@ -271,7 +355,12 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
   }
 
   return (
-    <section className="airplane-tickets-row">
+    <section
+      ref={sectionRef}
+      className={`airplane-tickets-row ${
+        isMobileLayout ? "is-mobile-list" : ""
+      }`}
+    >
       <div className="airplane-tickets-row-header">
         <h2>{title}</h2>
       </div>
@@ -341,6 +430,17 @@ export default function AirplaneTicketsCarouselRow({ title, items }: Props) {
           →
         </button>
       </div>
+
+      {isMobileLayout && mobileTotalPages > 1 && (
+        <div className="airplane-tickets-row-mobile-pagination">
+          <Pagination
+            totalPages={mobileTotalPages}
+            currentPage={mobilePage}
+            onPageChange={handleMobilePageChange}
+            scrollToTop={false}
+          />
+        </div>
+      )}
     </section>
   );
 }

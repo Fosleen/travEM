@@ -164,94 +164,145 @@ const CountryLanguage: FC<CountryLanguageProps> = ({ countryId }) => {
   }
 
   return (
-    <section className="country-language-container">
-      <div className="country-language-intro">
-        <div className="country-language-kicker">Jezik na putu</div>
+    <>
+      <section className="country-language-container country-language-desktop">
+        <div className="country-language-intro">
+          <div className="country-language-kicker">Jezik na putu</div>
 
-        <div className="country-language-text">
-          <h2>{languageData.language_name} za putnike</h2>
+          <div className="country-language-text">
+            <h2>{languageData.language_name} za putnike</h2>
 
-          <p>
-            6 osnovnih riječi koje će ti pomoći u svakodnevnim situacijama.
-          </p>
+            <p>
+              6 osnovnih riječi koje će ti pomoći u svakodnevnim situacijama.
+            </p>
+          </div>
+
+          <div className="country-language-side-note">
+            <span className="country-language-side-note-dot" />
+            <p>Lokalci cijene svaki trud, čak i kad znaš samo par riječi!</p>
+          </div>
         </div>
 
-        <div className="country-language-side-note">
-          <span className="country-language-side-note-dot" />
-          <p>Lokalci cijene svaki trud, čak i kad znaš samo par riječi!</p>
+        <div className="country-language-content">
+          <div className="country-language-phrases">
+            {sortedPhrases.map((phraseItem) => {
+              const phraseKey = getPhraseKey(phraseItem);
+
+              return (
+                <article
+                  className="country-language-card"
+                  key={phraseKey}
+                  tabIndex={0}
+                >
+                  <div className="country-language-card-number">
+                    {phraseItem.order_index}
+                  </div>
+
+                  <div className="country-language-card-body">
+                    <p className="country-language-card-label">
+                      {PHRASE_LABELS[phraseItem.order_index]}
+                    </p>
+
+                    <div className="country-language-card-phrase-wrap">
+                      <h3
+                        ref={(element) => {
+                          phraseRefs.current[phraseKey] = element;
+                        }}
+                        style={
+                          phraseFontSizes[phraseKey]
+                            ? { fontSize: `${phraseFontSizes[phraseKey]}px` }
+                            : undefined
+                        }
+                        title={phraseItem.phrase}
+                      >
+                        {phraseItem.phrase}
+                      </h3>
+                    </div>
+
+                    {phraseItem.pronunciation && (
+                      <div className="country-language-card-pronunciation-wrap">
+                        <p
+                          ref={(element) => {
+                            pronunciationRefs.current[phraseKey] = element;
+                          }}
+                          className="country-language-card-pronunciation"
+                          style={
+                            pronunciationFontSizes[phraseKey]
+                              ? {
+                                  fontSize: `${pronunciationFontSizes[phraseKey]}px`,
+                                }
+                              : undefined
+                          }
+                          title={phraseItem.pronunciation}
+                        >
+                          [{phraseItem.pronunciation}]
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="country-language-card-line" />
+                </article>
+              );
+            })}
+          </div>
+
+          <div className="country-language-note">
+            Izgovor je napisan onako kako se otprilike čita, ne mora biti
+            savršeno!
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div className="country-language-content">
-        <div className="country-language-phrases">
-          {sortedPhrases.map((phraseItem) => {
-            const phraseKey = getPhraseKey(phraseItem);
+      <section className="country-language-mobile">
+        <div className="country-language-mobile-header">
+          <h2>
+            {languageData.language_name} <span>za putnike</span>
+          </h2>
+        </div>
 
-            return (
+        <div className="country-language-mobile-content">
+          <div className="country-language-mobile-phrases">
+            {sortedPhrases.map((phraseItem) => (
               <article
-                className="country-language-card"
-                key={phraseKey}
+                className="country-language-mobile-row"
+                key={`${phraseItem.id || "phrase"}-${phraseItem.order_index}`}
                 tabIndex={0}
               >
-                <div className="country-language-card-number">
+                <div className="country-language-mobile-row-number">
                   {phraseItem.order_index}
                 </div>
 
-                <div className="country-language-card-body">
-                  <p className="country-language-card-label">
-                    {PHRASE_LABELS[phraseItem.order_index]}
-                  </p>
-
-                  <div className="country-language-card-phrase-wrap">
-                    <h3
-                      ref={(element) => {
-                        phraseRefs.current[phraseKey] = element;
-                      }}
-                      style={
-                        phraseFontSizes[phraseKey]
-                          ? { fontSize: `${phraseFontSizes[phraseKey]}px` }
-                          : undefined
-                      }
-                      title={phraseItem.phrase}
-                    >
-                      {phraseItem.phrase}
-                    </h3>
-                  </div>
-
-                  {phraseItem.pronunciation && (
-                    <div className="country-language-card-pronunciation-wrap">
-                      <p
-                        ref={(element) => {
-                          pronunciationRefs.current[phraseKey] = element;
-                        }}
-                        className="country-language-card-pronunciation"
-                        style={
-                          pronunciationFontSizes[phraseKey]
-                            ? {
-                                fontSize: `${pronunciationFontSizes[phraseKey]}px`,
-                              }
-                            : undefined
-                        }
-                        title={phraseItem.pronunciation}
-                      >
-                        [{phraseItem.pronunciation}]
-                      </p>
-                    </div>
-                  )}
+                <div className="country-language-mobile-row-label">
+                  {PHRASE_LABELS[phraseItem.order_index]}
                 </div>
 
-                <div className="country-language-card-line" />
-              </article>
-            );
-          })}
-        </div>
+                <div className="country-language-mobile-row-phrase">
+                  {phraseItem.phrase}
+                </div>
 
-        <div className="country-language-note">
-          Izgovor je napisan onako kako se otprilike čita, ne mora biti
-          savršeno!
+                {phraseItem.pronunciation && (
+                  <div className="country-language-mobile-row-pronunciation">
+                    [{phraseItem.pronunciation}]
+                  </div>
+                )}
+              </article>
+            ))}
+          </div>
+
+          <div className="country-language-mobile-note">
+            <span
+              className="country-language-mobile-note-icon"
+              aria-hidden="true"
+            >
+              ♡
+            </span>
+
+            <p>Lokalci cijene svaki trud, čak i kad znaš samo par riječi!</p>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 

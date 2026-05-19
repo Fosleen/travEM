@@ -28,31 +28,37 @@ const TIPS_SCROLL_STORAGE_KEY = "tips-and-tricks-scroll-y";
 const tipsMenuItems = [
   {
     title: "Pakiranje",
+    displayTitle: "Pakiranje",
     slugTitle: "pakiranje",
     icon: "/images/luggage-icon.png",
   },
   {
     title: "Let avionom",
+    displayTitle: "Let avionom",
     slugTitle: "let-avionom",
     icon: "/images/airport-icon.png",
   },
   {
     title: "Organizacija puta",
+    displayTitle: "Novosti i organizacija puta",
     slugTitle: "organizacija-puta",
     icon: "/images/travel-org-icon.png",
   },
   {
     title: "Aplikacije",
+    displayTitle: "Aplikacije",
     slugTitle: "aplikacije",
     icon: "/images/travel-app-icon.png",
   },
   {
     title: "Smještaj",
+    displayTitle: "Smještaj",
     slugTitle: "smjestaj",
     icon: "/images/bed-icon.png",
   },
   {
     title: "Revolut",
+    displayTitle: "Revolut",
     slugTitle: "revolut",
     icon: "/images/cards-icon.png",
   },
@@ -62,13 +68,16 @@ const tipVisualMap: Record<
   string,
   {
     icon: string;
+    heroImage: string;
     modifier: string;
     eyebrow: string;
     intro: string;
+    displayTitle?: string;
   }
 > = {
   pakiranje: {
     icon: "/images/luggage-icon.png",
+    heroImage: "/images/TipsAndTricks/Pakiranje.png",
     modifier: "packing",
     eyebrow: "Pametno spremanje",
     intro:
@@ -76,6 +85,7 @@ const tipVisualMap: Record<
   },
   "let-avionom": {
     icon: "/images/airport-icon.png",
+    heroImage: "/images/TipsAndTricks/Let avionom.png",
     modifier: "flight",
     eyebrow: "Bez stresa u zraku",
     intro:
@@ -83,13 +93,16 @@ const tipVisualMap: Record<
   },
   "organizacija-puta": {
     icon: "/images/travel-org-icon.png",
+    heroImage: "/images/TipsAndTricks/Organizacija_puta.png",
     modifier: "organization",
     eyebrow: "Planiranje putovanja",
+    displayTitle: "Novosti i organizacija puta",
     intro:
       "Savjeti, novosti, alati i ideje koje vam mogu pomoći da putovanje isplanirate jednostavnije, pametnije i povoljnije.",
   },
   aplikacije: {
     icon: "/images/travel-app-icon.png",
+    heroImage: "/images/TipsAndTricks/Aplikacije.png",
     modifier: "apps",
     eyebrow: "Digitalni alati",
     intro:
@@ -97,6 +110,7 @@ const tipVisualMap: Record<
   },
   smjestaj: {
     icon: "/images/bed-icon.png",
+    heroImage: "/images/TipsAndTricks/Smjestaj.png",
     modifier: "stay",
     eyebrow: "Pametniji booking",
     intro:
@@ -104,6 +118,7 @@ const tipVisualMap: Record<
   },
   revolut: {
     icon: "/images/cards-icon.png",
+    heroImage: "/images/TipsAndTricks/Revolut.png",
     modifier: "revolut",
     eyebrow: "Novac na putu",
     intro:
@@ -367,6 +382,8 @@ const TipsAndTricks = ({
     ? getReadableTipTitle(selectedArticleType)
     : "";
 
+  const displayedSelectedTitle = currentTipVisual.displayTitle || selectedTitle;
+
   const introText =
     currentTipVisual.intro || selectedArticleType?.description || "";
 
@@ -449,19 +466,27 @@ const TipsAndTricks = ({
         <section
           className={`tips-and-tricks-hero tips-and-tricks-hero-${currentTipVisual.modifier}`}
         >
-          <div className="tips-and-tricks-hero-content">
-            <div className="tips-and-tricks-hero-text">
-              <span className="tips-and-tricks-hero-eyebrow">
-                {currentTipVisual.eyebrow}
-              </span>
-              <h1>{selectedTitle}</h1>
-              <h2>{selectedArticleType.description}</h2>
-              {introText && <p>{introText}</p>}
-            </div>
+          <div className="tips-and-tricks-hero-card">
+            <img
+              className="tips-and-tricks-hero-image"
+              src={currentTipVisual.heroImage}
+              alt=""
+            />
 
-            <div className="tips-and-tricks-hero-visual">
-              <div className="tips-and-tricks-hero-visual-card">
-                <img src={currentTipVisual.icon} alt="" />
+            <div className="tips-and-tricks-hero-overlay" />
+
+            <div className="tips-and-tricks-hero-content">
+              <div className="tips-and-tricks-hero-text">
+                <span className="tips-and-tricks-hero-eyebrow">
+                  {currentTipVisual.eyebrow}
+                </span>
+                <h1>{displayedSelectedTitle}</h1>
+                <h2>{selectedArticleType.description}</h2>
+                {introText && <p>{introText}</p>}
+              </div>
+
+              <div className="tips-and-tricks-hero-line" aria-hidden="true">
+                <span>✈</span>
               </div>
             </div>
           </div>
@@ -483,7 +508,7 @@ const TipsAndTricks = ({
               <span className="tips-and-tricks-chip-icon">
                 <img src={item.icon} alt="" />
               </span>
-              <span>{item.title}</span>
+              <span>{item.displayTitle || item.title}</span>
             </button>
           );
         })}
@@ -514,20 +539,23 @@ const TipsAndTricks = ({
                     <div className="tips-and-tricks-image-placeholder" />
                   )}
 
-                  <div className="tips-and-tricks-featured-overlay">
-                    <span>Istaknuto</span>
-                    <h3>{getArticleTitle(featuredArticle)}</h3>
+                  <span className="tips-and-tricks-featured-label">
+                    Istaknuto
+                  </span>
+                </div>
 
-                    {getArticleDescription(featuredArticle) && (
-                      <p>{getArticleDescription(featuredArticle)}</p>
-                    )}
+                <div className="tips-and-tricks-featured-body">
+                  <h3>{getArticleTitle(featuredArticle)}</h3>
 
-                    {featuredDateInfo.value && (
-                      <div className="tips-and-tricks-featured-meta">
-                        <span>{formatArticleDate(featuredDateInfo.value)}</span>
-                      </div>
-                    )}
-                  </div>
+                  {getArticleDescription(featuredArticle) && (
+                    <p>{getArticleDescription(featuredArticle)}</p>
+                  )}
+
+                  {featuredDateInfo.value && (
+                    <div className="tips-and-tricks-featured-meta">
+                      <span>{formatArticleDate(featuredDateInfo.value)}</span>
+                    </div>
+                  )}
                 </div>
               </Link>
 
@@ -577,7 +605,7 @@ const TipsAndTricks = ({
           {otherArticles.length > 0 && (
             <section className="tips-and-tricks-section">
               <div className="tips-and-tricks-section-header">
-                <h2>Još savjeta iz rubrike {selectedTitle}</h2>
+                <h2>Još savjeta iz rubrike {displayedSelectedTitle}</h2>
               </div>
 
               <div
@@ -637,6 +665,7 @@ const TipsAndTricks = ({
           totalPages={totalPages}
           currentPage={currentPage}
           onPageChange={handlePageChange}
+          scrollToTop={false}
         />
       )}
 

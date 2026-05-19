@@ -15,8 +15,8 @@ const Pagination: FC<ExtendedPaginationProps> = ({
   scrollToTop = true,
 }) => {
   const handlePageClick = (event: { selected: number }) => {
-    if (scrollToTop) {
-      window.scrollTo({ top: 0, behavior: "instant" });
+    if (scrollToTop && typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "auto" });
     }
 
     const pageHandler = onPageChange || setPage;

@@ -20,6 +20,10 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
   const flagUrl =
     (data as any)?.country?.flag_image_url || (data as any)?.flag_image_url;
 
+  const formattedDate = data?.date_written
+    ? formatDate(new Date(data.date_written))
+    : null;
+
   return (
     <Link href={href}>
       <div
@@ -46,11 +50,13 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
         </div>
 
         <div className="horizontal-post-item-big-text-container">
-          <h4>{type == "article" ? data?.title : data?.name}</h4>
+          <h4>{type === "article" ? data?.title : data?.name}</h4>
+
           <div className="horizontal-post-item-big-inner-text-container">
-            <p>{data?.subtitle} </p>
-            {!stretched && hasDate && data?.date_written && (
-              <p>{formatDate(data?.date_written)}</p>
+            <p>{data?.subtitle}</p>
+
+            {!stretched && hasDate && formattedDate && (
+              <p>{formattedDate}</p>
             )}
           </div>
         </div>

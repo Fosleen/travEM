@@ -1,7 +1,13 @@
 // client/components/user/molecules/BestTimeToVisitPlace/BestTimeToVisitPlace.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import {
+  CSSProperties,
+  KeyboardEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { apiUrl } from "@/utils/api";
 import "./BestTimeToVisitPlace.scss";
 
@@ -200,6 +206,31 @@ function ratingClass(r: string) {
   return "poor";
 }
 
+function splitNote(note: string) {
+  const trimmed = note.trim();
+
+  if (!trimmed) {
+    return {
+      lead: "",
+      rest: "",
+    };
+  }
+
+  const firstSentenceMatch = trimmed.match(/^(.+?[.!?])\s*(.*)$/);
+
+  if (!firstSentenceMatch) {
+    return {
+      lead: trimmed,
+      rest: "",
+    };
+  }
+
+  return {
+    lead: firstSentenceMatch[1],
+    rest: firstSentenceMatch[2],
+  };
+}
+
 export default function BestTimeToVisitPlace({
   placeId,
   placeNameDative,
@@ -207,6 +238,7 @@ export default function BestTimeToVisitPlace({
   const [placeClimate, setPlaceClimate] = useState<ApiBestTimePlace | null>(
     null
   );
+  const [activeMonthKey, setActiveMonthKey] = useState<MonthKey | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -259,6 +291,10 @@ export default function BestTimeToVisitPlace({
     return () => {
       isMounted = false;
     };
+  }, [placeId]);
+
+  useEffect(() => {
+    setActiveMonthKey(null);
   }, [placeId]);
 
   const computed = useMemo(() => {
@@ -323,6 +359,19 @@ export default function BestTimeToVisitPlace({
     placeClimate.place?.name ||
     "";
 
+  const noteParts = placeClimate.note ? splitNote(placeClimate.note) : null;
+
+  const handleMonthKeyDown = (
+    event: KeyboardEvent<HTMLDivElement>,
+    month: MonthKey
+  ) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+
+    event.preventDefault();
+
+    setActiveMonthKey((current) => (current === month ? null : month));
+  };
+
   return (
     <section className="btv-place">
       <div className="btv-place-header">
@@ -350,31 +399,56 @@ export default function BestTimeToVisitPlace({
         </div>
       </div>
 
-      {placeClimate.note && (
-        <div className="btv-place-note">{placeClimate.note}</div>
+      {noteParts && (
+        <div className="btv-place-note">
+          <div className="btv-place-note-badge" aria-hidden="true">
+            <span>★</span>
+          </div>
+
+          <div className="btv-place-note-content">
+            <p className="btv-place-note-lead">{noteParts.lead}</p>
+
+            {noteParts.rest && (
+              <p className="btv-place-note-rest">{noteParts.rest}</p>
+            )}
+          </div>
+        </div>
       )}
 
       <div className="btv-place-grid" role="list">
         {computed.months.map((m) => (
           <div
             key={m.month}
-            className={`btv-place-month ${ratingClass(m.rating)}`}
+            className={`btv-place-month ${ratingClass(m.rating)} ${
+              activeMonthKey === m.month ? "is-active" : ""
+            }`}
             role="listitem"
+            tabIndex={0}
+            onClick={() =>
+              setActiveMonthKey((current) =>
+                current === m.month ? null : m.month
+              )
+            }
+            onKeyDown={(event) => handleMonthKeyDown(event, m.month)}
           >
+            <div className="btv-place-month-label">{MONTH_LABEL[m.month]}</div>
+
             <div className="btv-place-month-icon" aria-hidden="true">
               {ICON[m.icon]}
             </div>
 
             <div className="btv-place-month-temp">{m.tempC}°C</div>
 
-            <div className="btv-place-bar-wrap">
+            <div className="btv-place-bar-wrap" aria-hidden="true">
               <div
                 className="btv-place-bar"
-                style={{ height: `${m.heightPct}%` }}
+                style={
+                  {
+                    "--btv-place-bar-size": `${m.heightPct}%`,
+                  } as CSSProperties
+                }
               />
             </div>
-
-            <div className="btv-place-month-label">{MONTH_LABEL[m.month]}</div>
           </div>
         ))}
       </div>

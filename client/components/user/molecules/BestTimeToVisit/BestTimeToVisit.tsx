@@ -1,7 +1,7 @@
 // client/components/user/molecules/BestTimeToVisit/BestTimeToVisit.tsx
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { CSSProperties, KeyboardEvent, useEffect, useMemo, useState } from "react";
 import { apiUrl } from "@/utils/api";
 import { getCountryAccusative } from "@/utils/countryGrammar";
 import "./BestTimeToVisit.scss";
@@ -211,12 +211,38 @@ function normalizeSlug(slug: string) {
   return decodeURIComponent(slug).toLowerCase();
 }
 
+function splitNote(note: string) {
+  const trimmed = note.trim();
+
+  if (!trimmed) {
+    return {
+      lead: "",
+      rest: "",
+    };
+  }
+
+  const firstSentenceMatch = trimmed.match(/^(.+?[.!?])\s*(.*)$/);
+
+  if (!firstSentenceMatch) {
+    return {
+      lead: trimmed,
+      rest: "",
+    };
+  }
+
+  return {
+    lead: firstSentenceMatch[1],
+    rest: firstSentenceMatch[2],
+  };
+}
+
 export default function BestTimeToVisit({ countrySlug, countryId }: Props) {
   const normalizedSlug = normalizeSlug(countrySlug);
 
   const [countryClimate, setCountryClimate] =
     useState<ApiCountryBestTime | null>(null);
   const [activeRegionId, setActiveRegionId] = useState<string | null>(null);
+  const [activeMonthKey, setActiveMonthKey] = useState<MonthKey | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -269,6 +295,10 @@ export default function BestTimeToVisit({ countrySlug, countryId }: Props) {
       isMounted = false;
     };
   }, [countryId, normalizedSlug]);
+
+  useEffect(() => {
+    setActiveMonthKey(null);
+  }, [activeRegionId]);
 
   const region = useMemo(() => {
     if (!countryClimate?.regions || countryClimate.regions.length === 0) {
@@ -356,6 +386,19 @@ export default function BestTimeToVisit({ countrySlug, countryId }: Props) {
     (a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0)
   );
 
+  const noteParts = region.note ? splitNote(region.note) : null;
+
+  const handleMonthKeyDown = (
+    event: KeyboardEvent<HTMLDivElement>,
+    month: MonthKey
+  ) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+
+    event.preventDefault();
+
+    setActiveMonthKey((current) => (current === month ? null : month));
+  };
+
   return (
     <section className="btv">
       <div className="btv-header">
@@ -400,26 +443,54 @@ export default function BestTimeToVisit({ countrySlug, countryId }: Props) {
         </div>
       )}
 
-      {region.note && <div className="btv-note">{region.note}</div>}
+      {noteParts && (
+        <div className="btv-note">
+          <div className="btv-note-badge" aria-hidden="true">
+            <span>★</span>
+          </div>
+
+          <div className="btv-note-content">
+            <p className="btv-note-lead">{noteParts.lead}</p>
+
+            {noteParts.rest && <p className="btv-note-rest">{noteParts.rest}</p>}
+          </div>
+        </div>
+      )}
 
       <div className="btv-grid" role="list">
         {computed.months.map((m) => (
           <div
             key={m.month}
-            className={`btv-month ${ratingClass(m.rating)}`}
+            className={`btv-month ${ratingClass(m.rating)} ${
+              activeMonthKey === m.month ? "is-active" : ""
+            }`}
             role="listitem"
+            tabIndex={0}
+            onClick={() =>
+              setActiveMonthKey((current) =>
+                current === m.month ? null : m.month
+              )
+            }
+            onKeyDown={(event) => handleMonthKeyDown(event, m.month)}
           >
+            <div className="btv-month-label">{MONTH_LABEL[m.month]}</div>
+
             <div className="btv-month-icon" aria-hidden="true">
               {ICON[m.icon]}
             </div>
 
             <div className="btv-month-temp">{m.tempC}°C</div>
 
-            <div className="btv-bar-wrap">
-              <div className="btv-bar" style={{ height: `${m.heightPct}%` }} />
+            <div className="btv-bar-wrap" aria-hidden="true">
+              <div
+                className="btv-bar"
+                style={
+                  {
+                    "--btv-bar-size": `${m.heightPct}%`,
+                  } as CSSProperties
+                }
+              />
             </div>
-
-            <div className="btv-month-label">{MONTH_LABEL[m.month]}</div>
           </div>
         ))}
       </div>

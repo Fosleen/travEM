@@ -3,12 +3,9 @@
 import Link from "next/link";
 import "./MainCountryPost.scss";
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import Lottie, { type LottieRefCurrentProps } from "lottie-react";
 import mainPostIconAnimation from "@/public/lottie/main-post-icon.json";
-
-const EXTENDED_PREVIEW_MIN_HEIGHT = 520;
-const DESKTOP_BREAKPOINT = 1024;
 
 const getArticleSections = (article: any) => {
   return (
@@ -37,38 +34,8 @@ const getSectionIcon = (section: any) => {
 };
 
 const MainCountryPost = ({ article }: any) => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
   const lottieRef = useRef<LottieRefCurrentProps | null>(null);
   const savedFrameRef = useRef(0);
-
-  const [canShowExtendedPreview, setCanShowExtendedPreview] = useState(false);
-
-  useEffect(() => {
-    const container = containerRef.current;
-
-    if (!container || typeof window === "undefined") return;
-
-    const updatePreviewMode = () => {
-      const containerHeight = container.getBoundingClientRect().height;
-      const isDesktop = window.innerWidth >= DESKTOP_BREAKPOINT;
-
-      setCanShowExtendedPreview(
-        isDesktop && containerHeight >= EXTENDED_PREVIEW_MIN_HEIGHT
-      );
-    };
-
-    updatePreviewMode();
-
-    const resizeObserver = new ResizeObserver(updatePreviewMode);
-    resizeObserver.observe(container);
-
-    window.addEventListener("resize", updatePreviewMode);
-
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener("resize", updatePreviewMode);
-    };
-  }, []);
 
   const previewSections = useMemo(() => {
     const sections = getArticleSections(article);
@@ -85,8 +52,8 @@ const MainCountryPost = ({ article }: any) => {
         href: `/clanak/${article.id}#odlomak-${index}`,
       }))
       .filter((section: any) => section.title)
-      .slice(0, canShowExtendedPreview ? 8 : 4);
-  }, [article, canShowExtendedPreview]);
+      .slice(0, 4);
+  }, [article]);
 
   const handleEnter = () => {
     const lottie = lottieRef.current;
@@ -127,58 +94,55 @@ const MainCountryPost = ({ article }: any) => {
 
   return (
     <div
-      ref={containerRef}
-      className={`main-country-post-container ${
-        canShowExtendedPreview ? "has-extended-preview" : ""
-      }`}
+      className="main-country-post-container"
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
     >
-      <div className="main-country-post-bg-image-container">
-        <Image
-          src={article.main_image_url}
-          alt={`${article.title} background`}
-          width={4000}
-          height={2000}
-        />
-      </div>
+      <Link
+        href={`/clanak/${article.id}`}
+        className="main-country-post-main-link"
+        onFocus={handleEnter}
+        onBlur={handleLeave}
+      >
+        <div className="main-country-post-bg-image-container">
+          <Image
+            src={article.main_image_url}
+            alt={`${article.title} background`}
+            width={4000}
+            height={2000}
+          />
+        </div>
 
-      <div className="main-country-top-layer">
-        <Link
-          href={`/clanak/${article.id}`}
-          className="main-country-post-main-link"
-          onFocus={handleEnter}
-          onBlur={handleLeave}
-        >
-          <div className="main-country-post-top-image-container">
-            <img
-              src={article.main_image_url}
-              alt={`${article.title} post-image`}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              style={{ objectFit: "cover" }}
-            />
-          </div>
+        <div className="main-country-post-top-image-container">
+          <img
+            src={article.main_image_url}
+            alt={`${article.title} post-image`}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            style={{ objectFit: "cover" }}
+          />
+        </div>
 
-          <div className="main-country-icon-container">
-            <div className="main-country-icon-circle">
-              <div className="main-country-icon-lottie">
-                <Lottie
-                  lottieRef={lottieRef}
-                  animationData={mainPostIconAnimation}
-                  autoplay={false}
-                  loop={false}
-                  onComplete={handleComplete}
-                />
-              </div>
+        <div className="main-country-icon-container">
+          <div className="main-country-icon-circle">
+            <div className="main-country-icon-lottie">
+              <Lottie
+                lottieRef={lottieRef}
+                animationData={mainPostIconAnimation}
+                autoplay={false}
+                loop={false}
+                onComplete={handleComplete}
+              />
             </div>
           </div>
+        </div>
 
-          <div className="main-country-post-text-container">
-            {article.title}
-          </div>
-        </Link>
+        <div className="main-country-post-text-container">{article.title}</div>
+      </Link>
 
-        {previewSections.length > 0 && (
+      {previewSections.length > 0 && (
+        <div className="main-country-post-preview-card">
+          <h3>Vodič sadrži</h3>
+
           <div className="main-country-post-preview-row">
             {previewSections.map((section: any, index: number) => (
               <Link
@@ -200,11 +164,13 @@ const MainCountryPost = ({ article }: any) => {
                 <span className="main-country-post-preview-text">
                   {section.title}
                 </span>
+
+                <span className="main-country-post-preview-arrow">›</span>
               </Link>
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

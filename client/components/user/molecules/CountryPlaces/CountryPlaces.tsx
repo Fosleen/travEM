@@ -62,6 +62,11 @@ const CountryPlaces = ({ places = [], countryName }) => {
   const countryNameInGenitive = getCountryGenitive(countryName);
   const desktopRows = chunkPlacesForDesktop(places);
 
+  const getPlaceHref = (placeName) =>
+    `/destinacija/${encodeURIComponent(
+      countryName.toLowerCase()
+    )}/${encodeURIComponent(placeName.toLowerCase())}`;
+
   return (
     <section className="country-places-container">
       <div className="country-places-header">
@@ -70,34 +75,35 @@ const CountryPlaces = ({ places = [], countryName }) => {
 
       {/* Mobile / tablet */}
       <div className="country-places-list country-places-list-mobile">
-        {places.map((el, index) => {
-          const href = `/destinacija/${encodeURIComponent(
-            countryName.toLowerCase()
-          )}/${encodeURIComponent(el.name.toLowerCase())}`;
+        {places.map((el, index) => (
+          <Link
+            href={getPlaceHref(el.name)}
+            className="country-place-card country-place-card-mobile"
+            key={el.id || el.name || index}
+          >
+            <div className="country-place-card-image">
+              <Image
+                src={el.main_image_url}
+                alt={el.name}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1199px) 50vw, 25vw"
+              />
+            </div>
 
-          return (
-            <Link
-              href={href}
-              className="country-place-card"
-              key={el.id || el.name || index}
-            >
-              <div className="country-place-card-image">
-                <Image
-                  src={el.main_image_url}
-                  alt={el.name}
-                  fill
-                  sizes="(max-width: 768px) 82vw, (max-width: 1199px) 40vw, 25vw"
-                />
-              </div>
-
-              <div className="country-place-card-overlay">
+            <div className="country-place-card-overlay">
+              <div className="country-place-card-content">
                 <h3>{el.name}</h3>
+
                 {el.description && <p>{el.description}</p>}
-                <span className="country-place-card-cta">Otkrij više</span>
+
+                <span className="country-place-card-cta">
+                  Otkrij više
+                  <span aria-hidden="true">→</span>
+                </span>
               </div>
-            </Link>
-          );
-        })}
+            </div>
+          </Link>
+        ))}
       </div>
 
       {/* Desktop */}
@@ -107,34 +113,28 @@ const CountryPlaces = ({ places = [], countryName }) => {
             className={`country-places-row country-places-row-${row.length}`}
             key={rowIndex}
           >
-            {row.map((el, index) => {
-              const href = `/destinacija/${encodeURIComponent(
-                countryName.toLowerCase()
-              )}/${encodeURIComponent(el.name.toLowerCase())}`;
+            {row.map((el, index) => (
+              <Link
+                href={getPlaceHref(el.name)}
+                className="country-place-card country-place-card-desktop"
+                key={el.id || `${el.name}-${rowIndex}-${index}`}
+              >
+                <div className="country-place-card-image">
+                  <Image
+                    src={el.main_image_url}
+                    alt={el.name}
+                    fill
+                    sizes="(max-width: 768px) 82vw, (max-width: 1199px) 40vw, 25vw"
+                  />
+                </div>
 
-              return (
-                <Link
-                  href={href}
-                  className="country-place-card"
-                  key={el.id || `${el.name}-${rowIndex}-${index}`}
-                >
-                  <div className="country-place-card-image">
-                    <Image
-                      src={el.main_image_url}
-                      alt={el.name}
-                      fill
-                      sizes="(max-width: 768px) 82vw, (max-width: 1199px) 40vw, 25vw"
-                    />
-                  </div>
-
-                  <div className="country-place-card-overlay">
-                    <h3>{el.name}</h3>
-                    {el.description && <p>{el.description}</p>}
-                    <span className="country-place-card-cta">Otkrij više</span>
-                  </div>
-                </Link>
-              );
-            })}
+                <div className="country-place-card-overlay">
+                  <h3>{el.name}</h3>
+                  {el.description && <p>{el.description}</p>}
+                  <span className="country-place-card-cta">Otkrij više</span>
+                </div>
+              </Link>
+            ))}
           </div>
         ))}
       </div>

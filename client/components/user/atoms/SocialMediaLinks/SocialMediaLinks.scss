@@ -1,7 +1,8 @@
 /* SocialMediaLinks.scss */
 @use "@/utils/theme.scss" as *;
 
-$femaleRose: #e891a8;
+$femalePurple: #373FD5;
+$femalePurple50: rgba($femalePurple, 0.5);
 $darkIcon: #2f2936;
 
 .socials-container {
@@ -84,7 +85,7 @@ $darkIcon: #2f2936;
     }
 
     &.female {
-      background-color: $femaleRose;
+      background-color: $femalePurple50;
     }
 
     &.shared {
@@ -94,8 +95,8 @@ $darkIcon: #2f2936;
         $lightBlue 49.5%,
         rgba(255, 255, 255, 0.7) 49.5%,
         rgba(255, 255, 255, 0.7) 50.5%,
-        $femaleRose 50.5%,
-        $femaleRose 100%
+        $femalePurple50 50.5%,
+        $femalePurple50 100%
       );
     }
 
@@ -180,13 +181,13 @@ $darkIcon: #2f2936;
     &.female:hover {
       box-shadow:
         0 10px 18px rgba(0, 0, 0, 0.18),
-        0 0 12px rgba($femaleRose, 0.65);
+        0 0 12px rgba($femalePurple50, 0.5);
     }
 
     &.shared:hover {
       box-shadow:
         0 10px 18px rgba(0, 0, 0, 0.18),
-        0 0 12px rgba($femaleRose, 0.45),
+        0 0 12px rgba($femalePurple50, 0.5),
         0 0 16px rgba($lightBlue, 0.45);
     }
 
@@ -360,12 +361,12 @@ $darkIcon: #2f2936;
 
       &.female-cluster {
         &::before {
-          background: rgba($femaleRose, 0.2);
+          background: $femalePurple50;
         }
 
         &::after {
-          background: rgba($femaleRose, 0.55);
-          box-shadow: 0 0 8px rgba($femaleRose, 0.25);
+          background: $femalePurple50;
+          box-shadow: 0 0 8px rgba($femalePurple, 0.25);
         }
       }
 

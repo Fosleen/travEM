@@ -59,6 +59,10 @@ const DestinationCountry = ({
         )}
       </div>
 
+      <div className="destination-country-visa-info-container">
+        <VisaInfo countryId={country.id} countryName={country.name} />
+      </div>
+
       <div className="destination-country-upper-container">
         {country.characteristics && (
           <div className="destination-country-upper-container-item">
@@ -78,15 +82,9 @@ const DestinationCountry = ({
         countryId={country.id}
       />
 
-      <div className="destination-country-visa-info-container">
-        <VisaInfo countryId={country.id} countryName={country.name} />
-      </div>
-
       <div className="destination-country-language-container">
         <CountryLanguage countryId={country.id} />
       </div>
-
-
 
       {country.articles && country.articles.length > 0 && (
         <div className="destination-country-posts-container">

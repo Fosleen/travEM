@@ -357,16 +357,16 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
         </section>
       )}
 
-      <BestTimeToVisitPlace
-        placeId={place.id}
-        placeNameDative={getPlaceCase(place, "dative")}
-      />
-
       {place?.country?.id && (
         <div className="destination-place-language-container">
           <CountryLanguage countryId={place.country.id} />
         </div>
       )}
+
+      <BestTimeToVisitPlace
+        placeId={place.id}
+        placeNameDative={getPlaceCase(place, "dative")}
+      />
 
       {place.videos && place.videos.length > 0 && (
         <div className="destination-place-videos-container">

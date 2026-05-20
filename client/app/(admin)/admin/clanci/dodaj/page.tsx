@@ -37,27 +37,17 @@ import {
   getSubscribersWithoutPagination,
   sendNewsletterToSubscribers,
 } from "@/utils/subscribers";
-
 import SectionActions from "@/components/admin/atoms/SectionActions/SectionActions";
-
-const TIPS_ARTICLE_TYPE_IDS = [3, 4, 5, 6, 7, 8];
-
-const TIPS_ARTICLE_TYPE_TITLES: Record<number, string> = {
-  3: "Pakiranje",
-  4: "Let avionom",
-  5: "Organizacija puta",
-  6: "Aplikacije",
-  7: "Smještaj",
-  8: "Revolut",
-};
-
-const isTipsArticleType = (articleTypeId: string | number | null) => {
-  return TIPS_ARTICLE_TYPE_IDS.includes(Number(articleTypeId));
-};
-
-const getTipsArticleTypeTitle = (articleTypeId: string | number | null) => {
-  return TIPS_ARTICLE_TYPE_TITLES[Number(articleTypeId)] || "odabrane rubrike";
-};
+import {
+  ARTICLE_TYPE_AIRPLANE_TICKET_ID,
+  ARTICLE_TYPE_DESTINATION_ID,
+  getTipsArticleTypeTitle,
+  isTipsArticleType,
+} from "@/utils/articleTypeHelpers";
+import {
+  insertSectionImageSlotAfter,
+  moveSectionImageSlot,
+} from "@/utils/sectionFormHelpers";
 
 const AddArticlePage = () => {
   const router = useRouter();
@@ -75,7 +65,6 @@ const AddArticlePage = () => {
   const [imageHeightValue, setImageHeightValue] = useState("");
   const [imageWidthValue, setImageWidthValue] = useState("");
 
-  // images
   const [imageType, setImageType] = useState<string | null>(null);
   const [sectionSelected, setSectionSelected] = useState<number>(0);
   const [mainArticleImage, setMainArticleImage] = useState<string>("");
@@ -102,12 +91,14 @@ const AddArticlePage = () => {
       .max(100, "Opis smije imati max 100 znakova!"),
     article_type: Yup.number().required("Obavezno polje!").integer(),
     article_airport_city_id: Yup.number().when("article_type", {
-      is: 2,
+      is: (value: string | number) =>
+        Number(value) === Number(ARTICLE_TYPE_AIRPLANE_TICKET_ID),
       then: () => Yup.number().required("Obavezno polje!").integer(),
       otherwise: () => Yup.number().notRequired(),
     }),
     article_country: Yup.number().when("article_type", {
-      is: 1,
+      is: (value: string | number) =>
+        Number(value) === Number(ARTICLE_TYPE_DESTINATION_ID),
       then: () => Yup.number().required("Obavezno polje!").integer(),
       otherwise: () => Yup.number().notRequired(),
     }),
@@ -293,26 +284,14 @@ const AddArticlePage = () => {
 
   const handleInsertSectionAfter = (arrayHelpers: any, index: number) => {
     arrayHelpers.insert(index + 1, { ...emptySection });
-
-    setSectionImages((prev) => {
-      const copy = [...prev];
-      copy.splice(index + 1, 0, []);
-      return copy;
-    });
+    setSectionImages((prev) => insertSectionImageSlotAfter(prev, index));
   };
 
   const handleMoveSection = (arrayHelpers: any, from: number, to: number) => {
     if (to < 0) return;
 
     arrayHelpers.move(from, to);
-
-    setSectionImages((prev) => {
-      if (to >= prev.length) return prev;
-      const copy = [...prev];
-      const [moved] = copy.splice(from, 1);
-      copy.splice(to, 0, moved);
-      return copy;
-    });
+    setSectionImages((prev) => moveSectionImageSlot(prev, from, to));
   };
 
   const handleAddSection = (arrayHelpers: any) => {
@@ -518,11 +497,11 @@ const AddArticlePage = () => {
                           setFieldValue("article_country", null);
                           setSelectedCountryId("");
 
-                          if (value != "2") {
+                          if (value != ARTICLE_TYPE_AIRPLANE_TICKET_ID) {
                             setIsFarDestinationChecked(false);
                           }
 
-                          if (value != "1") {
+                          if (value != ARTICLE_TYPE_DESTINATION_ID) {
                             setIsMainCountryPostChecked(false);
                           }
 
@@ -546,7 +525,7 @@ const AddArticlePage = () => {
                       placeholder={"Unesi link videa"}
                     />
 
-                    {values.article_type == "1" && (
+                    {values.article_type == ARTICLE_TYPE_DESTINATION_ID && (
                       <>
                         <div className="add-article-input">
                           <Field
@@ -590,49 +569,50 @@ const AddArticlePage = () => {
                       </>
                     )}
 
-                    {values.article_type == "2" && airportCities && (
-                      <div className="add-article-airport-row">
-                        <div className="add-article-input">
-                          <Field
-                            name="article_airport_city_id"
-                            type="text"
-                            as={AdvancedDropdown}
-                            label="Aerodrom *"
-                            hardcodedValue="Odaberi aerodrom iz kojeg se kreće..."
-                            options={airportCities}
-                            onChange={(value) => {
-                              setFieldValue(
-                                "article_airport_city_id",
-                                value.id
-                              );
-                            }}
-                            selectedValue={values.article_airport_city_id}
-                            imageAttribute="flag_url"
-                            images
-                          />
-                          <ErrorMessage
-                            name="article_airport_city_id"
-                            component="div"
-                            className="error-message"
-                          />
-                        </div>
-
-                        <div className="add-article-airport-toggle">
-                          <div className="add-article-toggle-item">
-                            <ToggleSwitch
-                              name={"far-destination"}
-                              description={"Daleka destinacija?"}
-                              value={isFarDestinationChecked}
-                              setter={() =>
-                                setIsFarDestinationChecked(
-                                  !isFarDestinationChecked
-                                )
-                              }
+                    {values.article_type == ARTICLE_TYPE_AIRPLANE_TICKET_ID &&
+                      airportCities && (
+                        <div className="add-article-airport-row">
+                          <div className="add-article-input">
+                            <Field
+                              name="article_airport_city_id"
+                              type="text"
+                              as={AdvancedDropdown}
+                              label="Aerodrom *"
+                              hardcodedValue="Odaberi aerodrom iz kojeg se kreće..."
+                              options={airportCities}
+                              onChange={(value) => {
+                                setFieldValue(
+                                  "article_airport_city_id",
+                                  value.id
+                                );
+                              }}
+                              selectedValue={values.article_airport_city_id}
+                              imageAttribute="flag_url"
+                              images
+                            />
+                            <ErrorMessage
+                              name="article_airport_city_id"
+                              component="div"
+                              className="error-message"
                             />
                           </div>
+
+                          <div className="add-article-airport-toggle">
+                            <div className="add-article-toggle-item">
+                              <ToggleSwitch
+                                name={"far-destination"}
+                                description={"Daleka destinacija?"}
+                                value={isFarDestinationChecked}
+                                setter={() =>
+                                  setIsFarDestinationChecked(
+                                    !isFarDestinationChecked
+                                  )
+                                }
+                              />
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </div>
                 </div>
 
@@ -960,16 +940,17 @@ const AddArticlePage = () => {
                 </div>
 
                 <div className="add-article-toggle-container">
-                  {selectedCountryId && values.article_type == "1" && (
-                    <div className="add-article-toggle-item">
-                      <ToggleSwitch
-                        name={"main-country-post"}
-                        description={"Dodaj članak kao glavni za državu"}
-                        value={isMainCountryPostChecked}
-                        setter={setIsMainCountryPostChecked}
-                      />
-                    </div>
-                  )}
+                  {selectedCountryId &&
+                    values.article_type == ARTICLE_TYPE_DESTINATION_ID && (
+                      <div className="add-article-toggle-item">
+                        <ToggleSwitch
+                          name={"main-country-post"}
+                          description={"Dodaj članak kao glavni za državu"}
+                          value={isMainCountryPostChecked}
+                          setter={setIsMainCountryPostChecked}
+                        />
+                      </div>
+                    )}
 
                   {isTipsArticleType(values.article_type) && (
                     <div className="add-article-toggle-item add-article-toggle-item-highlight">

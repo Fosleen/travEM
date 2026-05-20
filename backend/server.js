@@ -17,13 +17,19 @@ const app = express();
 // Create all 1:1, 1:M and M:N
 createAssociations();
 
+const allowedOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(",").map((origin) => origin.trim())
+  : [];
+
 const corsOptions = {
-  origin: [
-    "http://localhost:3000",
-    "http://192.168.100.60:3000",
-    "http://192.168.18.33:3000"
-    
-  ],
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error("Not allowed by CORS"));
+  },
   credentials: true,
   methods: "GET, POST, PATCH, DELETE, PUT",
   allowedHeaders: "Content-Type, Authorization",

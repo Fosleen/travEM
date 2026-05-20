@@ -1,5 +1,6 @@
 import db from "../models/index.js";
 import { Op } from "sequelize";
+import { MONTH_ORDER } from "../utils/global.js";
 
 const BEST_TIME_INCLUDE = {
   model: db.models.PlaceBestTimeToVisit,
@@ -11,21 +12,6 @@ const BEST_TIME_INCLUDE = {
     },
   ],
 };
-
-const MONTH_ORDER = [
-  "jan",
-  "feb",
-  "mar",
-  "apr",
-  "may",
-  "jun",
-  "jul",
-  "aug",
-  "sep",
-  "oct",
-  "nov",
-  "dec",
-];
 
 const FEATURED_ARTICLE_OVERVIEW_SECTION_LIMIT = 5;
 

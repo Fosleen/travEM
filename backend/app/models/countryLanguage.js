@@ -8,7 +8,7 @@ export default (sequelize, DataTypes) => {
         field: "countryId",
       },
       language_name: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(50),
         allowNull: false,
       },
       is_active: {

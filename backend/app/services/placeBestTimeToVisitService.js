@@ -1,19 +1,5 @@
 import db from "../models/index.js";
-
-const MONTH_ORDER = [
-  "jan",
-  "feb",
-  "mar",
-  "apr",
-  "may",
-  "jun",
-  "jul",
-  "aug",
-  "sep",
-  "oct",
-  "nov",
-  "dec",
-];
+import { MONTH_ORDER } from "../utils/global.js";
 
 const BEST_TIME_INCLUDE = [
   {

@@ -39,25 +39,53 @@ export const normalizeEmail = (raw: string) => raw.trim().toLowerCase();
 export const isBasicValidEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-function levenshtein(a: string, b: string) {
+/**
+ * Calculates Levenshtein distance only up to maxDistance.
+ * Returns maxDistance + 1 as soon as it is clear that the distance is too large.
+ */
+function levenshteinWithinLimit(
+  a: string,
+  b: string,
+  maxDistance: number
+): number {
   const m = a.length;
   const n = b.length;
-  const dp: number[][] = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
 
-  for (let i = 0; i <= m; i++) dp[i][0] = i;
-  for (let j = 0; j <= n; j++) dp[0][j] = j;
+  if (Math.abs(m - n) > maxDistance) {
+    return maxDistance + 1;
+  }
+
+  if (m === 0) return n <= maxDistance ? n : maxDistance + 1;
+  if (n === 0) return m <= maxDistance ? m : maxDistance + 1;
+
+  let previousRow = Array.from({ length: n + 1 }, (_, index) => index);
+  let currentRow = new Array(n + 1);
 
   for (let i = 1; i <= m; i++) {
+    currentRow[0] = i;
+
+    let rowMin = currentRow[0];
+
     for (let j = 1; j <= n; j++) {
       const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-      dp[i][j] = Math.min(
-        dp[i - 1][j] + 1, // delete
-        dp[i][j - 1] + 1, // insert
-        dp[i - 1][j - 1] + cost // replace
+
+      currentRow[j] = Math.min(
+        previousRow[j] + 1,
+        currentRow[j - 1] + 1,
+        previousRow[j - 1] + cost
       );
+
+      rowMin = Math.min(rowMin, currentRow[j]);
     }
+
+    if (rowMin > maxDistance) {
+      return maxDistance + 1;
+    }
+
+    [previousRow, currentRow] = [currentRow, previousRow];
   }
-  return dp[m][n];
+
+  return previousRow[n] <= maxDistance ? previousRow[n] : maxDistance + 1;
 }
 
 /**
@@ -112,24 +140,25 @@ export function suggestEmailCorrection(
 
   if (quickMap[domain]) return `${local}@${quickMap[domain]}`;
 
-  // nađi najbližu poznatu domenu
+  // prag: kratke domene su osjetljivije
+  const maxAllowed = domain.length <= 10 ? 1 : 2;
+
+  // nađi najbližu poznatu domenu, ali računaj udaljenost samo do dozvoljenog praga
   let best: { d: string; dist: number } | null = null;
 
   for (const d of commonDomains) {
-    const dist = levenshtein(domain, d);
-    if (!best || dist < best.dist) best = { d, dist };
-    if (dist === 0) break;
+    const dist = levenshteinWithinLimit(domain, d, maxAllowed);
+
+    if (dist <= maxAllowed && (!best || dist < best.dist)) {
+      best = { d, dist };
+    }
+
+    if (dist === 1) {
+      break;
+    }
   }
 
   if (!best) return null;
 
-  // prag: kratke domene su osjetljivije
-  const maxAllowed = domain.length <= 10 ? 1 : 2;
-
-  if (best.dist > 0 && best.dist <= maxAllowed) {
-    return `${local}@${best.d}`;
-  }
-
-  // izgleda kao custom domena -> ne diraj
-  return null;
+  return `${local}@${best.d}`;
 }

@@ -1,15 +1,36 @@
 import db from "../models/index.js";
 import { Op, Sequelize } from "sequelize";
 
-const TIPS_ARTICLE_TYPE_IDS = [3, 4, 5, 6, 7, 8];
+const isTipsArticleType = async (articleTypeId, transaction = null) => {
+  const normalizedArticleTypeId = Number(articleTypeId);
+
+  if (!normalizedArticleTypeId || Number.isNaN(normalizedArticleTypeId)) {
+    return false;
+  }
+
+  const articleType = await db.models.ArticleType.findByPk(
+    normalizedArticleTypeId,
+    {
+      transaction,
+    }
+  );
+
+  return parseBooleanValue(articleType?.isTipsType);
+};
 
 const parseBooleanValue = (value) => {
-  return value === true || value === 1 || value === "1";
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value === 1;
+
+  if (typeof value === "string") {
+    const normalizedValue = value.trim().toLowerCase();
+    return normalizedValue === "1" || normalizedValue === "true";
+  }
+
+  return false;
 };
 
-const isTipsArticleType = (articleTypeId) => {
-  return TIPS_ARTICLE_TYPE_IDS.includes(Number(articleTypeId));
-};
+
 
 const normalizeNullableId = (value) => {
   const parsedValue = Number(value);
@@ -32,7 +53,7 @@ class ArticleService {
     currentArticleId,
     transaction
   ) {
-    if (!isTipsArticleType(articleTypeId)) {
+    if (!(await isTipsArticleType(articleTypeId, transaction))) {
       return;
     }
 
@@ -103,7 +124,7 @@ class ArticleService {
     try {
       const normalizedArticleTypeId = Number(articleTypeId);
 
-      if (!isTipsArticleType(normalizedArticleTypeId)) {
+      if (!(await isTipsArticleType(normalizedArticleTypeId))) {
         return null;
       }
 
@@ -233,27 +254,15 @@ class ArticleService {
         }
       } else if (
         startingArticle.articleTypeId == 2 ||
-        startingArticle.articleTypeId == 3 ||
-        startingArticle.articleTypeId == 4 ||
-        startingArticle.articleTypeId == 5 ||
-        startingArticle.articleTypeId == 6 ||
-        startingArticle.articleTypeId == 7 ||
-        startingArticle.articleTypeId == 8
-      ) {
+        (await isTipsArticleType(startingArticle.articleTypeId))
+        ) {
         nmbrSameType = 4;
       }
 
       if (nmbrSameType > 0) {
         let articlesSameType;
 
-        if (
-          startingArticle.articleTypeId == 3 ||
-          startingArticle.articleTypeId == 4 ||
-          startingArticle.articleTypeId == 5 ||
-          startingArticle.articleTypeId == 6 ||
-          startingArticle.articleTypeId == 7 ||
-          startingArticle.articleTypeId == 8
-        ) {
+        if (await isTipsArticleType(startingArticle.articleTypeId)) {
           articlesSameType = await db.models.Article.findAll({
             where: {
               articleTypeId: startingArticle.articleTypeId,
@@ -384,7 +393,7 @@ class ArticleService {
     try {
       const normalizedArticleTypeId = Number(article_type_id);
       const shouldBeTipsFeatured =
-        isTipsArticleType(normalizedArticleTypeId) &&
+        (await isTipsArticleType(normalizedArticleTypeId, transaction)) &&
         parseBooleanValue(is_tips_featured);
 
       if (shouldBeTipsFeatured) {
@@ -704,8 +713,8 @@ class ArticleService {
 
       const normalizedArticleTypeId = Number(article_type_id);
       const shouldBeTipsFeatured =
-        isTipsArticleType(normalizedArticleTypeId) &&
-        parseBooleanValue(is_tips_featured);
+      (await isTipsArticleType(normalizedArticleTypeId, transaction)) &&
+      parseBooleanValue(is_tips_featured);
 
       if (shouldBeTipsFeatured) {
         await this.resetOtherTipsFeaturedArticles(

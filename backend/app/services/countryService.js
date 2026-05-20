@@ -1,20 +1,6 @@
 import db from "../models/index.js";
 import { Op } from "sequelize";
-
-const MONTH_ORDER = [
-  "jan",
-  "feb",
-  "mar",
-  "apr",
-  "may",
-  "jun",
-  "jul",
-  "aug",
-  "sep",
-  "oct",
-  "nov",
-  "dec",
-];
+import { MONTH_ORDER } from "../utils/global.js";
 
 const normalizeNumber = (value) => {
   if (value === null || value === undefined || value === "") return null;

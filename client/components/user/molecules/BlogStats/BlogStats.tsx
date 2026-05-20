@@ -24,32 +24,32 @@ const BlogStats: FC<{ homepageContent: HomepageData }> = ({
       {blogStats && (
         <>
           <BlogStatsItem
-            lottieSrc="/lottie/stats-map.json"
+            icon="/images/world-icon.png"
             value={blogStats.continents_nmbr.toString()}
             text="kontinenta"
           />
           <BlogStatsItem
-            lottieSrc="/lottie/stats-globe.json"
+            icon="/images/globe-icon.png"
             value={blogStats.countries_nmbr.toString()}
             text="države"
           />
           <BlogStatsItem
-            lottieSrc="/lottie/stats-article.json"
+            icon="/images/article-icon.png"
             value={blogStats.articles_nmbr.toString()}
             text="članaka"
           />
           <BlogStatsItem
-            lottieSrc="/lottie/stats-ticket.json"
+            icon="/images/plane-ticket-icon.png"
             value={homepageContent.flights_nmbr}
             text="letova avionom"
           />
           <BlogStatsItem
-            lottieSrc="/lottie/stats-camera.json"
+            icon="/images/vlogging-icon.png"
             value={homepageContent.videos_nmbr}
             text="videa"
           />
           <BlogStatsItem
-            lottieSrc="/lottie/stats-walk.json"
+            icon="/images/walk-icon.png"
             value={homepageContent.distance_nmbr}
             text="prijeđenih kilometara"
           />

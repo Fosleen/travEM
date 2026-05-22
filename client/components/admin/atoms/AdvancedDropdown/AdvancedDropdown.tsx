@@ -5,6 +5,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { Dropdown } from "primereact/dropdown";
 import "./AdvancedDropdown.scss";
 import { DropdownProps } from "../../../../common/types";
+import { hasAnySectionIconFeature } from "@/utils/sectionSpecialFeatures";
 
 const AdvancedDropdown: FC<DropdownProps> = ({
   label,
@@ -20,7 +21,6 @@ const AdvancedDropdown: FC<DropdownProps> = ({
 }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
-  // 1) Dodaj "praznu" opciju na vrh (reset)
   const optionsWithEmpty = useMemo(() => {
     const emptyOption = {
       id: null,
@@ -29,51 +29,69 @@ const AdvancedDropdown: FC<DropdownProps> = ({
       __isEmpty: true,
     };
 
-    // Ako već postoji opcija s id=null, ne dodaj duplu
-    const hasNull = Array.isArray(options) && options.some((o) => o?.id === null);
+    const hasNull =
+      Array.isArray(options) && options.some((option) => option?.id === null);
 
     return hasNull ? options : [emptyOption, ...(options || [])];
   }, [options, filterAttribute, imageAttribute]);
 
-  // 2) Kada parent promijeni selectedValue (npr. edit), syncaj selectedOption
   useEffect(() => {
     const list = optionsWithEmpty || [];
-    const option = list.find((o) => o?.id === selectedValue) || null;
+    const option = list.find((item) => item?.id === selectedValue) || null;
     setSelectedOption(option);
   }, [selectedValue, optionsWithEmpty]);
 
-  // 3) Default value (ako želiš automatski postaviti na mount)
   useEffect(() => {
-    // ako je defaultValue null -> to znači "prazno"
     if (defaultValue === null || defaultValue === undefined) return;
 
     const list = optionsWithEmpty || [];
-    const defaultOption = list.find((o) => o?.id === defaultValue) || null;
+    const defaultOption = list.find((item) => item?.id === defaultValue) || null;
+
     setSelectedOption(defaultOption);
-    if (onChange) onChange(defaultOption);
+
+    if (onChange) {
+      onChange(defaultOption);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSelect = (option) => {
-    // klik na "— Bez odabira —" => reset (null)
     if (option?.id === null || option?.__isEmpty) {
       setSelectedOption(null);
-      if (onChange) onChange(null);
+
+      if (onChange) {
+        onChange(null);
+      }
+
       return;
     }
 
     setSelectedOption(option);
-    if (onChange) onChange(option);
+
+    if (onChange) {
+      onChange(option);
+    }
+  };
+
+  const getIsSpecialFeatureOption = (option) => {
+    if (!option || option?.id === null || option?.__isEmpty) return false;
+
+    return hasAnySectionIconFeature(option);
   };
 
   const selectedOptionTemplate = (option, props) => {
-    // Kad je reset (null) -> pokaži placeholder (hardcodedValue)
     if (!option || option?.id === null || option?.__isEmpty) {
       return <span className="dropdown-placeholder">{props.placeholder}</span>;
     }
 
+    const isSpecialFeatureOption = getIsSpecialFeatureOption(option);
+
     return (
-      <div className="option-item selected">
+      <div
+        className={`option-item selected ${
+          isSpecialFeatureOption ? "option-item--special" : ""
+        }`}
+      >
         {images && option?.[imageAttribute] && (
           <img
             alt={option?.[filterAttribute] || ""}
@@ -81,6 +99,7 @@ const AdvancedDropdown: FC<DropdownProps> = ({
             className="icon"
           />
         )}
+
         {option?.[filterAttribute] && <div>{option?.[filterAttribute]}</div>}
       </div>
     );
@@ -97,11 +116,22 @@ const AdvancedDropdown: FC<DropdownProps> = ({
       );
     }
 
+    const isSpecialFeatureOption = getIsSpecialFeatureOption(option);
+
     return (
-      <div className="option-item">
+      <div
+        className={`option-item ${
+          isSpecialFeatureOption ? "option-item--special" : ""
+        }`}
+      >
         {images && option?.[imageAttribute] && (
-          <img alt={option?.[filterAttribute] || ""} src={option?.[imageAttribute]} className="icon" />
+          <img
+            alt={option?.[filterAttribute] || ""}
+            src={option?.[imageAttribute]}
+            className="icon"
+          />
         )}
+
         <div>{option?.[filterAttribute]}</div>
       </div>
     );
@@ -110,6 +140,7 @@ const AdvancedDropdown: FC<DropdownProps> = ({
   return (
     <div className="dropdown-wrapper">
       {label && <label className="dropdown-label">{label}</label>}
+
       <div className="dropdown-filter-wrapper">
         <Dropdown
           value={selectedOption}

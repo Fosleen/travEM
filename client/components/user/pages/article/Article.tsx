@@ -30,6 +30,18 @@ const getNewsletterInsertIndex = (sectionsLength: number) => {
   return 3;
 };
 
+const parseBooleanValue = (value: any) => {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value === 1;
+
+  if (typeof value === "string") {
+    const normalizedValue = value.trim().toLowerCase();
+    return normalizedValue === "1" || normalizedValue === "true";
+  }
+
+  return false;
+};
+
 const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
   const router = useRouter();
   const articleContent = initialArticle;
@@ -62,6 +74,43 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
   const openLightbox = (index: number) => {
     setLightboxIndex(index);
     setLightboxOpen(true);
+  };
+
+  const shouldShowSectionVisaInfo = (section: any) => {
+    const hasEnabledVisaInfo =
+      parseBooleanValue(section?.show_visa_info) ||
+      parseBooleanValue(section?.showVisaInfo);
+
+    return (
+      hasEnabledVisaInfo &&
+      articleContent?.country?.id &&
+      articleContent?.country?.name
+    );
+  };
+
+  const shouldShowSectionBestTimeToVisit = (section: any) => {
+    const hasEnabledBestTime =
+      parseBooleanValue(section?.show_best_time_to_visit) ||
+      parseBooleanValue(section?.showBestTimeToVisit);
+
+    return (
+      hasEnabledBestTime &&
+      articleContent?.country?.id &&
+      articleContent?.country?.name
+    );
+  };
+
+  const getArticlePlaceId = () => {
+    return articleContent?.place?.id || articleContent?.placeId || null;
+  };
+
+  const getArticlePlaceNameDative = () => {
+    return (
+      articleContent?.place?.name_dative ||
+      articleContent?.place?.nameDative ||
+      articleContent?.place?.name ||
+      ""
+    );
   };
 
   return (
@@ -100,7 +149,19 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
       <div className="article-content">
         {articleContent?.sections?.map((section, index) => (
           <React.Fragment key={index}>
-            <ArticleFragment section={section} index={index} />
+            <ArticleFragment
+              section={section}
+              index={index}
+              showVisaInfo={shouldShowSectionVisaInfo(section)}
+              visaInfoCountryId={articleContent?.country?.id}
+              visaInfoCountryName={articleContent?.country?.name}
+              showBestTimeToVisit={shouldShowSectionBestTimeToVisit(section)}
+              bestTimeCountryId={articleContent?.country?.id}
+              bestTimeCountrySlug={articleContent?.country?.name || ""}
+              bestTimePlaceId={getArticlePlaceId()}
+              bestTimePlaceNameDative={getArticlePlaceNameDative()}
+            />
+
             {section.link_title !== "" && <ArticleReadMore section={section} />}
 
             {index === newsletterInsertIndex && (

@@ -50,6 +50,27 @@
     }
   }
 
+  .article-fragment-visa-info {
+    width: 100%;
+    max-width: 900px;
+
+    .visa-info-container {
+      max-width: 100%;
+      margin: 0;
+    }
+  }
+
+  .article-fragment-best-time {
+    width: 100%;
+    max-width: 900px;
+
+    .btv,
+    .btv-place {
+      max-width: 100%;
+      margin: 0;
+    }
+  }
+
   .article-html-content {
     display: flex;
     flex-direction: column;

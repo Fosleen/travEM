@@ -7,11 +7,21 @@ export default (sequelize, DataTypes) => {
       subtitle: { type: DataTypes.STRING(100) },
       link_title: { type: DataTypes.STRING(100) },
       link_url: { type: DataTypes.STRING },
+      show_visa_info: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      show_best_time_to_visit: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
     },
     {
-      underscored: true, // vanjski kljuc ce bit snake_case, a ne camelCase
+      underscored: true,
       timestamps: false,
-      freezeTableName: true, // da ne pluralizira tablicu
+      freezeTableName: true,
     }
   );
 

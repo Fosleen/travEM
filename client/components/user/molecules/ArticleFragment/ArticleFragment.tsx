@@ -6,11 +6,22 @@ import { ArticleProps } from "../../../../common/types";
 import DOMPurify from "isomorphic-dompurify";
 import Image from "next/image";
 import Lightbox from "yet-another-react-lightbox";
+import VisaInfo from "@/components/user/molecules/VisaInfo/VisaInfo";
+import BestTimeToVisit from "@/components/user/molecules/BestTimeToVisit/BestTimeToVisit";
+import BestTimeToVisitPlace from "@/components/user/molecules/BestTimeToVisitPlace/BestTimeToVisitPlace";
 
 const ArticleFragment: FC<ArticleProps> = ({
   section = {},
   article = {},
   index,
+  showVisaInfo = false,
+  visaInfoCountryId,
+  visaInfoCountryName,
+  showBestTimeToVisit = false,
+  bestTimeCountryId,
+  bestTimeCountrySlug,
+  bestTimePlaceId,
+  bestTimePlaceNameDative,
 }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -18,7 +29,8 @@ const ArticleFragment: FC<ArticleProps> = ({
   const sectionId = `odlomak-${index}`;
 
   const images = useMemo(
-    () => (section?.section_images || []).filter((image) => image?.url?.trim?.()),
+    () =>
+      (section?.section_images || []).filter((image) => image?.url?.trim?.()),
     [section?.section_images]
   );
 
@@ -38,7 +50,27 @@ const ArticleFragment: FC<ArticleProps> = ({
 
   const hasVideo = Boolean(article?.video?.url?.trim());
 
-  const hasAnything = hasTitle || hasHtmlContent || hasOne || hasTwo || hasVideo;
+  const shouldRenderVisaInfo =
+    showVisaInfo && Boolean(visaInfoCountryId) && Boolean(visaInfoCountryName);
+
+  const shouldRenderBestTimeToVisit =
+    showBestTimeToVisit && Boolean(bestTimeCountryId) && Boolean(bestTimeCountrySlug);
+
+  const shouldRenderPlaceBestTimeToVisit =
+    shouldRenderBestTimeToVisit && Boolean(bestTimePlaceId);
+
+  const shouldRenderCountryBestTimeToVisit =
+    shouldRenderBestTimeToVisit && !bestTimePlaceId;
+
+  const hasAnything =
+    hasTitle ||
+    hasHtmlContent ||
+    hasOne ||
+    hasTwo ||
+    hasVideo ||
+    shouldRenderVisaInfo ||
+    shouldRenderBestTimeToVisit;
+
   if (!hasAnything) return null;
 
   const lightboxSlides = images.map((image) => ({
@@ -66,6 +98,33 @@ const ArticleFragment: FC<ArticleProps> = ({
             {title}
           </h3>
         ))}
+
+      {shouldRenderVisaInfo && (
+        <div className="article-fragment-visa-info">
+          <VisaInfo
+            countryId={visaInfoCountryId}
+            countryName={visaInfoCountryName}
+          />
+        </div>
+      )}
+
+      {shouldRenderPlaceBestTimeToVisit && (
+        <div className="article-fragment-best-time">
+          <BestTimeToVisitPlace
+            placeId={bestTimePlaceId}
+            placeNameDative={bestTimePlaceNameDative}
+          />
+        </div>
+      )}
+
+      {shouldRenderCountryBestTimeToVisit && (
+        <div className="article-fragment-best-time">
+          <BestTimeToVisit
+            countryId={bestTimeCountryId}
+            countrySlug={bestTimeCountrySlug}
+          />
+        </div>
+      )}
 
       {hasHtmlContent && (
         <div

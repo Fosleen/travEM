@@ -81,6 +81,7 @@
   background-color: $bg;
   padding: 4px 8px;
   gap: 8px;
+  position: relative;
 
   &.selected {
     padding: 0;
@@ -90,6 +91,42 @@
     margin-right: 8px;
     width: 30px;
   }
+}
+
+.option-item--special {
+  width: fit-content;
+  min-width: 48px;
+  border: 2px solid rgba($green, 0.28);
+  border-radius: 10px;
+  background-color: rgba($green, 0.06);
+
+  .icon {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    padding: 3px;
+    margin-right: 8px;
+    border-radius: 8px;
+    background-color: rgba($green, 0.08);
+  }
+
+  &.selected {
+    border: 0;
+    background-color: transparent;
+    width: auto;
+    min-width: unset;
+
+    .icon {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      background-color: transparent;
+    }
+  }
+}
+
+.option-item-special-badge {
+  display: none;
 }
 
 /* “Bez odabira” opcija */

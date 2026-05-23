@@ -524,8 +524,9 @@ const EditArticle = () => {
 
   const handleDeleteSection = (arrayHelpers, sectionIndex) => {
     arrayHelpers.remove(sectionIndex);
-    setSectionImages(
-      sectionImages.filter((_el, index) => index !== sectionIndex)
+
+    setSectionImages((prevSectionImages) =>
+      prevSectionImages.filter((_el, index) => index !== sectionIndex)
     );
   };
 
@@ -544,7 +545,7 @@ const EditArticle = () => {
       order: 1,
     });
 
-    setSectionImages([...sectionImages, []]);
+    setSectionImages((prevSectionImages) => [...prevSectionImages, []]);
   };
 
   const handleAddMetatag = (arrayHelpers) => {
@@ -565,13 +566,13 @@ const EditArticle = () => {
     if (type == "main") {
       setMainArticleImage(null);
     } else if (type == "other") {
-      setOtherArticleImages(
-        otherArticleImages.filter((_el, index) => index !== itemIndex)
+      setOtherArticleImages((prev) =>
+        prev.filter((_el, index) => index !== itemIndex)
       );
-    } else if (type == "section") {
+    } else if (type == "section" && sectionIndex !== undefined) {
       setSectionImages((prevSectionImages) => [
         ...prevSectionImages.slice(0, sectionIndex),
-        prevSectionImages[sectionIndex].filter(
+        (prevSectionImages[sectionIndex] || []).filter(
           (_el, index) => index !== itemIndex
         ),
         ...prevSectionImages.slice(sectionIndex + 1),
@@ -604,7 +605,7 @@ const EditArticle = () => {
       setSectionImages((prevSectionImages) => [
         ...prevSectionImages.slice(0, sectionSelected),
         [
-          ...prevSectionImages[sectionSelected],
+          ...(prevSectionImages[sectionSelected] || []),
           {
             id: null,
             url: modalInputValue,
@@ -615,6 +616,7 @@ const EditArticle = () => {
         ...prevSectionImages.slice(sectionSelected + 1),
       ]);
     }
+
     setModalInputValue("");
     setImageHeightValue("");
     setImageWidthValue("");
@@ -1459,8 +1461,7 @@ const EditArticle = () => {
                                       <div className="edit-article-bottom-container">
                                         <div className="edit-article-images-container">
                                           {sectionImages &&
-                                            sectionImages[index].map(
-                                              (el, imageIndex) => (
+                                            (sectionImages[index] || []).map((el, imageIndex) => (
                                                 <div
                                                   key={imageIndex}
                                                   className="edit-article-image"
@@ -1487,7 +1488,7 @@ const EditArticle = () => {
                                               )
                                             )}
 
-                                          {sectionImages[index].length < 2 && (
+                                          {(sectionImages[index] || []).length < 2 && (
                                             <div
                                               className="edit-article-item"
                                               onClick={() => {

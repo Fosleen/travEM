@@ -1,6 +1,7 @@
 export const SECTION_ICON_FEATURE_KEYS = {
   ENTRY_REQUIREMENTS: "entry_requirements",
   BEST_TIME_TO_VISIT: "best_time_to_visit",
+  COUNTRY_LANGUAGE: "country_language",
 } as const;
 
 export type SectionIconFeatureKey =
@@ -32,5 +33,12 @@ export const isBestTimeToVisitSectionIcon = (icon?: any): boolean => {
   return hasSectionIconFeature(
     icon,
     SECTION_ICON_FEATURE_KEYS.BEST_TIME_TO_VISIT
+  );
+};
+
+export const isCountryLanguageSectionIcon = (icon?: any): boolean => {
+  return hasSectionIconFeature(
+    icon,
+    SECTION_ICON_FEATURE_KEYS.COUNTRY_LANGUAGE
   );
 };

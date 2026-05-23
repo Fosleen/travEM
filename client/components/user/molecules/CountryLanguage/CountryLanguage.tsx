@@ -7,6 +7,7 @@ import { getCountryLanguage } from "../../../../utils/countryLanguage";
 
 interface CountryLanguageProps {
   countryId: number;
+  variant?: "default" | "article";
 }
 
 const PHRASE_LABELS: Record<number, string> = {
@@ -21,7 +22,10 @@ const PHRASE_LABELS: Record<number, string> = {
 const getPhraseKey = (phraseItem: any) =>
   `${phraseItem.id || "phrase"}-${phraseItem.order_index}`;
 
-const CountryLanguage: FC<CountryLanguageProps> = ({ countryId }) => {
+const CountryLanguage: FC<CountryLanguageProps> = ({
+  countryId,
+  variant = "default",
+}) => {
   const [languageData, setLanguageData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [phraseFontSizes, setPhraseFontSizes] = useState<Record<string, number>>(
@@ -163,9 +167,15 @@ const CountryLanguage: FC<CountryLanguageProps> = ({ countryId }) => {
     return null;
   }
 
+  const isArticleVariant = variant === "article";
+
   return (
     <>
-      <section className="country-language-container country-language-desktop">
+      <section
+        className={`country-language-container country-language-desktop ${
+          isArticleVariant ? "country-language-desktop--article" : ""
+        }`}
+      >
         <div className="country-language-intro">
           <div className="country-language-kicker">Jezik na putu</div>
 
@@ -254,7 +264,11 @@ const CountryLanguage: FC<CountryLanguageProps> = ({ countryId }) => {
         </div>
       </section>
 
-      <section className="country-language-mobile">
+      <section
+        className={`country-language-mobile ${
+          isArticleVariant ? "country-language-mobile--article" : ""
+        }`}
+      >
         <div className="country-language-mobile-header">
           <h2>
             {languageData.language_name} <span>za putnike</span>

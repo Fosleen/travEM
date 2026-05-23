@@ -10,7 +10,8 @@ class SectionService {
     section_icon_id,
     article_id,
     show_visa_info = false,
-    show_best_time_to_visit = false
+    show_best_time_to_visit = false,
+    show_country_language = false
   ) {
     try {
       const section = await db.models.Section.create({
@@ -23,6 +24,7 @@ class SectionService {
         articleId: article_id,
         show_visa_info: Boolean(show_visa_info),
         show_best_time_to_visit: Boolean(show_best_time_to_visit),
+        show_country_language: Boolean(show_country_language),
       });
 
       return section;
@@ -42,7 +44,8 @@ class SectionService {
     section_icon_id,
     article_id,
     show_visa_info = false,
-    show_best_time_to_visit = false
+    show_best_time_to_visit = false,
+    show_country_language = false
   ) {
     console.log(id);
 
@@ -58,6 +61,7 @@ class SectionService {
           articleId: article_id,
           show_visa_info: Boolean(show_visa_info),
           show_best_time_to_visit: Boolean(show_best_time_to_visit),
+          show_country_language: Boolean(show_country_language),
         },
         {
           where: { id: id },

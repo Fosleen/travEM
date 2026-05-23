@@ -9,6 +9,7 @@ import Lightbox from "yet-another-react-lightbox";
 import VisaInfo from "@/components/user/molecules/VisaInfo/VisaInfo";
 import BestTimeToVisit from "@/components/user/molecules/BestTimeToVisit/BestTimeToVisit";
 import BestTimeToVisitPlace from "@/components/user/molecules/BestTimeToVisitPlace/BestTimeToVisitPlace";
+import CountryLanguage from "@/components/user/molecules/CountryLanguage/CountryLanguage";
 
 const ArticleFragment: FC<ArticleProps> = ({
   section = {},
@@ -22,6 +23,8 @@ const ArticleFragment: FC<ArticleProps> = ({
   bestTimeCountrySlug,
   bestTimePlaceId,
   bestTimePlaceNameDative,
+  showCountryLanguage = false,
+  countryLanguageCountryId,
 }) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -62,6 +65,9 @@ const ArticleFragment: FC<ArticleProps> = ({
   const shouldRenderCountryBestTimeToVisit =
     shouldRenderBestTimeToVisit && !bestTimePlaceId;
 
+  const shouldRenderCountryLanguage =
+    showCountryLanguage && Boolean(countryLanguageCountryId);
+
   const hasAnything =
     hasTitle ||
     hasHtmlContent ||
@@ -69,7 +75,8 @@ const ArticleFragment: FC<ArticleProps> = ({
     hasTwo ||
     hasVideo ||
     shouldRenderVisaInfo ||
-    shouldRenderBestTimeToVisit;
+    shouldRenderBestTimeToVisit ||
+    shouldRenderCountryLanguage;
 
   if (!hasAnything) return null;
 
@@ -123,6 +130,12 @@ const ArticleFragment: FC<ArticleProps> = ({
             countryId={bestTimeCountryId}
             countrySlug={bestTimeCountrySlug}
           />
+        </div>
+      )}
+
+      {shouldRenderCountryLanguage && (
+        <div className="article-fragment-country-language">
+          <CountryLanguage countryId={countryLanguageCountryId} variant="article" />
         </div>
       )}
 

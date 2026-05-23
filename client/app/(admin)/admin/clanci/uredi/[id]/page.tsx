@@ -62,6 +62,7 @@ import {
 } from "@/utils/sectionFormHelpers";
 import {
   isBestTimeToVisitSectionIcon,
+  isCountryLanguageSectionIcon,
   isEntryRequirementsSectionIcon,
 } from "@/utils/sectionSpecialFeatures";
 
@@ -181,6 +182,7 @@ const EditArticle = () => {
     section_icon: null,
     show_visa_info: false,
     show_best_time_to_visit: false,
+    show_country_language: false,
   };
 
   const handleInsertSectionAfter = (arrayHelpers: any, index: number) => {
@@ -295,7 +297,8 @@ const EditArticle = () => {
               el.section_url_link,
               el.section_icon,
               Boolean(el.show_visa_info),
-              Boolean(el.show_best_time_to_visit)
+              Boolean(el.show_best_time_to_visit),
+              Boolean(el.show_country_language)
             );
 
             console.log(`   ✅ Section ${index + 1} updated:`, sectionResponse);
@@ -328,7 +331,8 @@ const EditArticle = () => {
               el.section_icon,
               article.id,
               Boolean(el.show_visa_info),
-              Boolean(el.show_best_time_to_visit)
+              Boolean(el.show_best_time_to_visit),
+              Boolean(el.show_country_language)
             );
 
             console.log(`   ✅ Section ${index + 1} created:`, response);
@@ -536,6 +540,7 @@ const EditArticle = () => {
       section_icon: null,
       show_visa_info: false,
       show_best_time_to_visit: false,
+      show_country_language: false,
       order: 1,
     });
 
@@ -746,6 +751,9 @@ const EditArticle = () => {
                       show_best_time_to_visit:
                         parseBooleanValue(el.show_best_time_to_visit) ||
                         parseBooleanValue(el.showBestTimeToVisit),
+                      show_country_language:
+                        parseBooleanValue(el.show_country_language) ||
+                        parseBooleanValue(el.showCountryLanguage),
                     }))
                   : [],
               }}
@@ -827,6 +835,10 @@ const EditArticle = () => {
                                   `sections.${index}.show_best_time_to_visit`,
                                   false
                                 );
+                                setFieldValue(
+                                  `sections.${index}.show_country_language`,
+                                  false
+                                );
                               }
                             );
 
@@ -879,6 +891,14 @@ const EditArticle = () => {
                                     (_section: any, index: number) => {
                                       setFieldValue(
                                         `sections.${index}.show_visa_info`,
+                                        false
+                                      );
+                                      setFieldValue(
+                                        `sections.${index}.show_best_time_to_visit`,
+                                        false
+                                      );
+                                      setFieldValue(
+                                        `sections.${index}.show_country_language`,
                                         false
                                       );
                                     }
@@ -991,6 +1011,10 @@ const EditArticle = () => {
                                   `sections.${index}.show_best_time_to_visit`,
                                   false
                                 );
+                                setFieldValue(
+                                  `sections.${index}.show_country_language`,
+                                  false
+                                );
                               }
                             );
                           }}
@@ -1059,6 +1083,13 @@ const EditArticle = () => {
                                     );
                                   const isBestTimeToVisitIconSelected =
                                     isBestTimeToVisitSectionIcon(selectedIcon);
+                                  const isCountryLanguageIconSelected =
+                                    isCountryLanguageSectionIcon(selectedIcon);
+
+                                  const isSpecialFeatureIconSelected =
+                                    isEntryRequirementsIconSelected ||
+                                    isBestTimeToVisitIconSelected ||
+                                    isCountryLanguageIconSelected;
 
                                   const canShowVisaInfoToggle =
                                     isEntryRequirementsIconSelected &&
@@ -1068,6 +1099,12 @@ const EditArticle = () => {
 
                                   const canShowBestTimeToVisitToggle =
                                     isBestTimeToVisitIconSelected &&
+                                    values.article_type ==
+                                      ARTICLE_TYPE_DESTINATION_ID &&
+                                    values.article_country;
+
+                                  const canShowCountryLanguageToggle =
+                                    isCountryLanguageIconSelected &&
                                     values.article_type ==
                                       ARTICLE_TYPE_DESTINATION_ID &&
                                     values.article_country;
@@ -1117,8 +1154,7 @@ const EditArticle = () => {
 
                                         <div
                                           className={`edit-article-section-top-item ${
-                                            isEntryRequirementsIconSelected ||
-                                            isBestTimeToVisitIconSelected
+                                            isSpecialFeatureIconSelected
                                               ? "is-special-entry-requirements"
                                               : ""
                                           }`}
@@ -1146,6 +1182,10 @@ const EditArticle = () => {
                                                   `sections.${index}.show_best_time_to_visit`,
                                                   false
                                                 );
+                                                setFieldValue(
+                                                  `sections.${index}.show_country_language`,
+                                                  false
+                                                );
                                                 return;
                                               }
 
@@ -1155,6 +1195,10 @@ const EditArticle = () => {
                                                 );
                                               const isBestTimeToVisitIcon =
                                                 isBestTimeToVisitSectionIcon(
+                                                  value
+                                                );
+                                              const isCountryLanguageIcon =
+                                                isCountryLanguageSectionIcon(
                                                   value
                                                 );
 
@@ -1173,6 +1217,13 @@ const EditArticle = () => {
                                               if (!isBestTimeToVisitIcon) {
                                                 setFieldValue(
                                                   `sections.${index}.show_best_time_to_visit`,
+                                                  false
+                                                );
+                                              }
+
+                                              if (!isCountryLanguageIcon) {
+                                                setFieldValue(
+                                                  `sections.${index}.show_country_language`,
                                                   false
                                                 );
                                               }
@@ -1307,6 +1358,68 @@ const EditArticle = () => {
                                               državu. Ako odaberete i grad,
                                               prikazat će se gradska varijanta
                                               bloka.
+                                            </p>
+                                          )}
+                                        </div>
+                                      )}
+
+{isCountryLanguageIconSelected && (
+                                        <div className="edit-article-special-feature-panel">
+                                          <div className="edit-article-special-feature-header">
+                                            {selectedIconUrl && (
+                                              <img
+                                                src={selectedIconUrl}
+                                                alt="Ikonica korisnih fraza i jezika"
+                                              />
+                                            )}
+
+                                            <div>
+                                              <strong>
+                                                Posebni blok za jezik i korisne fraze
+                                              </strong>
+                                              <p>
+                                                Ova ikonica može prikazati
+                                                interaktivni blok s osnovnim
+                                                korisnim frazama za državu
+                                                članka. Čitatelji mogu vidjeti
+                                                najvažnije izraze za putovanje,
+                                                poput pozdrava, zahvale i
+                                                osnovnih riječi.
+                                              </p>
+                                            </div>
+                                          </div>
+
+                                          {canShowCountryLanguageToggle ? (
+                                            <div className="edit-article-special-feature-toggle">
+                                              <ToggleSwitch
+                                                name={`show-country-language-${index}`}
+                                                description={
+                                                  "Prikaži jezik i korisne fraze u ovom odlomku"
+                                                }
+                                                value={Boolean(
+                                                  section.show_country_language
+                                                )}
+                                                setter={() =>
+                                                  setFieldValue(
+                                                    `sections.${index}.show_country_language`,
+                                                    !section.show_country_language
+                                                  )
+                                                }
+                                              />
+
+                                              <p>
+                                                Ako označite ovu opciju,
+                                                CountryLanguage blok prikazat će
+                                                se iznad teksta ovog odlomka na
+                                                stranici članka.
+                                              </p>
+                                            </div>
+                                          ) : (
+                                            <p className="edit-article-special-feature-warning">
+                                              Za prikaz jezika i korisnih fraza
+                                              članak mora biti vezan uz državu.
+                                              Prvo odaberite vrstu članka
+                                              “Destinacija” i državu članka.
                                             </p>
                                           )}
                                         </div>

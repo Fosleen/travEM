@@ -100,6 +100,15 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
     );
   };
 
+
+  const shouldShowSectionCountryLanguage = (section: any) => {
+    const hasEnabledCountryLanguage =
+      parseBooleanValue(section?.show_country_language) ||
+      parseBooleanValue(section?.showCountryLanguage);
+
+    return hasEnabledCountryLanguage && articleContent?.country?.id;
+  };
+
   const getArticlePlaceId = () => {
     return articleContent?.place?.id || articleContent?.placeId || null;
   };
@@ -160,6 +169,8 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
               bestTimeCountrySlug={articleContent?.country?.name || ""}
               bestTimePlaceId={getArticlePlaceId()}
               bestTimePlaceNameDative={getArticlePlaceNameDative()}
+              showCountryLanguage={shouldShowSectionCountryLanguage(section)}
+              countryLanguageCountryId={articleContent?.country?.id}
             />
 
             {section.link_title !== "" && <ArticleReadMore section={section} />}

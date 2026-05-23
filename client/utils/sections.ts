@@ -9,7 +9,8 @@ export async function addSection(
   icon_id: number | null,
   article_id: number,
   show_visa_info: boolean = false,
-  show_best_time_to_visit: boolean = false
+  show_best_time_to_visit: boolean = false,
+  show_country_language: boolean = false
 ) {
   const token = localStorage.getItem("jwt");
 
@@ -30,6 +31,7 @@ export async function addSection(
       article_id: article_id,
       show_visa_info: show_visa_info,
       show_best_time_to_visit: show_best_time_to_visit,
+      show_country_language: show_country_language,
     }),
   });
 
@@ -52,7 +54,8 @@ export async function updateSection(
   link_url: string,
   icon_id: number | null,
   show_visa_info: boolean = false,
-  show_best_time_to_visit: boolean = false
+  show_best_time_to_visit: boolean = false,
+  show_country_language: boolean = false
 ) {
   const token = localStorage.getItem("jwt");
 
@@ -72,6 +75,7 @@ export async function updateSection(
       section_icon_id: icon_id,
       show_visa_info: show_visa_info,
       show_best_time_to_visit: show_best_time_to_visit,
+      show_country_language: show_country_language,
     }),
   });
 

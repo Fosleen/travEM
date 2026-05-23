@@ -50,25 +50,12 @@
     }
   }
 
-  .article-fragment-visa-info {
+  .article-fragment-visa-info,
+  .article-fragment-best-time,
+  .article-fragment-best-time-to-visit,
+  .article-fragment-country-language {
     width: 100%;
     max-width: 900px;
-
-    .visa-info-container {
-      max-width: 100%;
-      margin: 0;
-    }
-  }
-
-  .article-fragment-best-time {
-    width: 100%;
-    max-width: 900px;
-
-    .btv,
-    .btv-place {
-      max-width: 100%;
-      margin: 0;
-    }
   }
 
   .article-html-content {

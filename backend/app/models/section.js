@@ -17,6 +17,11 @@ export default (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: false,
       },
+      show_country_language: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
     },
     {
       underscored: true,

@@ -11,7 +11,8 @@ class SectionController {
       req.body.section_icon_id,
       req.body.article_id,
       req.body.show_visa_info,
-      req.body.show_best_time_to_visit
+      req.body.show_best_time_to_visit,
+      req.body.show_country_language
     );
 
     if (response.length == 0) {
@@ -32,7 +33,8 @@ class SectionController {
       req.body.section_icon_id,
       req.body.article_id,
       req.body.show_visa_info,
-      req.body.show_best_time_to_visit
+      req.body.show_best_time_to_visit,
+      req.body.show_country_language
     );
 
     if (!response || response.length == 0) {

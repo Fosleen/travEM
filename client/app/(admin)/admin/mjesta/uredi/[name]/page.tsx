@@ -3,7 +3,6 @@
 "use client";
 
 import { Fragment, useEffect, useRef, useState } from "react";
-import { getVisitedCountries } from "@/utils/map";
 import { PlacesData } from "@/common/types";
 import Button from "@/components/atoms/Button";
 import "./EditPlace.scss";
@@ -14,110 +13,26 @@ import Input from "@/components/atoms/Input";
 import Modal from "@/components/atoms/Modal";
 import Swal from "sweetalert2";
 import { deletePlaceById, getPlacesByName, updatePlace } from "@/utils/places";
-import * as Yup from "yup";
 import { notifySuccess } from "@/components/atoms/Toast/Toast";
 import { Plus, Trash, X } from "@phosphor-icons/react";
 import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
 import { addVideo, deleteVideo, updateVideo } from "@/utils/videos";
 import { useParams, useRouter } from "next/navigation";
-
-const grammarRows = [
-  {
-    key: "place_name",
-    label: "Nominativ",
-    question: "tko? što?",
-    example: "radi",
-    isPreview: true,
-  },
-  {
-    key: "name_genitive",
-    label: "Genitiv",
-    question: "koga? čega?",
-    example: "nema"
-  },
-  {
-    key: "name_dative",
-    label: "Dativ",
-    question: "komu? čemu?",
-    example: "idem"
-  },
-  {
-    key: "name_accusative",
-    label: "Akuzativ",
-    question: "koga? što?",
-    example: "vidim"
-  },
-  {
-    key: "name_locative",
-    label: "Lokativ",
-    question: "o komu? o čemu?",
-    example: "govorim"
-  },
-];
-
-const bestTimeMonths = [
-  { month_key: "jan", label: "Siječanj" },
-  { month_key: "feb", label: "Veljača" },
-  { month_key: "mar", label: "Ožujak" },
-  { month_key: "apr", label: "Travanj" },
-  { month_key: "may", label: "Svibanj" },
-  { month_key: "jun", label: "Lipanj" },
-  { month_key: "jul", label: "Srpanj" },
-  { month_key: "aug", label: "Kolovoz" },
-  { month_key: "sep", label: "Rujan" },
-  { month_key: "oct", label: "Listopad" },
-  { month_key: "nov", label: "Studeni" },
-  { month_key: "dec", label: "Prosinac" },
-];
-
-const getDefaultBestTimeMonths = () =>
-  bestTimeMonths.map((month) => ({
-    month_key: month.month_key,
-    avg_temp_c: "",
-    avg_rain_mm: "",
-  }));
-
-const normalizeNumberForInput = (value) => {
-  if (value === null || value === undefined) return "";
-  return String(value).replace(".", ",");
-};
-
-const slugifyPlaceName = (value: string) => {
-  return value.trim().toLowerCase().replace(/\s+/g, "-");
-};
-
-const getInitialBestTimeToVisit = (place) => {
-  const bestTime = place?.best_time_to_visit;
-
-  if (!bestTime) {
-    return {
-      subtitle: "",
-      note: "",
-      is_enabled: true,
-      months: getDefaultBestTimeMonths(),
-    };
-  }
-
-  const existingMonths = bestTime.months || [];
-
-  return {
-    subtitle: bestTime.subtitle || "",
-    note: bestTime.note || "",
-    is_enabled:
-      bestTime.is_enabled === undefined ? true : Boolean(bestTime.is_enabled),
-    months: bestTimeMonths.map((month) => {
-      const foundMonth = existingMonths.find(
-        (item) => item.month_key === month.month_key
-      );
-
-      return {
-        month_key: month.month_key,
-        avg_temp_c: normalizeNumberForInput(foundMonth?.avg_temp_c),
-        avg_rain_mm: normalizeNumberForInput(foundMonth?.avg_rain_mm),
-      };
-    }),
-  };
-};
+import {
+  addMainPlaceImage,
+  addVideoField,
+  bestTimeMonths,
+  buildBestTimeToVisitPayload,
+  createPlaceValidationSchema,
+  deleteMainPlaceImage,
+  deleteVideoField,
+  fetchCountryDropdownOptions,
+  getInitialBestTimeToVisit,
+  grammarRows,
+  hasMainPlaceImage,
+  navigateToPlaces,
+  toggleDialog,
+} from "@/utils/placeFormHelpers";
 
 const EditPlace = () => {
   const params = useParams();
@@ -137,16 +52,6 @@ const EditPlace = () => {
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
   const [place, setPlace] = useState<PlacesData | null>(null);
 
-  const handleAddVideo = (arrayHelpers) => {
-    arrayHelpers.push({
-      video_url: "",
-    });
-  };
-
-  const handleDeleteVideo = (arrayHelpers, videoIndex) => {
-    arrayHelpers.remove(videoIndex);
-  };
-
   const getArticleOptions = () => {
     const placeArticles = place?.articles || [];
 
@@ -165,12 +70,7 @@ const EditPlace = () => {
   const handleSave = async (values) => {
     setIsSubmitClicked(true);
 
-    const bestTimeToVisitPayload = {
-      ...values.best_time_to_visit,
-      slug: slugifyPlaceName(values.place_name),
-    };
-
-    if (validateImages()) {
+    if (hasMainPlaceImage(mainPlaceImage)) {
       Swal.fire({
         title: "Jeste li sigurni?",
         text: "Uredit ćete ovo mjesto",
@@ -204,7 +104,7 @@ const EditPlace = () => {
             featured_article_id: values.featured_article_id
               ? parseInt(values.featured_article_id)
               : null,
-            best_time_to_visit: bestTimeToVisitPayload,
+            best_time_to_visit: buildBestTimeToVisitPayload(values),
           });
 
           console.log(placeResponse);
@@ -244,27 +144,6 @@ const EditPlace = () => {
     }
   };
 
-  const handleCancel = () => {
-    router.push("/admin/mjesta");
-  };
-
-  const handleAddImage = () => {
-    setMainPlaceImage(modalInputValue);
-    setModalInputValue("");
-  };
-
-  const handleDeleteImage = () => {
-    setMainPlaceImage(null);
-  };
-
-  const toggleDialog = () => {
-    if (dialogRef && dialogRef.current) {
-      dialogRef.current.hasAttribute("open")
-        ? dialogRef.current.close()
-        : dialogRef.current.showModal();
-    }
-  };
-
   const handleDeletePlace = () => {
     Swal.fire({
       title: `DESTRUKTIVNA RADNJA!\nJeste li sigurni da želite izbrisati mjesto ${place?.name} i sve članke o njemu?`,
@@ -288,17 +167,7 @@ const EditPlace = () => {
 
   const fetchData = async () => {
     try {
-      const countriesData = await getVisitedCountries();
-
-      const newArray = countriesData.map(
-        (el: { id: number; flag_image_url: string; name: string }) => ({
-          id: el.id,
-          url: el.flag_image_url,
-          name: el.name,
-        })
-      );
-
-      setCountries(newArray);
+      setCountries(await fetchCountryDropdownOptions());
 
       if (name) {
         const _place = await getPlacesByName(name, 1, 1);
@@ -320,71 +189,6 @@ const EditPlace = () => {
       fetchData();
     }
   }, [name]);
-
-  const numberValidation = Yup.string()
-    .required("Obavezno polje!")
-    .test("is-valid-number", "Vrijednost mora biti validan broj!", (value) => {
-      if (value === undefined || value === null || value === "") return false;
-      return !Number.isNaN(Number(value.toString().replace(",", ".")));
-    });
-
-  const ValidationSchema = Yup.object().shape({
-    place_name: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Naziv smije imati max 100 znakova!"),
-    name_genitive: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Genitiv smije imati max 100 znakova!"),
-    name_dative: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Dativ smije imati max 100 znakova!"),
-    name_accusative: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Akuzativ smije imati max 100 znakova!"),
-    name_locative: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Lokativ smije imati max 100 znakova!"),
-    place_latitude: Yup.string()
-      .required("Obavezno polje!")
-      .test(
-        "is-valid-latitude",
-        "Geografska širina mora biti validan decimalni broj!",
-        (value) => !isNaN(parseFloat(value))
-      ),
-    place_longitude: Yup.string()
-      .required("Obavezno polje!")
-      .test(
-        "is-valid-longitude",
-        "Geografska dužina mora biti validan decimalni broj!",
-        (value) => !isNaN(parseFloat(value))
-      ),
-    place_description: Yup.string().required("Obavezno polje!"),
-    place_country: Yup.number().required("Obavezno polje!").integer(),
-    featured_article_id: Yup.mixed().nullable(),
-    best_time_to_visit: Yup.object().shape({
-      subtitle: Yup.string().required("Obavezno polje!"),
-      note: Yup.string().nullable(),
-      is_enabled: Yup.boolean(),
-      months: Yup.array()
-        .of(
-          Yup.object().shape({
-            month_key: Yup.string().required("Obavezno polje!"),
-            avg_temp_c: numberValidation,
-            avg_rain_mm: numberValidation,
-          })
-        )
-        .min(12, "Potrebno je unijeti svih 12 mjeseci."),
-    }),
-    videos: Yup.array().of(
-      Yup.object().shape({
-        video_url: Yup.string().required("Obavezno polje!"),
-      })
-    ),
-  });
-
-  const validateImages = () => {
-    return mainPlaceImage != "" && mainPlaceImage;
-  };
 
   return (
     <>
@@ -424,7 +228,9 @@ const EditPlace = () => {
                   }))
                 : [],
             }}
-            validationSchema={ValidationSchema}
+            validationSchema={createPlaceValidationSchema({
+              includeFeaturedArticle: true,
+            })}
             onSubmit={handleSave}
             enableReinitialize={true}
           >
@@ -522,7 +328,7 @@ const EditPlace = () => {
                       <div
                         className="edit-place-image"
                         onClick={() => {
-                          handleDeleteImage();
+                          deleteMainPlaceImage(setMainPlaceImage);
                         }}
                       >
                         <div className="edit-place-image-remove-icon">
@@ -538,7 +344,7 @@ const EditPlace = () => {
                       <div
                         className="edit-place-item"
                         onClick={() => {
-                          toggleDialog();
+                          toggleDialog(dialogRef);
                         }}
                       >
                         <Plus size={32} color="#616161" weight="bold" />
@@ -752,7 +558,7 @@ const EditPlace = () => {
                                   type="button"
                                   circle
                                   onClick={() => {
-                                    handleAddVideo(arrayHelpers);
+                                    addVideoField(arrayHelpers);
                                   }}
                                 >
                                   +
@@ -774,7 +580,7 @@ const EditPlace = () => {
 
                                       <div
                                         onClick={() => {
-                                          handleDeleteVideo(
+                                          deleteVideoField(
                                             arrayHelpers,
                                             index
                                           );
@@ -836,7 +642,11 @@ const EditPlace = () => {
                     uredi mjesto
                   </Button>
 
-                  <Button type="button" white onClick={handleCancel}>
+                  <Button
+                    type="button"
+                    white
+                    onClick={() => navigateToPlaces(router)}
+                  >
                     Odustani
                   </Button>
                 </div>
@@ -850,8 +660,14 @@ const EditPlace = () => {
 
       <Modal
         ref={dialogRef}
-        toggleDialog={toggleDialog}
-        onClick={handleAddImage}
+        toggleDialog={() => toggleDialog(dialogRef)}
+        onClick={() =>
+          addMainPlaceImage({
+            modalInputValue,
+            setMainPlaceImage,
+            setModalInputValue,
+          })
+        }
         modalInputValue={modalInputValue}
         setModalInputValue={setModalInputValue}
       />

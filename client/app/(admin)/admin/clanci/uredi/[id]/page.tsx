@@ -15,11 +15,6 @@ import {
   SectionIconsData,
   SectionImage,
 } from "@/common/types";
-import * as Yup from "yup";
-import { getPlacesByCountry } from "@/utils/places";
-import { getArticleTypes } from "@/utils/articleTypes";
-import { getVisitedCountries } from "@/utils/map";
-import { getSectionIcons } from "@/utils/sectionIcons";
 import Modal from "@/components/atoms/Modal";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import Input from "@/components/atoms/Input";
@@ -43,7 +38,6 @@ import { addSection, deleteSection, updateSection } from "@/utils/sections";
 import { addSectionImage, deleteSectionImage } from "@/utils/sectionImages";
 import { addGalleryImage, deleteGalleryImage } from "@/utils/galleryImages";
 import { addVideo, updateVideo, deleteVideo } from "@/utils/videos";
-import { getAirportCities } from "@/utils/airportCities";
 import AdvancedEditor from "@/components/atoms/AdvancedEditor";
 import {
   getSubscribersWithoutPagination,
@@ -57,9 +51,26 @@ import {
   isTipsArticleType,
 } from "@/utils/articleTypeHelpers";
 import {
-  insertSectionImageSlotAfter,
-  moveSectionImageSlot,
+  addArticleSection,
+  createEmptyArticleSection,
+  deleteArticleSection,
+  getSectionIconUrl,
+  getSelectedSectionIcon,
+  insertArticleSectionAfter,
+  moveArticleSection,
 } from "@/utils/sectionFormHelpers";
+import {
+  addArticleFormImage,
+  addMetatag,
+  articleValidationSchema,
+  deleteArticleFormImage,
+  deleteMetatag,
+  fetchArticleFormOptions,
+  fetchArticlePlaces,
+  hasMainArticleImage,
+  navigateToArticles,
+  toggleDialog,
+} from "@/utils/articleFormHelpers";
 import {
   isBestTimeToVisitSectionIcon,
   isCountryLanguageSectionIcon,
@@ -112,96 +123,11 @@ const EditArticle = () => {
   const [isFarDestinationChecked, setIsFarDestinationChecked] = useState(false);
   const [isTipsFeaturedChecked, setIsTipsFeaturedChecked] = useState(false);
 
-  const ValidationSchema = Yup.object().shape({
-    article_title: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Naslov smije imati max 100 znakova!"),
-    article_subtitle: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Podnaslov smije imati max 100 znakova!"),
-    article_description: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Opis smije imati max 100 znakova!"),
-    article_type: Yup.number().required("Obavezno polje!").integer(),
-    article_airport_city_id: Yup.number().when("article_type", {
-      is: (value: string | number) =>
-        Number(value) === Number(ARTICLE_TYPE_AIRPLANE_TICKET_ID),
-      then: () => Yup.number().required("Obavezno polje!").integer(),
-      otherwise: () => Yup.number().notRequired(),
-    }),
-    article_country: Yup.number().when("article_type", {
-      is: (value: string | number) =>
-        Number(value) === Number(ARTICLE_TYPE_DESTINATION_ID),
-      then: () => Yup.number().required("Obavezno polje!").integer(),
-      otherwise: () => Yup.number().notRequired(),
-    }),
-    metatags: Yup.array().of(
-      Yup.object().shape({
-        metatag_text: Yup.string().required("Obavezno polje!"),
-      })
-    ),
-    sections: Yup.array().of(
-      Yup.object().shape({
-        section_subtitle: Yup.string().max(
-          100,
-          "Podnaslov smije imati max 100 znakova!"
-        ),
-        section_url_title: Yup.string().max(
-          100,
-          "Naslov linka smije imati max 100 znakova!"
-        ),
-      })
-    ),
-  });
-
-  const validateImages = () => {
-    return mainArticleImage != "" && mainArticleImage;
-  };
-
-  const getIconUrl = (icon: any) => {
-    return icon?.url || icon?.icon_url || icon?.image_url || icon?.src || "";
-  };
-
-  const getSelectedSectionIcon = (iconId: number | string | null) => {
-    if (!iconId || !sectionIcons || typeof sectionIcons === "string") {
-      return null;
-    }
-
-    return (
-      sectionIcons.find((icon: any) => Number(icon.id) === Number(iconId)) ||
-      null
-    );
-  };
-
-  const emptySection = {
-    section_id: null,
-    section_subtitle: "",
-    section_text: "",
-    section_url_title: "",
-    section_url_link: "",
-    section_icon: null,
-    show_visa_info: false,
-    show_best_time_to_visit: false,
-    show_country_language: false,
-  };
-
-  const handleInsertSectionAfter = (arrayHelpers: any, index: number) => {
-    arrayHelpers.insert(index + 1, { ...emptySection });
-    setSectionImages((prev) => insertSectionImageSlotAfter(prev, index));
-  };
-
-  const handleMoveSection = (arrayHelpers: any, from: number, to: number) => {
-    if (to < 0) return;
-
-    arrayHelpers.move(from, to);
-    setSectionImages((prev) => moveSectionImageSlot(prev, from, to));
-  };
-
   const handleSave = async (values: any) => {
     console.log("=== HANDLE SAVE STARTED ===");
     setIsSubmitClicked(true);
 
-    if (!validateImages()) {
+    if (!hasMainArticleImage(mainArticleImage)) {
       console.log("❌ Image validation failed");
       return;
     }
@@ -519,43 +445,23 @@ const EditArticle = () => {
   };
 
   const handleCancel = () => {
-    router.push("/admin/clanci");
+    navigateToArticles(router);
   };
 
   const handleDeleteSection = (arrayHelpers, sectionIndex) => {
-    arrayHelpers.remove(sectionIndex);
-
-    setSectionImages((prevSectionImages) =>
-      prevSectionImages.filter((_el, index) => index !== sectionIndex)
-    );
+    deleteArticleSection(arrayHelpers, setSectionImages, sectionIndex);
   };
 
   const handleAddSection = (arrayHelpers) => {
-    arrayHelpers.push({
-      id: null,
-      section_id: null,
-      section_subtitle: "",
-      section_text: "",
-      section_url_title: "",
-      section_url_link: "",
-      section_icon: null,
-      show_visa_info: false,
-      show_best_time_to_visit: false,
-      show_country_language: false,
-      order: 1,
-    });
-
-    setSectionImages((prevSectionImages) => [...prevSectionImages, []]);
-  };
-
-  const handleAddMetatag = (arrayHelpers) => {
-    arrayHelpers.push({
-      metatag_text: "",
-    });
-  };
-
-  const handleDeleteMetatag = (arrayHelpers, tagIndex) => {
-    arrayHelpers.remove(tagIndex);
+    addArticleSection(
+      arrayHelpers,
+      setSectionImages,
+      createEmptyArticleSection({
+        includeId: true,
+        includeSectionId: true,
+        includeOrder: true,
+      })
+    );
   };
 
   const handleDeleteImage = (
@@ -563,74 +469,48 @@ const EditArticle = () => {
     itemIndex?: number,
     sectionIndex?: number
   ) => {
-    if (type == "main") {
-      setMainArticleImage(null);
-    } else if (type == "other") {
-      setOtherArticleImages((prev) =>
-        prev.filter((_el, index) => index !== itemIndex)
-      );
-    } else if (type == "section" && sectionIndex !== undefined) {
-      setSectionImages((prevSectionImages) => [
-        ...prevSectionImages.slice(0, sectionIndex),
-        (prevSectionImages[sectionIndex] || []).filter(
-          (_el, index) => index !== itemIndex
-        ),
-        ...prevSectionImages.slice(sectionIndex + 1),
-      ]);
-    }
-    setImageType(null);
-  };
-
-  const toggleDialog = () => {
-    if (dialogRef && dialogRef.current) {
-      dialogRef.current.hasAttribute("open")
-        ? dialogRef.current.close()
-        : dialogRef.current.showModal();
-    }
+    deleteArticleFormImage({
+      type,
+      itemIndex,
+      sectionIndex,
+      setMainArticleImage,
+      setOtherArticleImages,
+      setSectionImages,
+      setImageType,
+      emptyMainImageValue: null,
+    });
   };
 
   const handleAddImage = () => {
-    if (imageType == "main") {
-      setMainArticleImage(modalInputValue);
-    } else if (imageType == "other") {
-      setOtherArticleImages([
-        ...otherArticleImages,
-        {
-          url: modalInputValue,
-          width: imageWidthValue,
-          height: imageHeightValue,
-        },
-      ]);
-    } else if (imageType == "section") {
-      setSectionImages((prevSectionImages) => [
-        ...prevSectionImages.slice(0, sectionSelected),
-        [
-          ...(prevSectionImages[sectionSelected] || []),
-          {
-            id: null,
-            url: modalInputValue,
-            width: imageWidthValue || null,
-            height: imageHeightValue || null,
-          },
-        ],
-        ...prevSectionImages.slice(sectionSelected + 1),
-      ]);
-    }
-
-    setModalInputValue("");
-    setImageHeightValue("");
-    setImageWidthValue("");
+    addArticleFormImage({
+      imageType,
+      modalInputValue,
+      imageWidthValue,
+      imageHeightValue,
+      sectionSelected,
+      setMainArticleImage,
+      setOtherArticleImages,
+      setSectionImages,
+      setModalInputValue,
+      setImageHeightValue,
+      setImageWidthValue,
+      includeOtherImageDimensions: true,
+      includeSectionImageId: true,
+      emptySectionImageDimensionValue: null,
+    });
   };
 
   const fetchData = async () => {
     try {
       console.log("Fetching data for article ID:", id);
       if (id) {
-        const articleTypesData = await getArticleTypes();
-        const countriesData = await getVisitedCountries();
-        const sectionIconsData = await getSectionIcons();
+        const {
+          articleTypesData,
+          countriesData,
+          sectionIconsData,
+          airportsData,
+        } = await fetchArticleFormOptions();
         const articleData = await getArticleById(parseInt(id), true);
-        const airportsData = await getAirportCities();
 
         let isSetAsMainCountryPost = null;
 
@@ -671,7 +551,7 @@ const EditArticle = () => {
   };
 
   const fetchPlacesData = async () => {
-    const placesData = await getPlacesByCountry(parseInt(selectedCountryId));
+    const placesData = await fetchArticlePlaces(selectedCountryId);
     setPlaces(placesData);
   };
 
@@ -759,7 +639,7 @@ const EditArticle = () => {
                     }))
                   : [],
               }}
-              validationSchema={ValidationSchema}
+              validationSchema={articleValidationSchema}
               onSubmit={handleSave}
               enableReinitialize={true}
             >
@@ -1046,7 +926,7 @@ const EditArticle = () => {
                       <div
                         className="edit-article-item"
                         onClick={() => {
-                          toggleDialog();
+                          toggleDialog(dialogRef);
                           setImageType("main");
                         }}
                       >
@@ -1075,10 +955,11 @@ const EditArticle = () => {
                             {sections && sections.length > 0
                               ? sections.map((section, index) => {
                                   const selectedIcon = getSelectedSectionIcon(
+                                    sectionIcons,
                                     section.section_icon
                                   );
                                   const selectedIconUrl =
-                                    getIconUrl(selectedIcon);
+                                    getSectionIconUrl(selectedIcon);
                                   const isEntryRequirementsIconSelected =
                                     isEntryRequirementsSectionIcon(
                                       selectedIcon
@@ -1122,21 +1003,27 @@ const EditArticle = () => {
                                         index={index}
                                         total={sections.length}
                                         onInsertBelow={() =>
-                                          handleInsertSectionAfter(
+                                          insertArticleSectionAfter(
                                             arrayHelpers,
-                                            index
+                                            setSectionImages,
+                                            index,
+                                            createEmptyArticleSection({
+                                              includeSectionId: true,
+                                            })
                                           )
                                         }
                                         onMoveUp={() =>
-                                          handleMoveSection(
+                                          moveArticleSection(
                                             arrayHelpers,
+                                            setSectionImages,
                                             index,
                                             index - 1
                                           )
                                         }
                                         onMoveDown={() =>
-                                          handleMoveSection(
+                                          moveArticleSection(
                                             arrayHelpers,
+                                            setSectionImages,
                                             index,
                                             index + 1
                                           )
@@ -1492,7 +1379,7 @@ const EditArticle = () => {
                                             <div
                                               className="edit-article-item"
                                               onClick={() => {
-                                                toggleDialog();
+                                                toggleDialog(dialogRef);
                                                 setImageType("section");
                                                 setSectionSelected(index);
                                               }}
@@ -1567,7 +1454,7 @@ const EditArticle = () => {
                       <div
                         className="edit-article-item"
                         onClick={() => {
-                          toggleDialog();
+                          toggleDialog(dialogRef);
                           setImageType("other");
                         }}
                       >
@@ -1592,7 +1479,7 @@ const EditArticle = () => {
                                   type="button"
                                   circle
                                   onClick={() => {
-                                    handleAddMetatag(arrayHelpersMetatag);
+                                    addMetatag(arrayHelpersMetatag);
                                   }}
                                 >
                                   +
@@ -1613,7 +1500,7 @@ const EditArticle = () => {
 
                                         <div
                                           onClick={() => {
-                                            handleDeleteMetatag(
+                                            deleteMetatag(
                                               arrayHelpersMetatag,
                                               index
                                             );
@@ -1700,7 +1587,7 @@ const EditArticle = () => {
 
         <Modal
           ref={dialogRef}
-          toggleDialog={toggleDialog}
+          toggleDialog={() => toggleDialog(dialogRef)}
           onClick={handleAddImage}
           modalInputValue={modalInputValue}
           modalImageHeightValue={imageHeightValue}

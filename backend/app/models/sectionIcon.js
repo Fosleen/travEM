@@ -4,7 +4,7 @@ export default (sequelize, DataTypes) => {
     {
       url: { type: DataTypes.STRING, allowNull: false },
       feature_key: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(50),
         allowNull: true,
       },
     },

@@ -4,7 +4,6 @@
 
 import "./EditCountry.scss";
 import { Fragment, useEffect, useRef, useState } from "react";
-import * as Yup from "yup";
 import { countries as countryList } from "@/utils/all_countries.ts";
 import Swal from "sweetalert2";
 import { notifySuccess } from "@/components/atoms/Toast/Toast";
@@ -40,174 +39,32 @@ import {
 import { updateSpecificityImage } from "@/utils/specificityImages";
 import { useParams, useRouter } from "next/navigation";
 import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
-import { getCountryAccusative } from "@/utils/countryGrammar";
 import {
   addCountryLanguage,
   getCountryLanguage,
   patchCountryLanguage,
 } from "@/utils/countryLanguage";
-
-const bestTimeMonths = [
-  { month_key: "jan", label: "Siječanj" },
-  { month_key: "feb", label: "Veljača" },
-  { month_key: "mar", label: "Ožujak" },
-  { month_key: "apr", label: "Travanj" },
-  { month_key: "may", label: "Svibanj" },
-  { month_key: "jun", label: "Lipanj" },
-  { month_key: "jul", label: "Srpanj" },
-  { month_key: "aug", label: "Kolovoz" },
-  { month_key: "sep", label: "Rujan" },
-  { month_key: "oct", label: "Listopad" },
-  { month_key: "nov", label: "Studeni" },
-  { month_key: "dec", label: "Prosinac" },
-];
-
-const countryLanguagePhraseLabels = [
-  { order_index: 1, label: "Bok / pozdrav" },
-  { order_index: 2, label: "Hvala" },
-  { order_index: 3, label: "Molim" },
-  { order_index: 4, label: "Oprostite" },
-  { order_index: 5, label: "Da" },
-  { order_index: 6, label: "Ne" },
-];
-
-const getDefaultBestTimeMonths = () =>
-  bestTimeMonths.map((month) => ({
-    month_key: month.month_key,
-    avg_temp_c: "",
-    avg_rain_mm: "",
-  }));
-
-const getDefaultBestTimeRegion = (sortOrder = 1) => ({
-  region_key: "",
-  label: "",
-  note: "",
-  sort_order: sortOrder,
-  months: getDefaultBestTimeMonths(),
-});
-
-const getDefaultCountryLanguagePhrases = () =>
-  countryLanguagePhraseLabels.map((item) => ({
-    order_index: item.order_index,
-    phrase: "",
-    pronunciation: "",
-  }));
-
-const getInitialCountryLanguage = (countryLanguage) => {
-  if (!countryLanguage) {
-    return {
-      id: null,
-      language_name: "",
-      is_active: true,
-      phrases: getDefaultCountryLanguagePhrases(),
-    };
-  }
-
-  const existingPhrases = countryLanguage.phrases || [];
-
-  return {
-    id: countryLanguage.id || null,
-    language_name: countryLanguage.language_name || "",
-    is_active:
-      countryLanguage.is_active === undefined
-        ? true
-        : Boolean(countryLanguage.is_active),
-    phrases: countryLanguagePhraseLabels.map((item) => {
-      const foundPhrase = existingPhrases.find(
-        (phraseItem) => phraseItem.order_index === item.order_index
-      );
-
-      return {
-        order_index: item.order_index,
-        phrase: foundPhrase?.phrase || "",
-        pronunciation: foundPhrase?.pronunciation || "",
-      };
-    }),
-  };
-};
-
-const normalizeNumberForInput = (value) => {
-  if (value === null || value === undefined) return "";
-  return String(value).replace(".", ",");
-};
-
-const normalizeSlug = (value: string) => {
-  return value
-    ?.toString()
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "-");
-};
-
-const safeDecodeURIComponent = (value: string) => {
-  if (!value) return "";
-
-  try {
-    return decodeURIComponent(value);
-  } catch (error) {
-    return value;
-  }
-};
-
-const getBestTimeTitle = (countryName: string) => {
-  if (!countryName) return "";
-  return `Kada je najbolje posjetiti ${getCountryAccusative(countryName)}?`;
-};
-
-const getInitialBestTimeToVisit = (country) => {
-  const bestTime = country?.best_time_to_visit;
-  const countryRealName = country?.country_real_name || "";
-  const defaultTitle = getBestTimeTitle(countryRealName);
-
-  if (!bestTime) {
-    return {
-      title: defaultTitle,
-      subtitle: "",
-      is_enabled: true,
-      regions: [getDefaultBestTimeRegion(1)],
-    };
-  }
-
-  const existingRegions = bestTime.regions || [];
-
-  return {
-    title: bestTime.title || defaultTitle,
-    subtitle: bestTime.subtitle || "",
-    is_enabled:
-      bestTime.is_enabled === undefined ? true : Boolean(bestTime.is_enabled),
-    regions:
-      existingRegions.length > 0
-        ? existingRegions.map((region, regionIndex) => {
-            const existingMonths = region.months || [];
-
-            return {
-              region_key: region.region_key || "",
-              label: region.label || "",
-              note: region.note || "",
-              sort_order: region.sort_order || regionIndex + 1,
-              months: bestTimeMonths.map((month) => {
-                const foundMonth = existingMonths.find(
-                  (item) => item.month_key === month.month_key
-                );
-
-                return {
-                  month_key: month.month_key,
-                  avg_temp_c: normalizeNumberForInput(foundMonth?.avg_temp_c),
-                  avg_rain_mm: normalizeNumberForInput(foundMonth?.avg_rain_mm),
-                };
-              }),
-            };
-          })
-        : [getDefaultBestTimeRegion(1)],
-  };
-};
-
-const numberValidation = Yup.string()
-  .required("Obavezno polje!")
-  .test("is-valid-number", "Vrijednost mora biti validan broj!", (value) => {
-    if (value === undefined || value === null || value === "") return false;
-    return !Number.isNaN(Number(value.toString().replace(",", ".")));
-  });
+import {
+  addCountryImage,
+  addSpecificityItemField,
+  addVideoField,
+  bestTimeMonths,
+  countryLanguagePhraseLabels,
+  createCountryValidationSchema,
+  deleteCountryImage,
+  deleteSpecificityItemField,
+  deleteVideoField,
+  getDefaultBestTimeRegion,
+  getDefaultBestTimeTitle,
+  getInitialBestTimeToVisit,
+  getInitialCountryLanguage,
+  hasAllCountryImages,
+  navigateToCountries,
+  prepareBestTimeToVisitPayload,
+  prepareCountryLanguagePayload,
+  safeDecodeURIComponent,
+  toggleDialog,
+} from "@/utils/countryFormHelpers";
 
 const EditCountry = () => {
   const params = useParams();
@@ -255,147 +112,16 @@ const EditCountry = () => {
   const [selectedSpecificityImage, setSelectedSpecificityImage] = useState([]);
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
 
-  const ValidationSchema = Yup.object().shape({
-    country_name: Yup.string().required("Obavezno polje!"),
-    country_description: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Opis smije imati max 100 znakova!"),
-    country_color: Yup.string().required("Obavezno polje!"),
-    country_continent: Yup.string().required("Obavezno polje!"),
-    country_language: Yup.object().shape({
-      language_name: Yup.string()
-        .required("Obavezno polje!")
-        .max(100, "Naziv jezika smije imati max 100 znakova!"),
-      is_active: Yup.boolean(),
-      phrases: Yup.array()
-        .of(
-          Yup.object().shape({
-            order_index: Yup.number().required("Obavezno polje!"),
-            phrase: Yup.string()
-              .required("Obavezno polje!")
-              .max(100, "Riječ/fraza smije imati max 100 znakova!"),
-            pronunciation: Yup.string()
-              .required("Obavezno polje!")
-              .max(100, "Izgovor smije imati max 100 znakova!"),
-          })
-        )
-        .min(6, "Potrebno je unijeti svih 6 riječi."),
-    }),
-    best_time_to_visit: Yup.object().shape({
-      title: Yup.string().nullable(),
-      subtitle: Yup.string().required("Obavezno polje!"),
-      is_enabled: Yup.boolean(),
-      regions: Yup.array()
-        .of(
-          Yup.object().shape({
-            region_key: Yup.string().nullable(),
-            label: Yup.string().required("Obavezno polje!"),
-            note: Yup.string().nullable(),
-            sort_order: Yup.number(),
-            months: Yup.array()
-              .of(
-                Yup.object().shape({
-                  month_key: Yup.string().required("Obavezno polje!"),
-                  avg_temp_c: numberValidation,
-                  avg_rain_mm: numberValidation,
-                })
-              )
-              .min(12, "Potrebno je unijeti svih 12 mjeseci."),
-          })
-        )
-        .min(1, "Potrebno je unijeti barem jednu regiju."),
-    }),
-    characteristics: Yup.array().of(
-      Yup.object().shape({
-        icon: Yup.string().required("Obavezno polje!"),
-        title: Yup.string()
-          .required("Obavezno polje !")
-          .max(80, "Naslov smije imati max 80 znakova!"),
-        description: Yup.string()
-          .required("Obavezno polje!")
-          .max(80, "Opis smije imati max 80 znakova!"),
-      })
-    ),
-    specificities: Yup.array().of(
-      Yup.object().shape({
-        title: Yup.string()
-          .required("Obavezno polje!")
-          .max(45, "Naslov smije imati max 100 znakova!"),
-        specificity_items: Yup.array().of(
-          Yup.object().shape({
-            title: Yup.string()
-              .required("Obavezno polje!")
-              .max(30, "Naslov smije imati max 30 znakova!"),
-            description: Yup.string()
-              .required("Obavezno polje!")
-              .max(100, "Opis smije imati max 100 znakova!"),
-          })
-        ),
-      })
-    ),
-    videos: Yup.array().of(
-      Yup.object().shape({
-        video_url: Yup.string().required("Obavezno polje!"),
-      })
-    ),
-  });
-
-  const validateImages = () => {
-    let areAllImagesFilledIn = true;
-
-    specificityImages.map((imageGroup) => {
-      imageGroup.map((image) => {
-        if (!image || image.url == "") {
-          areAllImagesFilledIn = false;
-        }
-      });
-    });
-
-    if (
-      mainCountryImage == "" ||
-      !mainCountryImage ||
-      flagImage == "" ||
-      !flagImage
-    ) {
-      areAllImagesFilledIn = false;
-    }
-
-    return areAllImagesFilledIn;
-  };
-
-  const prepareBestTimeToVisitPayload = (values, selectedCountry) => {
-    return {
-      ...values.best_time_to_visit,
-      slug: normalizeSlug(selectedCountry.name),
-      title:
-        values.best_time_to_visit.title || getBestTimeTitle(selectedCountry.name),
-      subtitle: values.best_time_to_visit.subtitle,
-      is_enabled: values.best_time_to_visit.is_enabled,
-      regions: values.best_time_to_visit.regions.map((region, index) => ({
-        ...region,
-        region_key: normalizeSlug(region.label),
-        sort_order: index + 1,
-        months: region.months,
-      })),
-    };
-  };
-
-  const prepareCountryLanguagePayload = (values) => {
-    return {
-      language_name: values.country_language.language_name,
-      is_active: values.country_language.is_active,
-      phrases: values.country_language.phrases.map((phraseItem, index) => ({
-        order_index: index + 1,
-        phrase: phraseItem.phrase,
-        pronunciation: phraseItem.pronunciation,
-      })),
-    };
-  };
-
   const handleSave = async (values) => {
     setIsSubmitClicked(true);
 
-    if (validateImages()) {
+    if (
+      hasAllCountryImages({
+        mainCountryImage,
+        flagImage,
+        specificityImages,
+      })
+    ) {
       Swal.fire({
         title: "Jeste li sigurni?",
         text: "Uredit ćete ovu državu",
@@ -561,47 +287,20 @@ const EditCountry = () => {
   };
 
   const handleCancel = () => {
-    router.push("/admin/drzave");
-  };
-
-  const toggleDialog = () => {
-    if (dialogRef && dialogRef.current) {
-      dialogRef.current.hasAttribute("open")
-        ? dialogRef.current.close()
-        : dialogRef.current.showModal();
-    }
+    navigateToCountries(router);
   };
 
   const handleAddImage = () => {
-    if (imageType == "main") {
-      setMainCountryImage(modalInputValue);
-    } else if (imageType == "flag") {
-      setFlagImage(modalInputValue);
-    } else if (imageType == "spec") {
-      setSpecificityImages((prevSectionImages) => {
-        return [
-          ...prevSectionImages.slice(0, selectedSpecificityImage[1]),
-          [
-            ...prevSectionImages[selectedSpecificityImage[1]].slice(
-              0,
-              selectedSpecificityImage[0]
-            ),
-            {
-              ...prevSectionImages[selectedSpecificityImage[1]!][
-                selectedSpecificityImage[0]!
-              ],
-              url: modalInputValue,
-            },
-            ...prevSectionImages[selectedSpecificityImage[1]].slice(
-              selectedSpecificityImage[0] + 1
-            ),
-          ],
-          ...prevSectionImages.slice(selectedSpecificityImage[1] + 1),
-        ];
-      });
-    }
-
-    setModalInputValue("");
+    addCountryImage({
+      imageType,
+      modalInputValue,
+      selectedSpecificityImage,
+      setMainCountryImage,
+      setFlagImage,
+      setSpecificityImages,
+      setModalInputValue,
+      preserveSpecificityImageData: true,
+    });
   };
 
   const handleDeleteImage = (
@@ -609,44 +308,34 @@ const EditCountry = () => {
     imageIndex?: number,
     specificityIndex?: number
   ) => {
-    if (type == "main") {
-      setMainCountryImage(null);
-    } else if (type == "flag") {
-      setFlagImage(null);
-    } else if (type == "spec") {
-      setSpecificityImages((prevSectionImages) => {
-        return [
-          ...prevSectionImages.slice(0, specificityIndex),
-          [
-            ...prevSectionImages[specificityIndex!].slice(0, imageIndex),
-            { ...prevSectionImages[specificityIndex!][imageIndex!], url: "" },
-            ...prevSectionImages[specificityIndex!].slice(imageIndex! + 1),
-          ],
-          ...prevSectionImages.slice(specificityIndex! + 1),
-        ];
-      });
-    }
+    deleteCountryImage({
+      type,
+      imageIndex,
+      specificityIndex,
+      setMainCountryImage,
+      setFlagImage,
+      setSpecificityImages,
+      emptySpecificityImageValue: {
+        ...specificityImages[specificityIndex!]?.[imageIndex!],
+        url: "",
+      },
+    });
   };
 
   const handleAddVideo = (arrayHelpers) => {
-    arrayHelpers.push({
-      video_url: "",
-    });
+    addVideoField(arrayHelpers);
   };
 
   const handleDeleteVideo = (arrayHelpers, videoIndex) => {
-    arrayHelpers.remove(videoIndex);
+    deleteVideoField(arrayHelpers, videoIndex);
   };
 
   const handleAddSpecificityItem = (subarrayHelpers) => {
-    subarrayHelpers.push({
-      title: "",
-      description: "",
-    });
+    addSpecificityItemField(subarrayHelpers);
   };
 
   const handleDeleteSpecificityItem = (subarrayHelpers, index) => {
-    subarrayHelpers.remove(index);
+    deleteSpecificityItemField(subarrayHelpers, index);
   };
 
   useEffect(() => {
@@ -832,7 +521,7 @@ const EditCountry = () => {
                   }))
                 : [],
             }}
-            validationSchema={ValidationSchema}
+            validationSchema={createCountryValidationSchema("edit")}
             onSubmit={handleSave}
             enableReinitialize={true}
           >
@@ -852,7 +541,7 @@ const EditCountry = () => {
                           setFieldValue("country_name", value.id);
                           setFieldValue(
                             "best_time_to_visit.title",
-                            getBestTimeTitle(value.name)
+                            getDefaultBestTimeTitle(value.name)
                           );
                         }}
                         selectedValue={values.country_name}
@@ -944,7 +633,7 @@ const EditCountry = () => {
                       <div
                         className="edit-country-item"
                         onClick={() => {
-                          toggleDialog();
+                          toggleDialog(dialogRef);
                           setImageType("flag");
                         }}
                       >
@@ -978,7 +667,7 @@ const EditCountry = () => {
                       <div
                         className="edit-country-item"
                         onClick={() => {
-                          toggleDialog();
+                          toggleDialog(dialogRef);
                           setImageType("main");
                         }}
                       >
@@ -1499,7 +1188,7 @@ const EditCountry = () => {
                                                       <div
                                                         className="edit-country-item"
                                                         onClick={() => {
-                                                          toggleDialog();
+                                                          toggleDialog(dialogRef);
                                                           setSelectedSpecificityImage(
                                                             [imageIndex, index]
                                                           );
@@ -1624,7 +1313,7 @@ const EditCountry = () => {
 
       <Modal
         ref={dialogRef}
-        toggleDialog={toggleDialog}
+        toggleDialog={() => toggleDialog(dialogRef)}
         onClick={handleAddImage}
         modalInputValue={modalInputValue}
         setModalInputValue={setModalInputValue}

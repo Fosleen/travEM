@@ -14,7 +14,6 @@ import Input from "@/components/atoms/Input";
 import Textarea from "@/components/admin/atoms/Textarea";
 import { getColors } from "@/utils/colors";
 import { getCharacteristicIcons } from "@/utils/characteristicIcons";
-import * as Yup from "yup";
 import AdvancedDropdown from "@/components/admin/atoms/AdvancedDropdown";
 import { countries as countryList } from "@/utils/all_countries";
 import { Plus, Trash, X } from "@phosphor-icons/react";
@@ -24,76 +23,26 @@ import { addSpecificity } from "@/utils/specificities";
 import { addCharacteristic } from "@/utils/characteristics";
 import { addVideo } from "@/utils/videos";
 import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
-import { getCountryAccusative } from "@/utils/countryGrammar";
 import { addCountryLanguage } from "@/utils/countryLanguage";
-
-const bestTimeMonths = [
-  { month_key: "jan", label: "Siječanj" },
-  { month_key: "feb", label: "Veljača" },
-  { month_key: "mar", label: "Ožujak" },
-  { month_key: "apr", label: "Travanj" },
-  { month_key: "may", label: "Svibanj" },
-  { month_key: "jun", label: "Lipanj" },
-  { month_key: "jul", label: "Srpanj" },
-  { month_key: "aug", label: "Kolovoz" },
-  { month_key: "sep", label: "Rujan" },
-  { month_key: "oct", label: "Listopad" },
-  { month_key: "nov", label: "Studeni" },
-  { month_key: "dec", label: "Prosinac" },
-];
-
-const countryLanguagePhraseLabels = [
-  { order_index: 1, label: "Bok / pozdrav" },
-  { order_index: 2, label: "Hvala" },
-  { order_index: 3, label: "Molim" },
-  { order_index: 4, label: "Oprostite" },
-  { order_index: 5, label: "Da" },
-  { order_index: 6, label: "Ne" },
-];
-
-const getDefaultBestTimeMonths = () =>
-  bestTimeMonths.map((month) => ({
-    month_key: month.month_key,
-    avg_temp_c: "",
-    avg_rain_mm: "",
-  }));
-
-const getDefaultBestTimeRegion = (sortOrder = 1) => ({
-  region_key: "",
-  label: "",
-  note: "",
-  sort_order: sortOrder,
-  months: getDefaultBestTimeMonths(),
-});
-
-const getDefaultCountryLanguagePhrases = () =>
-  countryLanguagePhraseLabels.map((item) => ({
-    order_index: item.order_index,
-    phrase: "",
-    pronunciation: "",
-  }));
-
-const normalizeSlug = (value: string) => {
-  return value
-    ?.toString()
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "-");
-};
-
-const getDefaultBestTimeTitle = (countryName: string) => {
-  if (!countryName) return "";
-
-  return `Kada je najbolje posjetiti ${getCountryAccusative(countryName)}?`;
-};
-
-const numberValidation = Yup.string()
-  .required("Obavezno polje!")
-  .test("is-valid-number", "Vrijednost mora biti validan broj!", (value) => {
-    if (value === undefined || value === null || value === "") return false;
-
-    return !Number.isNaN(Number(value.toString().replace(",", ".")));
-  });
+import {
+  addCountryImage,
+  addSpecificityItemField,
+  addVideoField,
+  bestTimeMonths,
+  countryLanguagePhraseLabels,
+  createCountryValidationSchema,
+  deleteCountryImage,
+  deleteSpecificityItemField,
+  deleteVideoField,
+  getDefaultBestTimeRegion,
+  getDefaultBestTimeTitle,
+  getDefaultCountryLanguagePhrases,
+  hasAllCountryImages,
+  navigateToCountries,
+  prepareBestTimeToVisitPayload,
+  prepareCountryLanguagePayload,
+  toggleDialog,
+} from "@/utils/countryFormHelpers";
 
 const AddCountry = () => {
   const router = useRouter();
@@ -119,148 +68,16 @@ const AddCountry = () => {
   const [selectedSpecificityImage, setSelectedSpecificityImage] = useState([]);
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
 
-  const ValidationSchema = Yup.object().shape({
-    country_name: Yup.string().required("Obavezno polje!"),
-    country_description: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Opis smije imati max 100 znakova!"),
-    country_color: Yup.string().required("Obavezno polje!"),
-    country_continent: Yup.string().required("Obavezno polje!"),
-    country_language: Yup.object().shape({
-      language_name: Yup.string()
-        .required("Obavezno polje!")
-        .max(100, "Naziv jezika smije imati max 100 znakova!"),
-      is_active: Yup.boolean(),
-      phrases: Yup.array()
-        .of(
-          Yup.object().shape({
-            order_index: Yup.number().required("Obavezno polje!"),
-            phrase: Yup.string()
-              .required("Obavezno polje!")
-              .max(100, "Riječ/fraza smije imati max 100 znakova!"),
-            pronunciation: Yup.string()
-              .required("Obavezno polje!")
-              .max(100, "Izgovor smije imati max 100 znakova!"),
-          })
-        )
-        .min(6, "Potrebno je unijeti svih 6 riječi."),
-    }),
-    best_time_to_visit: Yup.object().shape({
-      title: Yup.string().nullable(),
-      subtitle: Yup.string().required("Obavezno polje!"),
-      is_enabled: Yup.boolean(),
-      regions: Yup.array()
-        .of(
-          Yup.object().shape({
-            region_key: Yup.string().nullable(),
-            label: Yup.string().required("Obavezno polje!"),
-            note: Yup.string().nullable(),
-            sort_order: Yup.number(),
-            months: Yup.array()
-              .of(
-                Yup.object().shape({
-                  month_key: Yup.string().required("Obavezno polje!"),
-                  avg_temp_c: numberValidation,
-                  avg_rain_mm: numberValidation,
-                })
-              )
-              .min(12, "Potrebno je unijeti svih 12 mjeseci."),
-          })
-        )
-        .min(1, "Potrebno je unijeti barem jednu regiju."),
-    }),
-    characteristics: Yup.array().of(
-      Yup.object().shape({
-        characteristic_icon: Yup.string().required("Obavezno polje!"),
-        characteristic_title: Yup.string()
-          .required("Obavezno polje !")
-          .max(80, "Naslov smije imati max 80 znakova!"),
-        characteristic_description: Yup.string()
-          .required("Obavezno polje!")
-          .max(80, "Opis smije imati max 80 znakova!"),
-      })
-    ),
-    specificities: Yup.array().of(
-      Yup.object().shape({
-        title: Yup.string()
-          .required("Obavezno polje!")
-          .max(45, "Naslov smije imati max 100 znakova!"),
-        items: Yup.array().of(
-          Yup.object().shape({
-            title: Yup.string()
-              .required("Obavezno polje!")
-              .max(30, "Naslov smije imati max 30 znakova!"),
-            description: Yup.string()
-              .required("Obavezno polje!")
-              .max(100, "Opis smije imati max 100 znakova!"),
-          })
-        ),
-      })
-    ),
-    videos: Yup.array().of(
-      Yup.object().shape({
-        video_url: Yup.string().required("Obavezno polje!"),
-      })
-    ),
-  });
-
-  const validateImages = () => {
-    let areAllImagesFilledIn = true;
-
-    specificityImages.map((imageGroup) => {
-      imageGroup.map((image) => {
-        if (!image || image == "") {
-          areAllImagesFilledIn = false;
-        }
-      });
-    });
-
-    if (
-      mainCountryImage == "" ||
-      !mainCountryImage ||
-      flagImage == "" ||
-      !flagImage
-    ) {
-      areAllImagesFilledIn = false;
-    }
-
-    return areAllImagesFilledIn;
-  };
-
-  const prepareBestTimeToVisitPayload = (values, selectedCountry) => {
-    return {
-      ...values.best_time_to_visit,
-      slug: normalizeSlug(selectedCountry.name),
-      title:
-        values.best_time_to_visit.title ||
-        getDefaultBestTimeTitle(selectedCountry.name),
-      subtitle: values.best_time_to_visit.subtitle,
-      is_enabled: values.best_time_to_visit.is_enabled,
-      regions: values.best_time_to_visit.regions.map((region, index) => ({
-        ...region,
-        region_key: normalizeSlug(region.label),
-        sort_order: index + 1,
-        months: region.months,
-      })),
-    };
-  };
-
-  const prepareCountryLanguagePayload = (values) => {
-    return {
-      language_name: values.country_language.language_name,
-      is_active: values.country_language.is_active,
-      phrases: values.country_language.phrases.map((phraseItem, index) => ({
-        order_index: index + 1,
-        phrase: phraseItem.phrase,
-        pronunciation: phraseItem.pronunciation,
-      })),
-    };
-  };
-
   const handleSave = async (values) => {
     setIsSubmitClicked(true);
 
-    if (validateImages()) {
+    if (
+      hasAllCountryImages({
+        mainCountryImage,
+        flagImage,
+        specificityImages,
+      })
+    ) {
       Swal.fire({
         title: "Jeste li sigurni?",
         text: "Objavit ćete ovu državu",
@@ -334,42 +151,19 @@ const AddCountry = () => {
   };
 
   const handleCancel = () => {
-    router.push("/admin/drzave");
-  };
-
-  const toggleDialog = () => {
-    if (dialogRef && dialogRef.current) {
-      dialogRef.current.hasAttribute("open")
-        ? dialogRef.current.close()
-        : dialogRef.current.showModal();
-    }
+    navigateToCountries(router);
   };
 
   const handleAddImage = () => {
-    if (imageType == "main") {
-      setMainCountryImage(modalInputValue);
-    } else if (imageType == "flag") {
-      setFlagImage(modalInputValue);
-    } else if (imageType == "spec") {
-      setSpecificityImages((prevSectionImages) => {
-        return [
-          ...prevSectionImages.slice(0, selectedSpecificityImage[1]),
-          [
-            ...prevSectionImages[selectedSpecificityImage[1]].slice(
-              0,
-              selectedSpecificityImage[0]
-            ),
-            modalInputValue,
-            ...prevSectionImages[selectedSpecificityImage[1]].slice(
-              selectedSpecificityImage[0] + 1
-            ),
-          ],
-          ...prevSectionImages.slice(selectedSpecificityImage[1] + 1),
-        ];
-      });
-    }
-
-    setModalInputValue("");
+    addCountryImage({
+      imageType,
+      modalInputValue,
+      selectedSpecificityImage,
+      setMainCountryImage,
+      setFlagImage,
+      setSpecificityImages,
+      setModalInputValue,
+    });
   };
 
   const handleDeleteImage = (
@@ -377,44 +171,30 @@ const AddCountry = () => {
     imageIndex?: number,
     specificityIndex?: number
   ) => {
-    if (type == "main") {
-      setMainCountryImage(null);
-    } else if (type == "flag") {
-      setFlagImage(null);
-    } else if (type == "spec") {
-      setSpecificityImages((prevSectionImages) => {
-        return [
-          ...prevSectionImages.slice(0, specificityIndex),
-          [
-            ...prevSectionImages[specificityIndex!].slice(0, imageIndex),
-            null,
-            ...prevSectionImages[specificityIndex!].slice(imageIndex! + 1),
-          ],
-          ...prevSectionImages.slice(specificityIndex! + 1),
-        ];
-      });
-    }
+    deleteCountryImage({
+      type,
+      imageIndex,
+      specificityIndex,
+      setMainCountryImage,
+      setFlagImage,
+      setSpecificityImages,
+    });
   };
 
   const handleAddVideo = (arrayHelpers) => {
-    arrayHelpers.push({
-      video_url: "",
-    });
+    addVideoField(arrayHelpers);
   };
 
   const handleDeleteVideo = (arrayHelpers, videoIndex) => {
-    arrayHelpers.remove(videoIndex);
+    deleteVideoField(arrayHelpers, videoIndex);
   };
 
   const handleAddSpecificityItem = (subarrayHelpers) => {
-    subarrayHelpers.push({
-      title: "",
-      description: "",
-    });
+    addSpecificityItemField(subarrayHelpers);
   };
 
   const handleDeleteSpecificityItem = (subarrayHelpers, index) => {
-    subarrayHelpers.remove(index);
+    deleteSpecificityItemField(subarrayHelpers, index);
   };
 
   const fetchData = async () => {
@@ -525,7 +305,7 @@ const AddCountry = () => {
               ],
               videos: [{ video_url: "" }],
             }}
-            validationSchema={ValidationSchema}
+            validationSchema={createCountryValidationSchema("add")}
             onSubmit={handleSave}
           >
             {({ values, setFieldValue }) => (
@@ -636,7 +416,7 @@ const AddCountry = () => {
                       <div
                         className="add-country-item"
                         onClick={() => {
-                          toggleDialog();
+                          toggleDialog(dialogRef);
                           setImageType("flag");
                         }}
                       >
@@ -671,7 +451,7 @@ const AddCountry = () => {
                       <div
                         className="add-country-item"
                         onClick={() => {
-                          toggleDialog();
+                          toggleDialog(dialogRef);
                           setImageType("main");
                         }}
                       >
@@ -1193,7 +973,7 @@ const AddCountry = () => {
                                                       <div
                                                         className="add-country-item"
                                                         onClick={() => {
-                                                          toggleDialog();
+                                                          toggleDialog(dialogRef);
                                                           setSelectedSpecificityImage(
                                                             [imageIndex, index]
                                                           );
@@ -1316,7 +1096,7 @@ const AddCountry = () => {
 
       <Modal
         ref={dialogRef}
-        toggleDialog={toggleDialog}
+        toggleDialog={() => toggleDialog(dialogRef)}
         onClick={handleAddImage}
         modalInputValue={modalInputValue}
         setModalInputValue={setModalInputValue}

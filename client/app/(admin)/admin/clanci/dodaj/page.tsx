@@ -3,15 +3,11 @@
 
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import "./AddArticle.scss";
-import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 import Input from "@/components/atoms/Input";
 import Button from "@/components/atoms/Button";
 import { Fragment, useEffect, useRef, useState } from "react";
-import { getArticleTypes } from "@/utils/articleTypes";
 import Dropdown from "@/components/atoms/Dropdown";
-import { getVisitedCountries } from "@/utils/map";
-import { getSectionIcons } from "@/utils/sectionIcons";
 import { Plus, Trash, X } from "@phosphor-icons/react";
 import Swal from "sweetalert2";
 import {
@@ -21,7 +17,6 @@ import {
   SectionIconsData,
 } from "@/common/types";
 import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
-import { getPlacesByCountry } from "@/utils/places";
 import AdvancedDropdown from "@/components/admin/atoms/AdvancedDropdown";
 import { addArticle, createTopCountryArticle } from "@/utils/article";
 import { addSection } from "@/utils/sections";
@@ -30,7 +25,6 @@ import { addSectionImage } from "@/utils/sectionImages";
 import { addGalleryImage } from "@/utils/galleryImages";
 import { notifyFailure, notifySuccess } from "@/components/atoms/Toast/Toast";
 import Textarea from "@/components/admin/atoms/Textarea";
-import { getAirportCities } from "@/utils/airportCities";
 import pLimit from "p-limit";
 import AdvancedEditor from "@/components/atoms/AdvancedEditor";
 import {
@@ -45,9 +39,26 @@ import {
   isTipsArticleType,
 } from "@/utils/articleTypeHelpers";
 import {
-  insertSectionImageSlotAfter,
-  moveSectionImageSlot,
+  addArticleSection,
+  createEmptyArticleSection,
+  deleteArticleSection,
+  getSectionIconUrl,
+  getSelectedSectionIcon,
+  insertArticleSectionAfter,
+  moveArticleSection,
 } from "@/utils/sectionFormHelpers";
+import {
+  addArticleFormImage,
+  addMetatag,
+  articleValidationSchema,
+  deleteArticleFormImage,
+  deleteMetatag,
+  fetchArticleFormOptions,
+  fetchArticlePlaces,
+  hasMainArticleImage,
+  navigateToArticles,
+  toggleDialog,
+} from "@/utils/articleFormHelpers";
 import {
   isBestTimeToVisitSectionIcon,
   isCountryLanguageSectionIcon,
@@ -84,48 +95,6 @@ const AddArticlePage = () => {
   const [isFarDestinationChecked, setIsFarDestinationChecked] = useState(false);
   const [isTipsFeaturedChecked, setIsTipsFeaturedChecked] = useState(false);
 
-  const ValidationSchema = Yup.object().shape({
-    article_title: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Naslov smije imati max 100 znakova!"),
-    article_subtitle: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Podnaslov smije imati max 100 znakova!"),
-    article_description: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Opis smije imati max 100 znakova!"),
-    article_type: Yup.number().required("Obavezno polje!").integer(),
-    article_airport_city_id: Yup.number().when("article_type", {
-      is: (value: string | number) =>
-        Number(value) === Number(ARTICLE_TYPE_AIRPLANE_TICKET_ID),
-      then: () => Yup.number().required("Obavezno polje!").integer(),
-      otherwise: () => Yup.number().notRequired(),
-    }),
-    article_country: Yup.number().when("article_type", {
-      is: (value: string | number) =>
-        Number(value) === Number(ARTICLE_TYPE_DESTINATION_ID),
-      then: () => Yup.number().required("Obavezno polje!").integer(),
-      otherwise: () => Yup.number().notRequired(),
-    }),
-    metatags: Yup.array().of(
-      Yup.object().shape({
-        metatag_text: Yup.string().required("Obavezno polje!"),
-      })
-    ),
-    sections: Yup.array().of(
-      Yup.object().shape({
-        section_subtitle: Yup.string().max(
-          100,
-          "Podnaslov smije imati max 100 znakova!"
-        ),
-        section_url_title: Yup.string().max(
-          100,
-          "Naslov linka smije imati max 100 znakova!"
-        ),
-      })
-    ),
-  });
-
   const getUserId = () => {
     const jwtToken = localStorage.getItem("jwt");
     if (!jwtToken) return null;
@@ -139,29 +108,10 @@ const AddArticlePage = () => {
 
   const limit = pLimit(5);
 
-  const validateImages = () => {
-    return mainArticleImage != "" && mainArticleImage;
-  };
-
-  const getIconUrl = (icon: any) => {
-    return icon?.url || icon?.icon_url || icon?.image_url || icon?.src || "";
-  };
-
-  const getSelectedSectionIcon = (iconId: number | string | null) => {
-    if (!iconId || !sectionIcons || typeof sectionIcons === "string") {
-      return null;
-    }
-
-    return (
-      sectionIcons.find((icon: any) => Number(icon.id) === Number(iconId)) ||
-      null
-    );
-  };
-
   const handleSave = async (values: any) => {
     setIsSubmitClicked(true);
 
-    if (validateImages()) {
+    if (hasMainArticleImage(mainArticleImage)) {
       Swal.fire({
         title: "Jeste li sigurni?",
         text: "Objavit ćete ovaj članak",
@@ -286,63 +236,19 @@ const AddArticlePage = () => {
   };
 
   const handleCancel = () => {
-    router.push("/admin/clanci");
+    navigateToArticles(router);
   };
 
   const handleDeleteSection = (arrayHelpers: any, sectionIndex: number) => {
-    arrayHelpers.remove(sectionIndex);
-    setSectionImages(
-      sectionImages.filter((_el, index) => index !== sectionIndex)
-    );
-  };
-
-  const emptySection = {
-    section_subtitle: "",
-    section_text: "",
-    section_url_title: "",
-    section_url_link: "",
-    section_icon: null,
-    show_visa_info: false,
-    show_best_time_to_visit: false,
-    show_country_language: false,
-    order: 1,
-  };
-
-  const handleInsertSectionAfter = (arrayHelpers: any, index: number) => {
-    arrayHelpers.insert(index + 1, { ...emptySection });
-    setSectionImages((prev) => insertSectionImageSlotAfter(prev, index));
-  };
-
-  const handleMoveSection = (arrayHelpers: any, from: number, to: number) => {
-    if (to < 0) return;
-
-    arrayHelpers.move(from, to);
-    setSectionImages((prev) => moveSectionImageSlot(prev, from, to));
+    deleteArticleSection(arrayHelpers, setSectionImages, sectionIndex);
   };
 
   const handleAddSection = (arrayHelpers: any) => {
-    arrayHelpers.push({
-      section_subtitle: "",
-      section_text: "",
-      section_url_title: "",
-      section_url_link: "",
-      section_icon: null,
-      show_visa_info: false,
-      show_best_time_to_visit: false,
-      show_country_language: false,
-      order: 1,
-    });
-    setSectionImages([...sectionImages, []]);
-  };
-
-  const handleAddMetatag = (arrayHelpers: any) => {
-    arrayHelpers.push({
-      metatag_text: "",
-    });
-  };
-
-  const handleDeleteMetatag = (arrayHelpers: any, tagIndex: number) => {
-    arrayHelpers.remove(tagIndex);
+    addArticleSection(
+      arrayHelpers,
+      setSectionImages,
+      createEmptyArticleSection({ includeOrder: true })
+    );
   };
 
   const handleDeleteImage = (
@@ -350,67 +256,41 @@ const AddArticlePage = () => {
     itemIndex?: number,
     sectionIndex?: number
   ) => {
-    if (type == "main") {
-      setMainArticleImage("");
-    } else if (type == "other") {
-      setOtherArticleImages(
-        otherArticleImages.filter((_el, index) => index !== itemIndex)
-      );
-    } else if (type == "section") {
-      setSectionImages((prevSectionImages) => [
-        ...prevSectionImages.slice(0, sectionIndex),
-        prevSectionImages[sectionIndex!].filter(
-          (_el, index) => index !== itemIndex
-        ),
-        ...prevSectionImages.slice(sectionIndex! + 1),
-      ]);
-    }
-    setImageType(null);
-  };
-
-  const toggleDialog = () => {
-    if (dialogRef && dialogRef.current) {
-      dialogRef.current.hasAttribute("open")
-        ? dialogRef.current.close()
-        : dialogRef.current.showModal();
-    }
+    deleteArticleFormImage({
+      type,
+      itemIndex,
+      sectionIndex,
+      setMainArticleImage,
+      setOtherArticleImages,
+      setSectionImages,
+      setImageType,
+    });
   };
 
   const handleAddImage = () => {
-    if (imageType == "main") {
-      setMainArticleImage(modalInputValue);
-    } else if (imageType == "other") {
-      setOtherArticleImages([
-        ...otherArticleImages,
-        {
-          url: modalInputValue,
-        },
-      ]);
-    } else if (imageType == "section") {
-      setSectionImages((prevSectionImages) => [
-        ...prevSectionImages.slice(0, sectionSelected),
-        [
-          ...prevSectionImages[sectionSelected],
-          {
-            url: modalInputValue,
-            width: imageWidthValue,
-            height: imageHeightValue,
-          },
-        ],
-        ...prevSectionImages.slice(sectionSelected + 1),
-      ]);
-    }
-    setModalInputValue("");
-    setImageHeightValue("");
-    setImageWidthValue("");
+    addArticleFormImage({
+      imageType,
+      modalInputValue,
+      imageWidthValue,
+      imageHeightValue,
+      sectionSelected,
+      setMainArticleImage,
+      setOtherArticleImages,
+      setSectionImages,
+      setModalInputValue,
+      setImageHeightValue,
+      setImageWidthValue,
+    });
   };
 
   const fetchData = async () => {
     try {
-      const articleTypesData = await getArticleTypes();
-      const countriesData = await getVisitedCountries();
-      const sectionIconsData = await getSectionIcons();
-      const airportsData = await getAirportCities();
+      const {
+        articleTypesData,
+        countriesData,
+        sectionIconsData,
+        airportsData,
+      } = await fetchArticleFormOptions();
 
       setArticleTypes(articleTypesData);
       setCountries(countriesData);
@@ -422,7 +302,7 @@ const AddArticlePage = () => {
   };
 
   const fetchPlacesData = async () => {
-    const placesData = await getPlacesByCountry(selectedCountryId);
+    const placesData = await fetchArticlePlaces(selectedCountryId);
     setPlaces(placesData);
   };
 
@@ -451,19 +331,10 @@ const AddArticlePage = () => {
               article_airport_city_id: null,
               metatags: [{ metatag_text: "" }],
               sections: [
-                {
-                  section_subtitle: "",
-                  section_text: "",
-                  section_url_title: "",
-                  section_url_link: "",
-                  section_icon: null,
-                  show_visa_info: false,
-                  show_best_time_to_visit: false,
-                  show_country_language: false,
-                },
+                createEmptyArticleSection(),
               ],
             }}
-            validationSchema={ValidationSchema}
+            validationSchema={articleValidationSchema}
             onSubmit={handleSave}
           >
             {({ values, setFieldValue }) => (
@@ -683,7 +554,7 @@ const AddArticlePage = () => {
                     <div
                       className="add-article-item"
                       onClick={() => {
-                        toggleDialog();
+                        toggleDialog(dialogRef);
                         setImageType("main");
                       }}
                     >
@@ -711,10 +582,11 @@ const AddArticlePage = () => {
                           {sections && sections.length > 0
                             ? sections.map((section, index) => {
                                 const selectedIcon = getSelectedSectionIcon(
+                                  sectionIcons,
                                   section.section_icon
                                 );
                                 const selectedIconUrl =
-                                  getIconUrl(selectedIcon);
+                                  getSectionIconUrl(selectedIcon);
                                 const isEntryRequirementsIconSelected =
                                   isEntryRequirementsSectionIcon(
                                     selectedIcon
@@ -758,21 +630,27 @@ const AddArticlePage = () => {
                                       index={index}
                                       total={sections.length}
                                       onInsertBelow={() =>
-                                        handleInsertSectionAfter(
+                                        insertArticleSectionAfter(
                                           arrayHelpers,
-                                          index
+                                          setSectionImages,
+                                          index,
+                                          createEmptyArticleSection({
+                                            includeOrder: true,
+                                          })
                                         )
                                       }
                                       onMoveUp={() =>
-                                        handleMoveSection(
+                                        moveArticleSection(
                                           arrayHelpers,
+                                          setSectionImages,
                                           index,
                                           index - 1
                                         )
                                       }
                                       onMoveDown={() =>
-                                        handleMoveSection(
+                                        moveArticleSection(
                                           arrayHelpers,
+                                          setSectionImages,
                                           index,
                                           index + 1
                                         )
@@ -1125,7 +1003,7 @@ const AddArticlePage = () => {
                                           <div
                                             className="add-article-item"
                                             onClick={() => {
-                                              toggleDialog();
+                                              toggleDialog(dialogRef);
                                               setImageType("section");
                                               setSectionSelected(index);
                                             }}
@@ -1200,7 +1078,7 @@ const AddArticlePage = () => {
                     <div
                       className="add-article-item"
                       onClick={() => {
-                        toggleDialog();
+                        toggleDialog(dialogRef);
                         setImageType("other");
                       }}
                     >
@@ -1225,7 +1103,7 @@ const AddArticlePage = () => {
                                 type="button"
                                 circle
                                 onClick={() => {
-                                  handleAddMetatag(arrayHelpersMetatag);
+                                  addMetatag(arrayHelpersMetatag);
                                 }}
                               >
                                 +
@@ -1246,7 +1124,7 @@ const AddArticlePage = () => {
 
                                       <div
                                         onClick={() => {
-                                          handleDeleteMetatag(
+                                          deleteMetatag(
                                             arrayHelpersMetatag,
                                             index
                                           );
@@ -1338,7 +1216,7 @@ const AddArticlePage = () => {
 
       <Modal
         ref={dialogRef}
-        toggleDialog={toggleDialog}
+        toggleDialog={() => toggleDialog(dialogRef)}
         onClick={handleAddImage}
         modalInputValue={modalInputValue}
         modalImageHeightValue={imageHeightValue}

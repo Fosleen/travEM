@@ -26,6 +26,7 @@
     justify-content: flex-start;
     align-items: center;
     text-align: left;
+    max-width: 100%;
   }
 
   .flag-icon {
@@ -40,7 +41,6 @@
     min-width: 0;
   }
 
-  /* ključni fix */
   &.flag.full-width {
     width: 100%;
     min-width: 0;
@@ -83,45 +83,14 @@
     overflow: visible;
     text-overflow: unset;
     word-break: normal;
-    overflow-wrap: normal;
+    overflow-wrap: anywhere;
     hyphens: none;
     text-align: left;
+    max-width: 100%;
   }
 
   img {
     height: 32px;
-  }
-}
-
-/* 🔥 range 371–392 px */
-@media screen and (min-width: 371px) and (max-width: 392px) {
-  .destination-item-container.flag p {
-    font-size: 13.25px;
-    line-height: 1.08;
-  }
-}
-
-/* 🔥 range 331–344 px */
-@media screen and (min-width: 331px) and (max-width: 344px) {
-  .destination-item-container.flag p {
-    font-size: 12.6px;
-    line-height: 1.06;
-  }
-}
-
-/* manji mobiteli */
-@media screen and (max-width: 370px) {
-  .destination-item-container.flag p {
-    font-size: 13px;
-    line-height: 1.1;
-  }
-}
-
-/* baš uski */
-@media screen and (max-width: 330px) {
-  .destination-item-container.flag p {
-    font-size: 12.5px;
-    line-height: 1.05;
   }
 }
 

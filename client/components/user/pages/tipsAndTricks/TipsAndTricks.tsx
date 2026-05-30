@@ -8,6 +8,7 @@ import { useEffect, useState, useTransition } from "react";
 import { convertFromSlug } from "@/utils/global";
 import { Article, ArticleType, Nullable } from "@/common/types";
 import Pagination from "@/components/atoms/Pagination";
+import { parseBooleanValue } from "@/utils/parseBooleanValue";
 
 interface TipsAndTricksProps {
   initialArticleTypes: Array<ArticleType>;
@@ -124,10 +125,6 @@ const tipVisualMap: Record<
     intro:
       "Savjeti za plaćanje na putovanju, korištenje kartica, podizanje gotovine i izbjegavanje nepotrebnih troškova.",
   },
-};
-
-const parseBooleanValue = (value: any) => {
-  return value === true || value === 1 || value === "1";
 };
 
 const isTipsFeaturedArticle = (article: any) => {

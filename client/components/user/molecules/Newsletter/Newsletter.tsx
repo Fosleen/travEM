@@ -1,58 +1,14 @@
 import Input from "../../../atoms/Input";
 import "./Newsletter.scss";
 import NewsletterImage from "../../atoms/NewsletterImage";
-import { useMemo, useState } from "react";
-import { notifyFailure, notifyInfo } from "../../../atoms/Toast/Toast";
-import { addSubscriber } from "../../../../utils/subscribers";
+import { useState } from "react";
 import Image from "next/image";
 import NewsletterSubmitButton from "../../atoms/NewsletterSubmitButton/NewsletterSubmitButton";
-
-import {
-  COMMON_DOMAINS,
-  normalizeEmail,
-  isBasicValidEmail,
-  suggestEmailCorrection,
-} from "../../../../utils/email";
+import { handleSubscriptionClick } from "@/utils/newsletterSubscription";
 
 const Newsletter = () => {
   const [email, setEmail] = useState("");
   const [animateTrigger, setAnimateTrigger] = useState(0);
-
-  const commonDomains = useMemo(() => COMMON_DOMAINS, []);
-
-  const handleSubscriptionClick = async () => {
-    const normalized = normalizeEmail(email);
-
-    if (!normalized) {
-      notifyFailure("Molimo unesite email adresu");
-      return;
-    }
-
-    if (!isBasicValidEmail(normalized)) {
-      notifyFailure("Molimo unesite valjanu email adresu");
-      return;
-    }
-
-    setAnimateTrigger((prev) => prev + 1);
-
-    const suggestion = suggestEmailCorrection(normalized, commonDomains);
-    const finalEmail = suggestion ?? normalized;
-
-    if (suggestion) {
-      notifyInfo(`Ispravili smo domenu: ${normalized} -> ${finalEmail}`);
-      setEmail(finalEmail);
-    }
-
-    try {
-      await addSubscriber(finalEmail);
-      notifyInfo(
-        "Uspješno ste se pretplatili na newsletter! Ako ne vidite poruke, provjerite neželjenu poštu (spam mail) i maknite naš mail odande. Hvala."
-      );
-      setEmail("");
-    } catch (error) {
-      notifyFailure("Došlo je do greške prilikom pretplate");
-    }
-  };
 
   return (
     <div className="newsletter-container">
@@ -103,7 +59,15 @@ const Newsletter = () => {
 
               <div className="newsletter-button-container">
                 <NewsletterSubmitButton
-                  onClick={handleSubscriptionClick}
+                  onClick={() =>
+                    handleSubscriptionClick({
+                      email,
+                      setEmail,
+                      setAnimateTrigger,
+                      successMessage:
+                        "Uspješno ste se pretplatili na newsletter! Ako ne vidite poruke, provjerite neželjenu poštu (spam mail) i maknite naš mail odande. Hvala.",
+                    })
+                  }
                   animateTrigger={animateTrigger}
                   text="pretplati se"
                 />

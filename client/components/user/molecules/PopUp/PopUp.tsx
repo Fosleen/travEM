@@ -6,16 +6,8 @@ import { X } from "@phosphor-icons/react";
 
 import Input from "../../../atoms/Input";
 import "./PopUp.scss";
-import { notifyFailure, notifyInfo } from "../../../atoms/Toast/Toast";
-import { addSubscriber } from "../../../../utils/subscribers";
 import NewsletterSubmitButton from "../../atoms/NewsletterSubmitButton/NewsletterSubmitButton";
-
-import {
-  COMMON_DOMAINS,
-  normalizeEmail,
-  isBasicValidEmail,
-  suggestEmailCorrection,
-} from "../../../../utils/email";
+import { handleSubscriptionClick } from "@/utils/newsletterSubscription";
 
 const travemLogo = "/images/travem-logo-hero.webp";
 const popUpBg = "/images/popupbg.webp";
@@ -223,43 +215,6 @@ const PopUp = () => {
     }, 500);
   };
 
-  const handleSubscriptionClick = async () => {
-    const normalized = normalizeEmail(email);
-
-    if (!normalized) {
-      notifyFailure("Molimo unesite email adresu");
-      return;
-    }
-
-    if (!isBasicValidEmail(normalized)) {
-      notifyFailure("Molimo unesite valjanu email adresu");
-      return;
-    }
-
-    setAnimateTrigger((prev) => prev + 1);
-
-    const suggestion = suggestEmailCorrection(normalized, COMMON_DOMAINS);
-    const finalEmail = suggestion ?? normalized;
-
-    if (suggestion) {
-      notifyInfo(`Ispravili smo domenu: ${normalized} -> ${finalEmail}`);
-      setEmail(finalEmail);
-    }
-
-    try {
-      await addSubscriber(finalEmail);
-
-      notifyInfo(
-        "Uspješno ste se pretplatili na newsletter! Ako ne vidite poruke, provjerite neželjenu poštu (spam mail) i maknite naš mail odande. Hvala."
-      );
-
-      setEmail("");
-      closePopupAfterSuccessfulSubscription();
-    } catch (error) {
-      notifyFailure("Došlo je do greške prilikom pretplate");
-    }
-  };
-
   if (!showPopup) return null;
 
   return (
@@ -297,7 +252,16 @@ const PopUp = () => {
 
               <div className="newsletter-button-container">
                 <NewsletterSubmitButton
-                  onClick={handleSubscriptionClick}
+                  onClick={() =>
+                    handleSubscriptionClick({
+                      email,
+                      setEmail,
+                      setAnimateTrigger,
+                      successMessage:
+                        "Uspješno ste se pretplatili na newsletter! Ako ne vidite poruke, provjerite neželjenu poštu (spam mail) i maknite naš mail odande. Hvala.",
+                      onSuccess: closePopupAfterSuccessfulSubscription,
+                    })
+                  }
                   animateTrigger={animateTrigger}
                   text="pretplati se"
                 />

@@ -76,18 +76,7 @@ import {
   isCountryLanguageSectionIcon,
   isEntryRequirementsSectionIcon,
 } from "@/utils/sectionSpecialFeatures";
-
-const parseBooleanValue = (value: any) => {
-  if (typeof value === "boolean") return value;
-  if (typeof value === "number") return value === 1;
-
-  if (typeof value === "string") {
-    const normalizedValue = value.trim().toLowerCase();
-    return normalizedValue === "1" || normalizedValue === "true";
-  }
-
-  return false;
-};
+import { parseBooleanValue } from "@/utils/parseBooleanValue";
 
 const EditArticle = () => {
   const params = useParams();
@@ -529,16 +518,8 @@ const EditArticle = () => {
         setIsMainCountryPostChecked(isSetAsMainCountryPost?.id == id);
         setIsMainCountryPost(isSetAsMainCountryPost?.id == id);
         setSelectedCountryId(articleData.countryId || "");
-        setIsFarDestinationChecked(
-          articleData.isFarDestination === true ||
-            articleData.isFarDestination === 1 ||
-            articleData.is_far_destination === true ||
-            articleData.is_far_destination === 1
-        );
-        setIsTipsFeaturedChecked(
-          parseBooleanValue(articleData.isTipsFeatured) ||
-            parseBooleanValue(articleData.is_tips_featured)
-        );
+        setIsFarDestinationChecked(Boolean(articleData.isFarDestination));
+        setIsTipsFeaturedChecked(parseBooleanValue(articleData.isTipsFeatured));
         setSectionImages(
           articleData.sections.map((section) => section.section_images)
         );

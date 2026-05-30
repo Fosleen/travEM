@@ -7,8 +7,14 @@ import {
   normalizeNumberForInput,
   numberValidation,
 } from "@/utils/bestTimeFormHelpers";
+import { safeDecodeURIComponent } from "@/utils/url";
 
-export { bestTimeMonths, getDefaultBestTimeMonths, normalizeNumberForInput };
+export {
+  bestTimeMonths,
+  getDefaultBestTimeMonths,
+  normalizeNumberForInput,
+  safeDecodeURIComponent,
+};
 
 export const countryLanguagePhraseLabels = [
   { order_index: 1, label: "Bok / pozdrav" },
@@ -73,16 +79,6 @@ export const normalizeSlug = (value: string) => {
     .trim()
     .toLowerCase()
     .replace(/\s+/g, "-");
-};
-
-export const safeDecodeURIComponent = (value: string) => {
-  if (!value) return "";
-
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return value;
-  }
 };
 
 export const getDefaultBestTimeTitle = (countryName: string) => {

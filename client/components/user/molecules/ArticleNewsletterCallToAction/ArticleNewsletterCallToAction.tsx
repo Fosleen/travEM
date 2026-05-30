@@ -1,57 +1,13 @@
 import Input from "../../../atoms/Input";
 import "./ArticleNewsletterCallToAction.scss";
-import { useMemo, useState } from "react";
-import { notifyFailure, notifyInfo } from "../../../atoms/Toast/Toast";
-import { addSubscriber } from "../../../../utils/subscribers";
+import { useState } from "react";
 import Image from "next/image";
 import NewsletterSubmitButton from "../../atoms/NewsletterSubmitButton/NewsletterSubmitButton";
-
-import {
-  COMMON_DOMAINS,
-  normalizeEmail,
-  isBasicValidEmail,
-  suggestEmailCorrection,
-} from "../../../../utils/email";
+import { handleSubscriptionClick } from "@/utils/newsletterSubscription";
 
 const ArticleNewsletterCallToAction = () => {
   const [email, setEmail] = useState("");
   const [animateTrigger, setAnimateTrigger] = useState(0);
-
-  const commonDomains = useMemo(() => COMMON_DOMAINS, []);
-
-  const handleSubscriptionClick = async () => {
-    const normalized = normalizeEmail(email);
-
-    if (!normalized) {
-      notifyFailure("Molimo unesite email adresu");
-      return;
-    }
-
-    if (!isBasicValidEmail(normalized)) {
-      notifyFailure("Molimo unesite valjanu email adresu");
-      return;
-    }
-
-    setAnimateTrigger((prev) => prev + 1);
-
-    const suggestion = suggestEmailCorrection(normalized, commonDomains);
-    const finalEmail = suggestion ?? normalized;
-
-    if (suggestion) {
-      notifyInfo(`Ispravili smo domenu: ${normalized} -> ${finalEmail}`);
-      setEmail(finalEmail);
-    }
-
-    try {
-      await addSubscriber(finalEmail);
-      notifyInfo(
-        "Uspješno ste se besplatno pretplatili na newsletter! Ako ne vidite poruke, provjerite neželjenu poštu i maknite naš mail odande. Hvala."
-      );
-      setEmail("");
-    } catch (error) {
-      notifyFailure("Došlo je do greške prilikom pretplate");
-    }
-  };
 
   return (
     <div className="article-newsletter-call-to-action-container">
@@ -90,7 +46,15 @@ const ArticleNewsletterCallToAction = () => {
 
           <div className="article-newsletter-call-to-action-button">
             <NewsletterSubmitButton
-              onClick={handleSubscriptionClick}
+              onClick={() =>
+                handleSubscriptionClick({
+                  email,
+                  setEmail,
+                  setAnimateTrigger,
+                  successMessage:
+                    "Uspješno ste se besplatno pretplatili na newsletter! Ako ne vidite poruke, provjerite neželjenu poštu i maknite naš mail odande. Hvala.",
+                })
+              }
               animateTrigger={animateTrigger}
               text="pretplati se besplatno"
             />

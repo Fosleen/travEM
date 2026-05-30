@@ -49,8 +49,8 @@
       gap: 12px;
       align-items: flex-start;
 
-      > * {
-        width: auto !important;
+      > .destination-item-container.flag.full-width {
+        width: auto;
         min-width: unset;
         max-width: max-content;
         flex: 0 0 auto;

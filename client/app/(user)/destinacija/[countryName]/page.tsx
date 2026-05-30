@@ -4,19 +4,10 @@ import { getFavoriteArticleByCountry } from "@/utils/article";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import DestinationCountry from "@/components/user/pages/destinationCountry/DestinationCountry";
+import { safeDecodeURIComponent } from "@/utils/url";
 
 type Props = {
   params: Promise<{ countryName: string }>;
-};
-
-const safeDecodeURIComponent = (value: string) => {
-  if (!value) return "";
-
-  try {
-    return decodeURIComponent(value);
-  } catch (error) {
-    return value;
-  }
 };
 
 const getCachedCountriesByName = cache(

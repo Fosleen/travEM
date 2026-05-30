@@ -15,22 +15,13 @@ import { CountriesData } from "@/common/types";
 import CountryLanguage from "../../molecules/CountryLanguage/CountryLanguage";
 
 import BestTimeToVisit from "../../molecules/BestTimeToVisit/BestTimeToVisit";
+import { safeDecodeURIComponent } from "@/utils/url";
 
 interface DestinationCountryProps {
   initialCountry: CountriesData;
   initialFavoriteArticle: any;
   countryName: string;
 }
-
-const safeDecodeURIComponent = (value: string) => {
-  if (!value) return "";
-
-  try {
-    return decodeURIComponent(value);
-  } catch (error) {
-    return value;
-  }
-};
 
 const DestinationCountry = ({
   initialCountry,

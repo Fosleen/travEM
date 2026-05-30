@@ -5,47 +5,29 @@ import Image from "next/image";
 import Link from "next/link";
 import { getCountryGenitive } from "@/utils/countryGrammar";
 
+const TAIL_SPLIT = {
+  5: 2,
+  6: 3,
+  7: 3,
+  8: 4,
+};
+
 const chunkPlacesForDesktop = (places) => {
-  const total = places.length;
-
-  if (total <= 4) return [places];
-  if (total === 5) return [places.slice(0, 2), places.slice(2)];
-  if (total === 6) return [places.slice(0, 3), places.slice(3)];
-  if (total === 7) return [places.slice(0, 3), places.slice(3)];
-  if (total === 8) return [places.slice(0, 4), places.slice(4)];
-
   const rows = [];
   let remaining = [...places];
 
   while (remaining.length > 0) {
     const left = remaining.length;
 
-    if (left === 5) {
-      rows.push(remaining.slice(0, 2));
-      rows.push(remaining.slice(2));
-      break;
-    }
-
-    if (left === 6) {
-      rows.push(remaining.slice(0, 3));
-      rows.push(remaining.slice(3));
-      break;
-    }
-
-    if (left === 7) {
-      rows.push(remaining.slice(0, 3));
-      rows.push(remaining.slice(3));
-      break;
-    }
-
-    if (left === 8) {
-      rows.push(remaining.slice(0, 4));
-      rows.push(remaining.slice(4));
-      break;
-    }
-
     if (left <= 4) {
       rows.push(remaining);
+      break;
+    }
+
+    if (TAIL_SPLIT[left]) {
+      const splitIndex = TAIL_SPLIT[left];
+      rows.push(remaining.slice(0, splitIndex));
+      rows.push(remaining.slice(splitIndex));
       break;
     }
 

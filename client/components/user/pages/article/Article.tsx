@@ -17,6 +17,8 @@ import "yet-another-react-lightbox/styles.css";
 
 import ArticleTableOfContentsDropUp from "@/components/user/molecules/ArticleTableOfContentsDropUp/ArticleTableOfContentsDropUp";
 import ArticleNewsletterCallToAction from "@/components/user/molecules/ArticleNewsletterCallToAction/ArticleNewsletterCallToAction";
+import { parseBooleanValue } from "@/utils/parseBooleanValue";
+import { openLightbox } from "@/utils/lightbox";
 
 interface ArticleProps {
   initialArticle: any;
@@ -28,18 +30,6 @@ const getNewsletterInsertIndex = (sectionsLength: number) => {
   if (sectionsLength <= 4) return 1;
   if (sectionsLength <= 7) return 2;
   return 3;
-};
-
-const parseBooleanValue = (value: any) => {
-  if (typeof value === "boolean") return value;
-  if (typeof value === "number") return value === 1;
-
-  if (typeof value === "string") {
-    const normalizedValue = value.trim().toLowerCase();
-    return normalizedValue === "1" || normalizedValue === "true";
-  }
-
-  return false;
 };
 
 const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
@@ -70,11 +60,6 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
   }, [sectionsLength]);
 
   const shouldShowBottomNewsletter = sectionsLength >= 10;
-
-  const openLightbox = (index: number) => {
-    setLightboxIndex(index);
-    setLightboxOpen(true);
-  };
 
   const shouldShowSectionVisaInfo = (section: any) => {
     const hasEnabledVisaInfo =
@@ -216,7 +201,13 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
               <div
                 key={image.id || index}
                 className="gallery-item"
-                onClick={() => openLightbox(index)}
+                onClick={() =>
+                  openLightbox({
+                    index,
+                    setLightboxIndex,
+                    setLightboxOpen,
+                  })
+                }
               >
                 <Image
                   src={image.url.trim()}

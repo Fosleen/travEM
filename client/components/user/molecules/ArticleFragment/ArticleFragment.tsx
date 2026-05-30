@@ -10,6 +10,7 @@ import VisaInfo from "@/components/user/molecules/VisaInfo/VisaInfo";
 import BestTimeToVisit from "@/components/user/molecules/BestTimeToVisit/BestTimeToVisit";
 import BestTimeToVisitPlace from "@/components/user/molecules/BestTimeToVisitPlace/BestTimeToVisitPlace";
 import CountryLanguage from "@/components/user/molecules/CountryLanguage/CountryLanguage";
+import { openLightbox } from "@/utils/lightbox";
 
 const ArticleFragment: FC<ArticleProps> = ({
   section = {},
@@ -85,11 +86,6 @@ const ArticleFragment: FC<ArticleProps> = ({
     alt: image.alt || "Article image",
   }));
 
-  const openLightbox = (clickedIndex: number) => {
-    setLightboxIndex(clickedIndex);
-    setLightboxOpen(true);
-  };
-
   return (
     <div className="article-wrapper" id={sectionId}>
       {hasTitle &&
@@ -150,7 +146,13 @@ const ArticleFragment: FC<ArticleProps> = ({
         <div className="article-fragment-image-wrapper">
           <div
             className="article-fragment-image-clickable"
-            onClick={() => openLightbox(0)}
+            onClick={() =>
+              openLightbox({
+                index: 0,
+                setLightboxIndex,
+                setLightboxOpen,
+              })
+            }
           >
             <Image
               alt={images[0]?.alt || "Article image"}
@@ -168,7 +170,13 @@ const ArticleFragment: FC<ArticleProps> = ({
         <div className="article-fragment-images-wrapper">
           <div
             className="article-fragment-image-frame article-fragment-image-frame--clickable"
-            onClick={() => openLightbox(0)}
+            onClick={() =>
+              openLightbox({
+                index: 0,
+                setLightboxIndex,
+                setLightboxOpen,
+              })
+            }
           >
             <Image
               alt={images[0]?.alt || "Article image"}
@@ -182,7 +190,13 @@ const ArticleFragment: FC<ArticleProps> = ({
 
           <div
             className="article-fragment-image-frame article-fragment-image-frame--clickable"
-            onClick={() => openLightbox(1)}
+            onClick={() =>
+              openLightbox({
+                index: 1,
+                setLightboxIndex,
+                setLightboxOpen,
+              })
+            }
           >
             <Image
               alt={images[1]?.alt || "Article image"}

@@ -100,9 +100,9 @@ const EditArticle = () => {
   const [imageType, setImageType] = useState<string | null>(null);
   const [sectionSelected, setSectionSelected] = useState<number>(0);
   const [mainArticleImage, setMainArticleImage] = useState<string>("");
-  const [sectionImages, setSectionImages] = useState<Array<Array<string>>>([
-    [],
-  ]);
+  const [sectionImages, setSectionImages] = useState<Array<Array<SectionImage>>>(
+    []
+  );
   const [otherArticleImages, setOtherArticleImages] = useState([]);
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
 
@@ -260,8 +260,8 @@ const EditArticle = () => {
                 const imgResponse = await addSectionImage(
                   image.url,
                   response.id,
-                  image.height,
-                  image.width
+                  image.width,
+                  image.height
                 );
                 console.log(`   ✅ Image added to new section:`, imgResponse);
                 return imgResponse;
@@ -292,16 +292,26 @@ const EditArticle = () => {
 
       console.log("✅ Removed sections deleted");
 
-      const removedSectionImages = article.sections.map((section, index) =>
-        section.section_images
+      const removedSectionImages = article.sections.flatMap((originalSection) => {
+         const currentSectionIndex = values.sections.findIndex(
+          (section: any) => section.section_id === originalSection.id
+        );
+
+        if (currentSectionIndex === -1) {
+          return [];
+        }
+
+        const currentImagesForSection = sectionImages[currentSectionIndex] || [];
+
+        return originalSection.section_images
           .map((image: SectionImage) => image.id)
           .filter(
             (imageId: number) =>
-              !sectionImages[index]?.some((img) => img.id === imageId)
-          )
-      );
+              !currentImagesForSection.some((img: SectionImage) => img.id === imageId)
+          );
+      });
 
-      const flatRemovedImages = removedSectionImages.flat();
+const flatRemovedImages = removedSectionImages;
       console.log("4️⃣ Deleting removed section images:", flatRemovedImages);
 
       await Promise.all(
@@ -445,11 +455,14 @@ const EditArticle = () => {
     addArticleSection(
       arrayHelpers,
       setSectionImages,
-      createEmptyArticleSection({
-        includeId: true,
-        includeSectionId: true,
-        includeOrder: true,
-      })
+      {
+        ...createEmptyArticleSection({
+          includeId: true,
+          includeSectionId: true,
+          includeOrder: true,
+        }),
+        form_key: crypto.randomUUID(),
+      }
     );
   };
 
@@ -602,6 +615,7 @@ const EditArticle = () => {
                 })),
                 sections: article.sections
                   ? article.sections.map((el) => ({
+                      form_key: `existing-section-${el.id}`,
                       section_id: el.id,
                       section_subtitle: el.subtitle,
                       section_text: el.text,
@@ -975,7 +989,7 @@ const EditArticle = () => {
 
                                   return (
                                     <fieldset
-                                      key={index}
+                                      key={section.form_key || section.section_id || `section-${index}`}
                                       className="edit-article-section"
                                     >
                                       <legend>Odlomak {index + 1}</legend>
@@ -988,9 +1002,12 @@ const EditArticle = () => {
                                             arrayHelpers,
                                             setSectionImages,
                                             index,
-                                            createEmptyArticleSection({
-                                              includeSectionId: true,
-                                            })
+                                            {
+                                              ...createEmptyArticleSection({
+                                                includeSectionId: true,
+                                              }),
+                                              form_key: crypto.randomUUID(),
+                                            }
                                           )
                                         }
                                         onMoveUp={() =>
@@ -1348,10 +1365,7 @@ const EditArticle = () => {
                                                       weight="bold"
                                                     />
                                                   </div>
-                                                  <img
-                                                    src={el.url}
-                                                    alt="img-error"
-                                                  />
+                                                  {el.url && <img src={el.url} alt="img-error" />}
                                                 </div>
                                               )
                                             )}
@@ -1428,7 +1442,7 @@ const EditArticle = () => {
                             <div className="edit-article-image-remove-icon">
                               <X size={32} color="#e70101" weight="bold" />
                             </div>
-                            <img src={el.url} alt="img-error" />
+                            {el.url && <img src={el.url} alt="img-error" />}
                           </div>
                         ))}
 

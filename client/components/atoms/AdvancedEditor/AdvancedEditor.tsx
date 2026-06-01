@@ -24,15 +24,21 @@ const AdvancedEditor: FC<AdvancedEditorProps> = ({
   const normalizedInitialValue = normalizeEditorValue(value);
 
   const [editorValue, setEditorValue] = useState(normalizedInitialValue);
+
+  const editorValueRef = useRef(normalizedInitialValue);
   const lastFormikValueRef = useRef(normalizedInitialValue);
 
   useEffect(() => {
     const nextValue = normalizeEditorValue(value);
 
-    if (nextValue !== lastFormikValueRef.current) {
+    if (nextValue === editorValueRef.current) {
       lastFormikValueRef.current = nextValue;
-      setEditorValue(nextValue);
+      return;
     }
+
+    editorValueRef.current = nextValue;
+    lastFormikValueRef.current = nextValue;
+    setEditorValue(nextValue);
   }, [value]);
 
   const header = useMemo(
@@ -102,21 +108,13 @@ const AdvancedEditor: FC<AdvancedEditorProps> = ({
   }) => {
     const nextValue = normalizeEditorValue(e.htmlValue);
 
-    setEditorValue((previousValue) => {
-      if (previousValue === nextValue) {
-        return previousValue;
-      }
+    if (nextValue === editorValueRef.current) {
+      return;
+    }
 
-      return nextValue;
-    });
+    editorValueRef.current = nextValue;
+    setEditorValue(nextValue);
 
-    /**
-     * Ako PrimeReact/Quill jasno kaže da je promjena došla od korisnika,
-     * odmah šaljemo vrijednost Formiku.
-     *
-     * Ako source ne postoji ili nije "user", ne šaljemo odmah jer PrimeReact
-     * često okida onTextChange kod mountanja/re-rendera i tada može nastati loop.
-     */
     if (e.source === "user") {
       commitValueToFormik(nextValue);
     }
@@ -126,7 +124,7 @@ const AdvancedEditor: FC<AdvancedEditorProps> = ({
     <div
       className="editor-wrapper"
       onBlurCapture={() => {
-        commitValueToFormik(editorValue);
+        commitValueToFormik(editorValueRef.current);
       }}
     >
       {label && (

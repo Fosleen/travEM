@@ -1,6 +1,18 @@
 import db from "../models/index.js";
 import { Op, Sequelize } from "sequelize";
 
+const parseBooleanValue = (value) => {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value === 1;
+
+  if (typeof value === "string") {
+    const normalizedValue = value.trim().toLowerCase();
+    return normalizedValue === "1" || normalizedValue === "true";
+  }
+
+  return false;
+};
+
 const isTipsArticleType = async (articleTypeId, transaction = null) => {
   const normalizedArticleTypeId = Number(articleTypeId);
 
@@ -17,20 +29,6 @@ const isTipsArticleType = async (articleTypeId, transaction = null) => {
 
   return parseBooleanValue(articleType?.isTipsType);
 };
-
-const parseBooleanValue = (value) => {
-  if (typeof value === "boolean") return value;
-  if (typeof value === "number") return value === 1;
-
-  if (typeof value === "string") {
-    const normalizedValue = value.trim().toLowerCase();
-    return normalizedValue === "1" || normalizedValue === "true";
-  }
-
-  return false;
-};
-
-
 
 const normalizeNullableId = (value) => {
   const parsedValue = Number(value);
@@ -191,6 +189,7 @@ class ArticleService {
           },
           {
             model: db.models.GalleryImage,
+            separate: true,
           },
           {
             model: db.models.Video,
@@ -206,6 +205,8 @@ class ArticleService {
           },
           {
             model: db.models.Section,
+            separate: true,
+            order: [["order", "ASC"]],
             include: [
               {
                 model: db.models.SectionImage,
@@ -217,10 +218,11 @@ class ArticleService {
           },
           {
             model: db.models.ArticleSpecialType,
-            through: db.models.Article_ArticleSpecialType,
+            through: {
+              attributes: [],
+            },
           },
         ],
-        order: [[{ model: db.models.Section }, "order", "ASC"]],
       });
 
       return article;
@@ -244,18 +246,17 @@ class ArticleService {
       }
 
       if (startingArticle.articleTypeId == 1) {
-        {
-          startingArticle.placeId && (nmbrSamePlace = 2);
+        if (startingArticle.placeId) {
+          nmbrSamePlace = 2;
         }
-        {
-          startingArticle.placeId
-            ? (nmbrSameCountry = 2)
-            : (nmbrSameCountry = 4);
-        }
+
+        startingArticle.placeId
+          ? (nmbrSameCountry = 2)
+          : (nmbrSameCountry = 4);
       } else if (
         startingArticle.articleTypeId == 2 ||
         (await isTipsArticleType(startingArticle.articleTypeId))
-        ) {
+      ) {
         nmbrSameType = 4;
       }
 
@@ -637,40 +638,38 @@ class ArticleService {
         special_type_id == 1 ||
         special_type_id == 3
       ) {
-        {
-          const valuesToAdd = article_ids.filter(
-            (value) =>
-              !existingArticles.rows.some((item) => item.articleId === value)
-          );
+        const valuesToAdd = article_ids.filter(
+          (value) =>
+            !existingArticles.rows.some((item) => item.articleId === value)
+        );
 
-          const valuesToRemove = [];
+        const valuesToRemove = [];
 
-          existingArticles.rows.map((row) => {
-            const articleIdToCheck = row.toJSON().articleId;
+        existingArticles.rows.map((row) => {
+          const articleIdToCheck = row.toJSON().articleId;
 
-            if (!article_ids.includes(articleIdToCheck)) {
-              valuesToRemove.push(row.toJSON().articleId);
-            }
-          });
+          if (!article_ids.includes(articleIdToCheck)) {
+            valuesToRemove.push(row.toJSON().articleId);
+          }
+        });
 
-          console.log(valuesToRemove);
-          console.log(valuesToAdd);
+        console.log(valuesToRemove);
+        console.log(valuesToAdd);
 
-          valuesToRemove.map(async (currRemoveValue, index) => {
-            await db.models.Article_ArticleSpecialType.update(
-              {
-                articleId: valuesToAdd[index],
+        valuesToRemove.map(async (currRemoveValue, index) => {
+          await db.models.Article_ArticleSpecialType.update(
+            {
+              articleId: valuesToAdd[index],
+              articleSpecialTypeId: special_type_id,
+            },
+            {
+              where: {
+                articleId: currRemoveValue,
                 articleSpecialTypeId: special_type_id,
               },
-              {
-                where: {
-                  articleId: currRemoveValue,
-                  articleSpecialTypeId: special_type_id,
-                },
-              }
-            );
-          });
-        }
+            }
+          );
+        });
       }
 
       return { article_ids: article_ids, special_type_id: special_type_id };
@@ -713,8 +712,8 @@ class ArticleService {
 
       const normalizedArticleTypeId = Number(article_type_id);
       const shouldBeTipsFeatured =
-      (await isTipsArticleType(normalizedArticleTypeId, transaction)) &&
-      parseBooleanValue(is_tips_featured);
+        (await isTipsArticleType(normalizedArticleTypeId, transaction)) &&
+        parseBooleanValue(is_tips_featured);
 
       if (shouldBeTipsFeatured) {
         await this.resetOtherTipsFeaturedArticles(

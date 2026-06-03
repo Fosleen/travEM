@@ -17,6 +17,7 @@ import "yet-another-react-lightbox/styles.css";
 
 import ArticleTableOfContentsDropUp from "@/components/user/molecules/ArticleTableOfContentsDropUp/ArticleTableOfContentsDropUp";
 import ArticleNewsletterCallToAction from "@/components/user/molecules/ArticleNewsletterCallToAction/ArticleNewsletterCallToAction";
+import ArticleSupportCallToAction from "@/components/user/molecules/ArticleSupportCallToAction/ArticleSupportCallToAction";
 import { parseBooleanValue } from "@/utils/parseBooleanValue";
 import { openLightbox } from "@/utils/lightbox";
 
@@ -30,6 +31,12 @@ const getNewsletterInsertIndex = (sectionsLength: number) => {
   if (sectionsLength <= 4) return 1;
   if (sectionsLength <= 7) return 2;
   return 3;
+};
+
+const getSupportInsertIndex = (sectionsLength: number) => {
+  if (sectionsLength < 15) return -1;
+
+  return Math.floor(sectionsLength * 0.65);
 };
 
 const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
@@ -59,7 +66,13 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
     return getNewsletterInsertIndex(sectionsLength);
   }, [sectionsLength]);
 
+  const supportInsertIndex = useMemo(() => {
+    return getSupportInsertIndex(sectionsLength);
+  }, [sectionsLength]);
+
   const shouldShowBottomNewsletter = sectionsLength >= 10;
+  const shouldShowInlineSupport = supportInsertIndex !== -1;
+  const shouldShowBottomSupport = sectionsLength >= 3;
 
   const shouldShowSectionVisaInfo = (section: any) => {
     const hasEnabledVisaInfo =
@@ -84,7 +97,6 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
       articleContent?.country?.name
     );
   };
-
 
   const shouldShowSectionCountryLanguage = (section: any) => {
     const hasEnabledCountryLanguage =
@@ -163,10 +175,16 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
             {index === newsletterInsertIndex && (
               <ArticleNewsletterCallToAction />
             )}
+
+            {shouldShowInlineSupport && index === supportInsertIndex && (
+              <ArticleSupportCallToAction />
+            )}
           </React.Fragment>
         ))}
 
         {shouldShowBottomNewsletter && <ArticleNewsletterCallToAction />}
+
+        {shouldShowBottomSupport && <ArticleSupportCallToAction />}
 
         <ArticleFragment article={articleContent} />
       </div>

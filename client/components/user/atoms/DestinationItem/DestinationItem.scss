@@ -115,18 +115,25 @@
 
 @media screen and ($desktop) {
   .destination-item-container {
-    /* obični full-width itemi mogu ostati compact */
     &.full-width:not(.flag) {
       width: fit-content;
       justify-content: center;
     }
 
-    /* ali flag itemi moraju uvijek ostati lijevo */
     &.flag.full-width {
       width: 100%;
       min-width: 0;
       justify-content: flex-start;
       text-align: left;
+    }
+
+    &.flag p {
+      white-space: normal;
+      word-break: normal;
+      overflow-wrap: normal;
+      word-wrap: normal;
+      hyphens: none;
+      text-wrap: balance;
     }
   }
 }

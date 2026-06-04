@@ -98,14 +98,35 @@
       border-radius: 50%;
       background: $bg;
       padding: 8px;
+      position: relative;
       display: flex;
       justify-content: center;
       align-items: center;
+      overflow: hidden;
       box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
       transform: translateY(0) scale(1);
       transition:
         transform 0.35s ease,
         box-shadow 0.35s ease;
+
+      .main-country-icon-lottie {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 74px;
+        height: 74px;
+        transform: translate(-50%, -50%);
+        display: block;
+        line-height: 0;
+      }
+
+      .main-country-icon-lottie svg,
+      .main-country-icon-lottie canvas,
+      .main-country-icon-lottie > div {
+        display: block;
+        width: 100% !important;
+        height: 100% !important;
+      }
     }
   }
 
@@ -268,6 +289,11 @@
         height: 84px;
         min-width: 84px;
         min-height: 84px;
+
+        .main-country-icon-lottie {
+          width: 68px;
+          height: 68px;
+        }
       }
     }
 
@@ -304,6 +330,11 @@
         min-width: 76px;
         min-height: 76px;
         padding: 6px;
+
+        .main-country-icon-lottie {
+          width: 62px;
+          height: 62px;
+        }
       }
     }
 
@@ -413,6 +444,11 @@
         height: 86px;
         min-width: 86px;
         min-height: 86px;
+
+        .main-country-icon-lottie {
+          width: 70px;
+          height: 70px;
+        }
       }
     }
 

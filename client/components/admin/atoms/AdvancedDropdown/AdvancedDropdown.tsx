@@ -21,6 +21,16 @@ const AdvancedDropdown: FC<DropdownProps> = ({
 }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
+  const getValueId = (value) => {
+    if (value === null || value === undefined) return null;
+
+    if (typeof value === "object") {
+      return value?.id ?? null;
+    }
+
+    return value;
+  };
+
   const optionsWithEmpty = useMemo(() => {
     const emptyOption = {
       id: null,
@@ -35,25 +45,32 @@ const AdvancedDropdown: FC<DropdownProps> = ({
     return hasNull ? options : [emptyOption, ...(options || [])];
   }, [options, filterAttribute, imageAttribute]);
 
-  useEffect(() => {
+  const findOptionByValue = (value) => {
+    const valueId = getValueId(value);
+
+    if (valueId === null || valueId === undefined) return null;
+
     const list = optionsWithEmpty || [];
-    const option = list.find((item) => item?.id === selectedValue) || null;
+
+    return list.find((item) => item?.id === valueId) || null;
+  };
+
+  useEffect(() => {
+    const option = findOptionByValue(selectedValue);
     setSelectedOption(option);
   }, [selectedValue, optionsWithEmpty]);
 
   useEffect(() => {
     if (defaultValue === null || defaultValue === undefined) return;
 
-    const list = optionsWithEmpty || [];
-    const defaultOption = list.find((item) => item?.id === defaultValue) || null;
-
+    const defaultOption = findOptionByValue(defaultValue);
     setSelectedOption(defaultOption);
 
-    if (onChange) {
-      onChange(defaultOption);
-    }
+    // Važno:
+    // Ne zovemo onChange ovdje jer defaultValue služi samo za prikaz početne vrijednosti.
+    // Inače komponenta roditelju može poslati null tijekom inicijalizacije.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [defaultValue, optionsWithEmpty]);
 
   const handleSelect = (option) => {
     if (option?.id === null || option?.__isEmpty) {

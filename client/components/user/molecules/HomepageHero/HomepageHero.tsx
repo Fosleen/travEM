@@ -176,7 +176,7 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
             <p className="light-color">
               i vodimo te kroz destinacije koje smo zaista posjetili. Korak po
               korak, iz prve ruke. <br />
-              Odaberi destinaciju:
+              <span className="destination-label">Odaberi destinaciju:</span>
             </p>
 
             <button

@@ -60,7 +60,6 @@ const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
     setIsLoadingVisaInfo(true);
 
     try {
-      // Prvi odabir: samo prikaži sadržaj normalno
       if (!isInfoShown || !visaInfo) {
         const nextVisaInfo = await getVisaResponseData(countryOption);
         setVisaInfo(nextVisaInfo);
@@ -68,20 +67,14 @@ const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
         return;
       }
 
-      // Kod promjene države:
-      // 1. pokreni fade-out / refresh animaciju starog sadržaja
       setIsAnimatingChange(true);
 
-      // 2. pričekaj da stari sadržaj “izađe”
       await new Promise((resolve) => setTimeout(resolve, 180));
 
-      // 3. dohvati novi sadržaj
       const nextVisaInfo = await getVisaResponseData(countryOption);
 
-      // 4. ubaci novi sadržaj dok je animacija još aktivna
       setVisaInfo(nextVisaInfo);
 
-      // 5. kratko zadrži animaciju da se novi sadržaj lijepo pokaže
       setTimeout(() => {
         setIsAnimatingChange(false);
       }, 220);
@@ -125,6 +118,43 @@ const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
     if (value === false) return "Ne.";
     return value;
   };
+
+  const hasAdditionalInfo = (value: string | null | undefined) => {
+    if (value === null || value === undefined) return false;
+
+    const trimmedValue = String(value).trim();
+
+    return trimmedValue !== "" && trimmedValue !== "-";
+  };
+
+  const getVisibleVisaResults = () => {
+    if (!visaInfo) return [];
+
+    const results = [
+      {
+        icon: "🪪",
+        title: "Dovoljan dokument:",
+        value: visaInfo.documentation,
+      },
+      {
+        icon: "🛂",
+        title: "Viza:",
+        value: formatVisaValue(visaInfo.visa_needed),
+      },
+    ];
+
+    if (hasAdditionalInfo(visaInfo.additional_info)) {
+      results.push({
+        icon: "📝",
+        title: "Napomena:",
+        value: visaInfo.additional_info,
+      });
+    }
+
+    return results;
+  };
+
+  const visibleVisaResults = getVisibleVisaResults();
 
   return (
     <div className="visa-info-container">
@@ -175,37 +205,22 @@ const VisaInfo: FC<{ countryId: number; countryName: string }> = ({
             isLoadingVisaInfo ? "loading" : ""
           }`}
         >
-          {visaInfo && (
-            <>
+          {visibleVisaResults.map((result, index) => (
+            <div key={result.title} className="visa-info-result-wrapper">
               <div className="visa-info-result">
-                <div className="visa-info-result-icon">🪪</div>
+                <div className="visa-info-result-icon">{result.icon}</div>
+
                 <div className="visa-info-result-text">
-                  <h4>Dovoljan dokument:</h4>
-                  <p>{visaInfo.documentation}</p>
+                  <h4>{result.title}</h4>
+                  <p>{result.value}</p>
                 </div>
               </div>
 
-              <div className="visa-info-divider" />
-
-              <div className="visa-info-result">
-                <div className="visa-info-result-icon">🛂</div>
-                <div className="visa-info-result-text">
-                  <h4>Viza:</h4>
-                  <p>{formatVisaValue(visaInfo.visa_needed)}</p>
-                </div>
-              </div>
-
-              <div className="visa-info-divider" />
-
-              <div className="visa-info-result">
-                <div className="visa-info-result-icon">📝</div>
-                <div className="visa-info-result-text">
-                  <h4>Napomena:</h4>
-                  <p>{visaInfo.additional_info}</p>
-                </div>
-              </div>
-            </>
-          )}
+              {index < visibleVisaResults.length - 1 && (
+                <div className="visa-info-divider" />
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>

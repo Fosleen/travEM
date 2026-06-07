@@ -7,6 +7,10 @@
   height: fit-content;
   overflow: visible;
 
+  .destination-label {
+    font-weight: 700;
+  }
+
   .overlay-icon {
     &-1,
     &-2 {

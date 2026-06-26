@@ -70,12 +70,12 @@ export const clients = [
     url: "https://emporiumplovdiv.com/",
   },
   {
-    img: "/images/sponsors/Hotel_Trakoscan.png",
+    img: "/images/sponsors/Hotel_Trakoscan.svg",
     name: "HotelTrakoscan",
     url: "https://www.hotel-trakoscan.hr/",
   },
   {
-    img: "/images/sponsors/Universal_Car_Rent.png",
+    img: "/images/sponsors/Universal_Car_Rent.svg",
     name: "UniversalCarRent",
     url: "https://uni-carrent.com/en",
   },
@@ -156,12 +156,12 @@ export const clients = [
     url: "https://emporiumplovdiv.com/",
   },
   {
-    img: "/images/sponsors/Hotel_Trakoscan.png",
+    img: "/images/sponsors/Hotel_Trakoscan.svg",
     name: "HotelTrakoscan",
     url: "https://www.hotel-trakoscan.hr/",
   },
   {
-    img: "/images/sponsors/Universal_Car_Rent.png",
+    img: "/images/sponsors/Universal_Car_Rent.svg",
     name: "UniversalCarRent",
     url: "https://uni-carrent.com/en",
   },

@@ -84,6 +84,11 @@ export const clients = [
     name: "ArboretumVolcjiPotok",
     url: "https://www.arboretum.si/hr/",
   },
+  {
+    img: "/images/sponsors/Hotel_Dobrovit.svg",
+    name: "HotelDobrovit",
+    url: "https://www.hotel-dobrovit.com/",
+  },
   // duplicated because there are not enough sponsors
   {
     img: "/images/logo-light.png",
@@ -169,5 +174,10 @@ export const clients = [
     img: "/images/sponsors/Arboretum_Volcji_Potok.png",
     name: "ArboretumVolcjiPotok",
     url: "https://www.arboretum.si/hr/",
+  },
+  {
+    img: "/images/sponsors/Hotel_Dobrovit.svg",
+    name: "HotelDobrovit",
+    url: "https://www.hotel-dobrovit.com/",
   },
 ];

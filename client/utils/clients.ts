@@ -15,11 +15,6 @@ export const clients = [
     url: "https://derahe.com/?fbclid=PAT01DUAORXk1leHRuA2FlbQIxMABzcnRjBmFwcF9pZA81NjcwNjczNDMzNTI0MjcAAafVyfUEQMOh3xre0wqfI5EdbAZwQpbhPhMPocz6gemgbX2kJ0gGjambmMktNw_aem_I4ZWZPZLeUIkqMchNc9XJQ",
   },
   {
-    img: "/images/sponsors/surfshark.png",
-    name: "Surfshark",
-    url: "https://get.surfshark.net/aff_c?offer_id=926&aff_id=36878",
-  },
-  {
     img: "/images/sponsors/Istanbulepass.png",
     name: "Istanbulepass",
     url: "https://istanbulepass.com/?ref=travem",
@@ -60,11 +55,6 @@ export const clients = [
     url: "https://gocity.com/en",
   },
   {
-    img: "/images/sponsors/srednja.hr.png",
-    name: "Srednja.hr",
-    url: "https://www.srednja.hr/faks/zarada-ide-do-10-000-eura-nasi-studenti-rade-i-po-pet-poslova-vele-da-za-hrvatsku-znaju-svi/",
-  },
-  {
     img: "/images/sponsors/simcorner.png",
     name: "SimCorner",
     url: "https://simcorner.com/",
@@ -73,6 +63,26 @@ export const clients = [
     img: "/images/sponsors/flynyon.png",
     name: "FlyNyon",
     url: "https://www.flynyon.com",
+  },
+  {
+    img: "/images/sponsors/Emporium_Hotel_Plovdiv.png",
+    name: "EmporiumHotelPlovdiv",
+    url: "https://emporiumplovdiv.com/",
+  },
+  {
+    img: "/images/sponsors/Hotel_Trakoscan.png",
+    name: "HotelTrakoscan",
+    url: "https://www.hotel-trakoscan.hr/",
+  },
+  {
+    img: "/images/sponsors/Universal_Car_Rent.png",
+    name: "UniversalCarRent",
+    url: "https://uni-carrent.com/en",
+  },
+  {
+    img: "/images/sponsors/Arboretum_Volcji_Potok.png",
+    name: "ArboretumVolcjiPotok",
+    url: "https://www.arboretum.si/hr/",
   },
   // duplicated because there are not enough sponsors
   {
@@ -91,11 +101,6 @@ export const clients = [
     url: "https://derahe.com/?fbclid=PAT01DUAORXk1leHRuA2FlbQIxMABzcnRjBmFwcF9pZA81NjcwNjczNDMzNTI0MjcAAafVyfUEQMOh3xre0wqfI5EdbAZwQpbhPhMPocz6gemgbX2kJ0gGjambmMktNw_aem_I4ZWZPZLeUIkqMchNc9XJQ",
   },
   {
-    img: "/images/sponsors/surfshark.png",
-    name: "Surfshark",
-    url: "https://get.surfshark.net/aff_c?offer_id=926&aff_id=36878",
-  },
-  {
     img: "/images/sponsors/Istanbulepass.png",
     name: "Istanbulepass",
     url: "https://istanbulepass.com/?ref=travem",
@@ -136,11 +141,6 @@ export const clients = [
     url: "https://gocity.com/en",
   },
   {
-    img: "/images/sponsors/srednja.hr.png",
-    name: "Srednja.hr",
-    url: "https://www.srednja.hr/faks/zarada-ide-do-10-000-eura-nasi-studenti-rade-i-po-pet-poslova-vele-da-za-hrvatsku-znaju-svi/",
-  },
-  {
     img: "/images/sponsors/simcorner.png",
     name: "SimCorner",
     url: "https://simcorner.com/",
@@ -149,5 +149,25 @@ export const clients = [
     img: "/images/sponsors/flynyon.png",
     name: "FlyNyon",
     url: "https://www.flynyon.com",
+  },
+    {
+    img: "/images/sponsors/Emporium_Hotel_Plovdiv.png",
+    name: "EmporiumHotelPlovdiv",
+    url: "https://emporiumplovdiv.com/",
+  },
+  {
+    img: "/images/sponsors/Hotel_Trakoscan.png",
+    name: "HotelTrakoscan",
+    url: "https://www.hotel-trakoscan.hr/",
+  },
+  {
+    img: "/images/sponsors/Universal_Car_Rent.png",
+    name: "UniversalCarRent",
+    url: "https://uni-carrent.com/en",
+  },
+  {
+    img: "/images/sponsors/Arboretum_Volcji_Potok.png",
+    name: "ArboretumVolcjiPotok",
+    url: "https://www.arboretum.si/hr/",
   },
 ];

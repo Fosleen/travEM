@@ -6,6 +6,12 @@
   color: #333333;
 }
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 
 /* Font is applied via className on body, but you can override: */
 .font-testimonia {

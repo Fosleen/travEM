@@ -114,6 +114,7 @@ const tipVisualMap: Record<
     heroImage: "/images/TipsAndTricks/Smjestaj.png",
     modifier: "stay",
     eyebrow: "Pametniji booking",
+    displayTitle: "Smještaj",
     intro:
       "Savjeti za pronalazak smještaja, rezervacije i stvari na koje treba paziti prije nego što potvrdite booking.",
   },
@@ -230,6 +231,10 @@ const getArticleHref = (article: any) => {
 };
 
 const getReadableTipTitle = (selectedArticleType: ArticleType) => {
+  if (selectedArticleType.name === "smjestaj") {
+    return "Smještaj";
+  }
+
   return convertFromSlug(selectedArticleType.name);
 };
 

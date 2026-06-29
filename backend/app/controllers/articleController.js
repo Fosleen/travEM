@@ -1,6 +1,26 @@
 import { clearCache, getOrSetCache } from "../middleware/redis.js";
 import articleService from "../services/articleService.js";
 import videoService from "../services/videoService.js";
+import jwt from "jsonwebtoken";
+
+const canIncludeScheduledArticles = (req) => {
+  if (req.query.includeScheduled !== "true") {
+    return false;
+  }
+
+  const authHeader = req.headers["authorization"];
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return false;
+  }
+
+  try {
+    jwt.verify(authHeader.split(" ")[1], process.env.JWT_SECRET_KEY);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
 
 class ArticleController {
   async getArticles(req, res) {
@@ -8,11 +28,13 @@ class ArticleController {
       const page = parseInt(req.query.page) || 1;
       const pageSize = parseInt(req.query.pageSize) || 12;
       const articleType = parseInt(req.query.articleType) || null;
+      const includeScheduled = canIncludeScheduledArticles(req);
 
       const response = await articleService.getArticles(
         page,
         pageSize,
-        articleType
+        articleType,
+        includeScheduled
       );
 
       if (!response || response.data.length === 0 || response.total === 0) {
@@ -48,11 +70,13 @@ class ArticleController {
       const { name } = req.params;
       const page = parseInt(req.query.page) || 1;
       const pageSize = parseInt(req.query.pageSize) || 200;
+      const includeScheduled = canIncludeScheduledArticles(req);
 
       const response = await articleService.getArticleBySearchTerm(
         name,
         page,
-        pageSize
+        pageSize,
+        includeScheduled
       );
 
       if (!response || response.length == 0 || response.total === 0) {
@@ -69,12 +93,13 @@ class ArticleController {
     try {
       const useCache = req.query.noCache !== "true";
       const { id } = req.params;
-      const cacheKey = `article:${id}`;
+      const includeScheduled = canIncludeScheduledArticles(req);
+      const cacheKey = includeScheduled ? `article:${id}:admin` : `article:${id}`;
 
       const response = await getOrSetCache(
         cacheKey,
         async () => {
-          return await articleService.getArticleById(id);
+          return await articleService.getArticleById(id, includeScheduled);
         },
         useCache
       );
@@ -107,7 +132,10 @@ class ArticleController {
         req.body.place_id,
         req.body.airport_city_id,
         req.body.is_far_destination,
-        req.body.is_tips_featured
+        req.body.is_tips_featured,
+        req.body.publish_at,
+        req.body.publish_timezone,
+        req.body.notify_subscribers_on_publish
       );
 
       if (response.length == 0) {
@@ -140,12 +168,15 @@ class ArticleController {
 
   async getHomepageArticles(req, res) {
     const useCache = req.query.noCache !== "true";
-    const cacheKey = `homepage-articles`;
+    const includeScheduled = canIncludeScheduledArticles(req);
+    const cacheKey = includeScheduled
+      ? `homepage-articles:admin`
+      : `homepage-articles`;
 
     const response = await getOrSetCache(
       cacheKey,
       async () => {
-        return await articleService.getHomepageArticles();
+        return await articleService.getHomepageArticles(includeScheduled);
       },
       useCache
     );
@@ -289,7 +320,10 @@ class ArticleController {
         req.body.place_id,
         req.body.airport_city_id,
         req.body.is_far_destination,
-        req.body.is_tips_featured
+        req.body.is_tips_featured,
+        req.body.publish_at,
+        req.body.publish_timezone,
+        req.body.notify_subscribers_on_publish
       );
 
       if (response === "Article not found") {

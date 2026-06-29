@@ -3,6 +3,7 @@ import { Sequelize } from "sequelize";
 import User from "./user.js";
 import ArticleType from "./articleType.js";
 import Article from "./article.js";
+import ArticleSchedule from "./articleSchedule.js";
 import SectionImage from "./sectionImage.js";
 import Section from "./section.js";
 import GalleryImage from "./galleryImage.js";
@@ -41,6 +42,10 @@ db.models = {};
 db.models.User = User(sequelizeConnection, Sequelize.DataTypes);
 db.models.ArticleType = ArticleType(sequelizeConnection, Sequelize.DataTypes);
 db.models.Article = Article(sequelizeConnection, Sequelize.DataTypes);
+db.models.ArticleSchedule = ArticleSchedule(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
 db.models.SectionImage = SectionImage(sequelizeConnection, Sequelize.DataTypes);
 db.models.SectionIcon = SectionIcon(sequelizeConnection, Sequelize.DataTypes);
 db.models.Section = Section(sequelizeConnection, Sequelize.DataTypes);

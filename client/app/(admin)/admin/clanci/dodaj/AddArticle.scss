@@ -330,6 +330,57 @@
       }
     }
 
+    .add-article-schedule-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 1024px;
+      padding: 8px 0 16px;
+    }
+
+    .add-article-schedule-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 2px solid rgba($green, 0.22);
+      border-radius: 8px;
+      background-color: rgba($green, 0.04);
+    }
+
+    .add-article-schedule-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+
+      label {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        color: $grey;
+      }
+
+      input,
+      select {
+        min-height: 44px;
+        border: 2px solid $greyMiddle;
+        border-radius: 8px;
+        padding: 0 12px;
+        font: inherit;
+        background-color: white;
+      }
+    }
+
+    .add-article-schedule-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      color: $greyMiddleDark;
+      font-size: 14px;
+    }
+
     .add-article-buttons {
       display: flex;
       gap: 8px;
@@ -392,6 +443,10 @@
 
       .add-article-buttons {
         flex-direction: column;
+      }
+
+      .add-article-schedule-grid {
+        grid-template-columns: 1fr;
       }
     }
   }

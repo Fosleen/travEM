@@ -12,16 +12,27 @@ const getToken = () => {
 
 // api/article.ts
 
-export async function getArticleById(id: number, noCache: boolean = false) {
+export async function getArticleById(
+  id: number,
+  noCache: boolean = false,
+  includeScheduled: boolean = noCache
+) {
   try {
     console.log(`Fetching article ${id} from ${apiUrl}/articles/${id}`);
+    const token = getToken();
+    const includeScheduledQuery = includeScheduled
+      ? "&includeScheduled=true"
+      : "";
 
     const response = await fetch(
-      `${apiUrl}/articles/${id}?noCache=${noCache}`,
+      `${apiUrl}/articles/${id}?noCache=${noCache}${includeScheduledQuery}`,
       {
         cache: "no-store",
         headers: {
           Accept: "application/json",
+          ...(includeScheduled && token
+            ? { Authorization: `Bearer ${token}` }
+            : {}),
         },
       }
     );
@@ -90,12 +101,26 @@ export async function getRecommendedArticles(id: number, type: string) {
   }
 }
 
-export async function getArticlesByName(name: string, page = 1, pageSize = 12) {
+export async function getArticlesByName(
+  name: string,
+  page = 1,
+  pageSize = 12,
+  includeScheduled: boolean = false
+) {
   try {
+    const token = getToken();
+
     const response = await fetch(
-      `${apiUrl}/articles/search/${name}?page=${page}&pageSize=${pageSize}`,
+      `${apiUrl}/articles/search/${name}?page=${page}&pageSize=${pageSize}${
+        includeScheduled ? "&includeScheduled=true" : ""
+      }`,
       {
         cache: "no-store",
+        headers: includeScheduled
+          ? {
+              Authorization: `Bearer ${token}`,
+            }
+          : undefined,
       }
     );
 
@@ -115,13 +140,24 @@ export async function getArticlesByName(name: string, page = 1, pageSize = 12) {
 export async function getArticles(
   page = 1,
   pageSize = 12,
-  articleType: number | null = null
+  articleType: number | null = null,
+  includeScheduled: boolean = false
 ) {
   try {
+    const token = getToken();
+
     const response = await fetch(
-      `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${articleType}`,
+      `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${articleType}${
+        includeScheduled ? "&includeScheduled=true" : ""
+      }`,
       {
         cache: "no-store",
+        headers:
+          includeScheduled && token
+            ? {
+                Authorization: `Bearer ${token}`,
+              }
+            : undefined,
       }
     );
 
@@ -162,10 +198,20 @@ export async function getTipsFeaturedArticle(articleTypeId: number) {
 
 export async function getHomepageArticles(noCache: boolean = false) {
   try {
+    const token = getToken();
+    const includeScheduled = noCache && Boolean(token);
+
     const response = await fetch(
-      `${apiUrl}/articles/homepage?noCache=${noCache}`,
+      `${apiUrl}/articles/homepage?noCache=${noCache}${
+        includeScheduled ? "&includeScheduled=true" : ""
+      }`,
       {
         cache: "no-store",
+        headers: includeScheduled
+          ? {
+              Authorization: `Bearer ${token}`,
+            }
+          : undefined,
       }
     );
 
@@ -222,9 +268,34 @@ export async function addArticle(
   date_updated: Date | string | null,
   airport_city_id: number | null,
   is_far_destination: boolean = false,
-  is_tips_featured: boolean = false
+  is_tips_featured: boolean = false,
+  publish_at?: string | null,
+  publish_timezone?: string,
+  notify_subscribers_on_publish?: boolean
 ) {
   const token = getToken();
+  const requestBody = {
+    title,
+    subtitle,
+    description,
+    video,
+    metatags,
+    article_type_id,
+    country_id,
+    place_id,
+    user_id,
+    main_image_url,
+    date_written,
+    date_updated,
+    airport_city_id,
+    is_far_destination,
+    is_tips_featured,
+    ...(publish_at !== undefined ? { publish_at } : {}),
+    ...(publish_timezone !== undefined ? { publish_timezone } : {}),
+    ...(notify_subscribers_on_publish !== undefined
+      ? { notify_subscribers_on_publish }
+      : {}),
+  };
 
   const response = await fetch(`${apiUrl}/articles`, {
     headers: {
@@ -233,23 +304,7 @@ export async function addArticle(
       Authorization: `Bearer ${token}`,
     },
     method: "POST",
-    body: JSON.stringify({
-      title,
-      subtitle,
-      description,
-      video,
-      metatags,
-      article_type_id,
-      country_id,
-      place_id,
-      user_id,
-      main_image_url,
-      date_written,
-      date_updated,
-      airport_city_id,
-      is_far_destination,
-      is_tips_featured,
-    }),
+    body: JSON.stringify(requestBody),
   });
 
   const data = await response.json();
@@ -304,7 +359,10 @@ export async function updateArticle(
   place_id: number | null | string,
   airport_city_id: number | null,
   is_far_destination: boolean = false,
-  is_tips_featured: boolean = false
+  is_tips_featured: boolean = false,
+  publish_at?: string | null,
+  publish_timezone?: string,
+  notify_subscribers_on_publish?: boolean
 ) {
   const requestBody = {
     title,
@@ -320,6 +378,11 @@ export async function updateArticle(
     place_id,
     is_far_destination,
     is_tips_featured,
+    ...(publish_at !== undefined ? { publish_at } : {}),
+    ...(publish_timezone !== undefined ? { publish_timezone } : {}),
+    ...(notify_subscribers_on_publish !== undefined
+      ? { notify_subscribers_on_publish }
+      : {}),
   };
 
   const token = getToken();

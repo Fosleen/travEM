@@ -52,6 +52,39 @@
       }
     }
 
+    .article-schedule-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-start;
+
+      small {
+        color: $greyMiddleDark;
+        font-size: 12px;
+        line-height: 1.2;
+      }
+    }
+
+    .article-schedule-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+
+      &.published {
+        background-color: rgba($green, 0.12);
+        color: $green;
+      }
+
+      &.scheduled {
+        background-color: rgba(44, 100, 180, 0.12);
+        color: #2c64b4;
+      }
+    }
+
     tbody {
       tr {
         &:last-of-type {

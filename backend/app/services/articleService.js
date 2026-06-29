@@ -45,6 +45,56 @@ const normalizeNullableId = (value) => {
   return parsedValue;
 };
 
+const getArticleScheduleInclude = () => ({
+  model: db.models.ArticleSchedule,
+  required: false,
+});
+
+const getPublicArticleWhere = (additionalWhere = {}) => ({
+  ...additionalWhere,
+  [Op.and]: [
+    ...(additionalWhere[Op.and] || []),
+    {
+      [Op.or]: [
+        { "$article_schedule.id$": null },
+        { "$article_schedule.publish_at$": null },
+        { "$article_schedule.publish_at$": { [Op.lte]: new Date() } },
+      ],
+    },
+  ],
+});
+
+const hasSchedulePayload = (
+  publish_at,
+  publish_timezone,
+  notify_subscribers_on_publish
+) => {
+  return (
+    publish_at !== undefined ||
+    publish_timezone !== undefined ||
+    notify_subscribers_on_publish !== undefined
+  );
+};
+
+const normalizeSchedulePayload = (
+  articleId,
+  publish_at,
+  publish_timezone,
+  notify_subscribers_on_publish
+) => ({
+  articleId,
+  publish_at: publish_at || null,
+  publish_timezone: publish_timezone || "Europe/Zagreb",
+  notify_subscribers_on_publish: parseBooleanValue(
+    notify_subscribers_on_publish
+  ),
+  newsletter_sent_at: null,
+  newsletter_send_started_at: null,
+  newsletter_send_error: null,
+  publish_processed_at: null,
+  publish_process_error: null,
+});
+
 class ArticleService {
   async resetOtherTipsFeaturedArticles(
     articleTypeId,
@@ -76,7 +126,7 @@ class ArticleService {
     );
   }
 
-  async getArticles(page, pageSize, articleType) {
+  async getArticles(page, pageSize, articleType, includeScheduled = false) {
     const limit = pageSize;
     const offset = (page - 1) * pageSize;
     const optionalArticleTypeWhere = articleType
@@ -100,8 +150,11 @@ class ArticleService {
           {
             model: db.models.Place,
           },
+          getArticleScheduleInclude(),
         ],
-        where: optionalArticleTypeWhere,
+        where: includeScheduled
+          ? optionalArticleTypeWhere
+          : getPublicArticleWhere(optionalArticleTypeWhere),
         order: [["date_written", "DESC"]],
       });
 
@@ -127,10 +180,6 @@ class ArticleService {
       }
 
       const featuredArticle = await db.models.Article.findOne({
-        where: {
-          articleTypeId: normalizedArticleTypeId,
-          isTipsFeatured: true,
-        },
         include: [
           {
             model: db.models.ArticleType,
@@ -144,7 +193,12 @@ class ArticleService {
           {
             model: db.models.Place,
           },
+          getArticleScheduleInclude(),
         ],
+        where: getPublicArticleWhere({
+          articleTypeId: normalizedArticleTypeId,
+          isTipsFeatured: true,
+        }),
         order: [["date_written", "DESC"]],
       });
 
@@ -153,9 +207,6 @@ class ArticleService {
       }
 
       const newestArticle = await db.models.Article.findOne({
-        where: {
-          articleTypeId: normalizedArticleTypeId,
-        },
         include: [
           {
             model: db.models.ArticleType,
@@ -169,7 +220,11 @@ class ArticleService {
           {
             model: db.models.Place,
           },
+          getArticleScheduleInclude(),
         ],
+        where: getPublicArticleWhere({
+          articleTypeId: normalizedArticleTypeId,
+        }),
         order: [["date_written", "DESC"]],
       });
 
@@ -180,9 +235,14 @@ class ArticleService {
     }
   }
 
-  async getArticleById(id) {
+  async getArticleById(id, includeScheduled = false) {
     try {
-      const article = await db.models.Article.findByPk(id, {
+      const article = await db.models.Article.findOne({
+        where: includeScheduled
+          ? { id }
+          : getPublicArticleWhere({
+              id,
+            }),
         include: [
           {
             model: db.models.User,
@@ -203,6 +263,7 @@ class ArticleService {
           {
             model: db.models.ArticleType,
           },
+          getArticleScheduleInclude(),
           {
             model: db.models.Section,
             separate: true,
@@ -239,7 +300,10 @@ class ArticleService {
     let nmbrSameCountry = 0;
 
     if (type == "article") {
-      const startingArticle = await db.models.Article.findByPk(id);
+      const startingArticle = await db.models.Article.findOne({
+        include: [getArticleScheduleInclude()],
+        where: getPublicArticleWhere({ id }),
+      });
 
       if (!startingArticle) {
         return "No starting article found";
@@ -265,19 +329,21 @@ class ArticleService {
 
         if (await isTipsArticleType(startingArticle.articleTypeId)) {
           articlesSameType = await db.models.Article.findAll({
-            where: {
+            include: [getArticleScheduleInclude()],
+            where: getPublicArticleWhere({
               articleTypeId: startingArticle.articleTypeId,
               id: { [Op.notIn]: [id] },
-            },
+            }),
             order: Sequelize.literal("rand()"),
             limit: nmbrSameType,
           });
         } else if (startingArticle.articleTypeId == 2) {
           articlesSameType = await db.models.Article.findAll({
-            where: {
+            include: [getArticleScheduleInclude()],
+            where: getPublicArticleWhere({
               articleTypeId: startingArticle.articleTypeId,
               id: { [Op.notIn]: [id] },
-            },
+            }),
             order: [["date_written", "DESC"]],
             limit: nmbrSameType,
           });
@@ -290,10 +356,11 @@ class ArticleService {
 
       if (nmbrSamePlace > 0) {
         const articlesSamePlace = await db.models.Article.findAll({
-          where: {
+          include: [getArticleScheduleInclude()],
+          where: getPublicArticleWhere({
             placeId: startingArticle.placeId,
             id: { [Op.notIn]: [id] },
-          },
+          }),
           order: Sequelize.literal("rand()"),
           limit: nmbrSamePlace,
         });
@@ -305,7 +372,8 @@ class ArticleService {
 
       if (nmbrSameCountry > 0) {
         const articlesSameCountry = await db.models.Article.findAll({
-          where: {
+          include: [getArticleScheduleInclude()],
+          where: getPublicArticleWhere({
             countryId: startingArticle.countryId,
             id: {
               [Op.notIn]: [
@@ -313,7 +381,7 @@ class ArticleService {
                 ...recommendedArticles.map((article) => article.id),
               ],
             },
-          },
+          }),
           order: Sequelize.literal("rand()"),
           limit: nmbrSameCountry,
         });
@@ -332,7 +400,8 @@ class ArticleService {
       }
 
       const articlesSelectedCountry = await db.models.Article.findAll({
-        where: {
+        include: [getArticleScheduleInclude()],
+        where: getPublicArticleWhere({
           countryId:
             type == "place-page"
               ? startingDestination.countryId
@@ -340,7 +409,7 @@ class ArticleService {
           id: {
             [Op.notIn]: [id, ...recommendedArticles.map((el) => el.id)],
           },
-        },
+        }),
         order: Sequelize.literal("rand()"),
         limit: 2,
       });
@@ -352,7 +421,8 @@ class ArticleService {
 
     if (recommendedArticles.length != 4) {
       const randomArticles = await db.models.Article.findAll({
-        where: {
+        include: [getArticleScheduleInclude()],
+        where: getPublicArticleWhere({
           articleTypeId: 1,
           id: {
             [Op.notIn]: [
@@ -360,7 +430,7 @@ class ArticleService {
               ...recommendedArticles.map((article) => article.id),
             ],
           },
-        },
+        }),
         order: Sequelize.literal("rand()"),
         limit: 4 - recommendedArticles.length,
       });
@@ -387,7 +457,10 @@ class ArticleService {
     place_id,
     airport_city_id,
     is_far_destination,
-    is_tips_featured
+    is_tips_featured,
+    publish_at,
+    publish_timezone,
+    notify_subscribers_on_publish
   ) {
     const transaction = await db.sequelize.transaction();
 
@@ -427,6 +500,24 @@ class ArticleService {
         }
       );
 
+      if (
+        hasSchedulePayload(
+          publish_at,
+          publish_timezone,
+          notify_subscribers_on_publish
+        )
+      ) {
+        await db.models.ArticleSchedule.create(
+          normalizeSchedulePayload(
+            article.id,
+            publish_at,
+            publish_timezone,
+            notify_subscribers_on_publish
+          ),
+          { transaction }
+        );
+      }
+
       await transaction.commit();
 
       return article;
@@ -437,10 +528,11 @@ class ArticleService {
     }
   }
 
-  async getHomepageArticles() {
+  async getHomepageArticles(includeScheduled = false) {
     try {
       const articles = await db.models.Article.findAll({
         include: [
+          getArticleScheduleInclude(),
           {
             model: db.models.ArticleSpecialType,
             through: db.models.Article_ArticleSpecialType,
@@ -452,6 +544,7 @@ class ArticleService {
             model: db.models.Country,
           },
         ],
+        where: includeScheduled ? {} : getPublicArticleWhere(),
       });
 
       return articles;
@@ -463,10 +556,11 @@ class ArticleService {
   async getTopCountryArticle(id) {
     try {
       const article = await db.models.Article.findOne({
-        where: {
+        where: getPublicArticleWhere({
           countryId: id,
-        },
+        }),
         include: [
+          getArticleScheduleInclude(),
           {
             model: db.models.ArticleSpecialType,
             through: db.models.Article_ArticleSpecialType,
@@ -496,9 +590,10 @@ class ArticleService {
   async getArticlesByCountryId(id) {
     try {
       const articles = await db.models.Article.findAll({
-        where: {
+        include: [getArticleScheduleInclude()],
+        where: getPublicArticleWhere({
           countryId: id,
-        },
+        }),
       });
 
       return articles;
@@ -510,9 +605,10 @@ class ArticleService {
   async getArticlesByPlaceId(id) {
     try {
       const articles = await db.models.Article.findAll({
-        where: {
+        include: [getArticleScheduleInclude()],
+        where: getPublicArticleWhere({
           placeId: id,
-        },
+        }),
       });
 
       return articles;
@@ -521,35 +617,39 @@ class ArticleService {
     }
   }
 
-  async getArticleBySearchTerm(name, page, pageSize) {
+  async getArticleBySearchTerm(name, page, pageSize, includeScheduled = false) {
     const limit = pageSize;
     const offset = (page - 1) * pageSize;
 
     try {
       const searchTermWithoutLastLetter = `%${name.slice(0, -1)}%`;
+      const searchWhere = {
+        [Op.or]: [
+          {
+            title: {
+              [Op.like]: searchTermWithoutLastLetter,
+            },
+          },
+          {
+            metatags: {
+              [Op.like]: searchTermWithoutLastLetter,
+            },
+          },
+        ],
+      };
 
       const articles = await db.models.Article.findAndCountAll({
         limit: limit,
         offset: offset,
         include: [
+          getArticleScheduleInclude(),
           {
             model: db.models.Country,
           },
         ],
-        where: {
-          [Op.or]: [
-            {
-              title: {
-                [Op.like]: searchTermWithoutLastLetter,
-              },
-            },
-            {
-              metatags: {
-                [Op.like]: searchTermWithoutLastLetter,
-              },
-            },
-          ],
-        },
+        where: includeScheduled
+          ? searchWhere
+          : getPublicArticleWhere(searchWhere),
       });
 
       return {
@@ -694,7 +794,10 @@ class ArticleService {
     place_id,
     airport_city_id,
     is_far_destination,
-    is_tips_featured
+    is_tips_featured,
+    publish_at,
+    publish_timezone,
+    notify_subscribers_on_publish
   ) {
     console.log("patchArticle");
 
@@ -746,7 +849,38 @@ class ArticleService {
         }
       );
 
+      if (
+        hasSchedulePayload(
+          publish_at,
+          publish_timezone,
+          notify_subscribers_on_publish
+        )
+      ) {
+        const schedulePayload = normalizeSchedulePayload(
+          id,
+          publish_at,
+          publish_timezone,
+          notify_subscribers_on_publish
+        );
+
+        const existingSchedule = await db.models.ArticleSchedule.findOne({
+          where: {
+            articleId: id,
+          },
+          transaction,
+        });
+
+        if (existingSchedule) {
+          await existingSchedule.update(schedulePayload, { transaction });
+        } else {
+          await db.models.ArticleSchedule.create(schedulePayload, {
+            transaction,
+          });
+        }
+      }
+
       const updatedArticle = await db.models.Article.findByPk(id, {
+        include: [getArticleScheduleInclude()],
         transaction,
       });
 

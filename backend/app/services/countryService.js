@@ -11,6 +11,25 @@ const normalizeSlug = (value) => {
   return value?.toString().trim().toLowerCase();
 };
 
+const getArticleScheduleInclude = () => ({
+  model: db.models.ArticleSchedule,
+  required: false,
+});
+
+const getPublicArticleWhere = (additionalWhere = {}) => ({
+  ...additionalWhere,
+  [Op.and]: [
+    ...(additionalWhere[Op.and] || []),
+    {
+      [Op.or]: [
+        { "$article_schedule.id$": null },
+        { "$article_schedule.publish_at$": null },
+        { "$article_schedule.publish_at$": { [Op.lte]: new Date() } },
+      ],
+    },
+  ],
+});
+
 class CountriesService {
   async getCountries(page, pageSize) {
     const limit = pageSize;
@@ -25,7 +44,8 @@ class CountriesService {
       const countriesWithArticleCount = await Promise.all(
         visitedCountries.rows.map(async (country) => {
           const articleCount = await db.models.Article.count({
-            where: { countryId: country.id },
+            include: [getArticleScheduleInclude()],
+            where: getPublicArticleWhere({ countryId: country.id }),
           });
 
           return {
@@ -95,6 +115,14 @@ class CountriesService {
             model: db.models.Article,
             separate: true,
             limit: 8,
+            include: [getArticleScheduleInclude()],
+            where: {
+              [Op.or]: [
+                { "$article_schedule.id$": null },
+                { "$article_schedule.publish_at$": null },
+                { "$article_schedule.publish_at$": { [Op.lte]: new Date() } },
+              ],
+            },
             order: [["date_written", "DESC"]],
           },
           {
@@ -146,7 +174,8 @@ class CountriesService {
         const countriesWithArticleCount = await Promise.all(
           countries.rows.map(async (country) => {
             const articleCount = await db.models.Article.count({
-              where: { countryId: country.id },
+              include: [getArticleScheduleInclude()],
+              where: getPublicArticleWhere({ countryId: country.id }),
             });
 
             return {

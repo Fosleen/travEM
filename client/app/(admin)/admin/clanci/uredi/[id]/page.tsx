@@ -77,6 +77,15 @@ import {
   isEntryRequirementsSectionIcon,
 } from "@/utils/sectionSpecialFeatures";
 import { parseBooleanValue } from "@/utils/parseBooleanValue";
+import {
+  formatDateTimeInTimeZone,
+  formatDateTimeLocalInput,
+  getArticleScheduleTimeZoneOptions,
+  getBrowserTimeZone,
+  getScheduleStatus,
+  ZAGREB_TIME_ZONE,
+  zonedDateTimeLocalToUtcIso,
+} from "@/utils/articleSchedule";
 
 const EditArticle = () => {
   const params = useParams();
@@ -111,6 +120,13 @@ const EditArticle = () => {
   const [isMainCountryPost, setIsMainCountryPost] = useState(false);
   const [isFarDestinationChecked, setIsFarDestinationChecked] = useState(false);
   const [isTipsFeaturedChecked, setIsTipsFeaturedChecked] = useState(false);
+  const [isScheduleChecked, setIsScheduleChecked] = useState(false);
+  const [scheduleDateTime, setScheduleDateTime] = useState("");
+  const [scheduleTimezone, setScheduleTimezone] = useState(getBrowserTimeZone());
+  const [
+    notifySubscribersOnPublish,
+    setNotifySubscribersOnPublish,
+  ] = useState(false);
 
   const handleSave = async (values: any) => {
     console.log("=== HANDLE SAVE STARTED ===");
@@ -122,10 +138,27 @@ const EditArticle = () => {
     }
 
     console.log("✅ Images validated");
+    const canEditSchedule = getScheduleStatus(article).className === "scheduled";
+    const publishAt = canEditSchedule && isScheduleChecked
+      ? zonedDateTimeLocalToUtcIso(scheduleDateTime, scheduleTimezone)
+      : null;
+    const shouldSendSchedulePayload = canEditSchedule;
+
+    if (canEditSchedule && isScheduleChecked && !publishAt) {
+      notifyFailure("Odaberite datum i vrijeme zakazane objave.");
+      return;
+    }
+
+    if (publishAt && new Date(publishAt).getTime() <= Date.now()) {
+      notifyFailure("Zakazana objava mora biti u budućnosti.");
+      return;
+    }
 
     const result = await Swal.fire({
       title: "Jeste li sigurni?",
-      text: "Objavit ćete ovaj uređeni članak",
+      text: isScheduleChecked
+        ? "Spremit ćete izmjene i zakazati objavu članka"
+        : "Objavit ćete ovaj uređeni članak",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#2BAC82",
@@ -184,7 +217,12 @@ const EditArticle = () => {
         values.article_place,
         values.article_airport_city_id,
         isFarDestinationChecked,
-        isTipsArticleType(values.article_type) && isTipsFeaturedChecked
+        isTipsArticleType(values.article_type) && isTipsFeaturedChecked,
+        shouldSendSchedulePayload ? publishAt : undefined,
+        shouldSendSchedulePayload ? scheduleTimezone : undefined,
+        shouldSendSchedulePayload
+          ? isScheduleChecked && notifySubscribersOnPublish
+          : undefined
       );
 
       console.log("✅ Article updated:", articleResponse);
@@ -533,6 +571,23 @@ const flatRemovedImages = removedSectionImages;
         setSelectedCountryId(articleData.countryId || "");
         setIsFarDestinationChecked(Boolean(articleData.isFarDestination));
         setIsTipsFeaturedChecked(parseBooleanValue(articleData.isTipsFeatured));
+        const schedule = articleData.article_schedule;
+        const scheduleStatus = getScheduleStatus(articleData);
+        const isScheduledArticle = scheduleStatus.className === "scheduled";
+
+        setIsScheduleChecked(isScheduledArticle);
+        setScheduleTimezone(schedule?.publish_timezone || getBrowserTimeZone());
+        setScheduleDateTime(
+          isScheduledArticle && schedule?.publish_at
+            ? formatDateTimeLocalInput(
+                schedule.publish_at,
+                schedule.publish_timezone || getBrowserTimeZone()
+              )
+            : ""
+        );
+        setNotifySubscribersOnPublish(
+          Boolean(schedule?.notify_subscribers_on_publish)
+        );
         setSectionImages(
           articleData.sections.map((section) => section.section_images)
         );
@@ -1554,6 +1609,114 @@ const flatRemovedImages = removedSectionImages;
                       </div>
                     )}
                   </div>
+
+                  {getScheduleStatus(article).className === "scheduled" && (
+                    <div className="edit-article-schedule-container">
+                      <ToggleSwitch
+                        name={"schedule-article"}
+                        description={"Zakaži objavu članka"}
+                        value={isScheduleChecked}
+                        setter={() => setIsScheduleChecked(!isScheduleChecked)}
+                      />
+
+                      <div className="edit-article-schedule-status">
+                        <span>
+                          Status: {getScheduleStatus(article).label}
+                        </span>
+                        <span>
+                          Zagreb:{" "}
+                          {formatDateTimeInTimeZone(
+                            article.article_schedule.publish_at,
+                            ZAGREB_TIME_ZONE
+                          )}
+                        </span>
+                      </div>
+
+                      {isScheduleChecked && (
+                        <div className="edit-article-schedule-panel">
+                          <div className="edit-article-schedule-grid">
+                            <label>
+                              Datum i vrijeme
+                              <input
+                                type="datetime-local"
+                                lang="hr-HR"
+                                step="60"
+                                min={formatDateTimeLocalInput(
+                                  new Date(),
+                                  scheduleTimezone
+                                )}
+                                value={scheduleDateTime}
+                                onChange={(event) =>
+                                  setScheduleDateTime(event.target.value)
+                                }
+                              />
+                            </label>
+
+                            <label>
+                              Vremenska zona
+                              <select
+                                value={scheduleTimezone}
+                                onChange={(event) =>
+                                  setScheduleTimezone(event.target.value)
+                                }
+                              >
+                                {getArticleScheduleTimeZoneOptions(
+                                  scheduleTimezone
+                                ).map((timeZone) => (
+                                  <option
+                                    key={timeZone.value}
+                                    value={timeZone.value}
+                                  >
+                                    {timeZone.label} ({timeZone.value})
+                                  </option>
+                                ))}
+                              </select>
+                            </label>
+                          </div>
+
+                          <div className="edit-article-schedule-newsletter">
+                            <ToggleSwitch
+                              name={"notify-subscribers-on-publish"}
+                              description={
+                                "Obavijesti pretplatnike kad članak bude objavljen"
+                              }
+                              value={notifySubscribersOnPublish}
+                              setter={() =>
+                                setNotifySubscribersOnPublish(
+                                  !notifySubscribersOnPublish
+                                )
+                              }
+                            />
+                          </div>
+
+                          {scheduleDateTime && (
+                            <div className="edit-article-schedule-preview">
+                              <span>
+                                Lokalno:{" "}
+                                {formatDateTimeInTimeZone(
+                                  zonedDateTimeLocalToUtcIso(
+                                    scheduleDateTime,
+                                    scheduleTimezone
+                                  ),
+                                  scheduleTimezone
+                                )}
+                              </span>
+                              <span>
+                                Zagreb:{" "}
+                                {formatDateTimeInTimeZone(
+                                  zonedDateTimeLocalToUtcIso(
+                                    scheduleDateTime,
+                                    scheduleTimezone
+                                  ),
+                                  ZAGREB_TIME_ZONE
+                                )}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   <div className="edit-article-buttons">
                     <Button type="submit" adminPrimary>

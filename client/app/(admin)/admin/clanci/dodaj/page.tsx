@@ -64,6 +64,14 @@ import {
   isCountryLanguageSectionIcon,
   isEntryRequirementsSectionIcon,
 } from "@/utils/sectionSpecialFeatures";
+import {
+  formatDateTimeInTimeZone,
+  formatDateTimeLocalInput,
+  getArticleScheduleTimeZoneOptions,
+  getBrowserTimeZone,
+  ZAGREB_TIME_ZONE,
+  zonedDateTimeLocalToUtcIso,
+} from "@/utils/articleSchedule";
 
 const AddArticlePage = () => {
   const router = useRouter();
@@ -94,6 +102,9 @@ const AddArticlePage = () => {
     useState(true);
   const [isFarDestinationChecked, setIsFarDestinationChecked] = useState(false);
   const [isTipsFeaturedChecked, setIsTipsFeaturedChecked] = useState(false);
+  const [isScheduleChecked, setIsScheduleChecked] = useState(false);
+  const [scheduleDateTime, setScheduleDateTime] = useState("");
+  const [scheduleTimezone, setScheduleTimezone] = useState(getBrowserTimeZone());
 
   const getUserId = () => {
     const jwtToken = localStorage.getItem("jwt");
@@ -112,9 +123,25 @@ const AddArticlePage = () => {
     setIsSubmitClicked(true);
 
     if (hasMainArticleImage(mainArticleImage)) {
+      const publishAt = isScheduleChecked
+        ? zonedDateTimeLocalToUtcIso(scheduleDateTime, scheduleTimezone)
+        : null;
+
+      if (isScheduleChecked && !publishAt) {
+        notifyFailure("Odaberite datum i vrijeme zakazane objave.");
+        return;
+      }
+
+      if (publishAt && new Date(publishAt).getTime() <= Date.now()) {
+        notifyFailure("Zakazana objava mora biti u budućnosti.");
+        return;
+      }
+
       Swal.fire({
         title: "Jeste li sigurni?",
-        text: "Objavit ćete ovaj članak",
+        text: isScheduleChecked
+          ? "Zakazat ćete objavu ovog članka"
+          : "Objavit ćete ovaj članak",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#2BAC82",
@@ -151,7 +178,10 @@ const AddArticlePage = () => {
               null,
               parseInt(values.article_airport_city_id),
               isFarDestinationChecked,
-              isTipsArticleType(values.article_type) && isTipsFeaturedChecked
+              isTipsArticleType(values.article_type) && isTipsFeaturedChecked,
+              isScheduleChecked ? publishAt : undefined,
+              isScheduleChecked ? scheduleTimezone : undefined,
+              isScheduleChecked ? isNotifySubscribersChecked : undefined
             );
 
             const galleryResults = await Promise.all(
@@ -190,7 +220,7 @@ const AddArticlePage = () => {
               ),
             ]);
 
-            if (isNotifySubscribersChecked) {
+            if (!isScheduleChecked && isNotifySubscribersChecked) {
               try {
                 const subscribers = await getSubscribersWithoutPagination();
 
@@ -217,7 +247,11 @@ const AddArticlePage = () => {
                 );
               }
             } else {
-              notifySuccess("Članak je uspješno objavljen!");
+              notifySuccess(
+                isScheduleChecked
+                  ? "Članak je uspješno zakazan!"
+                  : "Članak je uspješno objavljen!"
+              );
             }
 
             router.push("/admin/clanci");
@@ -1186,7 +1220,11 @@ const AddArticlePage = () => {
                   <div className="add-article-toggle-item">
                     <ToggleSwitch
                       name={"notify-subscribers"}
-                      description={"Obavijesti pretplatnike o ovom članku"}
+                      description={
+                        isScheduleChecked
+                          ? "Obavijesti pretplatnike kad članak bude objavljen"
+                          : "Obavijesti pretplatnike o ovom članku"
+                      }
                       value={isNotifySubscribersChecked}
                       setter={() =>
                         setIsNotifySubscribersChecked(
@@ -1197,9 +1235,87 @@ const AddArticlePage = () => {
                   </div>
                 </div>
 
+                <div className="add-article-schedule-container">
+                  <ToggleSwitch
+                    name={"schedule-article"}
+                    description={"Zakaži objavu članka"}
+                    value={isScheduleChecked}
+                    setter={() => setIsScheduleChecked(!isScheduleChecked)}
+                  />
+
+                  {isScheduleChecked && (
+                    <div className="add-article-schedule-panel">
+                      <div className="add-article-schedule-grid">
+                        <label>
+                          Datum i vrijeme
+                          <input
+                            type="datetime-local"
+                            lang="hr-HR"
+                            step="60"
+                            min={formatDateTimeLocalInput(
+                              new Date(),
+                              scheduleTimezone
+                            )}
+                            value={scheduleDateTime}
+                            onChange={(event) =>
+                              setScheduleDateTime(event.target.value)
+                            }
+                          />
+                        </label>
+
+                        <label>
+                          Vremenska zona
+                          <select
+                            value={scheduleTimezone}
+                            onChange={(event) =>
+                              setScheduleTimezone(event.target.value)
+                            }
+                          >
+                            {getArticleScheduleTimeZoneOptions(
+                              scheduleTimezone
+                            ).map((timeZone) => (
+                              <option
+                                key={timeZone.value}
+                                value={timeZone.value}
+                              >
+                                {timeZone.label} ({timeZone.value})
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
+
+                      {scheduleDateTime && (
+                        <div className="add-article-schedule-preview">
+                          <span>
+                            Lokalno:{" "}
+                            {formatDateTimeInTimeZone(
+                              zonedDateTimeLocalToUtcIso(
+                                scheduleDateTime,
+                                scheduleTimezone
+                              ),
+                              scheduleTimezone
+                            )}
+                          </span>
+                          <span>
+                            Zagreb:{" "}
+                            {formatDateTimeInTimeZone(
+                              zonedDateTimeLocalToUtcIso(
+                                scheduleDateTime,
+                                scheduleTimezone
+                              ),
+                              ZAGREB_TIME_ZONE
+                            )}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 <div className="add-article-buttons">
                   <Button type="submit" adminPrimary>
-                    objavi članak
+                    {isScheduleChecked ? "zakaži članak" : "objavi članak"}
                   </Button>
 
                   <Button type="button" white onClick={handleCancel}>

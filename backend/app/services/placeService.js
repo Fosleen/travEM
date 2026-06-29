@@ -51,6 +51,25 @@ const normalizeMonthValue = (value) => {
   return Number.isNaN(parsedValue) ? null : parsedValue;
 };
 
+const getArticleScheduleInclude = () => ({
+  model: db.models.ArticleSchedule,
+  required: false,
+});
+
+const getPublicArticleWhere = (additionalWhere = {}) => ({
+  ...additionalWhere,
+  [Op.and]: [
+    ...(additionalWhere[Op.and] || []),
+    {
+      [Op.or]: [
+        { "$article_schedule.id$": null },
+        { "$article_schedule.publish_at$": null },
+        { "$article_schedule.publish_at$": { [Op.lte]: new Date() } },
+      ],
+    },
+  ],
+});
+
 class PlacesService {
   async getFeaturedArticleOverview(place) {
     if (!place) return null;
@@ -66,10 +85,10 @@ class PlacesService {
 
     try {
       const featuredArticle = await db.models.Article.findOne({
-        where: {
+        where: getPublicArticleWhere({
           id: featuredArticleId,
           placeId: plainPlace.id,
-        },
+        }),
         attributes: [
           "id",
           "title",
@@ -87,6 +106,7 @@ class PlacesService {
           "airportCityId",
         ],
         include: [
+          getArticleScheduleInclude(),
           {
             model: db.models.Section,
             attributes: [
@@ -326,6 +346,20 @@ class PlacesService {
           },
           {
             model: db.models.Article,
+            separate: true,
+            include: [getArticleScheduleInclude()],
+            where: {
+              [Op.or]: [
+                { "$article_schedule.id$": null },
+                { "$article_schedule.publish_at$": null },
+                {
+                  "$article_schedule.publish_at$": {
+                    [Op.lte]: new Date(),
+                  },
+                },
+              ],
+            },
+            required: false,
           },
           BEST_TIME_INCLUDE,
         ],
@@ -355,6 +389,20 @@ class PlacesService {
           },
           {
             model: db.models.Article,
+            separate: true,
+            include: [getArticleScheduleInclude()],
+            where: {
+              [Op.or]: [
+                { "$article_schedule.id$": null },
+                { "$article_schedule.publish_at$": null },
+                {
+                  "$article_schedule.publish_at$": {
+                    [Op.lte]: new Date(),
+                  },
+                },
+              ],
+            },
+            required: false,
           },
           BEST_TIME_INCLUDE,
         ],

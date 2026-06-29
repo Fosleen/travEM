@@ -15,6 +15,11 @@ import { CaretUpDown, PencilSimpleLine, Trash } from "@phosphor-icons/react";
 import { formatDate } from "../../../../utils/global";
 import { deleteSubscriber } from "../../../../utils/subscribers";
 import { useRouter } from "next/navigation";
+import {
+  formatDateTimeInTimeZone,
+  getScheduleStatus,
+  ZAGREB_TIME_ZONE,
+} from "@/utils/articleSchedule";
 
 const TableContent = ({ data, type }) => {
   const [sorting, setSorting] = useState([]);
@@ -111,6 +116,26 @@ const TableContent = ({ data, type }) => {
       columnHelper.accessor("date_written", {
         header: () => "Datum",
         cell: (info) => formatDate(info.renderValue()),
+      }),
+      columnHelper.display({
+        id: "schedule",
+        header: () => "Objava",
+        cell: (row) => {
+          const status = getScheduleStatus(row.row.original);
+
+          return (
+            <div className="article-schedule-cell">
+              <span className={`article-schedule-badge ${status.className}`}>
+                {status.label}
+              </span>
+              {status.date && (
+                <small>
+                  {formatDateTimeInTimeZone(status.date, ZAGREB_TIME_ZONE)}
+                </small>
+              )}
+            </div>
+          );
+        },
       }),
       columnHelper.accessor("country.name", {
         header: () => "Država",

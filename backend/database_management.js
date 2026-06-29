@@ -5,6 +5,12 @@ export const createAssociations = () => {
   db.models.Article.hasOne(db.models.Video);
   db.models.Video.belongsTo(db.models.Article);
 
+  db.models.Article.hasOne(db.models.ArticleSchedule, {
+    foreignKey: { allowNull: false },
+    onDelete: "CASCADE",
+  });
+  db.models.ArticleSchedule.belongsTo(db.models.Article);
+
   db.models.SectionIcon.hasOne(db.models.Section);
   db.models.Section.belongsTo(db.models.SectionIcon);
 

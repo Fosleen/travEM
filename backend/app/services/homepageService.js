@@ -1,4 +1,19 @@
 import db from "../models/index.js";
+import { Op } from "sequelize";
+
+const getArticleScheduleInclude = () => ({
+  model: db.models.ArticleSchedule,
+  required: false,
+});
+
+const getPublicArticleWhere = () => ({
+  [Op.or]: [
+    { "$article_schedule.id$": null },
+    { "$article_schedule.publish_at$": null },
+    { "$article_schedule.publish_at$": { [Op.lte]: new Date() } },
+  ],
+});
+
 class HomepageService {
   async getHomepage() {
     try {
@@ -13,7 +28,10 @@ class HomepageService {
     try {
       const continentsNmbr = await db.models.Continent.count();
       const countriesNmbr = await db.models.Country.count();
-      const articlesNmbr = await db.models.Article.count();
+      const articlesNmbr = await db.models.Article.count({
+        include: [getArticleScheduleInclude()],
+        where: getPublicArticleWhere(),
+      });
 
       return {
         continents_nmbr: continentsNmbr,

@@ -11,6 +11,7 @@ import { createAssociations } from "./database_management.js";
 import helmet from "helmet";
 import swaggerDocs from "./app/utils/swagger.js";
 import { initRedis } from "./app/middleware/redis.js";
+import { startArticleScheduleJob } from "./app/jobs/articleScheduleJob.js";
 
 const app = express();
 
@@ -37,6 +38,7 @@ const corsOptions = {
 
 (async () => {
   await initRedis();
+  startArticleScheduleJob();
 })();
 
 app.use(cors(corsOptions));

@@ -41,6 +41,12 @@ const EditVisaInfo = () => {
   const [selectedCountry1Id, setSelectedCountry1Id] = useState("");
   const [selectedCountry2Id, setSelectedCountry2Id] = useState("");
 
+  const hasSelectedCountries =
+    selectedCountry1Id !== "" && selectedCountry2Id !== "";
+
+  const isExistingVisaInfo = (info) =>
+    info && typeof info === "object" && info.hasOwnProperty("id");
+
   const fetchData = async () => {
     try {
       const countriesData = await getVisitedCountries();
@@ -97,8 +103,10 @@ const EditVisaInfo = () => {
       confirmButtonText: "Da, objavi!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        if (checkedInfo && checkedInfo.hasOwnProperty("id")) {
-          await patchVisaInfo(
+        let savedInfo;
+
+        if (isExistingVisaInfo(checkedInfo)) {
+          savedInfo = await patchVisaInfo(
             checkedInfo.id,
             values.country_2.id,
             values.country_2.documentation,
@@ -107,7 +115,7 @@ const EditVisaInfo = () => {
             values.country_1_id
           );
         } else {
-          await addVisaInfo(
+          savedInfo = await addVisaInfo(
             values.country_2.id,
             values.country_2.documentation,
             values.country_2.visa_needed,
@@ -118,7 +126,9 @@ const EditVisaInfo = () => {
 
         notifySuccess("Uspješno dodane informacije o vizi!");
 
-        await checkInfo();
+        if (savedInfo && typeof savedInfo === "object") {
+          setCheckedInfo(savedInfo);
+        }
       }
     });
   };
@@ -166,6 +176,12 @@ const EditVisaInfo = () => {
                   value={values.country_1_id}
                   selectedValue={values.country_1_id}
                   onChange={(value) => {
+                    if (!value) {
+                      setFieldValue("country_1_id", "");
+                      setSelectedCountry1Id("");
+                      return;
+                    }
+
                     setFieldValue("country_1_id", value.id);
                     setSelectedCountry1Id(value.id);
                   }}
@@ -180,13 +196,19 @@ const EditVisaInfo = () => {
                   value={values.country_2.id}
                   selectedValue={values.country_2.id}
                   onChange={(value) => {
+                    if (!value) {
+                      setFieldValue("country_2.id", "");
+                      setSelectedCountry2Id("");
+                      return;
+                    }
+
                     setFieldValue("country_2.id", value.id);
                     setSelectedCountry2Id(value.id);
                   }}
                   isDisabled={false}
                 />
 
-                {values.country_2.id && checkedInfo && (
+                {hasSelectedCountries && (
                   <div className="add-visa-info-section">
                     <div className="add-visa-info-item">
                       <Field

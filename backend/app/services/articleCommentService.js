@@ -22,6 +22,17 @@ const PUBLIC_COMMENT_ATTRIBUTES = [
   "updated_at",
 ];
 
+const COMMENT_NOTIFICATION_ATTRIBUTES = [
+  "id",
+  "articleId",
+  "parentCommentId",
+  "username",
+  "email",
+  "body",
+  "notify_on_reply",
+  "unsubscribe_token",
+];
+
 const ADMIN_USERNAME = "putujEM s travEM";
 
 const normalizeEmail = (email) =>
@@ -448,42 +459,129 @@ class ArticleCommentService {
   async sendReplyNotification(parentComment, reply, article) {
     if (
       !parentComment ||
-      !article ||
-      !parentComment.notify_on_reply ||
-      !parentComment.email ||
-      !parentComment.unsubscribe_token
+      !article
     ) {
       return;
     }
 
     try {
-      await axios.post(
-        getLambdaEndpoint("/comment-reply-notification"),
-        {
-          parentComment: {
-            email: parentComment.email,
-            username: parentComment.username,
-            body: parentComment.body,
-            unsubscribe_token: parentComment.unsubscribe_token,
-          },
-          reply: {
-            body: reply.body,
-          },
-          article: {
-            id: article.id,
-            title: article.title,
-          },
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": process.env.X_API_KEY,
-          },
-        }
+      const recipients = await this.getThreadNotificationRecipients(
+        parentComment,
+        reply
       );
+
+      const results = await Promise.allSettled(
+        recipients.map((recipientComment) =>
+          axios.post(
+            getLambdaEndpoint("/comment-reply-notification"),
+            {
+              parentComment: {
+                email: recipientComment.email,
+                username: recipientComment.username,
+                body: recipientComment.body,
+                unsubscribe_token: recipientComment.unsubscribe_token,
+              },
+              reply: {
+                body: reply.body,
+              },
+              article: {
+                id: article.id,
+                title: article.title,
+              },
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                "x-api-key": process.env.X_API_KEY,
+              },
+            }
+          )
+        )
+      );
+
+      const failedCount = results.filter(
+        (result) => result.status === "rejected"
+      ).length;
+
+      if (failedCount > 0) {
+        console.error(
+          `Failed to send ${failedCount} comment reply notification emails`
+        );
+      }
     } catch (error) {
       console.error("Error sending comment reply notification:", error);
     }
+  }
+
+  async getThreadNotificationRecipients(parentComment, reply) {
+    const comments = await db.models.ArticleComment.findAll({
+      attributes: COMMENT_NOTIFICATION_ATTRIBUTES,
+      where: {
+        articleId: parentComment.articleId,
+        status: COMMENT_STATUS.PUBLISHED,
+        deleted_at: null,
+      },
+    });
+    const plainComments = comments.map((comment) =>
+      comment.get({ plain: true })
+    );
+    const commentsById = new Map(
+      plainComments.map((comment) => [comment.id, comment])
+    );
+
+    let rootComment = commentsById.get(parentComment.id);
+
+    while (
+      rootComment?.parentCommentId &&
+      commentsById.has(rootComment.parentCommentId)
+    ) {
+      rootComment = commentsById.get(rootComment.parentCommentId);
+    }
+
+    if (!rootComment) {
+      return [];
+    }
+
+    const threadCommentIds = new Set([rootComment.id]);
+    let didAddComment = true;
+
+    while (didAddComment) {
+      didAddComment = false;
+
+      plainComments.forEach((comment) => {
+        if (
+          comment.parentCommentId &&
+          threadCommentIds.has(comment.parentCommentId) &&
+          !threadCommentIds.has(comment.id)
+        ) {
+          threadCommentIds.add(comment.id);
+          didAddComment = true;
+        }
+      });
+    }
+
+    const replyAuthorEmail = normalizeEmail(reply.email);
+    const seenEmails = new Set();
+
+    return plainComments.filter((comment) => {
+      const email = normalizeEmail(comment.email);
+
+      if (
+        !threadCommentIds.has(comment.id) ||
+        comment.id === reply.id ||
+        !comment.notify_on_reply ||
+        !email ||
+        !comment.unsubscribe_token ||
+        email === replyAuthorEmail ||
+        seenEmails.has(email)
+      ) {
+        return false;
+      }
+
+      seenEmails.add(email);
+      comment.email = email;
+      return true;
+    });
   }
 }
 

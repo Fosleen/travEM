@@ -5,6 +5,7 @@ import {
   GlobeHemisphereWest,
   Buildings,
   Info,
+  ChatCenteredText,
 } from "@phosphor-icons/react/dist/ssr";
 import { FC } from "react";
 import { SidebarMenuItemProps } from "../../../../common/types";
@@ -30,6 +31,7 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = ({ text }) => {
       {text == "Mjesta" && <Buildings size={32} />}
       {text == "Sadržaj" && <Info size={32} />}
       {text == "Newsletter" && <Users size={32} />}
+      {text == "Komentari" && <ChatCenteredText size={32} />}
 
       {text}
     </Link>

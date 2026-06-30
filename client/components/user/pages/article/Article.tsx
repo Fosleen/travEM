@@ -20,6 +20,7 @@ import ArticleNewsletterCallToAction from "@/components/user/molecules/ArticleNe
 import ArticleSupportCallToAction from "@/components/user/molecules/ArticleSupportCallToAction/ArticleSupportCallToAction";
 import { parseBooleanValue } from "@/utils/parseBooleanValue";
 import { openLightbox } from "@/utils/lightbox";
+import ArticleComments from "@/components/user/molecules/ArticleComments";
 
 interface ArticleProps {
   initialArticle: any;
@@ -188,6 +189,8 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
 
         <ArticleFragment article={articleContent} />
       </div>
+      
+      <ArticleComments articleId={articleContent.id} />
 
       <div className="article-gallery-text-wrapper">
         {galleryImages?.length > 0 && <h3>Slika govori 1000 riječi</h3>}

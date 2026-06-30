@@ -25,6 +25,7 @@ import subscriber from "./subscriberRoute.js";
 import placeBestTimeToVisit from "./placeBestTimeToVisitRoute.js";
 import countryBestTimeToVisit from "./countryBestTimeToVisitRoute.js";
 import countryLanguage from "./countryLanguageRoute.js";
+import articleComment from "./articleCommentRoute.js";
 
 const router = new Router();
 
@@ -32,6 +33,7 @@ router.use("/homepage", homepage);
 router.use("/footer", footer);
 router.use("/article-types", articleType);
 router.use("/articles", article);
+router.use("/comments", articleComment);
 router.use("/sections", section);
 router.use("/section-icons", sectionIcon);
 router.use("/gallery-images", galleryImage);

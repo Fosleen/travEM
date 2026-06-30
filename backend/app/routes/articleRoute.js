@@ -1,5 +1,6 @@
 import { Router } from "express";
 import controller from "../controllers/articleController.js";
+import commentController from "../controllers/articleCommentController.js";
 import { verifyToken } from "../middleware/jwt_verify.js";
 
 const router = new Router();
@@ -53,6 +54,18 @@ const router = new Router();
  *                          $ref: '#/components/schemas/ServerErrorResponse'
  */
 router.get("/", controller.getArticles);
+
+router.get("/:articleId/comments", commentController.getArticleComments);
+router.post("/:articleId/comments", commentController.addComment);
+router.post(
+  "/:articleId/comments/:commentId/replies",
+  commentController.addReply
+);
+router.post(
+  "/:articleId/comments/:commentId/admin-replies",
+  verifyToken,
+  commentController.addAdminReply
+);
 
 // GET /api/v1/articles/homepage
 router.get("/homepage", controller.getHomepageArticles);

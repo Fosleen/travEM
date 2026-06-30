@@ -33,6 +33,8 @@ import CountryBestTimeToVisitRegion from "./countryBestTimeToVisitRegion.js";
 import CountryBestTimeToVisitMonth from "./countryBestTimeToVisitMonth.js";
 import CountryLanguage from "./countryLanguage.js";
 import CountryLanguagePhrase from "./countryLanguagePhrase.js";
+import ArticleComment from "./articleComment.js";
+import ArticleCommentLike from "./articleCommentLike.js";
 
 const db = {};
 
@@ -115,6 +117,14 @@ db.models.CountryLanguage = CountryLanguage(
 );
 
 db.models.CountryLanguagePhrase = CountryLanguagePhrase(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+db.models.ArticleComment = ArticleComment(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+db.models.ArticleCommentLike = ArticleCommentLike(
   sequelizeConnection,
   Sequelize.DataTypes
 );

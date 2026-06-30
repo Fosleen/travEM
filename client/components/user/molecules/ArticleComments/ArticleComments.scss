@@ -1,0 +1,350 @@
+@use "@/utils/theme.scss" as *;
+
+.article-comments {
+  max-width: 1300px;
+  margin: 8px auto 0;
+  padding: 16px;
+
+  @media screen and ($desktopLarge) {
+    padding: 16px 0;
+  }
+}
+
+.article-comments-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.article-comments-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  h3 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+    color: $grey;
+  }
+
+  span {
+    min-width: 34px;
+    height: 28px;
+    border-radius: 999px;
+    background: $limeLight;
+    color: $grey;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+}
+
+.article-comments-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid $greyMiddle;
+  border-radius: 8px;
+  background: #fff;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: $textPrimary;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    border: 1px solid $greyMiddle;
+    border-radius: 6px;
+    padding: 11px 12px;
+    font: inherit;
+    color: $grey;
+    background: #fff;
+
+    &:focus {
+      outline: 2px solid rgba($green, 0.2);
+      border-color: $green;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 112px;
+  }
+}
+
+.article-comments-field-help {
+  color: $textPrimary;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.article-comments-form-grid {
+  display: grid;
+  gap: 12px;
+
+  @media screen and ($tablet) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.article-comments-checkbox {
+  flex-direction: row !important;
+  align-items: flex-start;
+  font-weight: 500 !important;
+  line-height: 1.4;
+
+  input {
+    width: 18px;
+    min-width: 18px;
+    height: 18px;
+    margin-top: 1px;
+  }
+}
+
+.article-comments-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  button {
+    border: 0;
+    border-radius: 6px;
+    padding: 11px 18px;
+    background: $green;
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 180ms ease, box-shadow 180ms ease,
+      transform 180ms ease;
+
+    &:hover:not(:disabled) {
+      background: $greenHover;
+      box-shadow: 0 8px 18px rgba($green, 0.22);
+      transform: translateY(-2px);
+    }
+
+    &:active:not(:disabled) {
+      box-shadow: 0 4px 10px rgba($green, 0.18);
+      transform: translateY(0) scale(0.98);
+    }
+
+    &:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+  }
+
+  .article-comments-secondary-button {
+    background: $greyLight;
+    color: $grey;
+
+    &:hover:not(:disabled) {
+      background: $greyMiddle;
+      box-shadow: 0 8px 18px rgba($grey, 0.12);
+    }
+  }
+}
+
+.article-comments-message,
+.article-comments-error {
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.article-comments-message {
+  background: $limeLight;
+  color: $greenHover;
+}
+
+.article-comments-error {
+  background: #f9e7e7;
+  color: $delete;
+}
+
+.article-comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.article-comments-empty {
+  margin: 0;
+  border-radius: 999px;
+  padding: 7px 12px;
+  background: $limeLight;
+  color: $greenHover;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.article-comment-item {
+  border: 1px solid $greyMiddle;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fff;
+
+  p {
+    margin: 12px 0;
+    color: $grey;
+    line-height: 1.65;
+    white-space: pre-wrap;
+  }
+}
+
+.article-comment-reply {
+  background: $greyLight;
+}
+
+.article-comment-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: $textPrimary;
+
+  div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  strong {
+    color: $grey;
+  }
+
+  span {
+    border-radius: 999px;
+    padding: 3px 8px;
+    background: $green;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  time {
+    white-space: nowrap;
+    font-size: 13px;
+  }
+}
+
+.article-comment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 6px;
+
+  button {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    color: $greenHover;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .article-comment-like-button {
+    min-width: 48px;
+    height: 34px;
+    border-radius: 999px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: $greyLight;
+    color: $greyMiddleDark;
+
+    &:hover {
+      background: $limeLight;
+      color: $greenHover;
+    }
+
+    svg {
+      transform-origin: center;
+    }
+  }
+
+  .article-comment-liked {
+    background: $limeLight;
+    color: $greenHover;
+  }
+
+  .article-comment-like-pop {
+    animation: article-comment-like-button-pop 420ms ease;
+
+    svg {
+      animation: article-comment-like-icon-pop 420ms ease;
+    }
+  }
+
+  .article-comment-delete-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: $delete;
+  }
+}
+
+@keyframes article-comment-like-button-pop {
+  0% {
+    transform: scale(1);
+  }
+
+  35% {
+    transform: scale(1.12);
+  }
+
+  70% {
+    transform: scale(0.96);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes article-comment-like-icon-pop {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  35% {
+    transform: rotate(-10deg) scale(1.35);
+  }
+
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+.article-comment-replies {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 14px;
+  padding-left: 16px;
+  border-left: 3px solid $limeGreen;
+
+  @media screen and ($tablet) {
+    padding-left: 24px;
+  }
+}

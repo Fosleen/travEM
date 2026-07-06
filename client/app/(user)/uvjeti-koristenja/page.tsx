@@ -91,7 +91,7 @@ export default function TermsAndConditions() {
       <h4>8. Kontakt</h4>
       <p>
         Ako imate bilo kakva pitanja o ovim uvjetima korištenja, slobodno nas
-        kontaktirajte na travem.hr@gmail.com
+        kontaktirajte na hello@putujemstravem.com
       </p>
     </div>
   );

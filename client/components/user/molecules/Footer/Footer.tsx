@@ -119,7 +119,12 @@ const Footer: FC<FooterProps> = ({
         </div>
         <div className="footer-list-item">
           <div className="footer-list-item-title">KONTAKT</div>
-          <div className="footer-list-item-content">travem.hr@gmail.com</div>
+          <a
+            className="footer-list-item-content"
+            href="mailto:hello@putujemstravem.com"
+          >
+            hello@putujemstravem.com
+          </a>
           <span className="footer-list-item-links">
             <SocialMediaLinks />
           </span>

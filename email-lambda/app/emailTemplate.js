@@ -524,7 +524,7 @@ const createEmailTemplate = (article, userEmail) => {
                       >
                         Mi smo <strong>Ema i Matija</strong>, mladi par iz
                         Hrvatske koji putuje od 2020. godine. Kao studenti,
-                        naučili smo putovati s ograničenim budžetom – svaki
+                        naučili smo putovati s ograničenim budžetom. Svaki
                         novčić ulažemo u nova iskustva. Pratite naša putovanja
                         na blogu i YouTube kanalu!
                       </p>
@@ -761,8 +761,7 @@ const createEmailTemplate = (article, userEmail) => {
                           line-height: 1.5;
                         "
                       >
-                        Primili ste ovaj email jer ste pretplaćeni na newsletter
-                        od Putujem s travEM
+                        Primili ste ovaj email jer ste pretplaćeni na putujEM s travEM newsletter
                       </p>
 
                       <!-- Unsubscribe button -->
@@ -820,16 +819,16 @@ const createEmailTemplate = (article, userEmail) => {
                         >
                           Kontakt:
                           <a
-                            href="mailto:travem.hr@gmail.com"
+                            href="mailto:hello@putujemstravem.com"
                             style="color: #78a4d7; text-decoration: none"
-                            >travem.hr@gmail.com</a
+                            >hello@putujemstravem.com</a
                           >
                         </p>
                         <p
                           class="text-medium-gray"
                           style="color: #888888; font-size: 12px; margin: 0"
                         >
-                          © ${new Date().getFullYear()} Putujem s travEM. Sva prava
+                          © ${new Date().getFullYear()} putujEM s travEM. Sva prava
                           pridržana.
                         </p>
                       </div>

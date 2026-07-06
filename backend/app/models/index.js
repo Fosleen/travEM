@@ -35,6 +35,7 @@ import CountryLanguage from "./countryLanguage.js";
 import CountryLanguagePhrase from "./countryLanguagePhrase.js";
 import ArticleComment from "./articleComment.js";
 import ArticleCommentLike from "./articleCommentLike.js";
+import AirplaneTicketPromo from "./airplaneTicketPromo.js";
 
 const db = {};
 
@@ -125,6 +126,10 @@ db.models.ArticleComment = ArticleComment(
   Sequelize.DataTypes
 );
 db.models.ArticleCommentLike = ArticleCommentLike(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+db.models.AirplaneTicketPromo = AirplaneTicketPromo(
   sequelizeConnection,
   Sequelize.DataTypes
 );

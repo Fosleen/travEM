@@ -1,7 +1,7 @@
 // @ts-nocheck
 "use client";
 
-import { useMemo } from "react";
+import { Fragment, useMemo } from "react";
 import RecommendedPosts from "../../molecules/RecommendedPosts";
 
 import AirplaneTicketsHero from "../../atoms/AirplaneTicketsHero/AirplaneTicketsHero";
@@ -35,6 +35,15 @@ type AirplaneTicketsProps = {
   initialTickets: Article[];
   cityName: string;
   recommendedId: number | null;
+  promo?: {
+    top_text?: string;
+    middle_text?: string;
+    button_text?: string;
+    featured_article?: {
+      id?: number;
+      main_image_url?: string;
+    } | null;
+  } | null;
 };
 
 type AirplaneTicketsSectionProps = {
@@ -159,6 +168,7 @@ const AirplaneTickets = ({
   initialTickets,
   cityName,
   recommendedId,
+  promo,
 }: AirplaneTicketsProps) => {
   const formattedCityName = cityName
     .split(" ")
@@ -188,6 +198,26 @@ const AirplaneTickets = ({
     return { closeTickets: close, farTickets: far };
   }, [initialTickets]);
 
+  const promoTitleText =
+    promo?.top_text || "Ideš na svoj prvi let?\nEvo što sve trebaš znati";
+  const promoTitle = (
+    <>
+      {promoTitleText.split("\n").map((line, index, lines) => (
+        <Fragment key={`${line}-${index}`}>
+          {line}
+          {index < lines.length - 1 && <br />}
+        </Fragment>
+      ))}
+    </>
+  );
+
+  const promoHref = promo?.featured_article?.id
+    ? `/clanak/${promo.featured_article.id}`
+    : "/clanak/356";
+
+  const promoImageUrl =
+    promo?.featured_article?.main_image_url || PROMO_IMAGE_URL;
+
   return (
     <div className="airplane-tickets-parent-wrapper">
       <AirplaneTicketsHero
@@ -197,17 +227,15 @@ const AirplaneTickets = ({
       />
 
       <AirplaneTicketsPromoCard
-        imageUrl={PROMO_IMAGE_URL}
-        title={
-          <>
-            Ideš na svoj prvi let?
-            <br />
-            Evo što sve trebaš znati
-          </>
+        imageUrl={promoImageUrl}
+        title={promoTitle}
+        imageAlt={promoTitleText}
+        text={
+          promo?.middle_text ||
+          "Praktični vodič za sve što trebaš znati prije nego odeš na svoj prvi let, i sve što možeš očekivati tijekom putovanja."
         }
-        text="Praktični vodič za sve što trebaš znati prije nego odeš na svoj prvi let, i sve što možeš očekivati tijekom putovanja."
-        buttonText="Pročitaj vodič ✈︎"
-        href="/clanak/356"
+        buttonText={promo?.button_text || "Pročitaj vodič ✈︎"}
+        href={promoHref}
       />
 
       <div className="airplane-tickets-sections-wrapper">

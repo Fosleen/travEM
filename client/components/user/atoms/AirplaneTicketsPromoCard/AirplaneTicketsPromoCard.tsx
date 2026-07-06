@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ReactNode } from "react";
 import "./AirplaneTicketsPromoCard.scss";
 
 type Props = {
-  // možeš i dalje slati imageUrl, ali ako ne pošalješ -> koristi default promo sliku
   imageUrl?: string;
-  title: string;
+  title: ReactNode;
+  imageAlt: string;
   text: string;
   buttonText: string;
   href: string;
@@ -19,6 +20,7 @@ const DEFAULT_PROMO_IMAGE =
 const AirplaneTicketsPromoCard = ({
   imageUrl,
   title,
+  imageAlt,
   text,
   buttonText,
   href,
@@ -31,7 +33,7 @@ const AirplaneTicketsPromoCard = ({
         <div className="airplane-tickets-promo-image">
           <Image
             src={promoImage}
-            alt={title}
+            alt={imageAlt}
             fill
             sizes="(max-width: 768px) 100vw, 1200px"
             style={{ objectFit: "cover" }}

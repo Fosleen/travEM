@@ -26,6 +26,7 @@ import placeBestTimeToVisit from "./placeBestTimeToVisitRoute.js";
 import countryBestTimeToVisit from "./countryBestTimeToVisitRoute.js";
 import countryLanguage from "./countryLanguageRoute.js";
 import articleComment from "./articleCommentRoute.js";
+import airplaneTicketPromo from "./airplaneTicketPromoRoute.js";
 
 const router = new Router();
 
@@ -34,6 +35,7 @@ router.use("/footer", footer);
 router.use("/article-types", articleType);
 router.use("/articles", article);
 router.use("/comments", articleComment);
+router.use("/airplane-ticket-promo", airplaneTicketPromo);
 router.use("/sections", section);
 router.use("/section-icons", sectionIcon);
 router.use("/gallery-images", galleryImage);

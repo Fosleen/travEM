@@ -32,6 +32,7 @@ const clearPublishedArticleCaches = async (article) => {
       : Promise.resolve(),
     clearCacheByPattern("countries-page:*"),
     clearCacheByPattern("country-name:*"),
+    clearCacheByPattern("continent-countries:*"),
   ]);
 };
 

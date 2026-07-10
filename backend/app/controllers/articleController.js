@@ -1,4 +1,8 @@
-import { clearCache, getOrSetCache } from "../middleware/redis.js";
+import {
+  clearCache,
+  clearCacheByPattern,
+  getOrSetCache,
+} from "../middleware/redis.js";
 import articleService from "../services/articleService.js";
 import videoService from "../services/videoService.js";
 import jwt from "jsonwebtoken";
@@ -158,6 +162,7 @@ class ArticleController {
         if (response === undefined || response2 === undefined) {
           res.status(500).json({ error: "Internal server error" });
         } else {
+          await clearCacheByPattern("continent-countries:*");
           res.status(200).json(response);
         }
       }
@@ -332,6 +337,8 @@ class ArticleController {
           .json({ error: "Article with the provided ID doesn't exist" });
       } else {
         await clearCache(`article:${req.params.id}`);
+        await clearCache(`article:${req.params.id}:admin`);
+        await clearCacheByPattern("continent-countries:*");
         res.status(200).json(response);
       }
     } catch (error) {
@@ -346,6 +353,8 @@ class ArticleController {
 
       if (response) {
         await clearCache(`article:${id}`);
+        await clearCache(`article:${id}:admin`);
+        await clearCacheByPattern("continent-countries:*");
         res.status(200).json({});
       } else {
         return res.status(500).json({ error: "Internal server error" });

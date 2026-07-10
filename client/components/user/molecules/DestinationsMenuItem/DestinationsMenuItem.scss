@@ -90,7 +90,7 @@
   .destination-country-block {
     display: inline-block;
     width: 100%;
-    margin: 0 0 6px;
+    margin: 0 0 8px;
     vertical-align: top;
     break-inside: avoid;
     -webkit-column-break-inside: avoid;
@@ -98,11 +98,16 @@
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
+    overflow: visible;
   }
 
   .destination-country-block--no-cities {
     padding-left: 0;
     box-sizing: border-box;
+  }
+
+  .destination-country-block:has(.destination-item-container.has-badge) {
+    margin-top: 8px;
   }
 
   .destination-country-block .destination-item-container {
@@ -120,6 +125,11 @@
     overflow: hidden;
   }
 
+  .destination-country-block .destination-item-container.flag.has-badge {
+    overflow: visible;
+    z-index: 1;
+  }
+
   .destination-country-block .destination-item-container.flag p {
     max-width: 100%;
   }
@@ -135,6 +145,7 @@
     box-sizing: border-box;
     padding: 8px 10px 8px 10px;
     border-radius: 18px;
+    overflow: visible;
   }
 
   .destination-country-group-surface--with-cities {

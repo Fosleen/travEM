@@ -180,6 +180,7 @@ export interface CountriesData {
   description: string;
   main_image_url: string;
   flag_image_url: string;
+  is_new?: boolean;
   colorId: number;
   continentId: number;
   color?: { hex_value: string };

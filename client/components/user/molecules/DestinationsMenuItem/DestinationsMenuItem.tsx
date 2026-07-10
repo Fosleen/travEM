@@ -249,8 +249,8 @@ const DestinationsMenuItem: FC<{
   const sortedCountries = countries
     ? [...countries].sort(
         (
-          a: { id: number; name: string; flag_image_url: string },
-          b: { id: number; name: string; flag_image_url: string }
+          a: { id: number; name: string; flag_image_url: string; is_new?: boolean },
+          b: { id: number; name: string; flag_image_url: string; is_new?: boolean }
         ) => a.name.localeCompare(b.name)
       )
     : [];
@@ -268,7 +268,7 @@ const DestinationsMenuItem: FC<{
   const continentGenitive = getContinentGenitive(title);
 
   const renderCountryBlock = (
-    el: { id: number; name: string; flag_image_url: string },
+    el: { id: number; name: string; flag_image_url: string; is_new?: boolean },
     index?: number
   ) => {
     const places = placesByCountry[el.id] || [];
@@ -294,6 +294,7 @@ const DestinationsMenuItem: FC<{
               filterMenuItem
               name={el.name}
               iconUrl={el.flag_image_url}
+              badgeText={el.is_new ? "Novo" : undefined}
             />
 
             <div className="destination-city-slot">
@@ -315,6 +316,7 @@ const DestinationsMenuItem: FC<{
             filterMenuItem
             name={el.name}
             iconUrl={el.flag_image_url}
+            badgeText={el.is_new ? "Novo" : undefined}
           />
         )}
       </div>

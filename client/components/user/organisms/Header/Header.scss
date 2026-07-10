@@ -5,6 +5,7 @@
   position: relative;
 
   .header-top {
+    position: relative;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -65,9 +66,9 @@
   }
 }
 
-/* ✅ Kad je dropdown menu otvoren, logo + dropdown content moraju biti iznad header overlay-a */
-.header-container:has(.header-dim-overlay.is-active) {
-  .header-top a {
+/* Keep the complete navbar and dropdown content above the menu overlay. */
+.header-container.header-is-active {
+  .header-top {
     z-index: 3000;
   }
 

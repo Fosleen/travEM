@@ -25,6 +25,11 @@
 
   &:last-of-type {
     z-index: 1;
+
+    /* Keep the socials alongside the active search, above its backdrop. */
+    .socials-container {
+      z-index: 4001;
+    }
   }
 
   .navbar-item {

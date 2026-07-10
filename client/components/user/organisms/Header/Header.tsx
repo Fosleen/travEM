@@ -38,6 +38,7 @@ const Header: FC<HeaderProps> = ({
   selectedSubcategory,
 }) => {
   const [isDesktop, setDesktop] = useState(false);
+  const [isHeaderTopHovered, setIsHeaderTopHovered] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -51,10 +52,17 @@ const Header: FC<HeaderProps> = ({
 
   const isAnyMenuShown =
     isPlaneTicketsMenuShown || isDestinationsMenuShown || isTipsMenuShown;
+  const isHeaderActive = isAnyMenuShown || (isDesktop && isHeaderTopHovered);
 
   return (
-    <div className="header-container">
-      <div className="header-top">
+    <div
+      className={`header-container ${isHeaderActive ? "header-is-active" : ""}`}
+    >
+      <div
+        className="header-top"
+        onMouseEnter={() => setIsHeaderTopHovered(true)}
+        onMouseLeave={() => setIsHeaderTopHovered(false)}
+      >
         <Link href="/">
           <Image
             src={
@@ -107,7 +115,7 @@ const Header: FC<HeaderProps> = ({
       </div>
 
       <div
-        className={`header-dim-overlay ${isAnyMenuShown ? "is-active" : ""}`}
+        className={`header-dim-overlay ${isHeaderActive ? "is-active" : ""}`}
       />
     </div>
   );

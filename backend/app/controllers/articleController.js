@@ -197,7 +197,7 @@ class ArticleController {
     try {
       const { id } = req.params;
       const useCache = req.query.noCache !== "true";
-      const cacheKey = `top-country-article:${id}`;
+      const cacheKey = `top-country-article:v2:${id}`;
 
       const response = await getOrSetCache(
         cacheKey,
@@ -286,7 +286,7 @@ class ArticleController {
       } else if (!response || response.length == 0) {
         res.status(500).json({ error: "Internal server error" });
       } else {
-        await clearCache(`top-country-article:${response.countryId}`);
+        await clearCache(`top-country-article:v2:${response.countryId}`);
         res.status(200).json(response);
       }
     } catch (error) {
@@ -370,6 +370,7 @@ class ArticleController {
       const response = await articleService.deleteTopCountryArticle(id);
 
       if (response) {
+        await clearCache(`top-country-article:v2:${response}`);
         res.status(200).json({});
       } else {
         return res.status(500).json({ error: "Internal server error" });

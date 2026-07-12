@@ -556,6 +556,7 @@ class ArticleService {
   async getTopCountryArticle(id) {
     try {
       const article = await db.models.Article.findOne({
+        subQuery: false,
         where: getPublicArticleWhere({
           countryId: id,
         }),
@@ -563,13 +564,17 @@ class ArticleService {
           getArticleScheduleInclude(),
           {
             model: db.models.ArticleSpecialType,
-            through: db.models.Article_ArticleSpecialType,
+            through: {
+              attributes: [],
+            },
             where: {
               id: 2,
             },
           },
           {
             model: db.models.Section,
+            separate: true,
+            order: [["order", "ASC"]],
             include: [
               {
                 model: db.models.SectionIcon,
@@ -577,7 +582,6 @@ class ArticleService {
             ],
           },
         ],
-        order: [[{ model: db.models.Section }, "order", "ASC"]],
       });
 
       return article;
@@ -911,6 +915,14 @@ class ArticleService {
 
   async deleteTopCountryArticle(id) {
     try {
+      const article = await db.models.Article.findByPk(id, {
+        attributes: ["countryId"],
+      });
+
+      if (!article) {
+        return null;
+      }
+
       await db.models.Article_ArticleSpecialType.destroy({
         where: {
           articleId: id,
@@ -918,7 +930,7 @@ class ArticleService {
         },
       });
 
-      return [];
+      return article.countryId;
     } catch (error) {
       console.log(error);
       return null;

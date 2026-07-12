@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import axios from "axios";
+import { Op } from "sequelize";
 import db from "../models/index.js";
 import { moderateComment } from "../utils/commentModeration.js";
 
@@ -171,6 +172,43 @@ class ArticleCommentService {
         },
       ],
       order: [["created_at", "DESC"]],
+    });
+  }
+
+  async getAdminComments(userId) {
+    if (!(await this.isAdminUser(userId))) {
+      return { error: "Potreban je administratorski pristup", statusCode: 403 };
+    }
+
+    const answeredCommentIds = await db.models.ArticleComment.findAll({
+      attributes: ["parentCommentId"],
+      where: {
+        is_admin_reply: true,
+        deleted_at: null,
+        parentCommentId: { [Op.ne]: null },
+      },
+      raw: true,
+    });
+    const answeredIds = answeredCommentIds.map(
+      (comment) => comment.parentCommentId
+    );
+
+    return await db.models.ArticleComment.findAll({
+      where: {
+        deleted_at: null,
+        is_admin_reply: false,
+        ...(answeredIds.length > 0 && { id: { [Op.notIn]: answeredIds } }),
+      },
+      include: [
+        {
+          model: db.models.Article,
+          attributes: ["id", "title"],
+        },
+      ],
+      order: [
+        ["created_at", "DESC"],
+        ["id", "DESC"],
+      ],
     });
   }
 

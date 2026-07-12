@@ -112,6 +112,67 @@
   font-size: 13px;
 }
 
+.comments-review-status {
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-weight: 700;
+}
+
+.comments-review-status-published {
+  background: rgba($green, 0.12);
+  color: $green;
+}
+
+.comments-review-status-pending {
+  background: #fff3cd;
+  color: #7a5a00;
+}
+
+.comments-review-status-rejected {
+  background: #f9e7e7;
+  color: $delete;
+}
+
+.comments-review-reply {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+
+  textarea {
+    flex: 1;
+    min-height: 84px;
+    resize: vertical;
+    border: 1px solid $greyMiddle;
+    border-radius: 6px;
+    padding: 10px 12px;
+    color: $grey;
+    font: inherit;
+  }
+
+  button {
+    border: 0;
+    border-radius: 6px;
+    padding: 10px 14px;
+    background: $green;
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .comments-review-reply {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
 .comments-review-actions {
   margin-top: 14px;
 

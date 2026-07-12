@@ -5,6 +5,7 @@ import { verifyToken } from "../middleware/jwt_verify.js";
 const router = new Router();
 
 router.get("/unsubscribe", controller.unsubscribe);
+router.get("/admin", verifyToken, controller.getAdminComments);
 router.get("/pending", verifyToken, controller.getPendingComments);
 router.patch("/:commentId/status", verifyToken, controller.setCommentStatus);
 router.delete("/:commentId", verifyToken, controller.deleteComment);

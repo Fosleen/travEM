@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from "react";
 import {
-  getPendingComments,
+  addAdminCommentReply,
+  AdminArticleComment,
+  getAdminComments,
   updateCommentStatus,
 } from "@/utils/articleComments";
 import "./CommentsReview.scss";
@@ -17,17 +19,18 @@ const formatDateTime = (value: string) =>
   }).format(new Date(value));
 
 const CommentsReviewPage = () => {
-  const [comments, setComments] = useState<any[]>([]);
+  const [comments, setComments] = useState<AdminArticleComment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [actionCommentId, setActionCommentId] = useState<number | null>(null);
   const [error, setError] = useState("");
+  const [replyBodies, setReplyBodies] = useState<Record<number, string>>({});
 
   const loadPendingComments = async () => {
     setIsLoading(true);
     setError("");
 
     try {
-      const data = await getPendingComments();
+      const data = await getAdminComments();
       setComments(data);
     } catch (loadError: any) {
       setError(loadError.message || "Komentare nije moguće učitati.");
@@ -49,11 +52,33 @@ const CommentsReviewPage = () => {
 
     try {
       await updateCommentStatus(commentId, status);
-      setComments((current) =>
-        current.filter((comment) => comment.id !== commentId)
-      );
+      setComments((current) => current.map((comment) =>
+        comment.id === commentId ? { ...comment, status } : comment
+      ));
     } catch (statusError: any) {
       setError(statusError.message || "Status komentara nije moguće promijeniti.");
+    } finally {
+      setActionCommentId(null);
+    }
+  };
+
+  const handleReply = async (comment: AdminArticleComment) => {
+    const body = replyBodies[comment.id]?.trim();
+
+    if (!body) {
+      setError("Upišite odgovor prije slanja.");
+      return;
+    }
+
+    setActionCommentId(comment.id);
+    setError("");
+
+    try {
+      await addAdminCommentReply(comment.articleId, comment.id, body);
+      setReplyBodies((current) => ({ ...current, [comment.id]: "" }));
+      setComments((current) => current.filter(({ id }) => id !== comment.id));
+    } catch (replyError: any) {
+      setError(replyError.message || "Odgovor nije moguće poslati.");
     } finally {
       setActionCommentId(null);
     }
@@ -73,7 +98,7 @@ const CommentsReviewPage = () => {
       {isLoading ? (
         <p className="comments-review-empty">Učitavanje...</p>
       ) : comments.length === 0 ? (
-        <p className="comments-review-empty">Nema komentara na čekanju.</p>
+        <p className="comments-review-empty">Još nema komentara.</p>
       ) : (
         <div className="comments-review-list">
           {comments.map((comment) => (
@@ -90,28 +115,35 @@ const CommentsReviewPage = () => {
 
               <div className="comments-review-context">
                 <span>{comment.article?.title || "Članak"}</span>
+                <span className={`comments-review-status comments-review-status-${comment.status}`}>
+                  {comment.status === "published" ? "Objavljeno" : comment.status === "pending" ? "Na čekanju" : "Odbijeno"}
+                </span>
                 {comment.moderation_reason && (
                   <span>Razlog: {comment.moderation_reason}</span>
                 )}
               </div>
 
-              <div className="comments-review-actions">
-                <button
-                  type="button"
-                  onClick={() => handleStatusChange(comment.id, "published")}
-                  disabled={actionCommentId === comment.id}
-                >
-                  Odobri
-                </button>
-                <button
-                  type="button"
-                  className="comments-review-reject"
-                  onClick={() => handleStatusChange(comment.id, "rejected")}
-                  disabled={actionCommentId === comment.id}
-                >
-                  Odbij
-                </button>
-              </div>
+              {comment.status === "pending" && (
+                <div className="comments-review-actions">
+                  <button type="button" onClick={() => handleStatusChange(comment.id, "published")} disabled={actionCommentId === comment.id}>Odobri</button>
+                  <button type="button" className="comments-review-reject" onClick={() => handleStatusChange(comment.id, "rejected")} disabled={actionCommentId === comment.id}>Odbij</button>
+                </div>
+              )}
+
+              {comment.status === "published" && (
+                <div className="comments-review-reply">
+                  <textarea
+                    aria-label={`Odgovor za ${comment.username}`}
+                    placeholder="Napišite odgovor..."
+                    value={replyBodies[comment.id] || ""}
+                    onChange={(event) => setReplyBodies((current) => ({ ...current, [comment.id]: event.target.value }))}
+                    maxLength={3000}
+                  />
+                  <button type="button" onClick={() => handleReply(comment)} disabled={actionCommentId === comment.id}>
+                    {actionCommentId === comment.id ? "Slanje..." : "Odgovori"}
+                  </button>
+                </div>
+              )}
             </article>
           ))}
         </div>

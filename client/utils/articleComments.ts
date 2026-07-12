@@ -20,6 +20,15 @@ export interface CommentPayload {
   notifyOnReply: boolean;
 }
 
+export interface AdminArticleComment extends Omit<ArticleComment, "isAdminReply" | "replies"> {
+  email: string | null;
+  moderation_reason: string | null;
+  article: {
+    id: number;
+    title: string;
+  };
+}
+
 const getToken = () => {
   if (typeof window === "undefined") {
     return null;
@@ -213,6 +222,25 @@ export async function getPendingComments() {
   }
 
   return data;
+}
+
+export async function getAdminComments() {
+  const token = getToken();
+  const response = await fetch(`${apiUrl}/comments/admin`, {
+    cache: "no-store",
+    headers: {
+      Accept: "application/json",
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Failed to fetch comments");
+  }
+
+  return data as AdminArticleComment[];
 }
 
 export async function updateCommentStatus(

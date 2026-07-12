@@ -80,6 +80,21 @@ class ArticleCommentController {
     }
   }
 
+  async getAdminComments(req, res) {
+    try {
+      const comments = await service.getAdminComments(req.user?.id);
+
+      if (comments.error) {
+        return res.status(comments.statusCode || 400).json({ error: comments.error });
+      }
+
+      res.status(200).json(comments);
+    } catch (error) {
+      console.error("Error fetching admin comments:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
   async setCommentStatus(req, res) {
     try {
       const result = await service.setCommentStatus(

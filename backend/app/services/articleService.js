@@ -1,6 +1,8 @@
 import db from "../models/index.js";
 import { Op, Sequelize } from "sequelize";
 
+let affiliateTablesAvailable = true;
+
 const parseBooleanValue = (value) => {
   if (typeof value === "boolean") return value;
   if (typeof value === "number") return value === 1;
@@ -236,58 +238,95 @@ class ArticleService {
   }
 
   async getArticleById(id, includeScheduled = false) {
-    try {
-      const article = await db.models.Article.findOne({
+    const include = [
+      {
+        model: db.models.User,
+      },
+      {
+        model: db.models.GalleryImage,
+        separate: true,
+      },
+      {
+        model: db.models.Video,
+      },
+      {
+        model: db.models.Country,
+      },
+      {
+        model: db.models.Place,
+      },
+      {
+        model: db.models.ArticleType,
+      },
+      getArticleScheduleInclude(),
+      {
+        model: db.models.ArticleAffiliateLink,
+        as: "affiliate_links",
+        separate: true,
+        ...(includeScheduled ? {} : { where: { is_enabled: true } }),
+        order: [["sort_order", "ASC"]],
+        include: [
+          { model: db.models.AffiliatePartner, as: "partner" },
+        ],
+      },
+      {
+        model: db.models.Section,
+        separate: true,
+        order: [["order", "ASC"]],
+        include: [
+          {
+            model: db.models.SectionImage,
+          },
+          {
+            model: db.models.SectionIcon,
+          },
+        ],
+      },
+      {
+        model: db.models.ArticleSpecialType,
+        through: {
+          attributes: [],
+        },
+      },
+    ];
+
+    const findArticle = (queryInclude) =>
+      db.models.Article.findOne({
         where: includeScheduled
           ? { id }
           : getPublicArticleWhere({
               id,
             }),
-        include: [
-          {
-            model: db.models.User,
-          },
-          {
-            model: db.models.GalleryImage,
-            separate: true,
-          },
-          {
-            model: db.models.Video,
-          },
-          {
-            model: db.models.Country,
-          },
-          {
-            model: db.models.Place,
-          },
-          {
-            model: db.models.ArticleType,
-          },
-          getArticleScheduleInclude(),
-          {
-            model: db.models.Section,
-            separate: true,
-            order: [["order", "ASC"]],
-            include: [
-              {
-                model: db.models.SectionImage,
-              },
-              {
-                model: db.models.SectionIcon,
-              },
-            ],
-          },
-          {
-            model: db.models.ArticleSpecialType,
-            through: {
-              attributes: [],
-            },
-          },
-        ],
+        include: queryInclude,
       });
 
+    const includeWithoutAffiliateLinks = include.filter(
+      (item) => item.as !== "affiliate_links"
+    );
+
+    try {
+      const article = await findArticle(
+        affiliateTablesAvailable ? include : includeWithoutAffiliateLinks
+      );
+      if (article && !affiliateTablesAvailable) {
+        article.setDataValue("affiliate_links", []);
+      }
       return article;
     } catch (error) {
+      const missingAffiliateTable =
+        error?.original?.code === "ER_NO_SUCH_TABLE" ||
+        /affiliate_partner|article_affiliate_link/i.test(error?.message || "");
+
+      if (missingAffiliateTable) {
+        affiliateTablesAvailable = false;
+        console.warn(
+          "Affiliate tables are not installed; returning the article without affiliate links."
+        );
+        const article = await findArticle(includeWithoutAffiliateLinks);
+        if (article) article.setDataValue("affiliate_links", []);
+        return article;
+      }
+
       console.log(error);
       return `not found article with PK ${id}`;
     }

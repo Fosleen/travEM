@@ -80,6 +80,28 @@ export const createAssociations = () => {
   });
   db.models.ArticleComment.belongsTo(db.models.Article);
 
+  db.models.Article.hasMany(db.models.ArticleAffiliateLink, {
+    foreignKey: { allowNull: false },
+    as: "affiliate_links",
+    onDelete: "CASCADE",
+  });
+  db.models.ArticleAffiliateLink.belongsTo(db.models.Article);
+  db.models.AffiliatePartner.hasMany(db.models.ArticleAffiliateLink, {
+    foreignKey: {
+      name: "affiliatePartnerId",
+      field: "affiliate_partner_id",
+      allowNull: false,
+    },
+  });
+  db.models.ArticleAffiliateLink.belongsTo(db.models.AffiliatePartner, {
+    as: "partner",
+    foreignKey: {
+      name: "affiliatePartnerId",
+      field: "affiliate_partner_id",
+      allowNull: false,
+    },
+  });
+
   db.models.ArticleComment.hasMany(db.models.ArticleComment, {
     foreignKey: {
       name: "parentCommentId",

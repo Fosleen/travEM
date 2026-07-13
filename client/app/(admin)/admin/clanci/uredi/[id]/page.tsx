@@ -86,6 +86,13 @@ import {
   ZAGREB_TIME_ZONE,
   zonedDateTimeLocalToUtcIso,
 } from "@/utils/articleSchedule";
+import AffiliateLinksEditor from "@/components/admin/organisms/AffiliateLinksEditor/AffiliateLinksEditor";
+import {
+  getAffiliatePartners,
+  mergeArticleAffiliateLinks,
+  persistAffiliatePartners,
+  saveArticleAffiliateLinks,
+} from "@/utils/affiliateLinks";
 
 const EditArticle = () => {
   const params = useParams();
@@ -100,6 +107,7 @@ const EditArticle = () => {
   const [sectionIcons, setSectionIcons] = useState<SectionIconsData | string>(
     ""
   );
+  const [affiliateLinks, setAffiliateLinks] = useState([]);
   const [selectedCountryId, setSelectedCountryId] = useState("");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [modalInputValue, setModalInputValue] = useState("");
@@ -226,6 +234,14 @@ const EditArticle = () => {
       );
 
       console.log("✅ Article updated:", articleResponse);
+
+      if (affiliateLinks.length > 0) {
+        const persistedAffiliateLinks = await persistAffiliatePartners(
+          affiliateLinks
+        );
+        setAffiliateLinks(persistedAffiliateLinks);
+        await saveArticleAffiliateLinks(article.id, persistedAffiliateLinks);
+      }
 
       console.log(
         "2️⃣ Updating sections...",
@@ -551,6 +567,12 @@ const flatRemovedImages = removedSectionImages;
           airportsData,
         } = await fetchArticleFormOptions();
         const articleData = await getArticleById(parseInt(id), true);
+        let partners = [];
+        try {
+          partners = await getAffiliatePartners();
+        } catch (error) {
+          console.warn("Affiliate tables are not installed yet.", error);
+        }
 
         let isSetAsMainCountryPost = null;
 
@@ -565,6 +587,13 @@ const flatRemovedImages = removedSectionImages;
         setCountries(countriesData);
         setSectionIcons(sectionIconsData);
         setArticle(articleData);
+        setAffiliateLinks(
+          mergeArticleAffiliateLinks(
+            partners,
+            articleData.affiliate_links,
+            false
+          )
+        );
         setMainArticleImage(articleData.main_image_url);
         setIsMainCountryPostChecked(isSetAsMainCountryPost?.id == id);
         setIsMainCountryPost(isSetAsMainCountryPost?.id == id);
@@ -1512,6 +1541,11 @@ const flatRemovedImages = removedSectionImages;
                       </div>
                     </div>
                   </div>
+
+                  <AffiliateLinksEditor
+                    value={affiliateLinks}
+                    onChange={setAffiliateLinks}
+                  />
 
                   <div className="edit-metatags-wrapper">
                     <div className="edit-metatag-outer-container">

@@ -72,6 +72,13 @@ import {
   ZAGREB_TIME_ZONE,
   zonedDateTimeLocalToUtcIso,
 } from "@/utils/articleSchedule";
+import AffiliateLinksEditor from "@/components/admin/organisms/AffiliateLinksEditor/AffiliateLinksEditor";
+import {
+  getAffiliatePartners,
+  mergeArticleAffiliateLinks,
+  persistAffiliatePartners,
+  saveArticleAffiliateLinks,
+} from "@/utils/affiliateLinks";
 
 const AddArticlePage = () => {
   const router = useRouter();
@@ -82,6 +89,7 @@ const AddArticlePage = () => {
   const [sectionIcons, setSectionIcons] = useState<SectionIconsData | string>(
     ""
   );
+  const [affiliateLinks, setAffiliateLinks] = useState([]);
 
   const [selectedCountryId, setSelectedCountryId] = useState("");
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -183,6 +191,17 @@ const AddArticlePage = () => {
               isScheduleChecked ? scheduleTimezone : undefined,
               isScheduleChecked ? isNotifySubscribersChecked : undefined
             );
+
+            if (affiliateLinks.length > 0) {
+              const persistedAffiliateLinks = await persistAffiliatePartners(
+                affiliateLinks
+              );
+              setAffiliateLinks(persistedAffiliateLinks);
+              await saveArticleAffiliateLinks(
+                articleResponse.id,
+                persistedAffiliateLinks
+              );
+            }
 
             const galleryResults = await Promise.all(
               otherArticleImages.map((image) =>
@@ -330,6 +349,13 @@ const AddArticlePage = () => {
       setCountries(countriesData);
       setSectionIcons(sectionIconsData);
       setAirportCities(airportsData);
+      try {
+        const partners = await getAffiliatePartners();
+        setAffiliateLinks(mergeArticleAffiliateLinks(partners));
+      } catch (error) {
+        console.warn("Affiliate tables are not installed yet.", error);
+        setAffiliateLinks([]);
+      }
     } catch (error) {
       console.error("Error occured while fetching data:", error);
     }
@@ -1120,6 +1146,11 @@ const AddArticlePage = () => {
                     </div>
                   </div>
                 </div>
+
+                <AffiliateLinksEditor
+                  value={affiliateLinks}
+                  onChange={setAffiliateLinks}
+                />
 
                 <div className="add-metatags-wrapper">
                   <div className="add-metatag-outer-container">

@@ -36,6 +36,8 @@ import CountryLanguagePhrase from "./countryLanguagePhrase.js";
 import ArticleComment from "./articleComment.js";
 import ArticleCommentLike from "./articleCommentLike.js";
 import AirplaneTicketPromo from "./airplaneTicketPromo.js";
+import AffiliatePartner from "./affiliatePartner.js";
+import ArticleAffiliateLink from "./articleAffiliateLink.js";
 
 const db = {};
 
@@ -130,6 +132,14 @@ db.models.ArticleCommentLike = ArticleCommentLike(
   Sequelize.DataTypes
 );
 db.models.AirplaneTicketPromo = AirplaneTicketPromo(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+db.models.AffiliatePartner = AffiliatePartner(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+db.models.ArticleAffiliateLink = ArticleAffiliateLink(
   sequelizeConnection,
   Sequelize.DataTypes
 );

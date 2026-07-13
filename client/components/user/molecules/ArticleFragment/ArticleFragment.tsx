@@ -11,6 +11,7 @@ import BestTimeToVisit from "@/components/user/molecules/BestTimeToVisit/BestTim
 import BestTimeToVisitPlace from "@/components/user/molecules/BestTimeToVisitPlace/BestTimeToVisitPlace";
 import CountryLanguage from "@/components/user/molecules/CountryLanguage/CountryLanguage";
 import { openLightbox } from "@/utils/lightbox";
+import ArticleAffiliateLinks from "@/components/user/molecules/ArticleAffiliateLinks/ArticleAffiliateLinks";
 
 const ArticleFragment: FC<ArticleProps> = ({
   section = {},
@@ -53,6 +54,7 @@ const ArticleFragment: FC<ArticleProps> = ({
     section.text.replace(/<[^>]*>/g, "").trim().length > 0;
 
   const hasVideo = Boolean(article?.video?.url?.trim());
+  const hasAffiliateLinks = Boolean(article?.affiliate_links?.some((link) => link.is_enabled));
 
   const shouldRenderVisaInfo =
     showVisaInfo && Boolean(visaInfoCountryId) && Boolean(visaInfoCountryName);
@@ -75,6 +77,7 @@ const ArticleFragment: FC<ArticleProps> = ({
     hasOne ||
     hasTwo ||
     hasVideo ||
+    hasAffiliateLinks ||
     shouldRenderVisaInfo ||
     shouldRenderBestTimeToVisit ||
     shouldRenderCountryLanguage;
@@ -209,6 +212,8 @@ const ArticleFragment: FC<ArticleProps> = ({
           </div>
         </div>
       )}
+
+      {hasAffiliateLinks && <ArticleAffiliateLinks links={article.affiliate_links} />}
 
       {hasVideo && (
         <div className="article-fragment-video-wrapper">

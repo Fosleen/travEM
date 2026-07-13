@@ -19,6 +19,7 @@ import characteristicIcon from "./characteristicIconRoute.js";
 import specificityImage from "./specificityImageRoute.js";
 import specificityItem from "./specificityItemRoute.js";
 import video from "./videoRoute.js";
+import affiliate from "./affiliateRoute.js";
 import airportCity from "./airportCityRoute.js";
 import { verifyToken } from "../middleware/jwt_verify.js";
 import subscriber from "./subscriberRoute.js";
@@ -54,6 +55,7 @@ router.use("/places", place);
 router.use("/countries", country);
 router.use("/continents", continent);
 router.use("/videos", video);
+router.use("/affiliates", affiliate);
 router.use("/airport-cities", airportCity);
 router.use("/subscribers", subscriber);
 

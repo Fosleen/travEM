@@ -52,7 +52,7 @@ const CountryPlaces = ({ places = [], countryName }) => {
   return (
     <section className="country-places-container">
       <div className="country-places-header">
-        <h2>Istražite gradove {countryNameInGenitive}</h2>
+        <h2>Istražite mjesta {countryNameInGenitive}</h2>
       </div>
 
       {/* Mobile / tablet */}

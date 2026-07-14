@@ -91,6 +91,15 @@ const Footer: FC<FooterProps> = ({
           >
             Aviokarte
           </div>
+          <Link
+            href="https://www.discovercars.com/?a_aid=travEM"
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+          >
+            <div className="footer-list-item-content">
+              Rentaj auto na Discover Cars
+            </div>
+          </Link>
         </div>
         <div className="footer-list-item">
           <div className="footer-list-item-title">O NAMA</div>

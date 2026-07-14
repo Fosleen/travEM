@@ -5,6 +5,11 @@ export const clients = [
     url: "https://fosleen.com/?utm_source=putujemstravem&utm_medium=footer&utm_campaign=internal-link",
   },
   {
+    img: "/images/sponsors/DiscoverCars.png",
+    name: "DiscoverCars",
+    url: "https://www.discovercars.com/?a_aid=travEM",
+  },
+  {
     img: "/images/sponsors/Airalo.png",
     name: "Airalo",
     url: "https://try.airalo.com/putujemm",
@@ -94,6 +99,11 @@ export const clients = [
     img: "/images/logo-light.png",
     name: "Fosleen",
     url: "https://fosleen.com/?utm_source=putujemstravem&utm_medium=footer&utm_campaign=internal-link",
+  },
+    {
+    img: "/images/sponsors/DiscoverCars.png",
+    name: "DiscoverCars",
+    url: "https://www.discovercars.com/?a_aid=travEM",
   },
   {
     img: "/images/sponsors/Airalo.png",

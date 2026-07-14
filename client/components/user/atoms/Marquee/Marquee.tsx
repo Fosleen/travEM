@@ -9,7 +9,7 @@ const Marquee = () => {
     <div className="sponsors-parent-wrapper">
       <MarqueeElement
         className="sponsors-inner-wrapper"
-        pauseOnHover={false}
+        pauseOnHover={true}
         pauseOnClick={false}
         play={true}
         speed={20}

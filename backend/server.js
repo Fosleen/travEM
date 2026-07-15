@@ -18,19 +18,15 @@ const app = express();
 // Create all 1:1, 1:M and M:N
 createAssociations();
 
-const allowedOrigins = process.env.CORS_ORIGINS
-  ? process.env.CORS_ORIGINS.split(",").map((origin) => origin.trim())
-  : [];
+
 
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-      return;
-    }
-
-    callback(new Error("Not allowed by CORS"));
-  },
+  origin: [
+    "https://putujemstravem.com",
+    "https://www.putujemstravem.com",
+    "https://travem-n1ucljdnb-putujem-s-travems-projects.vercel.app",
+    "https://travem-nu.vercel.app/",
+  ],
   credentials: true,
   methods: "GET, POST, PATCH, DELETE, PUT",
   allowedHeaders: "Content-Type, Authorization",
@@ -82,7 +78,7 @@ app.post("/deploy", (req, res) => {
 
 // Start the server
 const PORT = dbConfig.PORT;
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
   swaggerDocs(app, PORT);
 });

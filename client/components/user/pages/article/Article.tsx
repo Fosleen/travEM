@@ -230,7 +230,7 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
                   })
                 }
               >
-                <Image
+                <img
                   src={image.url.trim()}
                   alt={image.alt || "Gallery image"}
                   width={image.width || 600}

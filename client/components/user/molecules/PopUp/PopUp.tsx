@@ -6,84 +6,12 @@ import { X } from "@phosphor-icons/react";
 
 import Input from "../../../atoms/Input";
 import "./PopUp.scss";
-import NewsletterSubmitButton from "../../atoms/NewsletterSubmitButton/NewsletterSubmitButton";
-import { handleSubscriptionClick } from "@/utils/newsletterSubscription";
-
+import Button from "../../../atoms/Button";
+import { notifyFailure, notifyInfo } from "../../../atoms/Toast/Toast";
+import { addSubscriber } from "../../../../utils/subscribers";
 const travemLogo = "/images/travem-logo-hero.webp";
 const popUpBg = "/images/popupbg.webp";
-
-const POPUP_DELAY_MS = 60000;
-const REQUIRED_SCROLL_PERCENT = 30;
-const EXIT_INTENT_MIN_TIME_MS = 10000;
-
-const CLOSED_COOLDOWN_DAYS = 7;
-const SUBSCRIBED_COOLDOWN_DAYS = 30;
-
-const MS_IN_DAY = 24 * 60 * 60 * 1000;
-
-const STORAGE_KEYS = {
-  oldClosed: "newsletterPopupClosed",
-  closedAt: "newsletterPopupClosedAt",
-  subscribedAt: "newsletterPopupSubscribedAt",
-  shownThisSession: "newsletterPopupShownThisSession",
-};
-
-const getStoredTimestamp = (key: string) => {
-  const value = localStorage.getItem(key);
-
-  if (!value) {
-    return null;
-  }
-
-  const timestamp = Number(value);
-
-  if (Number.isNaN(timestamp)) {
-    return null;
-  }
-
-  return timestamp;
-};
-
-const isWithinCooldown = (timestamp: number | null, cooldownDays: number) => {
-  if (!timestamp) {
-    return false;
-  }
-
-  return Date.now() - timestamp < cooldownDays * MS_IN_DAY;
-};
-
-const getScrollPercent = () => {
-  const documentElement = document.documentElement;
-  const body = document.body;
-
-  const scrollTop =
-    window.scrollY || documentElement.scrollTop || body.scrollTop || 0;
-
-  const scrollHeight = Math.max(
-    body.scrollHeight,
-    body.offsetHeight,
-    documentElement.clientHeight,
-    documentElement.scrollHeight,
-    documentElement.offsetHeight
-  );
-
-  const viewportHeight = window.innerHeight || documentElement.clientHeight;
-  const scrollableHeight = scrollHeight - viewportHeight;
-
-  if (scrollableHeight <= 0) {
-    return 0;
-  }
-
-  return Math.round((scrollTop / scrollableHeight) * 100);
-};
-
-const isDesktopDevice = () => {
-  if (typeof window === "undefined") {
-    return false;
-  }
-
-  return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-};
+import { X } from "@phosphor-icons/react";
 
 const PopUp = () => {
   const [email, setEmail] = useState("");

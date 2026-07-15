@@ -156,24 +156,11 @@
   width: 100%;
   max-width: 900px;
 
-  .article-fragment-image-clickable {
-    cursor: zoom-in;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
   .article-fragment-image {
     display: block;
     width: 100%;
     height: auto;
     border-radius: 8px;
-    transition: transform 0.3s ease;
-  }
-
-  .article-fragment-image-clickable:hover {
-    .article-fragment-image {
-      transform: scale(1.015);
-    }
   }
 }
 
@@ -194,28 +181,19 @@
   width: 100%;
   border-radius: 8px;
   overflow: hidden;
-  aspect-ratio: 4 / 5;
-  background: rgba(0, 0, 0, 0.02);
 
-  &.article-fragment-image-frame--clickable {
-    cursor: zoom-in;
-  }
+  aspect-ratio: 4 / 5;
+
+  background: rgba(0, 0, 0, 0.02);
 }
 
 .article-fragment-image--cover {
   width: 100%;
   height: 100%;
   display: block;
-  border-radius: 0;
+  border-radius: 0; 
   object-fit: cover;
   object-position: center;
-  transition: transform 0.3s ease;
-}
-
-.article-fragment-image-frame--clickable:hover {
-  .article-fragment-image--cover {
-    transform: scale(1.015);
-  }
 }
 
 .article-fragment-video-wrapper {

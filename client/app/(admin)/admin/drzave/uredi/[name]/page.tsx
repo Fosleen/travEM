@@ -38,33 +38,7 @@ import {
 } from "@/utils/specificityItems";
 import { updateSpecificityImage } from "@/utils/specificityImages";
 import { useParams, useRouter } from "next/navigation";
-import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
-import {
-  addCountryLanguage,
-  getCountryLanguage,
-  patchCountryLanguage,
-} from "@/utils/countryLanguage";
-import {
-  addCountryImage,
-  addSpecificityItemField,
-  addVideoField,
-  bestTimeMonths,
-  countryLanguagePhraseLabels,
-  createCountryValidationSchema,
-  deleteCountryImage,
-  deleteSpecificityItemField,
-  deleteVideoField,
-  getDefaultBestTimeRegion,
-  getDefaultBestTimeTitle,
-  getInitialBestTimeToVisit,
-  getInitialCountryLanguage,
-  hasAllCountryImages,
-  navigateToCountries,
-  prepareBestTimeToVisitPayload,
-  prepareCountryLanguagePayload,
-  safeDecodeURIComponent,
-  toggleDialog,
-} from "@/utils/countryFormHelpers";
+import { removeCroatianDiacritics } from "@/utils/global";
 
 const EditCountry = () => {
   const params = useParams();
@@ -112,6 +86,70 @@ const EditCountry = () => {
   const [selectedSpecificityImage, setSelectedSpecificityImage] = useState([]);
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
 
+  const ValidationSchema = Yup.object().shape({
+    country_name: Yup.string().required("Obavezno polje!"),
+    country_description: Yup.string()
+      .required("Obavezno polje!")
+      .max(100, "Opis smije imati max 100 znakova!"),
+    country_color: Yup.string().required("Obavezno polje!"),
+    characteristics: Yup.array().of(
+      Yup.object().shape({
+        icon: Yup.string().required("Obavezno polje!"),
+        title: Yup.string()
+          .required("Obavezno polje !")
+          .max(80, "Naslov smije imati max 80 znakova!"),
+        description: Yup.string()
+          .required("Obavezno polje!")
+          .max(80, "Opis smije imati max 80 znakova!"),
+      }),
+    ),
+    specificities: Yup.array().of(
+      Yup.object().shape({
+        title: Yup.string()
+          .required("Obavezno polje!")
+          .max(45, "Naslov smije imati max 100 znakova!"),
+        specificity_items: Yup.array().of(
+          Yup.object().shape({
+            title: Yup.string()
+              .required("Obavezno polje!")
+              .max(30, "Naslov smije imati max 30 znakova!"),
+            description: Yup.string()
+              .required("Obavezno polje!")
+              .max(100, "Opis smije imati max 100 znakova!"),
+          }),
+        ),
+      }),
+    ),
+    videos: Yup.array().of(
+      Yup.object().shape({
+        video_url: Yup.string().required("Obavezno polje!"),
+      }),
+    ),
+  });
+
+  const validateImages = () => {
+    let areAllImagesFilledIn = true;
+
+    specificityImages.map((imageGroup) => {
+      imageGroup.map((image) => {
+        if (!image || image.url == "") {
+          areAllImagesFilledIn = false;
+        }
+      });
+    });
+
+    if (
+      mainCountryImage == "" ||
+      !mainCountryImage ||
+      flagImage == "" ||
+      !flagImage
+    ) {
+      areAllImagesFilledIn = false;
+    }
+
+    return areAllImagesFilledIn;
+  };
+
   const handleSave = async (values) => {
     setIsSubmitClicked(true);
 
@@ -134,7 +172,7 @@ const EditCountry = () => {
       }).then(async (result) => {
         if (result.isConfirmed && country && countries) {
           const selectedCountry = countries.find(
-            (el) => el.id == values.country_name
+            (el) => el.id == values.country_name,
           );
 
           if (!selectedCountry) {
@@ -184,7 +222,7 @@ const EditCountry = () => {
                 el.id,
                 el.title,
                 el.description,
-                el.icon
+                el.icon,
               );
             });
           }
@@ -202,13 +240,13 @@ const EditCountry = () => {
                     await updateSpecificityItem(
                       item.id,
                       item.title,
-                      item.description
+                      item.description,
                     );
                   } else {
                     await addSpecificityItem(
                       item.title,
                       item.description,
-                      el.id
+                      el.id,
                     );
                   }
                 });
@@ -218,7 +256,7 @@ const EditCountry = () => {
                     await updateSpecificityImage(
                       image.id,
                       specificityImages[groupIndex][imageIndex].url,
-                      el.id
+                      el.id,
                     );
                   });
                 });
@@ -239,15 +277,15 @@ const EditCountry = () => {
                 specificity.specificity_items.map((item: { id: number }) => {
                   array2.push(item.id);
                 });
-              }
+              },
             );
 
             const removedValues = array1.filter(
-              (item) => !array2.includes(item)
+              (item) => !array2.includes(item),
             );
 
             removedValues.map(
-              async (el: number) => await deleteSpecificityItem(el)
+              async (el: number) => await deleteSpecificityItem(el),
             );
           }
 
@@ -255,8 +293,8 @@ const EditCountry = () => {
             const removedVideoIds = country.videos.filter(
               (el) =>
                 !values.videos.some(
-                  (video: { id: number }) => video.id === el.id
-                )
+                  (video: { id: number }) => video.id === el.id,
+                ),
             );
 
             removedVideoIds.map(async (el) => await deleteVideo(el.id));
@@ -272,7 +310,7 @@ const EditCountry = () => {
                 el.video_url,
                 null,
                 null,
-                country.id
+                country.id,
               );
             }
 
@@ -291,22 +329,43 @@ const EditCountry = () => {
   };
 
   const handleAddImage = () => {
-    addCountryImage({
-      imageType,
-      modalInputValue,
-      selectedSpecificityImage,
-      setMainCountryImage,
-      setFlagImage,
-      setSpecificityImages,
-      setModalInputValue,
-      preserveSpecificityImageData: true,
-    });
+    if (imageType == "main") {
+      setMainCountryImage(modalInputValue);
+    } else if (imageType == "flag") {
+      setFlagImage(modalInputValue);
+    } else if (imageType == "spec") {
+      setSpecificityImages((prevSectionImages) => {
+        return [
+          ...prevSectionImages.slice(0, selectedSpecificityImage[1]), // ostavi subarraye prije
+          [
+            // u odabranom subarrayu ostavi elemente prije odabranog
+            ...prevSectionImages[selectedSpecificityImage[1]].slice(
+              0,
+              selectedSpecificityImage[0],
+            ),
+            {
+              ...prevSectionImages[selectedSpecificityImage[1]!][
+                selectedSpecificityImage[0]!
+              ],
+              url: modalInputValue,
+            },
+            // dodaj url na to mjesto, id je stari (samo se url mijenja jer ce uvijek morat bit 3 slike tu)
+            // u odabranom subarrayu ostavi elemente nakon odabranog
+            ...prevSectionImages[selectedSpecificityImage[1]].slice(
+              selectedSpecificityImage[0] + 1,
+            ),
+          ],
+          ...prevSectionImages.slice(selectedSpecificityImage[1] + 1), // ostavi subarraye nakon
+        ];
+      });
+    }
+    setModalInputValue("");
   };
 
   const handleDeleteImage = (
     type: string,
     imageIndex?: number,
-    specificityIndex?: number
+    specificityIndex?: number,
   ) => {
     deleteCountryImage({
       type,
@@ -371,9 +430,25 @@ const EditCountry = () => {
         name: el.cro_name,
       }));
 
+      // Use decodeURIComponent in case Next.js doesn't auto-decode the param
+      const decodedName = decodeURIComponent(name);
+      const normalizedName = removeCroatianDiacritics(
+        decodedName.toLowerCase(),
+      );
+
+      // Find the current country's exact DB name via alreadyAddedCountries
+      // (avoids URL encoding/diacritics issues when comparing)
+      const currentDbCountry = alreadyAddedCountries.find(
+        (c) =>
+          removeCroatianDiacritics(c.name.toLowerCase()) === normalizedName,
+      );
+
       const filtered = allCountries.filter((el) => {
+        const isCurrentCountry = currentDbCountry
+          ? el.name === currentDbCountry.name
+          : removeCroatianDiacritics(el.name.toLowerCase()) === normalizedName;
         return (
-          el.name.toLowerCase() === normalizedName ||
+          isCurrentCountry ||
           !alreadyAddedCountries.some((existingCountry) => {
             return existingCountry.name === el.name;
           })
@@ -382,8 +457,11 @@ const EditCountry = () => {
 
       setCountries(filtered);
 
-      const foundCountryElement = filtered.find(
-        (el) => el.name.toLowerCase() === normalizedName
+      // find initial country name and its id so it shows in dropdown correctly
+      const foundCountryElement = filtered.find((el) =>
+        currentDbCountry
+          ? el.name === currentDbCountry.name
+          : removeCroatianDiacritics(el.name.toLowerCase()) === normalizedName,
       );
 
       if (foundCountryElement) {
@@ -470,7 +548,11 @@ const EditCountry = () => {
     <>
       <div className="edit-country-container">
         <h2>Uredi državu</h2>
-
+        {/* {JSON.stringify(country)} */}
+        {/* {JSON.stringify(characteristicIcons)} */}
+        {/* {JSON.stringify(colors)} */}
+        {/* {JSON.stringify(countries)} */}
+        {/* {JSON.stringify(countryArrayId)} */}
         {country &&
         characteristicIcons &&
         colors &&
@@ -984,7 +1066,7 @@ const EditCountry = () => {
                                         onChange={(value) => {
                                           setFieldValue(
                                             `characteristics.${index}.icon`,
-                                            value.id
+                                            value.id,
                                           );
                                         }}
                                         selectedValue={
@@ -1021,7 +1103,7 @@ const EditCountry = () => {
                                         className="error-message"
                                       />
                                     </div>
-                                  )
+                                  ),
                                 )
                               : null}
                           </div>
@@ -1082,7 +1164,7 @@ const EditCountry = () => {
                                               ? specificityItems.map(
                                                   (
                                                     _specificityItem,
-                                                    itemIndex
+                                                    itemIndex,
                                                   ) => (
                                                     <div
                                                       className="edit-country-specificities-item"
@@ -1117,7 +1199,7 @@ const EditCountry = () => {
                                                         onClick={() => {
                                                           handleDeleteSpecificityItem(
                                                             subarrayHelpers,
-                                                            itemIndex
+                                                            itemIndex,
                                                           );
                                                         }}
                                                       >
@@ -1127,7 +1209,7 @@ const EditCountry = () => {
                                                         />
                                                       </div>
                                                     </div>
-                                                  )
+                                                  ),
                                                 )
                                               : null}
 
@@ -1137,7 +1219,7 @@ const EditCountry = () => {
                                                 primary
                                                 onClick={() => {
                                                   handleAddSpecificityItem(
-                                                    subarrayHelpers
+                                                    subarrayHelpers,
                                                   );
                                                 }}
                                               >
@@ -1164,7 +1246,7 @@ const EditCountry = () => {
                                                           handleDeleteImage(
                                                             "spec",
                                                             imageIndex,
-                                                            index
+                                                            index,
                                                           );
                                                         }}
                                                       >
@@ -1190,7 +1272,7 @@ const EditCountry = () => {
                                                         onClick={() => {
                                                           toggleDialog(dialogRef);
                                                           setSelectedSpecificityImage(
-                                                            [imageIndex, index]
+                                                            [imageIndex, index],
                                                           );
                                                           setImageType("spec");
                                                         }}
@@ -1203,7 +1285,7 @@ const EditCountry = () => {
                                                       </div>
                                                     )}
                                                   </div>
-                                                )
+                                                ),
                                               )}
                                             </div>
 
@@ -1273,7 +1355,7 @@ const EditCountry = () => {
                                         onClick={() => {
                                           handleDeleteVideo(
                                             arrayHelpers,
-                                            index
+                                            index,
                                           );
                                         }}
                                       >

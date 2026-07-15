@@ -11,6 +11,7 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import GoogleAnalytics from "@/components/atoms/GoogleAnalytics/GoogleAnalytics";
 import GoogleAdSense from "@/components/atoms/GoogleAdSense/GoogleAdSense";
+import UXTweak from "@/components/atoms/UXTweak/UXTweak";
 
 export const metadata = {
   verification: {
@@ -37,6 +38,7 @@ export default function RootLayout({
       <body className={montserrat.className}>
         <GoogleAnalytics />
         <GoogleAdSense />
+        <UXTweak />
         {children}
       </body>
     </html>

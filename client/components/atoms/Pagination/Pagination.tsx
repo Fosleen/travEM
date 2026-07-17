@@ -3,19 +3,40 @@ import "./Pagination.scss";
 import { FC } from "react";
 import { PaginationProps } from "../../../common/types";
 
-const Pagination: FC<PaginationProps> = ({
+type ExtendedPaginationProps = PaginationProps & {
+  scrollToTop?: boolean;
+};
+
+const Pagination: FC<ExtendedPaginationProps> = ({
   setPage,
   onPageChange,
   totalPages,
   currentPage,
+  scrollToTop = true,
 }) => {
+  const normalizedTotalPages = Number.isFinite(totalPages)
+    ? Math.max(0, Math.ceil(totalPages))
+    : 0;
+
   const handlePageClick = (event: { selected: number }) => {
-    window.scrollTo({ top: 0, behavior: "instant" });
+    if (scrollToTop && typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+
     const pageHandler = onPageChange || setPage;
+
     if (pageHandler) {
       pageHandler(event.selected + 1);
     }
   };
+
+  if (normalizedTotalPages <= 1) {
+    return null;
+  }
+
+  const normalizedCurrentPage = Number.isFinite(currentPage)
+    ? Math.min(Math.max(1, Math.floor(currentPage as number)), normalizedTotalPages)
+    : 1;
 
   return (
     <div className="pagination-wrapper">
@@ -24,7 +45,7 @@ const Pagination: FC<PaginationProps> = ({
         onPageChange={handlePageClick}
         pageRangeDisplayed={3}
         marginPagesDisplayed={2}
-        pageCount={totalPages}
+        pageCount={normalizedTotalPages}
         previousLabel="<"
         pageClassName="page-item"
         pageLinkClassName="page-link"
@@ -38,7 +59,7 @@ const Pagination: FC<PaginationProps> = ({
         containerClassName="pagination"
         activeClassName="active-pagination"
         renderOnZeroPageCount={null}
-        forcePage={currentPage ? currentPage - 1 : 0}
+        forcePage={normalizedCurrentPage - 1}
       />
     </div>
   );

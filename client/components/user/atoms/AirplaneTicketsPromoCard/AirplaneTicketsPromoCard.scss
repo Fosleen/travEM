@@ -1,0 +1,290 @@
+@use "@/utils/theme.scss" as *;
+
+.airplane-tickets-promo {
+  width: 100%;
+  padding: 0 16px;
+
+  @media screen and ($desktop) {
+    padding: 0;
+  }
+
+  @media screen and (max-width: 361px) {
+    padding: 0 12px;
+  }
+}
+
+.airplane-tickets-promo-card {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-shadow: 0px 0px 12px rgb(199, 199, 199);
+
+  @media screen and ($tablet) {
+    height: 250px;
+  }
+
+  @media screen and ($desktop) {
+    height: 280px;
+  }
+
+  @media screen and (max-width: 361px) {
+    height: 240px;
+    border-radius: 14px;
+  }
+}
+
+.airplane-tickets-promo-image {
+  position: absolute;
+  inset: 0;
+  transform: scale(1.02);
+  filter: none;
+}
+
+.airplane-tickets-promo-overlay {
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(0, 0, 0, 0.60) 18%,
+    rgba(0, 0, 0, 0.40) 35%,
+    rgba(0, 0, 0, 0.10) 45%,
+    rgba(0, 0, 0, 0.00) 50%,
+    rgba(0, 0, 0, 0.00) 100%
+  );
+
+  padding: 18px 18px 20px 18px;
+
+  @media screen and ($tablet) {
+    padding: 22px 24px 24px 24px;
+  }
+
+  @media screen and (max-width: 361px) {
+    padding: 14px 14px 16px 14px;
+  }
+}
+
+.airplane-tickets-promo-text {
+  height: 100%;
+  max-width: 720px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 12px;
+
+  align-items: flex-start;
+  color: #f8f8f8;
+
+  h3 {
+    color: #f8f8f8;
+    margin: 0;
+    font-size: 26px;
+    font-weight: 900;
+    line-height: 1.1;
+
+    @media screen and ($tablet) {
+      font-size: 32px;
+    }
+
+    @media screen and ($desktop) {
+      font-size: 36px;
+    }
+
+    @media screen and (max-width: 361px) {
+      font-size: 22px;
+      line-height: 1.08;
+      letter-spacing: -0.2px;
+    }
+  }
+
+  p {
+    color: #f8f8f8;
+    margin: 0;
+    max-width: 560px;
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+
+    @media screen and ($desktop) {
+      font-size: 15px;
+    }
+
+    @media screen and (max-width: 361px) {
+      font-size: 13px;
+      line-height: 1.32;
+      max-width: 100%;
+    }
+  }
+}
+
+.airplane-tickets-promo-bottom {
+  display: flex;
+  align-items: flex-end;
+  margin-top: auto;
+}
+
+.airplane-tickets-promo-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  background-color: $limeGreen;
+  color: $grey;
+  font-weight: 900;
+  text-decoration: none;
+
+  border-radius: 999px;
+  padding: 10px 16px;
+
+  z-index: 0;
+  overflow: hidden;
+  white-space: nowrap;
+
+  .arrow {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  @media screen and (max-width: 361px) {
+    padding: 9px 14px;
+    gap: 8px;
+
+    .arrow {
+      font-size: 16px;
+    }
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: inherit;
+
+    background: conic-gradient(
+      from 0deg,
+      #2bac82 0deg 90deg,
+      transparent 90deg 180deg,
+      #2bac82 180deg 270deg,
+      transparent 270deg 360deg
+    );
+
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: -1;
+    animation: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    background-color: $limeGreen;
+    border-radius: inherit;
+    z-index: -1;
+  }
+
+  &:hover::before,
+  &:focus-visible::before {
+    opacity: 1;
+    animation: promo-border-spin 1.2s linear infinite;
+  }
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-1px);
+  }
+}
+
+@keyframes promo-border-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 393px - 434px: problematični range */
+@media screen and (min-width: 393px) and (max-width: 434px) {
+  .airplane-tickets-promo-card {
+    height: 235px;
+  }
+
+  .airplane-tickets-promo-overlay {
+    padding: 16px 16px 18px 16px;
+  }
+
+  .airplane-tickets-promo-text {
+    gap: 10px;
+    max-width: 540px;
+
+    h3 {
+      font-size: 22px;
+      line-height: 1.06;
+      letter-spacing: -0.2px;
+      max-width: 330px;
+    }
+
+    p {
+      font-size: 13px;
+      line-height: 1.3;
+      max-width: 330px;
+    }
+  }
+
+  .airplane-tickets-promo-btn {
+    padding: 9px 14px;
+  }
+}
+
+/* mali mobiteli do 392px */
+@media screen and (max-width: 392px) {
+  .airplane-tickets-promo-overlay {
+    padding: 16px 16px 18px 16px;
+  }
+
+  .airplane-tickets-promo-text {
+    gap: 10px;
+
+    h3 {
+      font-size: 24px;
+      line-height: 1.08;
+      letter-spacing: -0.2px;
+    }
+
+    p {
+      font-size: 13px;
+      line-height: 1.34;
+      max-width: 100%;
+    }
+  }
+
+  .airplane-tickets-promo-btn {
+    padding: 9px 14px;
+    gap: 8px;
+    white-space: nowrap;
+
+    .arrow {
+      font-size: 16px;
+    }
+  }
+}
+
+/* ispod 361px */
+@media screen and (max-width: 361px) {
+  .airplane-tickets-promo-overlay {
+    padding: 14px 14px 16px 14px;
+  }
+
+  .airplane-tickets-promo-text {
+    h3 {
+      font-size: 22px;
+      line-height: 1.06;
+    }
+  }
+}

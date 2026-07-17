@@ -4,7 +4,7 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const cors = require("cors");
 const express = require("express");
-const { sendNewsletter } = require("./handler");
+const { sendNewsletter, sendCommentReplyNotification } = require("./handler");
 
 const app = express();
 
@@ -27,6 +27,11 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.post("/", apiKeyMiddleware, sendNewsletter);
+app.post(
+  "/comment-reply-notification",
+  apiKeyMiddleware,
+  sendCommentReplyNotification
+);
 
 if (!process.env.ENV || process.env.ENV === "development") {
   const port = process.env.PORT;

@@ -5,6 +5,11 @@
   position: relative;
   min-height: 400px;
   height: fit-content;
+  overflow: visible;
+
+  .destination-label {
+    font-weight: 700;
+  }
 
   .overlay-icon {
     &-1,
@@ -12,6 +17,17 @@
       display: none;
       visibility: hidden;
     }
+  }
+
+  .overlay-icon-2 {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%, 60%);
+    width: clamp(40px, 5vw, 72px);
+    height: auto;
+    z-index: 3;
+    pointer-events: none;
   }
 
   .homepage-hero-left {
@@ -24,8 +40,15 @@
   p {
     font-size: 16px;
     font-weight: 600;
-    text-shadow: -1px -1px 0 #fff, 0 -1px 0 #fff, 1px -1px 0 #fff, 1px 0 0 #fff,
-      1px 1px 0 #fff, 0 1px 0 #fff, -1px 1px 0 #fff, -1px 0 0 #fff;
+    text-shadow:
+      -1px -1px 0 #fff,
+      0 -1px 0 #fff,
+      1px -1px 0 #fff,
+      1px 0 0 #fff,
+      1px 1px 0 #fff,
+      0 1px 0 #fff,
+      -1px 1px 0 #fff,
+      -1px 0 0 #fff;
     max-width: 256px;
     text-align: right;
 
@@ -48,7 +71,7 @@
 
       .homepage-hero-welcome-box {
         background-color: $bg;
-        box-shadow: 1px 4px 6px rgba($color: #000000, $alpha: 0.25);
+        box-shadow: 1px 4px 6px rgba(#000000, 0.25);
         height: fit-content;
 
         img {
@@ -63,7 +86,7 @@
     .homepage-hero-more {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 20px;
 
       .homepage-hero-more-row {
         display: flex;
@@ -72,41 +95,133 @@
         margin-right: 16px;
         gap: 8px;
 
-        p {
+        p,
+        a {
           width: fit-content;
+        }
 
-          &.names {
-            font-family: "Testimonia";
-            font-size: 48px;
-            color: $grey;
-            max-width: 100%;
+        .names-link {
+          font-family: "Testimonia", cursive;
+          font-size: 48px;
+          font-weight: 600;
+          line-height: 1;
+          letter-spacing: 0;
+          color: $grey;
+          max-width: 100%;
+          text-decoration: none;
+          display: inline-block;
+          position: relative;
+          cursor: pointer;
+          text-shadow:
+            2px 0 0 #fff,
+            -2px 0 0 #fff;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          -webkit-tap-highlight-color: rgba(45, 165, 128, 0.18);
+
+          transition:
+            transform 0.25s ease,
+            text-shadow 0.25s ease,
+            opacity 0.25s ease;
+
+          &::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 4px;
+            height: 2px;
+            background-color: rgba(45, 165, 128, 0.85);
+            transform-origin: left;
+            transform: scaleX(1);
+            opacity: 1;
+
+            transition:
+              transform 0.25s ease,
+              opacity 0.25s ease,
+              height 0.25s ease,
+              background-color 0.25s ease;
           }
 
-          &.special {
-            padding: 8px 16px;
-            background-color: $bg;
-            border-radius: 24px;
-            box-shadow: 0px 0px 6px 2px $limeGreen;
+          &:focus-visible {
+            outline: 2px solid $green;
+            outline-offset: 6px;
+            border-radius: 8px;
+          }
+
+          &:active {
+            transform: scale(0.985);
           }
         }
 
         &:last-child {
-          display: none;
-          visibility: hidden;
           margin-left: 16px;
         }
 
         .arrow-icon {
           cursor: pointer;
-          background-color: #eeeeee;
+          background-color: #d2eb64;
           width: 72px;
           height: 72px;
           display: flex;
           justify-content: center;
           align-items: center;
           border-radius: 50%;
+          border: none;
+          padding: 0;
+          appearance: none;
+          -webkit-appearance: none;
+          -webkit-tap-highlight-color: transparent;
+          touch-action: manipulation;
+
+          transition:
+            box-shadow 0.3s ease,
+            transform 0.3s ease;
+
+          &:active,
+          &:focus-visible,
+          &.is-open {
+            box-shadow: 0 0 0 3px #2da580;
+            transform: translateY(-2px);
+          }
         }
       }
+    }
+  }
+
+  .homepage-hero-destinations-menu-here-container {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-6px);
+
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      visibility 0.2s ease;
+
+    z-index: 5;
+
+    p {
+      text-shadow: none;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    &.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .homepage-hero-container {
+    .arrow-icon:hover {
+      box-shadow: 0 0 0 3px #2da580;
+      transform: translateY(-2px);
     }
   }
 }
@@ -119,17 +234,14 @@
 
     .homepage-hero-left {
       left: -70px;
-      z-index: 0;
     }
 
     .homepage-hero-right {
       .homepage-hero-welcome {
         gap: 24px;
 
-        .homepage-hero-welcome-box {
-          img {
-            width: 360px;
-          }
+        .homepage-hero-welcome-box img {
+          width: 360px;
         }
       }
 
@@ -137,10 +249,8 @@
         .homepage-hero-more-row {
           gap: 24px;
 
-          p {
-            &.names {
-              font-size: 56px;
-            }
+          .names-link {
+            font-size: 56px;
           }
         }
       }
@@ -151,6 +261,7 @@
 @media screen and ($desktop) {
   .homepage-hero-container {
     position: relative;
+    padding-bottom: clamp(48px, 6vw, 96px);
 
     .overlay-icon {
       &-1,
@@ -158,58 +269,51 @@
         position: absolute;
         display: block;
         visibility: visible;
-        width: 200px; // 280
+        width: 200px;
       }
 
       &-1 {
-        right: 0px;
+        right: 0;
         top: -24px;
       }
 
       &-2 {
         width: 120px;
-        bottom: 0px;
-        z-index: 1;
+        bottom: 0;
         left: 280px;
+        z-index: 1;
       }
     }
 
     .homepage-hero-left {
       left: -70px;
-      z-index: 0;
     }
 
     .homepage-hero-right {
       height: calc(100vh - 240px);
       min-height: 592px;
-      justify-content: space-around;
       display: flex;
       flex-direction: column;
+      justify-content: space-around;
 
       .homepage-hero-welcome {
         gap: 8px;
         margin-right: 160px;
 
-        p {
-          &:first-child {
-            width: 100%;
-            margin-top: 80px;
-            max-width: 640px;
-            text-align: center;
-          }
+        p:first-child {
+          width: 100%;
+          margin-top: 80px;
+          max-width: 640px;
+          text-align: center;
         }
 
-        .homepage-hero-welcome-box {
-          img {
-            padding: 20px;
-            width: 640px;
-          }
+        .homepage-hero-welcome-box img {
+          padding: 20px;
+          width: 640px;
         }
       }
 
       .homepage-hero-more {
-        display: flex;
-        flex-direction: column;
         width: 100%;
         align-items: end;
         justify-content: end;
@@ -218,22 +322,32 @@
           flex-direction: row;
           align-items: center;
 
-          p {
-            width: fit-content;
+          .names-link {
+            font-size: 72px;
 
-            &.names {
-              font-size: 72px;
+            &::after {
+              transform: scaleX(0);
+              opacity: 0;
             }
 
-            &.special {
-              padding: 12px 24px;
-              cursor: pointer;
+            &:hover {
+              transform: translateY(-2px);
+              text-shadow:
+                0.4px 0 0 currentColor,
+                -0.4px 0 0 currentColor,
+                0 2px 10px rgba(45, 165, 128, 0.12);
+            }
+
+            &:hover::after,
+            &:focus-visible::after {
+              transform: scaleX(1);
+              opacity: 1;
+              height: 3px;
+              background-color: rgba(45, 165, 128, 1);
             }
           }
 
           &:last-child {
-            display: flex;
-            visibility: visible;
             align-items: center;
           }
         }
@@ -243,20 +357,22 @@
     .homepage-hero-destinations-menu-here-container {
       position: absolute;
       bottom: -344px;
-      position: absolute;
+      left: 0;
+      right: 0;
       width: fit-content;
       margin-left: auto;
       margin-right: auto;
-      left: 0;
-      right: 0;
       text-align: center;
-      z-index: 2;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(-6px);
 
-      p {
-        text-shadow: none;
-        //color: $grey;
-        font-weight: 700;
-        font-size: 14px;
+      &.is-open {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transform: translateY(0);
       }
     }
   }
@@ -282,11 +398,14 @@
 
     .homepage-hero-left {
       left: calc((100vw - 1480px) / 2);
-      z-index: 0;
     }
 
     .homepage-hero-right {
       margin-right: calc((100vw - 1480px) / 2);
+      height: fit-content;
+      min-height: unset;
+      justify-content: flex-start;
+      gap: 48px;
     }
   }
 }

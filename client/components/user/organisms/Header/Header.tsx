@@ -1,3 +1,4 @@
+// Header.tsx
 "use client";
 
 import { useEffect, useState, FC } from "react";
@@ -37,24 +38,31 @@ const Header: FC<HeaderProps> = ({
   selectedSubcategory,
 }) => {
   const [isDesktop, setDesktop] = useState(false);
+  const [isHeaderTopHovered, setIsHeaderTopHovered] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
-    const updateMedia = () => {
-      setDesktop(window.innerWidth >= 1024);
-    };
-
+    const updateMedia = () => setDesktop(window.innerWidth >= 1024);
     updateMedia();
-
     window.addEventListener("resize", updateMedia);
     return () => window.removeEventListener("resize", updateMedia);
   }, []);
 
   const isHomePage = pathname === "/";
 
+  const isAnyMenuShown =
+    isPlaneTicketsMenuShown || isDestinationsMenuShown || isTipsMenuShown;
+  const isHeaderActive = isAnyMenuShown || (isDesktop && isHeaderTopHovered);
+
   return (
-    <div className="header-container">
-      <div className="header-top">
+    <div
+      className={`header-container ${isHeaderActive ? "header-is-active" : ""}`}
+    >
+      <div
+        className="header-top"
+        onMouseEnter={() => setIsHeaderTopHovered(true)}
+        onMouseLeave={() => setIsHeaderTopHovered(false)}
+      >
         <Link href="/">
           <Image
             src={
@@ -67,14 +75,19 @@ const Header: FC<HeaderProps> = ({
             alt="travem-logo"
           />
         </Link>
+
         {isDesktop && (
           <NavbarDesktop
             setIsPlaneTicketsMenuShown={setIsPlaneTicketsMenuShown}
             setIsDestinationsMenuShown={setIsDestinationsMenuShown}
             setIsTipsMenuShown={setIsTipsMenuShown}
+            isPlaneTicketsMenuShown={isPlaneTicketsMenuShown}
+            isDestinationsMenuShown={isDestinationsMenuShown}
+            isTipsMenuShown={isTipsMenuShown}
           />
         )}
       </div>
+
       {!isDesktop && (
         <NavbarMobile
           location={{ pathname }}
@@ -84,6 +97,7 @@ const Header: FC<HeaderProps> = ({
           setSelectedSubcategory={setSelectedSubcategory}
         />
       )}
+
       <div className="header-filter-menu-container">
         {isPlaneTicketsMenuShown && (
           <AirplaneTicketsMenu
@@ -99,6 +113,10 @@ const Header: FC<HeaderProps> = ({
           <TipsMenu setIsTipsMenuShown={setIsTipsMenuShown} />
         )}
       </div>
+
+      <div
+        className={`header-dim-overlay ${isHeaderActive ? "is-active" : ""}`}
+      />
     </div>
   );
 };

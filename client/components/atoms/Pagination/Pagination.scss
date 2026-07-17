@@ -6,19 +6,23 @@
   justify-content: center;
   align-items: center;
   z-index: 200;
-  background-color: white;
+  //background-color: white;
   border-radius: 8px;
+  padding: 12px;
 
   @media screen and ($tabletMedium) {
     width: fit-content;
+    padding: 12px;
   }
 
   ul {
     display: flex;
-    justify-content: space-around;
-    width: 100%;
-    gap: 4px;
-    padding: 12px;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    gap: 12px;
+    padding: 0;
+    margin: 0;
 
     @media screen and ($tabletMedium) {
       gap: 16px;
@@ -26,14 +30,10 @@
 
     li {
       list-style: none;
-      min-width: 28px;
+      min-width: 0;
       display: flex;
-      justify-content: space-around;
+      justify-content: center;
       align-items: center;
-
-      @media screen and ($tabletMedium) {
-        padding: 0px;
-      }
 
       a {
         text-decoration: none;
@@ -47,39 +47,75 @@
   }
 }
 
-.page-item {
-  background-color: $limeLight;
+.page-item,
+.page-item-carrot {
   border-radius: 8px;
-  color: $grey;
-  font-weight: 600;
   display: flex;
   align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  will-change: transform;
+}
+
+.page-item {
+  background-color: $limeLight;
+  color: $grey;
+  font-weight: 600;
+
+  &:hover {
+    background-color: $limeGreenHover;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  }
 }
 
 .page-item-carrot {
   background-color: $limeLight;
   color: $green;
-  padding: 6px 8px;
-  border-radius: 8px;
-  display: flex;
-  align-items: stretch;
+
+  &:hover {
+    background-color: $limeGreenHover;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  }
 }
 
 .page-link {
   cursor: pointer;
-  padding: 6px 8px;
-  min-width: 32px;
-  height: 100%;
+  padding: 8px 12px;
+  min-width: 40px;
+  height: 40px;
   align-items: center;
   display: flex;
   justify-content: center;
+  transition: color 0.25s ease;
 }
 
 .active-pagination {
   background-color: $green;
+  box-shadow: 0 8px 18px rgba(43, 172, 130, 0.22);
 
   .page-link {
     color: white;
+  }
+
+  &:hover {
+    background-color: $greenHover;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(43, 172, 130, 0.28);
   }
 }
 
@@ -87,9 +123,36 @@
 .page-link-previous {
   font-weight: bold;
   color: $green;
-  padding: 8px;
+  padding: 8px 12px;
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.25s ease;
 
   @media screen and ($tabletMedium) {
     padding: 10px 20px;
+    min-width: 56px;
+  }
+}
+
+/* ReactPaginate disabled previous/next state */
+.disabled {
+  opacity: 0.45;
+  pointer-events: none;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Optional: malo mirnije animacije na touch uređajima */
+@media (hover: none) {
+  .page-item,
+  .page-item-carrot,
+  .active-pagination {
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
   }
 }

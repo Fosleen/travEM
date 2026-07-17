@@ -11,11 +11,14 @@ import { createAssociations } from "./database_management.js";
 import helmet from "helmet";
 import swaggerDocs from "./app/utils/swagger.js";
 import { initRedis } from "./app/middleware/redis.js";
+import { startArticleScheduleJob } from "./app/jobs/articleScheduleJob.js";
 
 const app = express();
 
 // Create all 1:1, 1:M and M:N
 createAssociations();
+
+
 
 const corsOptions = {
   origin: [
@@ -31,6 +34,7 @@ const corsOptions = {
 
 (async () => {
   await initRedis();
+  startArticleScheduleJob();
 })();
 
 app.use(cors(corsOptions));
@@ -78,3 +82,4 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
   swaggerDocs(app, PORT);
 });
+

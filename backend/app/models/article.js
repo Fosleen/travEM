@@ -14,6 +14,17 @@ export default (sequelize, DataTypes) => {
       main_image_url: { type: DataTypes.STRING },
       metatags: { type: DataTypes.STRING },
       date_written: { type: DataTypes.DATEONLY, allowNull: false },
+      date_updated: { type: DataTypes.DATEONLY, allowNull: true },
+      isFarDestination: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      isTipsFeatured: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
     },
     {
       underscored: true,

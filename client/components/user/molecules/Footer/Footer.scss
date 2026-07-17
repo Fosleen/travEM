@@ -18,6 +18,7 @@
 
       a {
         text-decoration: none;
+        color: inherit;
       }
 
       .footer-list-item-title {
@@ -29,6 +30,26 @@
       .footer-list-item-content {
         color: $bg;
         cursor: pointer;
+        position: relative;
+        width: fit-content;
+
+        /* underline linija */
+        &::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          bottom: -2px;
+          width: 100%;
+          height: 1px;
+          background-color: currentColor;
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.2s ease;
+        }
+
+        &:hover::after {
+          transform: scaleX(1);
+        }
 
         &.flaticon {
           color: $textPrimary;
@@ -52,6 +73,9 @@
   }
 }
 
+/* ===================== */
+/* TABLET */
+/* ===================== */
 @media screen and ($tabletMedium) {
   .footer-container {
     .footer-logo {
@@ -64,6 +88,9 @@
   }
 }
 
+/* ===================== */
+/* DESKTOP */
+/* ===================== */
 @media screen and ($desktop) {
   .footer-container {
     .footer-list {
@@ -95,6 +122,9 @@
   }
 }
 
+/* ===================== */
+/* DESKTOP LARGE */
+/* ===================== */
 @media screen and ($desktopLarge) {
   .footer-container {
     .footer-list {

@@ -8,17 +8,37 @@ import ArticleTableOfContents from "@/components/user/molecules/ArticleTableOfCo
 import "./Article.scss";
 import ArticleReadMore from "@/components/user/atoms/ArticleReadMore";
 import CountryPlaces from "@/components/user/molecules/CountryPlaces";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import RecommendedPosts from "@/components/user/molecules/RecommendedPosts";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 
+import ArticleTableOfContentsDropUp from "@/components/user/molecules/ArticleTableOfContentsDropUp/ArticleTableOfContentsDropUp";
+import ArticleNewsletterCallToAction from "@/components/user/molecules/ArticleNewsletterCallToAction/ArticleNewsletterCallToAction";
+import ArticleSupportCallToAction from "@/components/user/molecules/ArticleSupportCallToAction/ArticleSupportCallToAction";
+import { parseBooleanValue } from "@/utils/parseBooleanValue";
+import { openLightbox } from "@/utils/lightbox";
+import ArticleComments from "@/components/user/molecules/ArticleComments";
+
 interface ArticleProps {
   initialArticle: any;
   initialCountryPlaces: any[];
 }
+
+const getNewsletterInsertIndex = (sectionsLength: number) => {
+  if (sectionsLength <= 0) return -1;
+  if (sectionsLength <= 4) return 1;
+  if (sectionsLength <= 7) return 2;
+  return 3;
+};
+
+const getSupportInsertIndex = (sectionsLength: number) => {
+  if (sectionsLength < 15) return -1;
+
+  return Math.floor(sectionsLength * 0.65);
+};
 
 const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
   const router = useRouter();
@@ -26,6 +46,8 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
   const countryPlaces = initialCountryPlaces;
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  const sectionsLength = articleContent?.sections?.length || 0;
 
   const handleCountryClick = () => {
     router.push(`/destinacija/${articleContent.country.name.toLowerCase()}`);
@@ -41,9 +63,61 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
     (image) => image.url
   );
 
-  const openLightbox = (index: number) => {
-    setLightboxIndex(index);
-    setLightboxOpen(true);
+  const newsletterInsertIndex = useMemo(() => {
+    return getNewsletterInsertIndex(sectionsLength);
+  }, [sectionsLength]);
+
+  const supportInsertIndex = useMemo(() => {
+    return getSupportInsertIndex(sectionsLength);
+  }, [sectionsLength]);
+
+  const shouldShowBottomNewsletter = sectionsLength >= 10;
+  const shouldShowInlineSupport = supportInsertIndex !== -1;
+  const shouldShowBottomSupport = sectionsLength >= 3;
+
+  const shouldShowSectionVisaInfo = (section: any) => {
+    const hasEnabledVisaInfo =
+      parseBooleanValue(section?.show_visa_info) ||
+      parseBooleanValue(section?.showVisaInfo);
+
+    return (
+      hasEnabledVisaInfo &&
+      articleContent?.country?.id &&
+      articleContent?.country?.name
+    );
+  };
+
+  const shouldShowSectionBestTimeToVisit = (section: any) => {
+    const hasEnabledBestTime =
+      parseBooleanValue(section?.show_best_time_to_visit) ||
+      parseBooleanValue(section?.showBestTimeToVisit);
+
+    return (
+      hasEnabledBestTime &&
+      articleContent?.country?.id &&
+      articleContent?.country?.name
+    );
+  };
+
+  const shouldShowSectionCountryLanguage = (section: any) => {
+    const hasEnabledCountryLanguage =
+      parseBooleanValue(section?.show_country_language) ||
+      parseBooleanValue(section?.showCountryLanguage);
+
+    return hasEnabledCountryLanguage && articleContent?.country?.id;
+  };
+
+  const getArticlePlaceId = () => {
+    return articleContent?.place?.id || articleContent?.placeId || null;
+  };
+
+  const getArticlePlaceNameDative = () => {
+    return (
+      articleContent?.place?.name_dative ||
+      articleContent?.place?.nameDative ||
+      articleContent?.place?.name ||
+      ""
+    );
   };
 
   return (
@@ -51,6 +125,7 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
       <div className="article-container">
         <ArticleHero article={articleContent} />
       </div>
+
       <div className="article-location-parent">
         <div className="article-location-container">
           {articleContent.articleTypeId === 1 && (
@@ -61,47 +136,81 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
                 width={20}
                 height={24}
               />
-              <h4 onClick={handlePlaceClick} className="article-location">
+              <h4 onClick={handlePlaceClick} className="article-location-text">
                 {articleContent.place && `${articleContent.place.name}, `}
               </h4>
-              <h4 onClick={handleCountryClick} className="article-location">
+              <h4 onClick={handleCountryClick} className="article-location-text">
                 {articleContent.country.name}
               </h4>
             </div>
           )}
         </div>
       </div>
-      <ArticleTableOfContents
-        article={articleContent}
-        key={articleContent.id}
-      />
+
+      <ArticleTableOfContents article={articleContent} key={articleContent.id} />
+
+      <div className="toc-dropup-sentinel" />
+
+      <ArticleTableOfContentsDropUp article={articleContent} />
+
       <div className="article-content">
         {articleContent?.sections?.map((section, index) => (
           <React.Fragment key={index}>
-            <ArticleFragment section={section} index={index} />
+            <ArticleFragment
+              section={section}
+              index={index}
+              showVisaInfo={shouldShowSectionVisaInfo(section)}
+              visaInfoCountryId={articleContent?.country?.id}
+              visaInfoCountryName={articleContent?.country?.name}
+              showBestTimeToVisit={shouldShowSectionBestTimeToVisit(section)}
+              bestTimeCountryId={articleContent?.country?.id}
+              bestTimeCountrySlug={articleContent?.country?.name || ""}
+              bestTimePlaceId={getArticlePlaceId()}
+              bestTimePlaceNameDative={getArticlePlaceNameDative()}
+              showCountryLanguage={shouldShowSectionCountryLanguage(section)}
+              countryLanguageCountryId={articleContent?.country?.id}
+            />
+
             {section.link_title !== "" && <ArticleReadMore section={section} />}
+
+            {index === newsletterInsertIndex && (
+              <ArticleNewsletterCallToAction />
+            )}
+
+            {shouldShowInlineSupport && index === supportInsertIndex && (
+              <ArticleSupportCallToAction />
+            )}
           </React.Fragment>
         ))}
+
+        {shouldShowBottomNewsletter && <ArticleNewsletterCallToAction />}
+
+        {shouldShowBottomSupport && <ArticleSupportCallToAction />}
+
         <ArticleFragment article={articleContent} />
       </div>
+      
+      <ArticleComments articleId={articleContent.id} />
 
       <div className="article-gallery-text-wrapper">
         {galleryImages?.length > 0 && <h3>Slika govori 1000 riječi</h3>}
 
         {articleContent.articleTypeId === 1 && (
           <div className="article-location-container">
-            <img
-              src="/images/location.png"
-              alt="location"
-              width={20}
-              height={24}
-            />
-            <h4 onClick={handlePlaceClick} className="article-location">
-              {articleContent.place && `${articleContent.place.name}, `}
-            </h4>
-            <h4 onClick={handleCountryClick} className="article-location">
-              {articleContent.country.name}
-            </h4>
+            <div className="article-location">
+              <img
+                src="/images/location.png"
+                alt="location"
+                width={20}
+                height={24}
+              />
+              <h4 onClick={handlePlaceClick} className="article-location-text">
+                {articleContent.place && `${articleContent.place.name}, `}
+              </h4>
+              <h4 onClick={handleCountryClick} className="article-location-text">
+                {articleContent.country.name}
+              </h4>
+            </div>
           </div>
         )}
       </div>
@@ -113,7 +222,13 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
               <div
                 key={image.id || index}
                 className="gallery-item"
-                onClick={() => openLightbox(index)}
+                onClick={() =>
+                  openLightbox({
+                    index,
+                    setLightboxIndex,
+                    setLightboxOpen,
+                  })
+                }
               >
                 <img
                   src={image.url.trim()}
@@ -148,6 +263,7 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
       {countryPlaces.length !== 0 && (
         <CountryPlaces hasPadding={false} places={countryPlaces} />
       )}
+
       <div className="article-connected-articles-wrapper">
         <RecommendedPosts
           id={articleContent.id}

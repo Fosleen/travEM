@@ -2,23 +2,18 @@
 
 .email-popup-bg {
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
   background-color: rgba(0, 0, 0, 0.6);
   position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  z-index: 99;
+  inset: 0;
+  z-index: 20000;
   padding: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
   opacity: 1;
   transition: opacity 0.5s ease;
 
-  /* Animation for background fade out */
   &.closing {
     opacity: 0;
   }
@@ -32,9 +27,11 @@
     justify-content: space-between;
     box-shadow: 0 0 32px #333333;
     position: relative;
+    z-index: 20001;
     transform: scale(1);
     opacity: 1;
     transition: transform 0.5s ease, opacity 0.5s ease;
+    animation: popIn 0.5s ease forwards;
 
     &.closing {
       transform: scale(0.9);
@@ -45,6 +42,7 @@
       position: absolute;
       right: 12px;
       top: 22px;
+      z-index: 1;
       cursor: pointer;
       background-color: $lightBlue;
       width: 56px;
@@ -124,20 +122,16 @@
   }
 }
 
-/* When the popup appears, add entrance animation */
 @keyframes popIn {
   0% {
     opacity: 0;
     transform: scale(0.9);
   }
+
   100% {
     opacity: 1;
     transform: scale(1);
   }
-}
-
-.email-popup-container {
-  animation: popIn 0.5s ease forwards;
 }
 
 @media screen and ($desktop) {
@@ -180,7 +174,7 @@
       .email-popup-img-section {
         flex: 1 1 50%;
         height: 100%;
-        border-bottom-left-radius: 0px;
+        border-bottom-left-radius: 0;
         border-bottom-right-radius: 24px;
         border-top-right-radius: 24px;
 
@@ -188,7 +182,7 @@
           height: 100% !important;
           object-fit: cover !important;
           object-position: center bottom !important;
-          border-bottom-left-radius: 0px;
+          border-bottom-left-radius: 0;
           border-bottom-right-radius: 24px;
           border-top-right-radius: 24px;
         }

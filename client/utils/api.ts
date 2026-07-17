@@ -1,1 +1,4 @@
-export const apiUrl: string = `https://travem-backend.com/api/v1`;
+// utils/api.ts
+
+export const apiUrl: string =
+  process.env.NEXT_PUBLIC_API_URL || "https://travem-backend.com/api/v1";

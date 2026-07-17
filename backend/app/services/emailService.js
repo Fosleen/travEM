@@ -63,7 +63,7 @@ const createEmailTemplate = (article) => {
             </a>
             <div class="footer">
               <p>Primili ste ovaj email jer ste pretplaćeni na naš newsletter.</p>
-              <p>Za odjavu nam se javite na mail travem.hr@gmail.com</p>
+              <p>Za odjavu nam se javite na mail hello@putujemstravem.com</p>
             </div>
           </div>
         </body>

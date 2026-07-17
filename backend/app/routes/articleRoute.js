@@ -1,5 +1,6 @@
 import { Router } from "express";
 import controller from "../controllers/articleController.js";
+import commentController from "../controllers/articleCommentController.js";
 import { verifyToken } from "../middleware/jwt_verify.js";
 
 const router = new Router();
@@ -12,7 +13,7 @@ const router = new Router();
  *      summary: Get all articles
  *      tags:
  *          - Article
- *      description: Returns an object with an array of articles with basic info about articles - id, title, subtitle, description, main_image_url, date_written, articleTypeId, countryId, placeId, userId, airportCityId and objects with data about article_type, airport_city, country and place.
+ *      description: Returns an object with an array of articles with basic info about articles - id, title, subtitle, description, main_image_url, date_written, date_updated, articleTypeId, countryId, placeId, userId, airportCityId and objects with data about article_type, airport_city, country and place.
  *      parameters:
  *        - in: query
  *          name: page
@@ -54,8 +55,23 @@ const router = new Router();
  */
 router.get("/", controller.getArticles);
 
+router.get("/:articleId/comments", commentController.getArticleComments);
+router.post("/:articleId/comments", commentController.addComment);
+router.post(
+  "/:articleId/comments/:commentId/replies",
+  commentController.addReply
+);
+router.post(
+  "/:articleId/comments/:commentId/admin-replies",
+  verifyToken,
+  commentController.addAdminReply
+);
+
 // GET /api/v1/articles/homepage
 router.get("/homepage", controller.getHomepageArticles);
+
+// GET /api/v1/articles/tips-featured/3
+router.get("/tips-featured/:articleTypeId", controller.getTipsFeaturedArticle);
 
 // GET /api/v1/articles/recommended/1?type=article
 /**
@@ -445,7 +461,7 @@ router.put(
 router.put(
   "/homepage/:specialTypeId",
   verifyToken,
-  controller.updateOrCreateTopHomepageArticles // update articles on any homepage part
+  controller.updateOrCreateTopHomepageArticles
 );
 
 // DELETE /api/v1/articles/4

@@ -28,6 +28,10 @@ const EditHomepageMenu = () => {
           text="Informacije o vizama"
           url="/admin/uredi-vize"
         />
+        <EditHomepageMenuItem
+          text="Aviokarte promo"
+          url="/admin/uredi-aviokarte-promo"
+        />
         <EditHomepageMenuItem text="Footer" url="/admin/uredi-footer" />
       </div>
     </div>

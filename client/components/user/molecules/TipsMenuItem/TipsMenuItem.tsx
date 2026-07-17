@@ -9,12 +9,15 @@ import { FC, MouseEventHandler } from "react";
 
 const TipsMenuItem: FC<{
   title: string;
+  slugTitle?: string;
   icon: string;
   onClick?: MouseEventHandler<HTMLElement>;
-}> = ({ title, icon, onClick }) => {
+}> = ({ title, slugTitle, icon, onClick }) => {
+  const linkTitle = slugTitle || title;
+
   return (
     <Link
-      href={`/savjeti/${removeCroatianDiacritics(convertToSlug(title))}`}
+      href={`/savjeti/${removeCroatianDiacritics(convertToSlug(linkTitle))}`}
       className="tips-menu-item-container"
       onClick={onClick}
     >

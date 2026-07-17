@@ -2,12 +2,22 @@
   display: flex;
   gap: 14px;
   align-items: center;
+  list-style: none; /* da nema bullet */
+
+.table-of-contents-item-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-decoration: underline; /* ako ti je to bio stil */
+  color: inherit;
+}
 
   .table-of-contents-item-image {
     min-width: 32px;
     width: 32px;
     height: 32px;
-    display: flex;
+    display: block;
     justify-content: center;
     align-items: center;
   }

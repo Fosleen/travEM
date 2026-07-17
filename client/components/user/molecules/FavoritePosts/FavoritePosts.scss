@@ -1,7 +1,7 @@
 @use "@/utils/theme.scss" as *;
 
 .favorite-posts-container {
-  margin-top: 120px;
+  margin-top: 80px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -17,16 +17,23 @@
 
 @media screen and ($desktop) {
   .favorite-posts-container {
-    max-width: 1300px;
+    max-width: 1400px;
     width: 100%;
     margin: 0 auto;
     flex-direction: row;
-    gap: 16px;
+
+    /*veći razmak između elemenata */
+    gap: 40px; /* prije: 16px */
+
+    align-items: flex-end; /* PORAVNA SVE KARTICE PO DONJOJ LINIJI */
   }
 }
 
 @media screen and ($desktopLarge) {
   .favorite-posts-container {
     padding: 0;
+
+    /* još malo "luksuza" na widescreenu */
+    gap: 48px;
   }
 }

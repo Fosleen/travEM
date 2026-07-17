@@ -1,28 +1,31 @@
 @use "@/utils/theme.scss" as *;
 
 .btn-scroll-to-top {
-  bottom: 30px;
-  right: 30px;
   position: fixed;
+  right: 30px;
+  bottom: calc(1px + var(--toc-safe-bottom, 0px));
   font-size: 3rem;
-
   cursor: pointer;
   border: none;
   border-radius: 55px;
-  z-index: 5;
+  z-index: 1001;
+  transition: bottom 0.25s ease, transform 0.25s ease;
 
-  @media screen and ($tablet) {
-    bottom: 8px;
-  }
-
-  svg {
-    path {
-      color: $green;
-    }
+  svg path {
+    color: $green;
   }
 }
 
 .btn-scroll-to-top:hover {
-  transition: 1s;
-  scale: 1.2;
+  transform: scale(1.15);
 }
+
+.btn-scroll-to-top {
+  opacity: calc(1 - var(--toc-scrolltop-hidden, 0));
+  pointer-events: auto;
+
+  &[style*="--toc-scrolltop-hidden: 1"] {
+    pointer-events: none;
+  }
+}
+

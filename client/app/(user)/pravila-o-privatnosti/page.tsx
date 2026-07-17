@@ -66,7 +66,7 @@ const PrivacyPolicy = () => {
         moguće ispoštovati Vaš zahtjev u roku od 30 dana, obavijestit ćemo Vas o
         tome. Ako želite ostvariti bilo koje od ovih prava ili imate bilo kakvih
         pitanja ili pritužbi u vezi s našim postupcima obrade podataka, molimo
-        kontaktirajte nas putem travem.hr@gmail.com.
+        kontaktirajte nas putem hello@putujemstravem.com.
       </p>
 
       <h4>Izmjene ovih Pravila o privatnosti</h4>

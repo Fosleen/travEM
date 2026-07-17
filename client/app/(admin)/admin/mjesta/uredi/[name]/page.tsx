@@ -1,8 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 "use client";
+
 import { Fragment, useEffect, useRef, useState } from "react";
-import { getVisitedCountries } from "@/utils/map";
 import { PlacesData } from "@/common/types";
 import Button from "@/components/atoms/Button";
 import "./EditPlace.scss";
@@ -13,12 +13,26 @@ import Input from "@/components/atoms/Input";
 import Modal from "@/components/atoms/Modal";
 import Swal from "sweetalert2";
 import { deletePlaceById, getPlacesByName, updatePlace } from "@/utils/places";
-import * as Yup from "yup";
 import { notifySuccess } from "@/components/atoms/Toast/Toast";
 import { Plus, Trash, X } from "@phosphor-icons/react";
 import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
 import { addVideo, deleteVideo, updateVideo } from "@/utils/videos";
 import { useParams, useRouter } from "next/navigation";
+import {
+  addMainPlaceImage,
+  addVideoField,
+  bestTimeMonths,
+  buildBestTimeToVisitPayload,
+  createPlaceValidationSchema,
+  deleteMainPlaceImage,
+  deleteVideoField,
+  fetchCountryDropdownOptions,
+  getInitialBestTimeToVisit,
+  grammarRows,
+  hasMainPlaceImage,
+  navigateToPlaces,
+  toggleDialog,
+} from "@/utils/placeFormHelpers";
 
 const EditPlace = () => {
   const params = useParams();
@@ -32,26 +46,31 @@ const EditPlace = () => {
   const [selectedCountryId, setSelectedCountryId] = useState("");
   const [mainPlaceImage, setMainPlaceImage] = useState<string>("");
 
-  // toggle state
   const [isFeaturedChecked, setIsFeaturedChecked] = useState(false);
   const [isOnMapChecked, setIsOnMapChecked] = useState(false);
 
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
   const [place, setPlace] = useState<PlacesData | null>(null);
 
-  const handleAddVideo = (arrayHelpers) => {
-    arrayHelpers.push({
-      video_url: "",
-    });
-  };
+  const getArticleOptions = () => {
+    const placeArticles = place?.articles || [];
 
-  const handleDeleteVideo = (arrayHelpers, videoIndex) => {
-    arrayHelpers.remove(videoIndex);
+    return [
+      {
+        id: null,
+        name: "Bez istaknutog članka",
+      },
+      ...placeArticles.map((article) => ({
+        id: article.id,
+        name: article.title,
+      })),
+    ];
   };
 
   const handleSave = async (values) => {
     setIsSubmitClicked(true);
-    if (validateImages()) {
+
+    if (hasMainPlaceImage(mainPlaceImage)) {
       Swal.fire({
         title: "Jeste li sigurni?",
         text: "Uredit ćete ovo mjesto",
@@ -67,7 +86,11 @@ const EditPlace = () => {
             id: place.id,
             description: values.place_description,
             name: values.place_name,
-            country_id: parseInt(selectedCountryId),
+            name_genitive: values.name_genitive,
+            name_dative: values.name_dative,
+            name_accusative: values.name_accusative,
+            name_locative: values.name_locative,
+            country_id: parseInt(values.place_country),
             map_icon: values.place_icon_url,
             latitude: parseFloat(
               values.place_latitude.toString().replace(",", ".")
@@ -78,10 +101,14 @@ const EditPlace = () => {
             main_image_url: mainPlaceImage,
             is_on_homepage_map: isOnMapChecked,
             is_above_homepage_map: isFeaturedChecked,
+            featured_article_id: values.featured_article_id
+              ? parseInt(values.featured_article_id)
+              : null,
+            best_time_to_visit: buildBestTimeToVisitPayload(values),
           });
+
           console.log(placeResponse);
 
-          // add, update (if it has id attibute already) and delete videos
           if (place.videos) {
             const removedVideoIds = place.videos.filter(
               (el) =>
@@ -89,10 +116,13 @@ const EditPlace = () => {
                   (video: { id: number }) => video.id === el.id
                 )
             );
+
             removedVideoIds.map(async (el) => await deleteVideo(el.id));
           }
+
           values.videos.map(async (el: { id: number; video_url: string }) => {
             let videoResponse;
+
             if (el.id) {
               videoResponse = await updateVideo(el.id, el.video_url);
             } else {
@@ -103,34 +133,14 @@ const EditPlace = () => {
                 null
               );
             }
+
             console.log(videoResponse);
           });
 
           router.push("/admin/mjesta");
-          notifySuccess("Uspješno dodano mjesto!");
+          notifySuccess("Uspješno uređeno mjesto!");
         }
       });
-    }
-  };
-
-  const handleCancel = () => {
-    router.push("/admin/mjesta");
-  };
-
-  const handleAddImage = () => {
-    setMainPlaceImage(modalInputValue);
-    setModalInputValue("");
-  };
-
-  const handleDeleteImage = () => {
-    setMainPlaceImage(null);
-  };
-
-  const toggleDialog = () => {
-    if (dialogRef && dialogRef.current) {
-      dialogRef.current.hasAttribute("open")
-        ? dialogRef.current.close()
-        : dialogRef.current.showModal();
     }
   };
 
@@ -157,22 +167,17 @@ const EditPlace = () => {
 
   const fetchData = async () => {
     try {
-      const countriesData = await getVisitedCountries();
-      const newArray = countriesData.map(
-        (el: { id: number; flag_image_url: string; name: string }) => ({
-          id: el.id,
-          url: el.flag_image_url,
-          name: el.name,
-        })
-      );
-      setCountries(newArray);
+      setCountries(await fetchCountryDropdownOptions());
 
       if (name) {
         const _place = await getPlacesByName(name, 1, 1);
-        setPlace(_place.data[0]);
-        setMainPlaceImage(_place.data[0].main_image_url);
-        setIsOnMapChecked(_place.data[0].is_on_homepage_map);
-        setIsFeaturedChecked(_place.data[0].is_above_homepage_map);
+        const selectedPlace = _place.data[0];
+
+        setPlace(selectedPlace);
+        setMainPlaceImage(selectedPlace.main_image_url);
+        setIsOnMapChecked(selectedPlace.is_on_homepage_map);
+        setIsFeaturedChecked(selectedPlace.is_above_homepage_map);
+        setSelectedCountryId(selectedPlace.countryId);
       }
     } catch (error) {
       console.error("Error occured while fetching data:", error);
@@ -184,37 +189,6 @@ const EditPlace = () => {
       fetchData();
     }
   }, [name]);
-
-  const ValidationSchema = Yup.object().shape({
-    place_name: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Naslov smije imati max 100 znakova!"),
-    place_latitude: Yup.string()
-      .required("Obavezno polje!")
-      .test(
-        "is-valid-latitude",
-        "Geografska širina mora biti validan decimalni broj!",
-        (value) => !isNaN(parseFloat(value))
-      ),
-    place_longitude: Yup.string()
-      .required("Obavezno polje!")
-      .test(
-        "is-valid-longitude",
-        "Geografska dužina mora biti validan decimalni broj!",
-        (value) => !isNaN(parseFloat(value))
-      ),
-    place_description: Yup.string().required("Obavezno polje!"),
-    place_country: Yup.number().required("Obavezno polje!").integer(),
-    videos: Yup.array().of(
-      Yup.object().shape({
-        video_url: Yup.string().required("Obavezno polje!"),
-      })
-    ),
-  });
-
-  const validateImages = () => {
-    return mainPlaceImage != "" && mainPlaceImage;
-  };
 
   return (
     <>
@@ -231,15 +205,22 @@ const EditPlace = () => {
             IZBRIŠI MJESTO I SVE ČLANKE O NJEMU
           </Button>
         </div>
+
         {countries && place ? (
           <Formik
             initialValues={{
               place_name: place.name,
+              name_genitive: place.name_genitive || "",
+              name_dative: place.name_dative || "",
+              name_accusative: place.name_accusative || "",
+              name_locative: place.name_locative || "",
               place_description: place.description,
               place_country: place.countryId,
               place_latitude: place.latitude,
               place_longitude: place.longitude,
               place_icon_url: place.map_icon,
+              featured_article_id: place.featured_article_id || null,
+              best_time_to_visit: getInitialBestTimeToVisit(place),
               videos: place.videos
                 ? place.videos.map((el) => ({
                     id: el.id,
@@ -247,7 +228,9 @@ const EditPlace = () => {
                   }))
                 : [],
             }}
-            validationSchema={ValidationSchema}
+            validationSchema={createPlaceValidationSchema({
+              includeFeaturedArticle: true,
+            })}
             onSubmit={handleSave}
             enableReinitialize={true}
           >
@@ -268,7 +251,8 @@ const EditPlace = () => {
                       className="error-message"
                     />
                   </div>
-                  <div className="add-place-input">
+
+                  <div className="edit-place-input">
                     <AdvancedDropdown
                       filter
                       images
@@ -289,6 +273,7 @@ const EditPlace = () => {
                       className="error-message"
                     />
                   </div>
+
                   <div className="edit-place-row">
                     <div className="edit-place-row-item">
                       <Field
@@ -303,6 +288,7 @@ const EditPlace = () => {
                         className="error-message"
                       />
                     </div>
+
                     <div className="edit-place-row-item">
                       <Field
                         name="place_longitude"
@@ -317,7 +303,8 @@ const EditPlace = () => {
                       />
                     </div>
                   </div>
-                  <div className="add-place-input">
+
+                  <div className="edit-place-input">
                     <Field
                       name="place_description"
                       value={values.place_description}
@@ -334,18 +321,20 @@ const EditPlace = () => {
                     />
                   </div>
                 </div>
-                <div className="add-place-input">
+
+                <div className="edit-place-input">
                   <div className="edit-place-images-container">
                     {mainPlaceImage ? (
                       <div
                         className="edit-place-image"
                         onClick={() => {
-                          handleDeleteImage();
+                          deleteMainPlaceImage(setMainPlaceImage);
                         }}
                       >
                         <div className="edit-place-image-remove-icon">
                           <X size={32} color="#e70101" weight="bold" />
                         </div>
+
                         <img
                           src={mainPlaceImage}
                           alt={`image-error-${mainPlaceImage}`}
@@ -355,19 +344,204 @@ const EditPlace = () => {
                       <div
                         className="edit-place-item"
                         onClick={() => {
-                          toggleDialog();
+                          toggleDialog(dialogRef);
                         }}
                       >
                         <Plus size={32} color="#616161" weight="bold" />
                       </div>
                     )}
                   </div>
+
                   {isSubmitClicked &&
                     (mainPlaceImage == "" || !mainPlaceImage) && (
                       <p className="error-message">Obavezno polje!</p>
                     )}
+
                   <p>* preporuča se slika u omjeru 16:9</p>
                 </div>
+
+                <div className="edit-place-input edit-place-featured-article-wrapper">
+                  <AdvancedDropdown
+                    filter
+                    hardcodedValue={"Odaberi istaknuti članak za ovaj grad"}
+                    options={getArticleOptions()}
+                    value={values.featured_article_id}
+                    selectedValue={values.featured_article_id}
+                    onChange={(value) => {
+                      setFieldValue("featured_article_id", value.id);
+                    }}
+                    isDisabled={!place?.articles || place.articles.length === 0}
+                    label="Istaknuti članak"
+                  />
+
+                  {(!place?.articles || place.articles.length === 0) && (
+                    <p className="edit-place-helper-text">
+                      Još nema članaka vezanih uz ovo mjesto. Istaknuti članak
+                      moći ćete odabrati nakon što dodate članak s ovim mjestom.
+                    </p>
+                  )}
+
+                  <ErrorMessage
+                    name="featured_article_id"
+                    component="div"
+                    className="error-message"
+                  />
+                </div>
+
+                <div className="edit-place-grammar-wrapper">
+                  <div className="edit-place-grammar-header">
+                    <h6>Padeži naziva mjesta *</h6>
+                    <p>
+                      Unesite oblike koji će se koristiti u tekstovima na
+                      stranici grada.
+                    </p>
+                  </div>
+
+                  <div className="edit-place-grammar-table">
+                    <div className="edit-place-grammar-row edit-place-grammar-row-head">
+                      <div>Padež</div>
+                      <div>Pitanje</div>
+                      <div>Glagol</div>
+                      <div>Naziv mjesta</div>
+                    </div>
+
+                    {grammarRows.map((row) => (
+                      <div className="edit-place-grammar-row" key={row.key}>
+                        <div className="edit-place-grammar-case">
+                          {row.label}
+                        </div>
+                        <div>{row.question}</div>
+                        <div>{row.example}</div>
+                        <div>
+                          {row.isPreview ? (
+                            <div className="edit-place-grammar-preview">
+                              {values.place_name || "Naziv mjesta"}
+                            </div>
+                          ) : (
+                            <>
+                              <Field
+                                name={row.key}
+                                type="text"
+                                as={Input}
+                                label=""
+                                placeholder={row.placeholder}
+                              />
+                              <ErrorMessage
+                                name={row.key}
+                                component="div"
+                                className="error-message"
+                              />
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="edit-place-best-time-wrapper">
+                  <div className="edit-place-best-time-header">
+                    <div>
+                      <h6>Najbolje vrijeme za posjet *</h6>
+                      <p>
+                        Unesite prosječnu temperaturu i količinu kiše za svaki
+                        mjesec.
+                      </p>
+                    </div>
+
+                    <ToggleSwitch
+                      name={"best-time-enabled"}
+                      description={"Prikaži ovu sekciju na stranici grada"}
+                      value={values.best_time_to_visit.is_enabled}
+                      setter={(value) => {
+                        setFieldValue("best_time_to_visit.is_enabled", value);
+                      }}
+                    />
+                  </div>
+
+                  <div className="edit-place-best-time-inputs">
+                    <div className="edit-place-input">
+                      <Field
+                        name="best_time_to_visit.subtitle"
+                        type="text"
+                        as={Input}
+                        label="Podnaslov *"
+                        placeholder="npr. Umjerena kontinentalna klima..."
+                      />
+                      <ErrorMessage
+                        name="best_time_to_visit.subtitle"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
+
+                    <div className="edit-place-input">
+                      <Field
+                        name="best_time_to_visit.note"
+                        type="text"
+                        as={Textarea}
+                        rows={2}
+                        label="Napomena"
+                        placeholder="npr. Svibanj, lipanj i rujan nude najbolji balans..."
+                      />
+                      <ErrorMessage
+                        name="best_time_to_visit.note"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="edit-place-best-time-table">
+                    <div className="edit-place-best-time-row edit-place-best-time-row-head">
+                      <div>Mjesec</div>
+                      <div>Prosj. temp. °C</div>
+                      <div>Kiša mm</div>
+                    </div>
+
+                    {bestTimeMonths.map((month, index) => (
+                      <div
+                        className="edit-place-best-time-row"
+                        key={month.month_key}
+                      >
+                        <div className="edit-place-best-time-month">
+                          {month.label}
+                        </div>
+
+                        <div>
+                          <Field
+                            name={`best_time_to_visit.months.${index}.avg_temp_c`}
+                            type="text"
+                            as={Input}
+                            label=""
+                            placeholder="npr. 17"
+                          />
+                          <ErrorMessage
+                            name={`best_time_to_visit.months.${index}.avg_temp_c`}
+                            component="div"
+                            className="error-message"
+                          />
+                        </div>
+
+                        <div>
+                          <Field
+                            name={`best_time_to_visit.months.${index}.avg_rain_mm`}
+                            type="text"
+                            as={Input}
+                            label=""
+                            placeholder="npr. 120"
+                          />
+                          <ErrorMessage
+                            name={`best_time_to_visit.months.${index}.avg_rain_mm`}
+                            component="div"
+                            className="error-message"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="edit-place-videos-wrapper">
                   <div className="edit-place-video-outer-container">
                     <FieldArray
@@ -384,13 +558,14 @@ const EditPlace = () => {
                                   type="button"
                                   circle
                                   onClick={() => {
-                                    handleAddVideo(arrayHelpers);
+                                    addVideoField(arrayHelpers);
                                   }}
                                 >
                                   +
                                 </Button>
                               )}
                             </div>
+
                             {videos && videos.length > 0
                               ? videos.map((_videos, index) => (
                                   <Fragment key={index}>
@@ -402,9 +577,10 @@ const EditPlace = () => {
                                         label=""
                                         placeholder="Unesi URL videa..."
                                       />
+
                                       <div
                                         onClick={() => {
-                                          handleDeleteVideo(
+                                          deleteVideoField(
                                             arrayHelpers,
                                             index
                                           );
@@ -413,6 +589,7 @@ const EditPlace = () => {
                                         <Trash color="#AC2B2B" size={32} />
                                       </div>
                                     </div>
+
                                     <ErrorMessage
                                       name={`videos.${index}.video_url`}
                                       component="div"
@@ -437,6 +614,7 @@ const EditPlace = () => {
                       setter={setIsOnMapChecked}
                     />
                   </div>
+
                   <div className="edit-place-toggle-item">
                     <ToggleSwitch
                       name={"featured-place"}
@@ -445,6 +623,7 @@ const EditPlace = () => {
                       setter={setIsFeaturedChecked}
                     />
                   </div>
+
                   {isFeaturedChecked && (
                     <div className="edit-place-toggle-input">
                       <Field
@@ -462,7 +641,12 @@ const EditPlace = () => {
                   <Button type="submit" adminPrimary>
                     uredi mjesto
                   </Button>
-                  <Button type="button" white onClick={handleCancel}>
+
+                  <Button
+                    type="button"
+                    white
+                    onClick={() => navigateToPlaces(router)}
+                  >
                     Odustani
                   </Button>
                 </div>
@@ -473,10 +657,17 @@ const EditPlace = () => {
           <p>Loading...</p>
         )}
       </div>
+
       <Modal
         ref={dialogRef}
-        toggleDialog={toggleDialog}
-        onClick={handleAddImage}
+        toggleDialog={() => toggleDialog(dialogRef)}
+        onClick={() =>
+          addMainPlaceImage({
+            modalInputValue,
+            setMainPlaceImage,
+            setModalInputValue,
+          })
+        }
         modalInputValue={modalInputValue}
         setModalInputValue={setModalInputValue}
       />

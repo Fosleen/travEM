@@ -15,7 +15,7 @@
   .other-posts-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 24px;
 
     .other-posts-left {
       display: flex;
@@ -43,6 +43,7 @@
     .other-posts-wrapper {
       flex-direction: row;
       flex: 2;
+      gap: 8px;
 
       .other-posts-left {
         display: flex;

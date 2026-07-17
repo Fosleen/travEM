@@ -10,6 +10,8 @@ import AirplaneTicketsMenu from "../../organisms/AirplaneTicketsMenu";
 import DestinationsMenu from "../../organisms/DestinationsMenu";
 import TipsMenu from "../../organisms/TipsMenu";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
 
 const NavbarMobile = ({
   location,
@@ -25,6 +27,11 @@ const NavbarMobile = ({
     setOpenNav(!openNav);
   };
 
+  const closeMobileNav = () => {
+    setOpenNav(false);
+    setSelectedSubcategory("");
+  };
+
   // Close nav when pathname changes
   useEffect(() => {
     setOpenNav(false);
@@ -32,7 +39,6 @@ const NavbarMobile = ({
   }, [location.pathname, setOpenNav, setSelectedSubcategory]);
 
   const handleSubcategoryChange = (type: string) => {
-    console.log(type);
     if (type != selectedSubcategory) {
       setSelectedSubcategory(type);
     } else {
@@ -50,10 +56,6 @@ const NavbarMobile = ({
     router.push(`/pretrazivanje?naslov=${searchText}`);
   };
 
-  useEffect(() => {
-    console.log(selectedSubcategory);
-  }, [selectedSubcategory]);
-
   return (
     <div className="navbar-mobile-container">
       <div className="navbar-mobile-icon">
@@ -63,9 +65,26 @@ const NavbarMobile = ({
           <List onClick={navHandler} size={40} color="black" />
         )}
       </div>
+
       {openNav && (
         <div className="navbar-mobile-menu">
-          <div className="navbar-empty-header"></div>
+          <div className="navbar-mobile-menu-header">
+            <Link
+              href="/"
+              className="navbar-mobile-logo"
+              onClick={closeMobileNav}
+              aria-label="Povratak na početnu stranicu"
+            >
+              <Image
+                src="/images/travem-logo-grey.webp"
+                width={102}
+                height={61}
+                alt="putujEM s travEM logo"
+                priority
+              />
+            </Link>
+          </div>
+
           <div className="navbar-mobile-menu-categories">
             <div className="navbar-mobile-menu-search">
               <Search
@@ -74,6 +93,7 @@ const NavbarMobile = ({
                 onClick={handleSearch}
               />
             </div>
+
             <div className="navbar-mobile-menu-list">
               <div
                 className={`navbar-mobile-item ${
@@ -88,6 +108,7 @@ const NavbarMobile = ({
                   <CaretDown size={16} weight="bold" color="#303030" />
                 )}
               </div>
+
               <div
                 className={`navbar-mobile-item ${
                   selectedSubcategory === "savjeti" && "selected"
@@ -101,6 +122,7 @@ const NavbarMobile = ({
                   <CaretDown size={16} weight="bold" color="#303030" />
                 )}
               </div>
+
               <div
                 className={`navbar-mobile-item ${
                   selectedSubcategory === "aviokarte" && "selected"
@@ -123,16 +145,19 @@ const NavbarMobile = ({
                 <DestinationsMenu />
               </div>
             )}
+
             {selectedSubcategory === "savjeti" && (
               <div>
                 <TipsMenu />
               </div>
             )}
+
             {selectedSubcategory === "aviokarte" && (
               <div>
                 <AirplaneTicketsMenu />
               </div>
             )}
+
             <SocialMediaLinks />
           </div>
         </div>

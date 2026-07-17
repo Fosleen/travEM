@@ -49,6 +49,13 @@
       }
     }
 
+    .edit-place-input {
+      max-width: 1024px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
     .edit-place-images-container {
       display: flex;
       gap: 12px;
@@ -96,6 +103,112 @@
         justify-content: center;
         align-items: center;
         cursor: pointer;
+      }
+    }
+
+    .edit-place-featured-article-wrapper {
+      margin-top: 8px;
+    }
+
+    .edit-place-helper-text {
+      margin: 4px 0 0;
+      color: $greyMiddleDark;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .edit-place-grammar-wrapper,
+    .edit-place-best-time-wrapper {
+      max-width: 1024px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 16px;
+      border: 1px solid rgba(120, 164, 215, 0.35);
+      border-radius: 12px;
+      background: rgba(120, 164, 215, 0.05);
+    }
+
+    .edit-place-grammar-header,
+    .edit-place-best-time-header {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+
+      h6 {
+        margin: 0;
+      }
+
+      p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.4;
+        color: $greyMiddleDark;
+      }
+    }
+
+    .edit-place-best-time-header {
+      gap: 12px;
+    }
+
+    .edit-place-grammar-table,
+    .edit-place-best-time-table {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .edit-place-grammar-row {
+      display: grid;
+      grid-template-columns: 120px 150px 110px minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+
+      > div {
+        min-width: 0;
+      }
+    }
+
+    .edit-place-grammar-row-head,
+    .edit-place-best-time-row-head {
+      font-size: 13px;
+      font-weight: 800;
+      color: $greyMiddleDark;
+      padding-bottom: 4px;
+      border-bottom: 1px solid rgba(120, 164, 215, 0.25);
+    }
+
+    .edit-place-grammar-case,
+    .edit-place-best-time-month {
+      font-weight: 800;
+    }
+
+    .edit-place-grammar-preview {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      border: 1px solid rgba(120, 164, 215, 0.4);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.6);
+      font-weight: 700;
+      color: $greyMiddleDark;
+    }
+
+    .edit-place-best-time-inputs {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .edit-place-best-time-row {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr) minmax(0, 1fr);
+      gap: 12px;
+      align-items: center;
+
+      > div {
+        min-width: 0;
       }
     }
 

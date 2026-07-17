@@ -2,6 +2,7 @@ import { getArticlesByType, getRecommendedArticles } from "@/utils/article";
 import AirplaneTickets from "@/components/user/pages/airplaneTickets/AirplaneTickets";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getAirplaneTicketPromo } from "@/utils/airplaneTicketPromo";
 
 type Props = {
   params: Promise<{ name: string }>;
@@ -53,7 +54,10 @@ export default async function Page({ params }: Props) {
   // Also decode in the page component
   const decodedName = decodeURIComponent(name);
 
-  const articlesData = await getArticlesByType(1, 12, 2);
+  const [articlesData, promoData] = await Promise.all([
+    getArticlesByType(1, 12, 2),
+    getAirplaneTicketPromo(),
+  ]);
 
   if (!articlesData || articlesData.error) {
     notFound();
@@ -85,6 +89,7 @@ export default async function Page({ params }: Props) {
       initialTickets={filteredTickets}
       cityName={decodedName}
       recommendedId={recommendedId}
+      promo={promoData && !promoData.error ? promoData : null}
     />
   );
 }

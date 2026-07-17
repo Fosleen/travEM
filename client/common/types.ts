@@ -134,12 +134,53 @@ export interface EditBannerData {
   recommended_post_3: number;
 }
 
+export interface CountryBestTimeToVisitMonthData {
+  id?: number;
+  country_best_time_to_visit_region_id?: number;
+  month_key:
+    | "jan"
+    | "feb"
+    | "mar"
+    | "apr"
+    | "may"
+    | "jun"
+    | "jul"
+    | "aug"
+    | "sep"
+    | "oct"
+    | "nov"
+    | "dec";
+  avg_temp_c: string | number;
+  avg_rain_mm: string | number;
+}
+
+export interface CountryBestTimeToVisitRegionData {
+  id?: number;
+  country_best_time_to_visit_id?: number;
+  region_key: string;
+  label: string;
+  note?: string | null;
+  sort_order?: number;
+  months: Array<CountryBestTimeToVisitMonthData>;
+}
+
+export interface CountryBestTimeToVisitData {
+  id?: number;
+  country_id?: number;
+  slug: string;
+  title?: string | null;
+  subtitle?: string | null;
+  is_enabled?: boolean;
+  regions: Array<CountryBestTimeToVisitRegionData>;
+}
+
 export interface CountriesData {
   id: number;
   name: string;
   description: string;
   main_image_url: string;
   flag_image_url: string;
+  is_new?: boolean;
   colorId: number;
   continentId: number;
   color?: { hex_value: string };
@@ -148,6 +189,7 @@ export interface CountriesData {
   places?: Array<PlacesData>;
   specificities?: Array<SpecificityProps>;
   videos?: Array<VideoProps>;
+  best_time_to_visit?: CountryBestTimeToVisitData | null;
 }
 
 export interface VideoProps {
@@ -158,6 +200,10 @@ export interface VideoProps {
 export interface PlacesData {
   id: number;
   name: string;
+  name_genitive?: string;
+  name_dative?: string;
+  name_accusative?: string;
+  name_locative?: string;
   description: string;
   latitude: number;
   longitude: number;
@@ -166,8 +212,20 @@ export interface PlacesData {
   map_icon: string;
   main_image_url: string;
   country_id: number;
+  featured_article_id?: number | null;
   country?: { name: string };
   countryId?: number;
+  articles?: Array<{
+    id: number;
+    title: string;
+    subtitle?: string;
+    description?: string;
+    main_image_url?: string;
+    date_written?: Date | string;
+    date_updated?: Date | string | null;
+    place_id?: number;
+    placeId?: number;
+  }>;
   videos?: Array<{
     id: number;
     url: string;
@@ -206,7 +264,8 @@ export interface Article {
   place_id: number;
   main_image_url: string;
   user_id: number;
-  date_written: Date;
+  date_written: Date | string;
+  date_updated?: Date | string | null;
   country?: CountriesData;
   article_special_types?: Array<ArticleSpecialType>;
 }
@@ -231,7 +290,8 @@ export interface HorizontalPostItemBigProps {
     title?: string;
     name?: string;
     subtitle: string;
-    date_written: Date;
+    date_written: Date | string;
+    date_updated?: Date | string | null;
   };
 }
 

@@ -1,4 +1,27 @@
 import db from "../models/index.js";
+import { Op } from "sequelize";
+
+const NEW_COUNTRIES_LIMIT = 3;
+
+const getArticleScheduleInclude = () => ({
+  model: db.models.ArticleSchedule,
+  attributes: [],
+  required: false,
+});
+
+const getPublicArticleWhere = (additionalWhere = {}) => ({
+  ...additionalWhere,
+  [Op.and]: [
+    ...(additionalWhere[Op.and] || []),
+    {
+      [Op.or]: [
+        { "$article_schedule.id$": null },
+        { "$article_schedule.publish_at$": null },
+        { "$article_schedule.publish_at$": { [Op.lte]: new Date() } },
+      ],
+    },
+  ],
+});
 
 class ContinentsService {
   async getContinents() {
@@ -27,10 +50,44 @@ class ContinentsService {
         return "Continent not found";
       }
 
+      const latestCountryArticleRows = await db.models.Article.findAll({
+        attributes: [
+          "countryId",
+          [
+            db.sequelize.fn(
+              "MAX",
+              db.sequelize.fn(
+                "COALESCE",
+                db.sequelize.col("date_updated"),
+                db.sequelize.col("date_written")
+              )
+            ),
+            "latestArticleDate",
+          ],
+        ],
+        include: [getArticleScheduleInclude()],
+        where: getPublicArticleWhere({
+          countryId: {
+            [Op.ne]: null,
+          },
+        }),
+        group: ["countryId"],
+        order: [[db.sequelize.literal("latestArticleDate"), "DESC"]],
+        limit: NEW_COUNTRIES_LIMIT,
+      });
+
+      const latestCountryIds = latestCountryArticleRows.map(
+        (article) => article.countryId
+      );
+
       const continentCountries = await db.models.Country.findAll({
         where: { continentId: id },
       });
-      return continentCountries;
+
+      return continentCountries.map((country) => ({
+        ...country.toJSON(),
+        is_new: latestCountryIds.includes(country.id),
+      }));
     } catch (error) {
       return error;
     }

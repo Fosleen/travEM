@@ -5,8 +5,9 @@ class SubscriberController {
   async getSubscribers(req, res) {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 12;
+    const search = typeof req.query.search === "string" ? req.query.search : "";
     try {
-      const response = await service.getSubscribers(page, pageSize);
+      const response = await service.getSubscribers(page, pageSize, search);
       if (!response || response.length == 0) {
         res.status(404).json({ error: "No subscribers found" });
       } else {

@@ -5,6 +5,7 @@ const getToken = () => {
   if (typeof window !== "undefined") {
     return localStorage.getItem("jwt");
   }
+
   return null;
 };
 
@@ -17,7 +18,7 @@ export async function getCountries(
     const response = await fetch(
       `${apiUrl}/countries?page=${page}&pageSize=${pageSize}&noCache=${noCache}`,
       {
-        cache: "no-store", // ← Disable Next.js cache
+        cache: "no-store",
       }
     );
 
@@ -39,7 +40,7 @@ export async function getCountryById(id: number, noCache: boolean = false) {
     const response = await fetch(
       `${apiUrl}/countries/${id}?noCache=${noCache}`,
       {
-        cache: "no-store", // ← Disable Next.js cache
+        cache: "no-store",
       }
     );
 
@@ -68,10 +69,12 @@ export async function getCountriesByName(
       isCount = 0;
     }
 
+    const encodedName = encodeURIComponent(name);
+
     const response = await fetch(
-      `${apiUrl}/countries/search/${name}?page=${page}&pageSize=${pageSize}&isCount=${isCount}&noCache=${noCache}`,
+      `${apiUrl}/countries/search/${encodedName}?page=${page}&pageSize=${pageSize}&isCount=${isCount}&noCache=${noCache}`,
       {
-        cache: "no-store", // ← Disable Next.js cache
+        cache: "no-store",
       }
     );
 
@@ -96,7 +99,7 @@ export async function getCountriesByContinent(
     const response = await fetch(
       `${apiUrl}/continents/countries/${id}?noCache=${noCache}`,
       {
-        cache: "no-store", // ← Disable Next.js cache
+        cache: "no-store",
       }
     );
 
@@ -119,7 +122,8 @@ export async function addCountry(
   main_image_url: string,
   flag_image_url: string,
   continent_id: number,
-  color_id: number
+  color_id: number,
+  best_time_to_visit?: any
 ) {
   const token = getToken();
 
@@ -131,12 +135,13 @@ export async function addCountry(
     },
     method: "POST",
     body: JSON.stringify({
-      name: name,
-      description: description,
-      main_image_url: main_image_url,
-      flag_image_url: flag_image_url,
-      continent_id: continent_id,
-      color_id: color_id,
+      name,
+      description,
+      main_image_url,
+      flag_image_url,
+      continent_id,
+      color_id,
+      best_time_to_visit,
     }),
   });
 
@@ -155,7 +160,7 @@ export async function getCountryPlaces(id: number, noCache: boolean = false) {
     const response = await fetch(
       `${apiUrl}/countries/places/${id}?noCache=${noCache}`,
       {
-        cache: "no-store", // ← Disable Next.js cache
+        cache: "no-store",
       }
     );
 
@@ -174,6 +179,7 @@ export async function getCountryPlaces(id: number, noCache: boolean = false) {
 
 export async function updateCountry(country: CountriesData) {
   console.log(country);
+
   const token = getToken();
 
   const response = await fetch(`${apiUrl}/countries/${country.id}`, {
@@ -190,6 +196,7 @@ export async function updateCountry(country: CountriesData) {
       flag_image_url: country.flag_image_url,
       continent_id: country.continentId,
       color_id: country.colorId,
+      best_time_to_visit: country.best_time_to_visit,
     }),
   });
 

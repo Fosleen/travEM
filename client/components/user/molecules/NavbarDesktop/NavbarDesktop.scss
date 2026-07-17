@@ -1,51 +1,68 @@
+/* NavbarDesktop.scss */
 @use "@/utils/theme.scss" as *;
 
 .navbar-desktop-container {
   display: flex;
   justify-content: space-between;
   width: 100%;
+  position: relative;
+}
 
-  .navbar-desktop-inner-container {
+.navbar-desktop-inner-container {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  margin-left: 16px;
+  position: relative;
+
+  &:last-of-type {
+    gap: 16px;
+  }
+
+  &:first-of-type {
+    z-index: 3000;
+  }
+
+  &:last-of-type {
+    z-index: 1;
+
+    /* Keep the socials alongside the active search, above its backdrop. */
+    .socials-container {
+      z-index: 4001;
+    }
+  }
+
+  .navbar-item {
+    padding: 8px 16px;
     display: flex;
     align-items: center;
-    gap: 0px;
-    margin-left: 16px;
+    gap: 8px;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    color: $grey;
+    cursor: pointer;
 
-    &:last-of-type {
-      gap: 16px;
+    svg {
+      fill: $grey;
     }
 
-    .navbar-item {
-      padding: 8px 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border-radius: 16px;
-      font-size: 16px;
-      font-weight: 700;
+    &.dark {
+      color: $bg;
+
+      svg {
+        fill: $bg;
+      }
+    }
+
+    &:hover,
+    &.active {
       color: $grey;
-      cursor: pointer;
+      background-color: $bg;
+      box-shadow: 0px 0px 6px 2px $limeGreen;
 
-      & svg {
+      svg {
         fill: $grey;
-      }
-
-      &.dark {
-        color: $bg;
-
-        & svg {
-          fill: $bg;
-        }
-      }
-
-      &:hover {
-        color: $grey;
-        background-color: $bg;
-        box-shadow: 0px 0px 6px 2px $limeGreen;
-
-        & svg {
-          fill: $grey;
-        }
       }
     }
   }

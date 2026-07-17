@@ -6,6 +6,7 @@ const getAuthToken = () => {
   if (typeof window !== "undefined") {
     return localStorage.getItem("jwt");
   }
+
   return null;
 };
 
@@ -13,41 +14,47 @@ export async function getPlaces(page = 1, pageSize = 12) {
   const response = await fetch(
     `${apiUrl}/places?page=${page}&pageSize=${pageSize}`,
     {
-      cache: "no-store", // ← Disable Next.js cache
+      cache: "no-store",
     }
   );
+
   const data = await response.json();
 
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
 export async function getPlacesWithImage() {
   const response = await fetch(`${apiUrl}/places/with-image`, {
-    cache: "no-store", // ← Disable Next.js cache
+    cache: "no-store",
   });
+
   const data = await response.json();
 
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
 export async function getPlacesByCountry(id: number) {
   const response = await fetch(`${apiUrl}/countries/places/${id}`, {
-    cache: "no-store", // ← Disable Next.js cache
+    cache: "no-store",
   });
+
   const data = await response.json();
 
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
@@ -60,15 +67,17 @@ export async function getPlacesByName(
   const response = await fetch(
     `${apiUrl}/places/search/${name}?page=${page}&pageSize=${pageSize}&noCache=${noCache}`,
     {
-      cache: "no-store", // ← Disable Next.js cache
+      cache: "no-store",
     }
   );
+
   const data = await response.json();
 
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
@@ -82,7 +91,12 @@ export async function addPlace(
   longitude: number,
   main_image_url: string,
   country_id: number,
-  videos: Array<string>
+  videos: Array<string>,
+  name_genitive: string,
+  name_dative: string,
+  name_accusative: string,
+  name_locative: string,
+  best_time_to_visit: any
 ) {
   const token = getAuthToken();
 
@@ -94,16 +108,21 @@ export async function addPlace(
     },
     method: "POST",
     body: JSON.stringify({
-      name: name,
-      description: description,
-      map_icon: map_icon,
-      is_on_homepage_map: is_on_homepage_map,
-      is_above_homepage_map: is_above_homepage_map,
-      latitude: latitude,
-      longitude: longitude,
-      main_image_url: main_image_url,
-      country_id: country_id,
-      videos: videos,
+      name,
+      name_genitive,
+      name_dative,
+      name_accusative,
+      name_locative,
+      description,
+      map_icon,
+      is_on_homepage_map,
+      is_above_homepage_map,
+      latitude,
+      longitude,
+      main_image_url,
+      country_id,
+      videos,
+      best_time_to_visit,
     }),
   });
 
@@ -113,6 +132,7 @@ export async function addPlace(
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
@@ -137,6 +157,7 @@ export async function addPlaceOnMap(id: number) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
@@ -161,6 +182,7 @@ export async function removePlaceOnMap(id: number) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
@@ -185,6 +207,7 @@ export async function addPlaceAboveMap(id: number) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
@@ -209,6 +232,7 @@ export async function removePlaceAboveMap(id: number) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
@@ -221,16 +245,18 @@ export async function deletePlaceById(id: number) {
     },
     method: "DELETE",
   });
+
   const data = await response.json();
 
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
-export async function updatePlace(place: PlacesData) {
+export async function updatePlace(place: PlacesData & { best_time_to_visit?: any }) {
   const token = getAuthToken();
 
   const response = await fetch(`${apiUrl}/places/${place.id}`, {
@@ -243,6 +269,10 @@ export async function updatePlace(place: PlacesData) {
     body: JSON.stringify({
       description: place.description,
       name: place.name,
+      name_genitive: place.name_genitive,
+      name_dative: place.name_dative,
+      name_accusative: place.name_accusative,
+      name_locative: place.name_locative,
       main_image_url: place.main_image_url,
       map_icon: place.map_icon,
       is_on_homepage_map: place.is_on_homepage_map,
@@ -250,6 +280,8 @@ export async function updatePlace(place: PlacesData) {
       latitude: place.latitude,
       longitude: place.longitude,
       country_id: place.country_id,
+      featured_article_id: place.featured_article_id ?? null,
+      best_time_to_visit: place.best_time_to_visit,
     }),
   });
 
@@ -259,5 +291,6 @@ export async function updatePlace(place: PlacesData) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }

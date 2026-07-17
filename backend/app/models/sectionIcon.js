@@ -3,6 +3,10 @@ export default (sequelize, DataTypes) => {
     "section_icon",
     {
       url: { type: DataTypes.STRING, allowNull: false },
+      feature_key: {
+        type: DataTypes.STRING(50),
+        allowNull: true,
+      },
     },
     {
       underscored: true,

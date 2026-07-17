@@ -38,3 +38,4 @@ export async function getContinentById(id: number) {
     return { error: error.message };
   }
 }
+

@@ -15,11 +15,6 @@ import {
   SectionIconsData,
   SectionImage,
 } from "@/common/types";
-import * as Yup from "yup";
-import { getPlacesByCountry } from "@/utils/places";
-import { getArticleTypes } from "@/utils/articleTypes";
-import { getVisitedCountries } from "@/utils/map";
-import { getSectionIcons } from "@/utils/sectionIcons";
 import Modal from "@/components/atoms/Modal";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import Input from "@/components/atoms/Input";
@@ -43,12 +38,61 @@ import { addSection, deleteSection, updateSection } from "@/utils/sections";
 import { addSectionImage, deleteSectionImage } from "@/utils/sectionImages";
 import { addGalleryImage, deleteGalleryImage } from "@/utils/galleryImages";
 import { addVideo, updateVideo, deleteVideo } from "@/utils/videos";
-import { getAirportCities } from "@/utils/airportCities";
 import AdvancedEditor from "@/components/atoms/AdvancedEditor";
 import {
   getSubscribersWithoutPagination,
   sendNewsletterToSubscribers,
 } from "@/utils/subscribers";
+import SectionActions from "@/components/admin/atoms/SectionActions/SectionActions";
+import {
+  ARTICLE_TYPE_AIRPLANE_TICKET_ID,
+  ARTICLE_TYPE_DESTINATION_ID,
+  getTipsArticleTypeTitle,
+  isTipsArticleType,
+} from "@/utils/articleTypeHelpers";
+import {
+  addArticleSection,
+  createEmptyArticleSection,
+  deleteArticleSection,
+  getSectionIconUrl,
+  getSelectedSectionIcon,
+  insertArticleSectionAfter,
+  moveArticleSection,
+} from "@/utils/sectionFormHelpers";
+import {
+  addArticleFormImage,
+  addMetatag,
+  articleValidationSchema,
+  deleteArticleFormImage,
+  deleteMetatag,
+  fetchArticleFormOptions,
+  fetchArticlePlaces,
+  hasMainArticleImage,
+  navigateToArticles,
+  toggleDialog,
+} from "@/utils/articleFormHelpers";
+import {
+  isBestTimeToVisitSectionIcon,
+  isCountryLanguageSectionIcon,
+  isEntryRequirementsSectionIcon,
+} from "@/utils/sectionSpecialFeatures";
+import { parseBooleanValue } from "@/utils/parseBooleanValue";
+import {
+  formatDateTimeInTimeZone,
+  formatDateTimeLocalInput,
+  getArticleScheduleTimeZoneOptions,
+  getBrowserTimeZone,
+  getScheduleStatus,
+  ZAGREB_TIME_ZONE,
+  zonedDateTimeLocalToUtcIso,
+} from "@/utils/articleSchedule";
+import AffiliateLinksEditor from "@/components/admin/organisms/AffiliateLinksEditor/AffiliateLinksEditor";
+import {
+  getAffiliatePartners,
+  mergeArticleAffiliateLinks,
+  persistAffiliatePartners,
+  saveArticleAffiliateLinks,
+} from "@/utils/affiliateLinks";
 
 const EditArticle = () => {
   const params = useParams();
@@ -63,83 +107,66 @@ const EditArticle = () => {
   const [sectionIcons, setSectionIcons] = useState<SectionIconsData | string>(
     ""
   );
+  const [affiliateLinks, setAffiliateLinks] = useState([]);
   const [selectedCountryId, setSelectedCountryId] = useState("");
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [modalInputValue, setModalInputValue] = useState("");
   const [imageHeightValue, setImageHeightValue] = useState("");
   const [imageWidthValue, setImageWidthValue] = useState("");
-  // images
+
   const [imageType, setImageType] = useState<string | null>(null);
   const [sectionSelected, setSectionSelected] = useState<number>(0);
   const [mainArticleImage, setMainArticleImage] = useState<string>("");
-  const [sectionImages, setSectionImages] = useState<Array<Array<string>>>([
-    [],
-  ]);
+  const [sectionImages, setSectionImages] = useState<Array<Array<SectionImage>>>(
+    []
+  );
   const [otherArticleImages, setOtherArticleImages] = useState([]);
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
 
   const [isMainCountryPostChecked, setIsMainCountryPostChecked] =
     useState(false);
   const [isMainCountryPost, setIsMainCountryPost] = useState(false);
-
-  const ValidationSchema = Yup.object().shape({
-    article_title: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Naslov smije imati max 100 znakova!"),
-    article_subtitle: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Podnaslov smije imati max 100 znakova!"),
-    article_description: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Opis smije imati max 100 znakova!"),
-    article_type: Yup.number().required("Obavezno polje!").integer(),
-    article_airport_city_id: Yup.number().when("article_type", {
-      is: 2,
-      then: () => Yup.number().required("Obavezno polje!").integer(),
-      otherwise: () => Yup.number().notRequired(),
-    }),
-    article_country: Yup.number().when("article_type", {
-      is: 1,
-      then: () => Yup.number().required("Obavezno polje!").integer(),
-      otherwise: () => Yup.number().notRequired(),
-    }),
-    metatags: Yup.array().of(
-      Yup.object().shape({
-        metatag_text: Yup.string().required("Obavezno polje!"),
-      })
-    ),
-    sections: Yup.array().of(
-      Yup.object().shape({
-        section_subtitle: Yup.string().max(
-          100,
-          "Podnaslov smije imati max 100 znakova!"
-        ),
-        section_url_title: Yup.string().max(
-          100,
-          "Naslov linka smije imati max 100 znakova!"
-        ),
-      })
-    ),
-  });
-
-  const validateImages = () => {
-    return mainArticleImage != "" && mainArticleImage;
-  };
+  const [isFarDestinationChecked, setIsFarDestinationChecked] = useState(false);
+  const [isTipsFeaturedChecked, setIsTipsFeaturedChecked] = useState(false);
+  const [isScheduleChecked, setIsScheduleChecked] = useState(false);
+  const [scheduleDateTime, setScheduleDateTime] = useState("");
+  const [scheduleTimezone, setScheduleTimezone] = useState(getBrowserTimeZone());
+  const [
+    notifySubscribersOnPublish,
+    setNotifySubscribersOnPublish,
+  ] = useState(false);
 
   const handleSave = async (values: any) => {
     console.log("=== HANDLE SAVE STARTED ===");
     setIsSubmitClicked(true);
 
-    if (!validateImages()) {
+    if (!hasMainArticleImage(mainArticleImage)) {
       console.log("❌ Image validation failed");
       return;
     }
 
     console.log("✅ Images validated");
+    const canEditSchedule = getScheduleStatus(article).className === "scheduled";
+    const publishAt = canEditSchedule && isScheduleChecked
+      ? zonedDateTimeLocalToUtcIso(scheduleDateTime, scheduleTimezone)
+      : null;
+    const shouldSendSchedulePayload = canEditSchedule;
+
+    if (canEditSchedule && isScheduleChecked && !publishAt) {
+      notifyFailure("Odaberite datum i vrijeme zakazane objave.");
+      return;
+    }
+
+    if (publishAt && new Date(publishAt).getTime() <= Date.now()) {
+      notifyFailure("Zakazana objava mora biti u budućnosti.");
+      return;
+    }
 
     const result = await Swal.fire({
       title: "Jeste li sigurni?",
-      text: "Objavit ćete ovaj uređeni članak",
+      text: isScheduleChecked
+        ? "Spremit ćete izmjene i zakazati objavu članka"
+        : "Objavit ćete ovaj uređeni članak",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#2BAC82",
@@ -158,7 +185,6 @@ const EditArticle = () => {
     try {
       console.log("=== STARTING UPDATE PROCESS ===");
 
-      // Build metatags string
       let metatagsString = "";
       values.metatags.forEach(
         (el, index) =>
@@ -166,7 +192,9 @@ const EditArticle = () => {
       );
       console.log("Metatags string:", metatagsString);
 
-      // 1. Update main article
+      const dateString = new Date().toJSON().slice(0, 10);
+      const todaysDate = new Date(dateString);
+
       console.log("1️⃣ Updating main article...", {
         id: article.id,
         title: values.article_title,
@@ -178,6 +206,9 @@ const EditArticle = () => {
         article_country: values.article_country,
         article_place: values.article_place,
         article_airport_city_id: values.article_airport_city_id,
+        is_far_destination: isFarDestinationChecked,
+        is_tips_featured:
+          isTipsArticleType(values.article_type) && isTipsFeaturedChecked,
       });
 
       const articleResponse = await updateArticle(
@@ -187,15 +218,31 @@ const EditArticle = () => {
         values.article_description,
         metatagsString,
         mainArticleImage,
+        article.date_written,
+        todaysDate,
         values.article_type,
         values.article_country,
         values.article_place,
-        values.article_airport_city_id
+        values.article_airport_city_id,
+        isFarDestinationChecked,
+        isTipsArticleType(values.article_type) && isTipsFeaturedChecked,
+        shouldSendSchedulePayload ? publishAt : undefined,
+        shouldSendSchedulePayload ? scheduleTimezone : undefined,
+        shouldSendSchedulePayload
+          ? isScheduleChecked && notifySubscribersOnPublish
+          : undefined
       );
 
       console.log("✅ Article updated:", articleResponse);
 
-      // 2. Update/Add sections
+      if (affiliateLinks.length > 0) {
+        const persistedAffiliateLinks = await persistAffiliatePartners(
+          affiliateLinks
+        );
+        setAffiliateLinks(persistedAffiliateLinks);
+        await saveArticleAffiliateLinks(article.id, persistedAffiliateLinks);
+      }
+
       console.log(
         "2️⃣ Updating sections...",
         values.sections.length,
@@ -210,7 +257,6 @@ const EditArticle = () => {
           );
 
           if (el.section_id) {
-            // Update existing section
             const sectionResponse = await updateSection(
               el.section_id,
               el.section_text,
@@ -218,11 +264,14 @@ const EditArticle = () => {
               index + 1,
               el.section_url_title,
               el.section_url_link,
-              el.section_icon
+              el.section_icon,
+              Boolean(el.show_visa_info),
+              Boolean(el.show_best_time_to_visit),
+              Boolean(el.show_country_language)
             );
+
             console.log(`   ✅ Section ${index + 1} updated:`, sectionResponse);
 
-            // Add new images to existing section
             const newImages =
               sectionImages[index]?.filter((img) => !img.id) || [];
             console.log(
@@ -242,7 +291,6 @@ const EditArticle = () => {
               })
             );
           } else {
-            // Add new section
             const response = await addSection(
               el.section_text,
               el.section_subtitle,
@@ -250,11 +298,14 @@ const EditArticle = () => {
               el.section_url_title,
               el.section_url_link,
               el.section_icon,
-              article.id
+              article.id,
+              Boolean(el.show_visa_info),
+              Boolean(el.show_best_time_to_visit),
+              Boolean(el.show_country_language)
             );
+
             console.log(`   ✅ Section ${index + 1} created:`, response);
 
-            // Add images to new section
             const newImages = sectionImages[index] || [];
             console.log(`   Adding ${newImages.length} images to new section`);
 
@@ -263,8 +314,8 @@ const EditArticle = () => {
                 const imgResponse = await addSectionImage(
                   image.url,
                   response.id,
-                  image.height,
-                  image.width
+                  image.width,
+                  image.height
                 );
                 console.log(`   ✅ Image added to new section:`, imgResponse);
                 return imgResponse;
@@ -276,7 +327,6 @@ const EditArticle = () => {
 
       console.log("✅ All sections updated");
 
-      // 3. Delete removed sections
       const removedSections = article.sections
         .map((section) => section.id)
         .filter(
@@ -296,17 +346,26 @@ const EditArticle = () => {
 
       console.log("✅ Removed sections deleted");
 
-      // 4. Delete removed section images
-      const removedSectionImages = article.sections.map((section, index) =>
-        section.section_images
+      const removedSectionImages = article.sections.flatMap((originalSection) => {
+         const currentSectionIndex = values.sections.findIndex(
+          (section: any) => section.section_id === originalSection.id
+        );
+
+        if (currentSectionIndex === -1) {
+          return [];
+        }
+
+        const currentImagesForSection = sectionImages[currentSectionIndex] || [];
+
+        return originalSection.section_images
           .map((image: SectionImage) => image.id)
           .filter(
             (imageId: number) =>
-              !sectionImages[index]?.some((img) => img.id === imageId)
-          )
-      );
+              !currentImagesForSection.some((img: SectionImage) => img.id === imageId)
+          );
+      });
 
-      const flatRemovedImages = removedSectionImages.flat();
+const flatRemovedImages = removedSectionImages;
       console.log("4️⃣ Deleting removed section images:", flatRemovedImages);
 
       await Promise.all(
@@ -319,7 +378,6 @@ const EditArticle = () => {
 
       console.log("✅ Removed section images deleted");
 
-      // 5. Add new gallery images
       const newGalleryImages = otherArticleImages.filter((img) => !img.id);
       console.log("5️⃣ Adding new gallery images:", newGalleryImages.length);
 
@@ -338,7 +396,6 @@ const EditArticle = () => {
 
       console.log("✅ Gallery images added");
 
-      // 6. Delete removed gallery images
       const removedGalleryImages = article.gallery_images
         .map((image: GalleryImage) => image.id)
         .filter(
@@ -357,7 +414,6 @@ const EditArticle = () => {
 
       console.log("✅ Gallery images deleted");
 
-      // 7. Handle top country article
       console.log("7️⃣ Handling top country article...");
       console.log("   isMainCountryPostChecked:", isMainCountryPostChecked);
       console.log("   isMainCountryPost:", isMainCountryPost);
@@ -374,24 +430,20 @@ const EditArticle = () => {
 
       console.log("✅ Top country article handled");
 
-      // 8 Handle video update/add/delete
       console.log("Handling video...");
       const hasVideo =
         values.article_video && values.article_video.trim() !== "";
       const existingVideo = article.video;
 
       if (hasVideo && existingVideo) {
-        // Update existing video
         console.log("   Updating existing video...", existingVideo.id);
         await updateVideo(existingVideo.id, values.article_video);
         console.log("   ✅ Video updated");
       } else if (hasVideo && !existingVideo) {
-        // Add new video
         console.log("   Adding new video...");
         await addVideo(values.article_video, article.id, null, null);
         console.log("   ✅ Video added");
       } else if (!hasVideo && existingVideo) {
-        // Delete existing video
         console.log("   Deleting existing video...", existingVideo.id);
         await deleteVideo(existingVideo.id);
         console.log("   ✅ Video deleted");
@@ -399,10 +451,7 @@ const EditArticle = () => {
         console.log("   No video changes needed");
       }
 
-      // 8. Success!
       console.log("=== UPDATE COMPLETE ===");
-      console.log("🎉 Navigating to /admin/clanci");
-
       router.push("/admin/clanci");
       notifySuccess("Uspješno uređen članak!");
     } catch (error) {
@@ -449,37 +498,26 @@ const EditArticle = () => {
   };
 
   const handleCancel = () => {
-    router.push("/admin/clanci");
+    navigateToArticles(router);
   };
 
   const handleDeleteSection = (arrayHelpers, sectionIndex) => {
-    arrayHelpers.remove(sectionIndex);
-    setSectionImages(
-      sectionImages.filter((_el, index) => index !== sectionIndex)
-    );
+    deleteArticleSection(arrayHelpers, setSectionImages, sectionIndex);
   };
 
   const handleAddSection = (arrayHelpers) => {
-    arrayHelpers.push({
-      id: null,
-      section_subtitle: "",
-      section_text: "",
-      section_url_title: "",
-      section_url_link: "",
-      section_icon: null,
-      order: 1,
-    });
-    setSectionImages([...sectionImages, []]);
-  };
-
-  const handleAddMetatag = (arrayHelpers) => {
-    arrayHelpers.push({
-      metatag_text: "",
-    });
-  };
-
-  const handleDeleteMetatag = (arrayHelpers, tagIndex) => {
-    arrayHelpers.remove(tagIndex);
+    addArticleSection(
+      arrayHelpers,
+      setSectionImages,
+      {
+        ...createEmptyArticleSection({
+          includeId: true,
+          includeSectionId: true,
+          includeOrder: true,
+        }),
+        form_key: crypto.randomUUID(),
+      }
+    );
   };
 
   const handleDeleteImage = (
@@ -487,85 +525,98 @@ const EditArticle = () => {
     itemIndex?: number,
     sectionIndex?: number
   ) => {
-    if (type == "main") {
-      setMainArticleImage(null);
-    } else if (type == "other") {
-      setOtherArticleImages(
-        otherArticleImages.filter((_el, index) => index !== itemIndex)
-      );
-    } else if (type == "section") {
-      setSectionImages((prevSectionImages) => [
-        ...prevSectionImages.slice(0, sectionIndex), // kopija polja prije indexa odabrane sekcije
-        prevSectionImages[sectionIndex].filter(
-          (_el, index) => index !== itemIndex
-        ), // micanje slike prema indexu slike prema indexu
-        ...prevSectionImages.slice(sectionIndex + 1), // kopija polja nakon indexa odabrane sekcije
-      ]);
-    }
-    setImageType(null);
-  };
-
-  const toggleDialog = () => {
-    if (dialogRef && dialogRef.current) {
-      dialogRef.current.hasAttribute("open")
-        ? dialogRef.current.close()
-        : dialogRef.current.showModal();
-    }
+    deleteArticleFormImage({
+      type,
+      itemIndex,
+      sectionIndex,
+      setMainArticleImage,
+      setOtherArticleImages,
+      setSectionImages,
+      setImageType,
+      emptyMainImageValue: null,
+    });
   };
 
   const handleAddImage = () => {
-    if (imageType == "main") {
-      setMainArticleImage(modalInputValue);
-    } else if (imageType == "other") {
-      setOtherArticleImages([
-        ...otherArticleImages,
-        {
-          url: modalInputValue,
-          width: imageWidthValue,
-          height: imageHeightValue,
-        },
-      ]);
-    } else if (imageType == "section") {
-      setSectionImages((prevSectionImages) => [
-        ...prevSectionImages.slice(0, sectionSelected), // kopija polja prije indexa odabrane sekcije
-        [
-          ...prevSectionImages[sectionSelected],
-          {
-            id: null,
-            url: modalInputValue,
-            width: imageWidthValue | null,
-            height: imageHeightValue | null,
-          },
-        ], // dodavanje slike na kraj odabrane sekcije
-        ...prevSectionImages.slice(sectionSelected + 1), // kopija polja nakon indexa odabrane sekcije
-      ]);
-    }
-    setModalInputValue("");
-    setImageHeightValue("");
-    setImageWidthValue("");
+    addArticleFormImage({
+      imageType,
+      modalInputValue,
+      imageWidthValue,
+      imageHeightValue,
+      sectionSelected,
+      setMainArticleImage,
+      setOtherArticleImages,
+      setSectionImages,
+      setModalInputValue,
+      setImageHeightValue,
+      setImageWidthValue,
+      includeOtherImageDimensions: true,
+      includeSectionImageId: true,
+      emptySectionImageDimensionValue: null,
+    });
   };
 
   const fetchData = async () => {
     try {
       console.log("Fetching data for article ID:", id);
       if (id) {
-        const articleTypesData = await getArticleTypes();
-        const countriesData = await getVisitedCountries();
-        const sectionIconsData = await getSectionIcons();
+        const {
+          articleTypesData,
+          countriesData,
+          sectionIconsData,
+          airportsData,
+        } = await fetchArticleFormOptions();
         const articleData = await getArticleById(parseInt(id), true);
-        const isSetAsMainCountryPost = await getFavoriteArticleByCountry(
-          articleData.countryId,
-          true
-        );
-        const airportsData = await getAirportCities();
+        let partners = [];
+        try {
+          partners = await getAffiliatePartners();
+        } catch (error) {
+          console.warn("Affiliate tables are not installed yet.", error);
+        }
+
+        let isSetAsMainCountryPost = null;
+
+        if (articleData.countryId) {
+          isSetAsMainCountryPost = await getFavoriteArticleByCountry(
+            articleData.countryId,
+            true
+          );
+        }
 
         setArticleTypes(articleTypesData);
         setCountries(countriesData);
         setSectionIcons(sectionIconsData);
         setArticle(articleData);
+        setAffiliateLinks(
+          mergeArticleAffiliateLinks(
+            partners,
+            articleData.affiliate_links,
+            false
+          )
+        );
         setMainArticleImage(articleData.main_image_url);
-        setIsMainCountryPostChecked(isSetAsMainCountryPost.id == id);
-        setIsMainCountryPost(isSetAsMainCountryPost.id == id);
+        setIsMainCountryPostChecked(isSetAsMainCountryPost?.id == id);
+        setIsMainCountryPost(isSetAsMainCountryPost?.id == id);
+        setSelectedCountryId(articleData.countryId || "");
+        setIsFarDestinationChecked(Boolean(articleData.isFarDestination));
+        setIsTipsFeaturedChecked(parseBooleanValue(articleData.isTipsFeatured));
+        const schedule = articleData.article_schedule;
+        const scheduleStatus = getScheduleStatus(articleData);
+        const isScheduledArticle = scheduleStatus.className === "scheduled";
+
+        setIsScheduleChecked(isScheduledArticle);
+        setScheduleTimezone(schedule?.publish_timezone || getBrowserTimeZone());
+        setScheduleDateTime(
+          isScheduledArticle && schedule?.publish_at
+            ? formatDateTimeLocalInput(
+                schedule.publish_at,
+                schedule.publish_timezone || getBrowserTimeZone()
+              )
+            : ""
+        );
+        setNotifySubscribersOnPublish(
+          Boolean(schedule?.notify_subscribers_on_publish)
+        );
         setSectionImages(
           articleData.sections.map((section) => section.section_images)
         );
@@ -578,7 +629,7 @@ const EditArticle = () => {
   };
 
   const fetchPlacesData = async () => {
-    const placesData = await getPlacesByCountry(parseInt(selectedCountryId));
+    const placesData = await fetchArticlePlaces(selectedCountryId);
     setPlaces(placesData);
   };
 
@@ -620,6 +671,7 @@ const EditArticle = () => {
         <div className="edit-article-container">
           <div className="edit-article-header">
             <h2>Uredi članak</h2>
+
             <Button
               red
               disabled={!article}
@@ -630,6 +682,7 @@ const EditArticle = () => {
               IZBRIŠI ČLANAK
             </Button>
           </div>
+
           {articleTypes && countries && article ? (
             <Formik
               initialValues={{
@@ -646,16 +699,26 @@ const EditArticle = () => {
                 })),
                 sections: article.sections
                   ? article.sections.map((el) => ({
+                      form_key: `existing-section-${el.id}`,
                       section_id: el.id,
                       section_subtitle: el.subtitle,
                       section_text: el.text,
                       section_url_title: el.link_title,
                       section_url_link: el.link_url,
                       section_icon: el.sectionIconId,
+                      show_visa_info:
+                        parseBooleanValue(el.show_visa_info) ||
+                        parseBooleanValue(el.showVisaInfo),
+                      show_best_time_to_visit:
+                        parseBooleanValue(el.show_best_time_to_visit) ||
+                        parseBooleanValue(el.showBestTimeToVisit),
+                      show_country_language:
+                        parseBooleanValue(el.show_country_language) ||
+                        parseBooleanValue(el.showCountryLanguage),
                     }))
                   : [],
               }}
-              validationSchema={ValidationSchema}
+              validationSchema={articleValidationSchema}
               onSubmit={handleSave}
               enableReinitialize={true}
             >
@@ -676,6 +739,7 @@ const EditArticle = () => {
                         className="error-message"
                       />
                     </div>
+
                     <div className="edit-article-input">
                       <Field
                         name="article_subtitle"
@@ -689,7 +753,8 @@ const EditArticle = () => {
                         className="error-message"
                       />
                     </div>
-                    <div className="add-article-input">
+
+                    <div className="edit-article-input">
                       <Field
                         name="article_description"
                         type="text"
@@ -705,8 +770,9 @@ const EditArticle = () => {
                         className="error-message"
                       />
                     </div>
+
                     <div className="edit-article-dropdowns">
-                      <div className="add-article-input">
+                      <div className="edit-article-input">
                         <Dropdown
                           hardcodedValue={
                             "Odaberi u kojem će se meniju prikazivat"
@@ -718,6 +784,37 @@ const EditArticle = () => {
                             setFieldValue("article_airport_city_id", null);
                             setFieldValue("article_place", null);
                             setFieldValue("article_country", null);
+                            setSelectedCountryId("");
+
+                            values.sections.forEach(
+                              (_section: any, index: number) => {
+                                setFieldValue(
+                                  `sections.${index}.show_visa_info`,
+                                  false
+                                );
+                                setFieldValue(
+                                  `sections.${index}.show_best_time_to_visit`,
+                                  false
+                                );
+                                setFieldValue(
+                                  `sections.${index}.show_country_language`,
+                                  false
+                                );
+                              }
+                            );
+
+                            if (value != ARTICLE_TYPE_AIRPLANE_TICKET_ID) {
+                              setIsFarDestinationChecked(false);
+                            }
+
+                            if (value != ARTICLE_TYPE_DESTINATION_ID) {
+                              setIsMainCountryPostChecked(false);
+                              setIsMainCountryPost(false);
+                            }
+
+                            if (!isTipsArticleType(value)) {
+                              setIsTipsFeaturedChecked(false);
+                            }
                           }}
                           label="Vrsta članka *"
                         />
@@ -727,15 +824,17 @@ const EditArticle = () => {
                           className="error-message"
                         />
                       </div>
+
                       <Field
                         name="article_video"
                         as={Input}
                         label="Videozapis (opcionalno) "
                         placeholder={"Unesi link videa"}
                       />
-                      {values.article_type == "1" && (
+
+                      {values.article_type == ARTICLE_TYPE_DESTINATION_ID && (
                         <>
-                          <div className="add-article-input">
+                          <div className="edit-article-input">
                             <Field
                               name="article_country"
                               type="text"
@@ -744,6 +843,31 @@ const EditArticle = () => {
                               hardcodedValue="Odaberi državu o kojoj se radi..."
                               options={countries}
                               onChange={(value) => {
+                                if (!value) {
+                                  setFieldValue("article_country", null);
+                                  setFieldValue("article_place", null);
+                                  setSelectedCountryId("");
+
+                                  values.sections.forEach(
+                                    (_section: any, index: number) => {
+                                      setFieldValue(
+                                        `sections.${index}.show_visa_info`,
+                                        false
+                                      );
+                                      setFieldValue(
+                                        `sections.${index}.show_best_time_to_visit`,
+                                        false
+                                      );
+                                      setFieldValue(
+                                        `sections.${index}.show_country_language`,
+                                        false
+                                      );
+                                    }
+                                  );
+
+                                  return;
+                                }
+
                                 setFieldValue("article_country", value.id);
                                 setSelectedCountryId(value.id);
                               }}
@@ -770,7 +894,10 @@ const EditArticle = () => {
                                 hardcodedValue="Odaberi grad ili mjesto o kojem se radi"
                                 options={places}
                                 onChange={(value) => {
-                                  setFieldValue("article_place", value.id);
+                                  setFieldValue(
+                                    "article_place",
+                                    value ? value.id : null
+                                  );
                                 }}
                                 selectedValue={values.article_place}
                                 filter
@@ -778,34 +905,54 @@ const EditArticle = () => {
                             )}
                         </>
                       )}
-                      {values.article_type == "2" && airportCities && (
-                        <div className="add-article-input">
-                          <Field
-                            name="article_airport_city_id"
-                            type="text"
-                            as={AdvancedDropdown}
-                            label="Aerodrom *"
-                            hardcodedValue="Odaberi aerodrom iz kojeg se kreće..."
-                            options={airportCities}
-                            onChange={(value) => {
-                              setFieldValue(
-                                "article_airport_city_id",
-                                value.id
-                              );
-                            }}
-                            selectedValue={values.article_airport_city_id}
-                            imageAttribute="flag_url"
-                            images
-                          />
-                          <ErrorMessage
-                            name="article_airport_city_id"
-                            component="div"
-                            className="error-message"
-                          />
-                        </div>
-                      )}
+
+                      {values.article_type == ARTICLE_TYPE_AIRPLANE_TICKET_ID &&
+                        airportCities && (
+                          <div className="edit-article-airport-row">
+                            <div className="edit-article-input">
+                              <Field
+                                name="article_airport_city_id"
+                                type="text"
+                                as={AdvancedDropdown}
+                                label="Aerodrom *"
+                                hardcodedValue="Odaberi aerodrom iz kojeg se kreće..."
+                                options={airportCities}
+                                onChange={(value) => {
+                                  setFieldValue(
+                                    "article_airport_city_id",
+                                    value ? value.id : null
+                                  );
+                                }}
+                                selectedValue={values.article_airport_city_id}
+                                imageAttribute="flag_url"
+                                images
+                              />
+                              <ErrorMessage
+                                name="article_airport_city_id"
+                                component="div"
+                                className="error-message"
+                              />
+                            </div>
+
+                            <div className="edit-article-airport-toggle">
+                              <div className="edit-article-toggle-item">
+                                <ToggleSwitch
+                                  name={"far-destination"}
+                                  description={"Daleka destinacija?"}
+                                  value={isFarDestinationChecked}
+                                  setter={() =>
+                                    setIsFarDestinationChecked(
+                                      !isFarDestinationChecked
+                                    )
+                                  }
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        )}
                     </div>
-                    {values.article_type == "1" &&
+
+                    {values.article_type == ARTICLE_TYPE_DESTINATION_ID &&
                       values.article_country != "" &&
                       values.article_country && (
                         <Button
@@ -814,12 +961,30 @@ const EditArticle = () => {
                             setSelectedCountryId(null);
                             setFieldValue("article_country", null);
                             setFieldValue("article_place", null);
+
+                            values.sections.forEach(
+                              (_section: any, index: number) => {
+                                setFieldValue(
+                                  `sections.${index}.show_visa_info`,
+                                  false
+                                );
+                                setFieldValue(
+                                  `sections.${index}.show_best_time_to_visit`,
+                                  false
+                                );
+                                setFieldValue(
+                                  `sections.${index}.show_country_language`,
+                                  false
+                                );
+                              }
+                            );
                           }}
                         >
                           ukloni odabranu državu i grad
                         </Button>
                       )}
                   </div>
+
                   <div className="edit-article-images-container">
                     {mainArticleImage ? (
                       <div
@@ -840,7 +1005,7 @@ const EditArticle = () => {
                       <div
                         className="edit-article-item"
                         onClick={() => {
-                          toggleDialog();
+                          toggleDialog(dialogRef);
                           setImageType("main");
                         }}
                       >
@@ -848,14 +1013,17 @@ const EditArticle = () => {
                       </div>
                     )}
                   </div>
+
                   {isSubmitClicked &&
                     (mainArticleImage == "" || !mainArticleImage) && (
                       <p className="error-message">Obavezno polje!</p>
                     )}
+
                   <p>* preporuča se slika u omjeru 16:9</p>
 
                   <div>
                     <h6>Odlomci</h6>
+
                     <FieldArray
                       name="sections"
                       render={(arrayHelpers) => {
@@ -864,141 +1032,469 @@ const EditArticle = () => {
                         return (
                           <div className="edit-article-sections-container">
                             {sections && sections.length > 0
-                              ? sections.map((_section, index) => (
-                                  <fieldset
-                                    key={index}
-                                    className="edit-article-section"
-                                  >
-                                    <legend>Odlomak {index + 1}</legend>
-                                    <div className="edit-article-section-top">
-                                      <div className="edit-article-section-top-item">
+                              ? sections.map((section, index) => {
+                                  const selectedIcon = getSelectedSectionIcon(
+                                    sectionIcons,
+                                    section.section_icon
+                                  );
+                                  const selectedIconUrl =
+                                    getSectionIconUrl(selectedIcon);
+                                  const isEntryRequirementsIconSelected =
+                                    isEntryRequirementsSectionIcon(
+                                      selectedIcon
+                                    );
+                                  const isBestTimeToVisitIconSelected =
+                                    isBestTimeToVisitSectionIcon(selectedIcon);
+                                  const isCountryLanguageIconSelected =
+                                    isCountryLanguageSectionIcon(selectedIcon);
+
+                                  const isSpecialFeatureIconSelected =
+                                    isEntryRequirementsIconSelected ||
+                                    isBestTimeToVisitIconSelected ||
+                                    isCountryLanguageIconSelected;
+
+                                  const canShowVisaInfoToggle =
+                                    isEntryRequirementsIconSelected &&
+                                    values.article_type ==
+                                      ARTICLE_TYPE_DESTINATION_ID &&
+                                    values.article_country;
+
+                                  const canShowBestTimeToVisitToggle =
+                                    isBestTimeToVisitIconSelected &&
+                                    values.article_type ==
+                                      ARTICLE_TYPE_DESTINATION_ID &&
+                                    values.article_country;
+
+                                  const canShowCountryLanguageToggle =
+                                    isCountryLanguageIconSelected &&
+                                    values.article_type ==
+                                      ARTICLE_TYPE_DESTINATION_ID &&
+                                    values.article_country;
+
+                                  return (
+                                    <fieldset
+                                      key={section.form_key || section.section_id || `section-${index}`}
+                                      className="edit-article-section"
+                                    >
+                                      <legend>Odlomak {index + 1}</legend>
+
+                                      <SectionActions
+                                        index={index}
+                                        total={sections.length}
+                                        onInsertBelow={() =>
+                                          insertArticleSectionAfter(
+                                            arrayHelpers,
+                                            setSectionImages,
+                                            index,
+                                            {
+                                              ...createEmptyArticleSection({
+                                                includeSectionId: true,
+                                              }),
+                                              form_key: crypto.randomUUID(),
+                                            }
+                                          )
+                                        }
+                                        onMoveUp={() =>
+                                          moveArticleSection(
+                                            arrayHelpers,
+                                            setSectionImages,
+                                            index,
+                                            index - 1
+                                          )
+                                        }
+                                        onMoveDown={() =>
+                                          moveArticleSection(
+                                            arrayHelpers,
+                                            setSectionImages,
+                                            index,
+                                            index + 1
+                                          )
+                                        }
+                                      />
+
+                                      <div className="edit-article-section-top">
+                                        <div className="edit-article-section-top-item">
+                                          <Field
+                                            name={`sections.${index}.section_subtitle`}
+                                            type="text"
+                                            as={Input}
+                                            label="Podnaslov odlomka (opcionalno)"
+                                            placeholder="Unesi podnaslov odlomka..."
+                                          />
+                                        </div>
+
+                                        <div
+                                          className={`edit-article-section-top-item ${
+                                            isSpecialFeatureIconSelected
+                                              ? "is-special-entry-requirements"
+                                              : ""
+                                          }`}
+                                        >
+                                          <Field
+                                            type="text"
+                                            as={AdvancedDropdown}
+                                            hardcodedValue="Odaberi..."
+                                            label="Vrsta ikone"
+                                            name={`sections.${index}.section_icon`}
+                                            options={sectionIcons}
+                                            onChange={(
+                                              value: SectionIconsData
+                                            ) => {
+                                              if (!value) {
+                                                setFieldValue(
+                                                  `sections.${index}.section_icon`,
+                                                  null
+                                                );
+                                                setFieldValue(
+                                                  `sections.${index}.show_visa_info`,
+                                                  false
+                                                );
+                                                setFieldValue(
+                                                  `sections.${index}.show_best_time_to_visit`,
+                                                  false
+                                                );
+                                                setFieldValue(
+                                                  `sections.${index}.show_country_language`,
+                                                  false
+                                                );
+                                                return;
+                                              }
+
+                                              const isEntryRequirementsIcon =
+                                                isEntryRequirementsSectionIcon(
+                                                  value
+                                                );
+                                              const isBestTimeToVisitIcon =
+                                                isBestTimeToVisitSectionIcon(
+                                                  value
+                                                );
+                                              const isCountryLanguageIcon =
+                                                isCountryLanguageSectionIcon(
+                                                  value
+                                                );
+
+                                              setFieldValue(
+                                                `sections.${index}.section_icon`,
+                                                value.id
+                                              );
+
+                                              if (!isEntryRequirementsIcon) {
+                                                setFieldValue(
+                                                  `sections.${index}.show_visa_info`,
+                                                  false
+                                                );
+                                              }
+
+                                              if (!isBestTimeToVisitIcon) {
+                                                setFieldValue(
+                                                  `sections.${index}.show_best_time_to_visit`,
+                                                  false
+                                                );
+                                              }
+
+                                              if (!isCountryLanguageIcon) {
+                                                setFieldValue(
+                                                  `sections.${index}.show_country_language`,
+                                                  false
+                                                );
+                                              }
+                                            }}
+                                            selectedValue={
+                                              values.sections[index]
+                                                .section_icon
+                                            }
+                                            filter={false}
+                                            images={true}
+                                          />
+                                        </div>
+                                      </div>
+
+                                      {isEntryRequirementsIconSelected && (
+                                        <div className="edit-article-special-feature-panel">
+                                          <div className="edit-article-special-feature-header">
+                                            {selectedIconUrl && (
+                                              <img
+                                                src={selectedIconUrl}
+                                                alt="Ikonica uvjeta ulaska"
+                                              />
+                                            )}
+
+                                            <div>
+                                              <strong>
+                                                Posebni blok za uvjete ulaska
+                                              </strong>
+                                              <p>
+                                                Ova ikonica može prikazati
+                                                interaktivni blok u kojem
+                                                čitatelj sam bira svoje
+                                                državljanstvo i provjerava treba
+                                                li mu osobna, putovnica ili
+                                                viza.
+                                              </p>
+                                            </div>
+                                          </div>
+
+                                          {canShowVisaInfoToggle ? (
+                                            <div className="edit-article-special-feature-toggle">
+                                              <ToggleSwitch
+                                                name={`show-visa-info-${index}`}
+                                                description={
+                                                  "Prikaži uvjete ulaska u državu u ovom odlomku"
+                                                }
+                                                value={Boolean(
+                                                  section.show_visa_info
+                                                )}
+                                                setter={() =>
+                                                  setFieldValue(
+                                                    `sections.${index}.show_visa_info`,
+                                                    !section.show_visa_info
+                                                  )
+                                                }
+                                              />
+
+                                              <p>
+                                                Ako označite ovu opciju,
+                                                VisaInfo blok će se prikazati
+                                                iznad teksta ovog odlomka na
+                                                stranici članka.
+                                              </p>
+                                            </div>
+                                          ) : (
+                                            <p className="edit-article-special-feature-warning">
+                                              Za prikaz uvjeta ulaska članak
+                                              mora biti vezan uz državu. Prvo
+                                              odaberite vrstu članka
+                                              “Destinacija” i državu članka.
+                                            </p>
+                                          )}
+                                        </div>
+                                      )}
+
+                                      {isBestTimeToVisitIconSelected && (
+                                        <div className="edit-article-special-feature-panel">
+                                          <div className="edit-article-special-feature-header">
+                                            {selectedIconUrl && (
+                                              <img
+                                                src={selectedIconUrl}
+                                                alt="Ikonica najboljeg vremena za posjet"
+                                              />
+                                            )}
+
+                                            <div>
+                                              <strong>
+                                                Posebni blok za najbolje vrijeme za posjet
+                                              </strong>
+                                              <p>
+                                                Ova ikonica može prikazati
+                                                interaktivni blok koji čitatelju
+                                                pokazuje najbolje mjesece za
+                                                posjet. Ako je članak vezan uz
+                                                grad, prikazat će se podaci za
+                                                grad. Ako je vezan samo uz
+                                                državu, prikazat će se podaci za
+                                                državu.
+                                              </p>
+                                            </div>
+                                          </div>
+
+                                          {canShowBestTimeToVisitToggle ? (
+                                            <div className="edit-article-special-feature-toggle">
+                                              <ToggleSwitch
+                                                name={`show-best-time-to-visit-${index}`}
+                                                description={
+                                                  "Prikaži najbolje vrijeme za posjet u ovom odlomku"
+                                                }
+                                                value={Boolean(
+                                                  section.show_best_time_to_visit
+                                                )}
+                                                setter={() =>
+                                                  setFieldValue(
+                                                    `sections.${index}.show_best_time_to_visit`,
+                                                    !section.show_best_time_to_visit
+                                                  )
+                                                }
+                                              />
+
+                                              <p>
+                                                Ako označite ovu opciju, blok
+                                                najboljeg vremena za posjet
+                                                prikazat će se iznad teksta ovog
+                                                odlomka na stranici članka.
+                                              </p>
+                                            </div>
+                                          ) : (
+                                            <p className="edit-article-special-feature-warning">
+                                              Za prikaz najboljeg vremena za
+                                              posjet članak mora biti vezan uz
+                                              državu. Ako odaberete i grad,
+                                              prikazat će se gradska varijanta
+                                              bloka.
+                                            </p>
+                                          )}
+                                        </div>
+                                      )}
+
+{isCountryLanguageIconSelected && (
+                                        <div className="edit-article-special-feature-panel">
+                                          <div className="edit-article-special-feature-header">
+                                            {selectedIconUrl && (
+                                              <img
+                                                src={selectedIconUrl}
+                                                alt="Ikonica korisnih fraza i jezika"
+                                              />
+                                            )}
+
+                                            <div>
+                                              <strong>
+                                                Posebni blok za jezik i korisne fraze
+                                              </strong>
+                                              <p>
+                                                Ova ikonica može prikazati
+                                                interaktivni blok s osnovnim
+                                                korisnim frazama za državu
+                                                članka. Čitatelji mogu vidjeti
+                                                najvažnije izraze za putovanje,
+                                                poput pozdrava, zahvale i
+                                                osnovnih riječi.
+                                              </p>
+                                            </div>
+                                          </div>
+
+                                          {canShowCountryLanguageToggle ? (
+                                            <div className="edit-article-special-feature-toggle">
+                                              <ToggleSwitch
+                                                name={`show-country-language-${index}`}
+                                                description={
+                                                  "Prikaži jezik i korisne fraze u ovom odlomku"
+                                                }
+                                                value={Boolean(
+                                                  section.show_country_language
+                                                )}
+                                                setter={() =>
+                                                  setFieldValue(
+                                                    `sections.${index}.show_country_language`,
+                                                    !section.show_country_language
+                                                  )
+                                                }
+                                              />
+
+                                              <p>
+                                                Ako označite ovu opciju,
+                                                CountryLanguage blok prikazat će
+                                                se iznad teksta ovog odlomka na
+                                                stranici članka.
+                                              </p>
+                                            </div>
+                                          ) : (
+                                            <p className="edit-article-special-feature-warning">
+                                              Za prikaz jezika i korisnih fraza
+                                              članak mora biti vezan uz državu.
+                                              Prvo odaberite vrstu članka
+                                              “Destinacija” i državu članka.
+                                            </p>
+                                          )}
+                                        </div>
+                                      )}
+
+                                      <div className="edit-article-input">
                                         <Field
-                                          name={`sections.${index}.section_subtitle`}
-                                          type="text"
-                                          as={Input}
-                                          label="Podnaslov odlomka (opcionalno)"
-                                          placeholder="Unesi podnaslov odlomka..."
+                                          name={`sections[${index}].section_text`}
+                                          label="Tekst odlomka *"
+                                          as={AdvancedEditor}
+                                        />
+                                        <ErrorMessage
+                                          name={`sections[${index}].section_text`}
+                                          component="div"
+                                          className="error-message"
                                         />
                                       </div>
-                                      <div className="edit-article-section-top-item">
+
+                                      <div className="edit-article-section-bottom">
                                         <Field
                                           type="text"
-                                          as={AdvancedDropdown}
-                                          hardcodedValue="Odaberi..."
-                                          label="Vrsta ikone"
-                                          name={`sections.${index}.section_icon`}
-                                          options={sectionIcons}
-                                          onChange={(
-                                            value: SectionIconsData
-                                          ) => {
-                                            setFieldValue(
-                                              `sections.${index}.section_icon`,
-                                              value.id
+                                          name={`sections.${index}.section_url_title`}
+                                          as={Input}
+                                          label="Naslov poveznice (opcionalno)"
+                                          placeholder="Unesi naslov poveznice..."
+                                        />
+
+                                        <Field
+                                          type="text"
+                                          name={`sections.${index}.section_url_link`}
+                                          as={Input}
+                                          label="Poveznica (opcionalno)"
+                                          placeholder="Unesi link poveznice..."
+                                        />
+                                      </div>
+
+                                      <div className="edit-article-bottom-container">
+                                        <div className="edit-article-images-container">
+                                          {sectionImages &&
+                                            (sectionImages[index] || []).map((el, imageIndex) => (
+                                                <div
+                                                  key={imageIndex}
+                                                  className="edit-article-image"
+                                                  onClick={() => {
+                                                    handleDeleteImage(
+                                                      "section",
+                                                      imageIndex,
+                                                      index
+                                                    );
+                                                  }}
+                                                >
+                                                  <div className="edit-article-image-remove-icon">
+                                                    <X
+                                                      size={32}
+                                                      color="#e70101"
+                                                      weight="bold"
+                                                    />
+                                                  </div>
+                                                  {el.url && <img src={el.url} alt="img-error" />}
+                                                </div>
+                                              )
+                                            )}
+
+                                          {(sectionImages[index] || []).length < 2 && (
+                                            <div
+                                              className="edit-article-item"
+                                              onClick={() => {
+                                                toggleDialog(dialogRef);
+                                                setImageType("section");
+                                                setSectionSelected(index);
+                                              }}
+                                            >
+                                              <Plus
+                                                size={32}
+                                                color="#616161"
+                                                weight="bold"
+                                              />
+                                            </div>
+                                          )}
+                                        </div>
+
+                                        <Button
+                                          type="button"
+                                          red
+                                          onClick={() => {
+                                            handleDeleteSection(
+                                              arrayHelpers,
+                                              index
                                             );
                                           }}
-                                          selectedValue={
-                                            values.sections[index].section_icon
-                                          }
-                                          filter={false}
-                                          images={true}
-                                        />
+                                        >
+                                          izbriši odlomak
+                                        </Button>
                                       </div>
-                                    </div>
-                                    <div className="add-article-input">
-                                      <Field
-                                        name={`sections[${index}].section_text`}
-                                        label="Tekst odlomka *"
-                                        as={AdvancedEditor}
-                                      />
-                                      <ErrorMessage
-                                        name={`sections[${index}].section_text`}
-                                        component="div"
-                                        className="error-message"
-                                      />
-                                    </div>
-                                    <div className="edit-article-section-bottom">
-                                      <Field
-                                        type="text"
-                                        name={`sections.${index}.section_url_title`}
-                                        as={Input}
-                                        label="Naslov poveznice (opcionalno)"
-                                        placeholder="Unesi naslov poveznice..."
-                                      />
-                                      <Field
-                                        type="text"
-                                        name={`sections.${index}.section_url_link`}
-                                        as={Input}
-                                        label="Poveznica (opcionalno)"
-                                        placeholder="Unesi link poveznice..."
-                                      />
-                                    </div>
-                                    <div className="edit-article-bottom-container">
-                                      <div className="edit-article-images-container">
-                                        {sectionImages &&
-                                          sectionImages[index].map(
-                                            (el, imageIndex) => (
-                                              <div
-                                                key={imageIndex}
-                                                className="edit-article-image"
-                                                onClick={() => {
-                                                  handleDeleteImage(
-                                                    "section",
-                                                    imageIndex,
-                                                    index
-                                                  );
-                                                }}
-                                              >
-                                                <div className="edit-article-image-remove-icon">
-                                                  <X
-                                                    size={32}
-                                                    color="#e70101"
-                                                    weight="bold"
-                                                  />
-                                                </div>
-                                                <img
-                                                  src={el.url}
-                                                  alt="img-error"
-                                                />
-                                              </div>
-                                            )
-                                          )}
-                                        {sectionImages[index].length < 2 && (
-                                          <div
-                                            className="edit-article-item"
-                                            onClick={() => {
-                                              toggleDialog();
-                                              setImageType("section");
-                                              setSectionSelected(index);
-                                            }}
-                                          >
-                                            <Plus
-                                              size={32}
-                                              color="#616161"
-                                              weight="bold"
-                                            />
-                                          </div>
-                                        )}
-                                      </div>
-                                      <Button
-                                        type="button"
-                                        red
-                                        onClick={() => {
-                                          handleDeleteSection(
-                                            arrayHelpers,
-                                            index
-                                          );
-                                        }}
-                                      >
-                                        izbriši odlomak
-                                      </Button>
-                                    </div>
-                                    <p>
-                                      * preporuča se 1 slika u omjeru 16:9 ili
-                                      max. 2 u omjeru 9:16
-                                    </p>
-                                  </fieldset>
-                                ))
+
+                                      <p>
+                                        * preporuča se 1 slika u omjeru 16:9 ili
+                                        max. 2 u omjeru 9:16
+                                      </p>
+                                    </fieldset>
+                                  );
+                                })
                               : null}
+
                             <Button
                               type="button"
                               primary
@@ -1013,8 +1509,10 @@ const EditArticle = () => {
                       }}
                     />
                   </div>
+
                   <div className="edit-article-gallery-container">
                     <h6>Preostale fotografije na članku:</h6>
+
                     <div className="edit-article-images-container">
                       {otherArticleImages &&
                         otherArticleImages.map((el, index) => (
@@ -1028,13 +1526,14 @@ const EditArticle = () => {
                             <div className="edit-article-image-remove-icon">
                               <X size={32} color="#e70101" weight="bold" />
                             </div>
-                            <img src={el.url} alt="img-error" />
+                            {el.url && <img src={el.url} alt="img-error" />}
                           </div>
                         ))}
+
                       <div
                         className="edit-article-item"
                         onClick={() => {
-                          toggleDialog();
+                          toggleDialog(dialogRef);
                           setImageType("other");
                         }}
                       >
@@ -1042,6 +1541,12 @@ const EditArticle = () => {
                       </div>
                     </div>
                   </div>
+
+                  <AffiliateLinksEditor
+                    value={affiliateLinks}
+                    onChange={setAffiliateLinks}
+                  />
+
                   <div className="edit-metatags-wrapper">
                     <div className="edit-metatag-outer-container">
                       <FieldArray
@@ -1053,16 +1558,18 @@ const EditArticle = () => {
                             <div className="edit-metatags-container">
                               <div className="edit-metatag-header">
                                 <h6>Meta oznake</h6>
+
                                 <Button
                                   type="button"
                                   circle
                                   onClick={() => {
-                                    handleAddMetatag(arrayHelpersMetatag);
+                                    addMetatag(arrayHelpersMetatag);
                                   }}
                                 >
                                   +
                                 </Button>
                               </div>
+
                               {metatags && metatags.length > 0
                                 ? metatags.map((_metatags, index) => (
                                     <Fragment key={index}>
@@ -1074,9 +1581,10 @@ const EditArticle = () => {
                                           label=""
                                           placeholder="Unesi meta oznaku..."
                                         />
+
                                         <div
                                           onClick={() => {
-                                            handleDeleteMetatag(
+                                            deleteMetatag(
                                               arrayHelpersMetatag,
                                               index
                                             );
@@ -1085,6 +1593,7 @@ const EditArticle = () => {
                                           <Trash color="#AC2B2B" size={32} />
                                         </div>
                                       </div>
+
                                       <ErrorMessage
                                         name={`metatags.${index}.metatag_text`}
                                         component="div"
@@ -1099,26 +1608,159 @@ const EditArticle = () => {
                       />
                     </div>
                   </div>
+
                   <div className="edit-article-toggle-container">
-                    {selectedCountryId && values.article_type == "1" && (
-                      <div className="edit-article-toggle-item">
+                    {selectedCountryId &&
+                      values.article_type == ARTICLE_TYPE_DESTINATION_ID && (
+                        <div className="edit-article-toggle-item">
+                          <ToggleSwitch
+                            name={"main-country-post"}
+                            description={"Postavi kao glavni članak države"}
+                            value={isMainCountryPostChecked}
+                            setter={setIsMainCountryPostChecked}
+                          />
+                        </div>
+                      )}
+
+                    {isTipsArticleType(values.article_type) && (
+                      <div className="edit-article-toggle-item edit-article-toggle-item-highlight">
                         <ToggleSwitch
-                          name={"main-country-post"}
-                          description={"Postavi kao glavni članak države"}
-                          value={isMainCountryPostChecked}
-                          setter={setIsMainCountryPostChecked}
+                          name={"tips-featured"}
+                          description={`Postavi kao istaknuti članak rubrike ${getTipsArticleTypeTitle(
+                            values.article_type
+                          )}`}
+                          value={isTipsFeaturedChecked}
+                          setter={() =>
+                            setIsTipsFeaturedChecked(!isTipsFeaturedChecked)
+                          }
                         />
+
+                        <p>
+                          Ako označite ovu opciju, ovaj članak će biti prikazan
+                          kao istaknuti članak za rubriku{" "}
+                          {getTipsArticleTypeTitle(values.article_type)}.
+                        </p>
                       </div>
                     )}
                   </div>
+
+                  {getScheduleStatus(article).className === "scheduled" && (
+                    <div className="edit-article-schedule-container">
+                      <ToggleSwitch
+                        name={"schedule-article"}
+                        description={"Zakaži objavu članka"}
+                        value={isScheduleChecked}
+                        setter={() => setIsScheduleChecked(!isScheduleChecked)}
+                      />
+
+                      <div className="edit-article-schedule-status">
+                        <span>
+                          Status: {getScheduleStatus(article).label}
+                        </span>
+                        <span>
+                          Zagreb:{" "}
+                          {formatDateTimeInTimeZone(
+                            article.article_schedule.publish_at,
+                            ZAGREB_TIME_ZONE
+                          )}
+                        </span>
+                      </div>
+
+                      {isScheduleChecked && (
+                        <div className="edit-article-schedule-panel">
+                          <div className="edit-article-schedule-grid">
+                            <label>
+                              Datum i vrijeme
+                              <input
+                                type="datetime-local"
+                                lang="hr-HR"
+                                step="60"
+                                min={formatDateTimeLocalInput(
+                                  new Date(),
+                                  scheduleTimezone
+                                )}
+                                value={scheduleDateTime}
+                                onChange={(event) =>
+                                  setScheduleDateTime(event.target.value)
+                                }
+                              />
+                            </label>
+
+                            <label>
+                              Vremenska zona
+                              <select
+                                value={scheduleTimezone}
+                                onChange={(event) =>
+                                  setScheduleTimezone(event.target.value)
+                                }
+                              >
+                                {getArticleScheduleTimeZoneOptions(
+                                  scheduleTimezone
+                                ).map((timeZone) => (
+                                  <option
+                                    key={timeZone.value}
+                                    value={timeZone.value}
+                                  >
+                                    {timeZone.label} ({timeZone.value})
+                                  </option>
+                                ))}
+                              </select>
+                            </label>
+                          </div>
+
+                          <div className="edit-article-schedule-newsletter">
+                            <ToggleSwitch
+                              name={"notify-subscribers-on-publish"}
+                              description={
+                                "Obavijesti pretplatnike kad članak bude objavljen"
+                              }
+                              value={notifySubscribersOnPublish}
+                              setter={() =>
+                                setNotifySubscribersOnPublish(
+                                  !notifySubscribersOnPublish
+                                )
+                              }
+                            />
+                          </div>
+
+                          {scheduleDateTime && (
+                            <div className="edit-article-schedule-preview">
+                              <span>
+                                Lokalno:{" "}
+                                {formatDateTimeInTimeZone(
+                                  zonedDateTimeLocalToUtcIso(
+                                    scheduleDateTime,
+                                    scheduleTimezone
+                                  ),
+                                  scheduleTimezone
+                                )}
+                              </span>
+                              <span>
+                                Zagreb:{" "}
+                                {formatDateTimeInTimeZone(
+                                  zonedDateTimeLocalToUtcIso(
+                                    scheduleDateTime,
+                                    scheduleTimezone
+                                  ),
+                                  ZAGREB_TIME_ZONE
+                                )}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   <div className="edit-article-buttons">
                     <Button type="submit" adminPrimary>
                       uredi članak
                     </Button>
+
                     <Button type="button" white onClick={handleCancel}>
                       Odustani
                     </Button>
+
                     <Button
                       type="button"
                       adminPrimary
@@ -1134,9 +1776,10 @@ const EditArticle = () => {
             <p>Loading...</p>
           )}
         </div>
+
         <Modal
           ref={dialogRef}
-          toggleDialog={toggleDialog}
+          toggleDialog={() => toggleDialog(dialogRef)}
           onClick={handleAddImage}
           modalInputValue={modalInputValue}
           modalImageHeightValue={imageHeightValue}
@@ -1146,6 +1789,7 @@ const EditArticle = () => {
           setImageWidthValue={setImageWidthValue}
           isAddArticle
         />
+
         {modalInputValue.toString()}
         {imageHeightValue.toString()}
         {imageWidthValue.toString()}

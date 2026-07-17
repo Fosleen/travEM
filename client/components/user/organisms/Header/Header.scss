@@ -1,16 +1,24 @@
+/* Header.scss */
 @use "@/utils/theme.scss" as *;
+
 .header-container {
   position: relative;
+
   .header-top {
+    position: relative;
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     padding-left: 8px;
+
     a {
       padding: 8px 0;
       position: relative;
-      z-index: 2;
+
+      /* ✅ DEFAULT: logo ispod search-backdrop (900), pa se zatamni kad se piše */
+      z-index: 800;
+
       display: block;
 
       img {
@@ -19,6 +27,7 @@
     }
   }
 
+  /* Dropdownovi moraju biti iznad overlay-a (kad je menu otvoren) */
   .header-filter-menu-container {
     position: absolute;
     width: fit-content;
@@ -27,6 +36,44 @@
     left: 0;
     right: 0;
     text-align: center;
+
+    /* ✅ DEFAULT: isto ispod search-backdrop, da se zatamni u search modu */
+    z-index: 800;
+  }
+
+  /* Overlay za dropdown menije (tvoj postojeći) */
+  .header-dim-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.38);
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition: opacity 90ms linear, visibility 0ms linear 90ms;
+
+    z-index: 2000;
+    pointer-events: none;
+
+    will-change: opacity;
+    transform: translateZ(0);
+  }
+
+  .header-dim-overlay.is-active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 90ms linear;
+  }
+}
+
+/* Keep the complete navbar and dropdown content above the menu overlay. */
+.header-container.header-is-active {
+  .header-top {
+    z-index: 3000;
+  }
+
+  .header-filter-menu-container {
+    z-index: 3000;
   }
 }
 

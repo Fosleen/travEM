@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { MagnifyingGlass } from "@phosphor-icons/react";
 import "./Search.scss";
 import { SearchProps } from "../../../common/types";
@@ -9,44 +9,81 @@ const Search: FC<SearchProps> = ({
   green = false,
   placeholder = "Pretraži...",
 }) => {
-  let searchClasses = `search `;
-  if (green) {
-    searchClasses += ` search-green `;
-  }
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (event: React.FormEvent) => {
-    console.log("handleSubmit");
+  const [isFocused, setIsFocused] = useState(false);
 
-    event.preventDefault();
+  const isActive = isFocused;
+
+  let searchClasses = `search`;
+  if (green) searchClasses += ` search-green`;
+
+  const closeOverlay = () => {
+    setIsFocused(false);
+    inputRef.current?.blur();
+  };
+
+  const runSearch = () => {
+    closeOverlay();
     onClick();
   };
 
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    runSearch();
+  };
+
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    console.log("handleKeyDown");
-
     if (event.key === "Enter") {
-      console.log("Enter");
-
       event.preventDefault();
-      onClick();
+      runSearch();
     }
   };
 
+  useEffect(() => {
+    if (!isActive) return;
+
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeOverlay();
+    };
+
+    window.addEventListener("keydown", onEsc);
+    return () => window.removeEventListener("keydown", onEsc);
+  }, [isActive]);
+
   return (
-    <form onSubmit={handleSubmit} className="search-container">
-      <input
-        type="text"
-        className={searchClasses}
-        onChange={onChange}
-        placeholder={placeholder}
-        onKeyDown={handleKeyDown}
+    <>
+      <div
+        className={`search-backdrop ${isActive ? "active" : ""}`}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          closeOverlay();
+        }}
       />
-      <MagnifyingGlass
-        size={16}
-        className="ph-magnifying-glass"
-        onClick={onClick}
-      />
-    </form>
+
+      <form
+        onSubmit={handleSubmit}
+        className={`search-container ${isActive ? "active" : ""}`}
+      >
+        <input
+          ref={inputRef}
+          type="text"
+          className={searchClasses}
+          onChange={onChange}
+          placeholder={placeholder}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+        />
+
+        <MagnifyingGlass
+          size={16}
+          className="ph-magnifying-glass"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={runSearch}
+        />
+      </form>
+    </>
   );
 };
 

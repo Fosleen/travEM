@@ -6,6 +6,7 @@
   flex-direction: column;
   gap: 16px;
   margin: 0 auto;
+
   .article-content {
     padding: 16px;
   }
@@ -25,13 +26,24 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 12px;
   margin-top: 24px;
+
   @media screen and ($desktop) {
     padding-left: 16px;
   }
+
   @media screen and ($desktopLarge) {
     padding: 0;
+  }
+}
+
+.article-section-visa-info-wrapper {
+  width: 100%;
+  margin: 8px 0 22px;
+
+  .visa-info-container {
+    max-width: 100%;
   }
 }
 
@@ -40,6 +52,7 @@
   margin: 0 auto;
   padding: 0 16px;
   margin-top: 24px;
+
   @media screen and ($desktopLarge) {
     padding: 0;
   }
@@ -49,9 +62,11 @@
   padding: 16px;
   max-width: 1300px;
   margin: 0 auto;
+
   h2 {
     font-weight: bold;
   }
+
   @media screen and ($desktopLarge) {
     padding: 16px 0;
   }
@@ -61,6 +76,7 @@
   max-width: 1300px;
   margin: 0 auto;
   padding: 16px;
+
   @media screen and ($desktopLarge) {
     padding: 16px 0;
   }
@@ -71,20 +87,34 @@
   align-items: center;
   gap: 8px;
   margin-left: 16px;
+
   .article-location {
     display: flex;
     align-items: center;
     gap: 8px;
-    text-decoration: underline;
     max-width: 1300px;
+  }
+
+  .article-location-text {
     cursor: pointer;
-    h2 {
-      font-weight: bold;
+
+    &:hover {
+      text-decoration: underline;
     }
-    @media screen and ($desktop) {
+  }
+
+  h2 {
+    font-weight: bold;
+  }
+
+  @media screen and ($desktop) {
+    .article-location {
       margin-left: 0px;
     }
-    @media screen and ($desktopLarge) {
+  }
+
+  @media screen and ($desktopLarge) {
+    .article-location {
       padding: 0;
     }
   }
@@ -97,6 +127,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
+
   @media screen and ($desktopLarge) {
     padding: 0;
   }

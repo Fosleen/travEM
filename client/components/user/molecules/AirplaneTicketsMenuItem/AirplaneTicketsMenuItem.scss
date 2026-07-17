@@ -2,19 +2,34 @@
 
 .airplane-tickets-menu-item-container {
   display: flex;
-  gap: 8px;
   flex-direction: column;
+  gap: 8px;
   z-index: 5;
+  width: 100%;
 
   h2 {
     text-align: left;
     font-size: 18px;
+    margin: 0;
+  }
+
+  hr {
+    width: 100%;
+    margin: 0;
+    border: 0;
+    border-top: 1px solid rgba(51, 51, 51, 0.25);
   }
 
   .airplane-tickets-menu-items {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    align-items: start;
+
+    > * {
+      min-width: 0;
+      width: 100%;
+    }
   }
 }
 
@@ -22,10 +37,6 @@
   .airplane-tickets-menu-item-container {
     h2 {
       font-size: 24px;
-    }
-
-    .airplane-tickets-menu-items {
-      grid-template-columns: 1fr 1fr 1fr;
     }
   }
 }
@@ -35,6 +46,15 @@
     .airplane-tickets-menu-items {
       display: flex;
       flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-start;
+
+      > .destination-item-container.flag.full-width {
+        width: auto;
+        min-width: unset;
+        max-width: max-content;
+        flex: 0 0 auto;
+      }
     }
   }
 }

@@ -12,16 +12,27 @@ const getToken = () => {
 
 // api/article.ts
 
-export async function getArticleById(id: number, noCache: boolean = false) {
+export async function getArticleById(
+  id: number,
+  noCache: boolean = false,
+  includeScheduled: boolean = noCache
+) {
   try {
     console.log(`Fetching article ${id} from ${apiUrl}/articles/${id}`);
+    const token = getToken();
+    const includeScheduledQuery = includeScheduled
+      ? "&includeScheduled=true"
+      : "";
 
     const response = await fetch(
-      `${apiUrl}/articles/${id}?noCache=${noCache}`,
+      `${apiUrl}/articles/${id}?noCache=${noCache}${includeScheduledQuery}`,
       {
-        cache: "no-store", // ← Always fetch from server (Redis will cache it)
+        cache: "no-store",
         headers: {
           Accept: "application/json",
+          ...(includeScheduled && token
+            ? { Authorization: `Bearer ${token}` }
+            : {}),
         },
       }
     );
@@ -51,7 +62,7 @@ export async function getArticlesByType(
     const response = await fetch(
       `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${article_type}`,
       {
-        cache: "no-store", // ← Disable Next.js cache
+        cache: "no-store",
       }
     );
 
@@ -73,7 +84,7 @@ export async function getRecommendedArticles(id: number, type: string) {
     const response = await fetch(
       `${apiUrl}/articles/recommended/${id}?type=${type}`,
       {
-        cache: "no-store", // ← Disable Next.js cache
+        cache: "no-store",
       }
     );
 
@@ -90,12 +101,26 @@ export async function getRecommendedArticles(id: number, type: string) {
   }
 }
 
-export async function getArticlesByName(name: string, page = 1, pageSize = 12) {
+export async function getArticlesByName(
+  name: string,
+  page = 1,
+  pageSize = 12,
+  includeScheduled: boolean = false
+) {
   try {
+    const token = getToken();
+
     const response = await fetch(
-      `${apiUrl}/articles/search/${name}?page=${page}&pageSize=${pageSize}`,
+      `${apiUrl}/articles/search/${name}?page=${page}&pageSize=${pageSize}${
+        includeScheduled ? "&includeScheduled=true" : ""
+      }`,
       {
-        cache: "no-store", // ← Disable Next.js cache
+        cache: "no-store",
+        headers: includeScheduled
+          ? {
+              Authorization: `Bearer ${token}`,
+            }
+          : undefined,
       }
     );
 
@@ -115,13 +140,24 @@ export async function getArticlesByName(name: string, page = 1, pageSize = 12) {
 export async function getArticles(
   page = 1,
   pageSize = 12,
-  articleType: number | null = null
+  articleType: number | null = null,
+  includeScheduled: boolean = false
 ) {
   try {
+    const token = getToken();
+
     const response = await fetch(
-      `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${articleType}`,
+      `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${articleType}${
+        includeScheduled ? "&includeScheduled=true" : ""
+      }`,
       {
-        cache: "no-store", // ← Disable Next.js cache
+        cache: "no-store",
+        headers:
+          includeScheduled && token
+            ? {
+                Authorization: `Bearer ${token}`,
+              }
+            : undefined,
       }
     );
 
@@ -138,12 +174,44 @@ export async function getArticles(
   }
 }
 
-export async function getHomepageArticles(noCache: boolean = false) {
+export async function getTipsFeaturedArticle(articleTypeId: number) {
   try {
     const response = await fetch(
-      `${apiUrl}/articles/homepage?noCache=${noCache}`,
+      `${apiUrl}/articles/tips-featured/${articleTypeId}`,
       {
-        cache: "no-store", // ← Disable Next.js cache, rely on Redis
+        cache: "no-store",
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.log(errorData.error);
+      return null;
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching tips featured article:", error);
+    return null;
+  }
+}
+
+export async function getHomepageArticles(noCache: boolean = false) {
+  try {
+    const token = getToken();
+    const includeScheduled = noCache && Boolean(token);
+
+    const response = await fetch(
+      `${apiUrl}/articles/homepage?noCache=${noCache}${
+        includeScheduled ? "&includeScheduled=true" : ""
+      }`,
+      {
+        cache: "no-store",
+        headers: includeScheduled
+          ? {
+              Authorization: `Bearer ${token}`,
+            }
+          : undefined,
       }
     );
 
@@ -168,7 +236,7 @@ export async function getFavoriteArticleByCountry(
     const response = await fetch(
       `${apiUrl}/articles/country/top/${id}?noCache=${noCache}`,
       {
-        cache: "no-store", // ← Disable Next.js cache
+        cache: "no-store",
       }
     );
 
@@ -185,9 +253,6 @@ export async function getFavoriteArticleByCountry(
   }
 }
 
-// Keep the rest of your mutations (POST, PATCH, DELETE) as they are
-// They already don't use caching
-
 export async function addArticle(
   title: string,
   subtitle: string,
@@ -199,10 +264,38 @@ export async function addArticle(
   place_id: number | null,
   main_image_url: string,
   user_id: number,
-  date_written: Date,
-  airport_city_id: number | null
+  date_written: Date | string,
+  date_updated: Date | string | null,
+  airport_city_id: number | null,
+  is_far_destination: boolean = false,
+  is_tips_featured: boolean = false,
+  publish_at?: string | null,
+  publish_timezone?: string,
+  notify_subscribers_on_publish?: boolean
 ) {
   const token = getToken();
+  const requestBody = {
+    title,
+    subtitle,
+    description,
+    video,
+    metatags,
+    article_type_id,
+    country_id,
+    place_id,
+    user_id,
+    main_image_url,
+    date_written,
+    date_updated,
+    airport_city_id,
+    is_far_destination,
+    is_tips_featured,
+    ...(publish_at !== undefined ? { publish_at } : {}),
+    ...(publish_timezone !== undefined ? { publish_timezone } : {}),
+    ...(notify_subscribers_on_publish !== undefined
+      ? { notify_subscribers_on_publish }
+      : {}),
+  };
 
   const response = await fetch(`${apiUrl}/articles`, {
     headers: {
@@ -211,20 +304,7 @@ export async function addArticle(
       Authorization: `Bearer ${token}`,
     },
     method: "POST",
-    body: JSON.stringify({
-      title,
-      subtitle,
-      description,
-      video,
-      metatags,
-      article_type_id,
-      country_id,
-      place_id,
-      user_id,
-      main_image_url,
-      date_written,
-      airport_city_id,
-    }),
+    body: JSON.stringify(requestBody),
   });
 
   const data = await response.json();
@@ -233,6 +313,7 @@ export async function addArticle(
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
@@ -253,12 +334,14 @@ export async function updateOrCreateTopHomepageArticles(
       article_id: articleIds,
     }),
   });
+
   const data = await response.json();
 
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
@@ -269,10 +352,17 @@ export async function updateArticle(
   description: string,
   metatags: string,
   main_image_url: string,
+  date_written: Date | string,
+  date_updated: Date | string | null,
   article_type_id: number,
   country_id: number | null | string,
   place_id: number | null | string,
-  airport_city_id: number | null
+  airport_city_id: number | null,
+  is_far_destination: boolean = false,
+  is_tips_featured: boolean = false,
+  publish_at?: string | null,
+  publish_timezone?: string,
+  notify_subscribers_on_publish?: boolean
 ) {
   const requestBody = {
     title,
@@ -280,10 +370,19 @@ export async function updateArticle(
     description,
     metatags,
     main_image_url,
+    date_written,
+    date_updated,
     article_type_id,
     airport_city_id,
     country_id,
     place_id,
+    is_far_destination,
+    is_tips_featured,
+    ...(publish_at !== undefined ? { publish_at } : {}),
+    ...(publish_timezone !== undefined ? { publish_timezone } : {}),
+    ...(notify_subscribers_on_publish !== undefined
+      ? { notify_subscribers_on_publish }
+      : {}),
   };
 
   const token = getToken();
@@ -297,12 +396,14 @@ export async function updateArticle(
     method: "PATCH",
     body: JSON.stringify(requestBody),
   });
+
   const data = await response.json();
 
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   console.log("data", data);
 
   return data;
@@ -317,12 +418,14 @@ export async function deleteArticleById(id: number) {
     },
     method: "DELETE",
   });
+
   const data = await response.json();
 
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
@@ -340,12 +443,14 @@ export async function createTopCountryArticle(articleId: number) {
       article_id: articleId,
     }),
   });
+
   const data = await response.json();
 
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }
 
@@ -360,11 +465,13 @@ export async function removeTopCountryArticle(articleId: number) {
     },
     method: "DELETE",
   });
+
   const data = await response.json();
 
   if (!response.ok) {
     console.log(data.error);
     return data.error;
   }
+
   return data;
 }

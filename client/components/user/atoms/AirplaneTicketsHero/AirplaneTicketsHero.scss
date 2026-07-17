@@ -1,0 +1,84 @@
+@use "@/utils/theme.scss" as *;
+
+.airplane-tickets-hero {
+  /* full-bleed banner */
+  width: 100%;
+}
+
+.airplane-tickets-hero-image {
+  position: relative;
+
+  /* full width banner */
+  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+
+  /* 3:1 omjer */
+  aspect-ratio: 3 / 1;
+
+  /* fallback za starije browsere + kontrola min/max visine */
+  height: clamp(220px, 28vw, 420px);
+
+  overflow: hidden;
+}
+
+.airplane-tickets-hero-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  /* zatamnjenje */
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.55),
+    rgba(0, 0, 0, 0.15) 60%,
+    rgba(0, 0, 0, 0)
+  );
+}
+
+.airplane-tickets-hero-text {
+  padding: 18px 16px;
+
+  /* tekst ostaje u "container" širini */
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+
+  h1 {
+    color: #fff;
+    font-weight: 800;
+    font-size: 26px;
+    margin: 0 0 6px 0;
+
+    @media screen and ($tablet) {
+      font-size: 36px;
+    }
+
+    @media screen and ($desktop) {
+      font-size: 44px;
+    }
+  }
+
+  p {
+    color: #fff;
+    margin: 0;
+    font-weight: 600;
+    opacity: 0.95;
+    font-size: 14px;
+
+    @media screen and ($tablet) {
+      font-size: 16px;
+    }
+  }
+}
+
+/* opcionalno: lagano zaobljenje bannera,
+   ali da i dalje ostane full width */
+@media screen and ($desktop) {
+  .airplane-tickets-hero-image {
+    //border-radius: 16px;
+  }
+}

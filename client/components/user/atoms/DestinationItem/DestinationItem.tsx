@@ -9,6 +9,7 @@ const DestinationItem: FC<{
   iconUrl?: string;
   countryName?: string;
   planeTickets?: boolean;
+  badgeText?: string;
 }> = ({
   mapItem = false,
   filterMenuItem = false,
@@ -16,6 +17,7 @@ const DestinationItem: FC<{
   iconUrl,
   countryName = null,
   planeTickets = false,
+  badgeText,
 }) => {
   const destinationPath = planeTickets
     ? `/aviokarte/${name.toLowerCase()}`
@@ -28,8 +30,11 @@ const DestinationItem: FC<{
       href={destinationPath}
       className={`destination-item-container ${
         (mapItem || filterMenuItem) && "has-icon full-width"
-      } ${filterMenuItem && "flag"} ${mapItem && "sights"}`}
+      } ${filterMenuItem && "flag"} ${mapItem && "sights"} ${
+        badgeText && "has-badge"
+      }`}
     >
+      {badgeText && <span className="destination-item-badge">{badgeText}</span>}
       {filterMenuItem && (
         <img className="flag-icon" src={iconUrl} alt="destination-image" />
       )}

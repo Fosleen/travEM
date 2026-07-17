@@ -1,8 +1,134 @@
 import db from "../models/index.js";
 import { Op, Sequelize } from "sequelize";
 
+let affiliateTablesAvailable = true;
+
+const parseBooleanValue = (value) => {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value === 1;
+
+  if (typeof value === "string") {
+    const normalizedValue = value.trim().toLowerCase();
+    return normalizedValue === "1" || normalizedValue === "true";
+  }
+
+  return false;
+};
+
+const isTipsArticleType = async (articleTypeId, transaction = null) => {
+  const normalizedArticleTypeId = Number(articleTypeId);
+
+  if (!normalizedArticleTypeId || Number.isNaN(normalizedArticleTypeId)) {
+    return false;
+  }
+
+  const articleType = await db.models.ArticleType.findByPk(
+    normalizedArticleTypeId,
+    {
+      transaction,
+    }
+  );
+
+  return parseBooleanValue(articleType?.isTipsType);
+};
+
+const normalizeNullableId = (value) => {
+  const parsedValue = Number(value);
+
+  if (
+    value === null ||
+    value === undefined ||
+    value === "" ||
+    Number.isNaN(parsedValue)
+  ) {
+    return null;
+  }
+
+  return parsedValue;
+};
+
+const getArticleScheduleInclude = () => ({
+  model: db.models.ArticleSchedule,
+  required: false,
+});
+
+const getPublicArticleWhere = (additionalWhere = {}) => ({
+  ...additionalWhere,
+  [Op.and]: [
+    ...(additionalWhere[Op.and] || []),
+    {
+      [Op.or]: [
+        { "$article_schedule.id$": null },
+        { "$article_schedule.publish_at$": null },
+        { "$article_schedule.publish_at$": { [Op.lte]: new Date() } },
+      ],
+    },
+  ],
+});
+
+const hasSchedulePayload = (
+  publish_at,
+  publish_timezone,
+  notify_subscribers_on_publish
+) => {
+  return (
+    publish_at !== undefined ||
+    publish_timezone !== undefined ||
+    notify_subscribers_on_publish !== undefined
+  );
+};
+
+const normalizeSchedulePayload = (
+  articleId,
+  publish_at,
+  publish_timezone,
+  notify_subscribers_on_publish
+) => ({
+  articleId,
+  publish_at: publish_at || null,
+  publish_timezone: publish_timezone || "Europe/Zagreb",
+  notify_subscribers_on_publish: parseBooleanValue(
+    notify_subscribers_on_publish
+  ),
+  newsletter_sent_at: null,
+  newsletter_send_started_at: null,
+  newsletter_send_error: null,
+  publish_processed_at: null,
+  publish_process_error: null,
+});
+
 class ArticleService {
-  async getArticles(page, pageSize, articleType) {
+  async resetOtherTipsFeaturedArticles(
+    articleTypeId,
+    currentArticleId,
+    transaction
+  ) {
+    if (!(await isTipsArticleType(articleTypeId, transaction))) {
+      return;
+    }
+
+    const where = {
+      articleTypeId: Number(articleTypeId),
+    };
+
+    if (currentArticleId) {
+      where.id = {
+        [Op.ne]: Number(currentArticleId),
+      };
+    }
+
+    await db.models.Article.update(
+      {
+        isTipsFeatured: false,
+      },
+      {
+        where,
+        transaction,
+      }
+    );
+  }
+
+  async getArticles(page, pageSize, articleType, includeScheduled = false) {
     const limit = pageSize;
     const offset = (page - 1) * pageSize;
     const optionalArticleTypeWhere = articleType
@@ -26,8 +152,11 @@ class ArticleService {
           {
             model: db.models.Place,
           },
+          getArticleScheduleInclude(),
         ],
-        where: optionalArticleTypeWhere,
+        where: includeScheduled
+          ? optionalArticleTypeWhere
+          : getPublicArticleWhere(optionalArticleTypeWhere),
         order: [["date_written", "DESC"]],
       });
 
@@ -39,22 +168,26 @@ class ArticleService {
         data: articles.rows,
       };
     } catch (error) {
+      console.log(error);
       return [];
     }
   }
 
-  async getArticleById(id) {
+  async getTipsFeaturedArticle(articleTypeId) {
     try {
-      const article = await db.models.Article.findByPk(id, {
+      const normalizedArticleTypeId = Number(articleTypeId);
+
+      if (!(await isTipsArticleType(normalizedArticleTypeId))) {
+        return null;
+      }
+
+      const featuredArticle = await db.models.Article.findOne({
         include: [
           {
-            model: db.models.User,
+            model: db.models.ArticleType,
           },
           {
-            model: db.models.GalleryImage,
-          },
-          {
-            model: db.models.Video,
+            model: db.models.AirportCity,
           },
           {
             model: db.models.Country,
@@ -62,29 +195,138 @@ class ArticleService {
           {
             model: db.models.Place,
           },
+          getArticleScheduleInclude(),
+        ],
+        where: getPublicArticleWhere({
+          articleTypeId: normalizedArticleTypeId,
+          isTipsFeatured: true,
+        }),
+        order: [["date_written", "DESC"]],
+      });
+
+      if (featuredArticle) {
+        return featuredArticle;
+      }
+
+      const newestArticle = await db.models.Article.findOne({
+        include: [
           {
             model: db.models.ArticleType,
           },
           {
-            model: db.models.Section,
-            include: [
-              {
-                model: db.models.SectionImage,
-              },
-              {
-                model: db.models.SectionIcon,
-              },
-            ],
+            model: db.models.AirportCity,
           },
           {
-            model: db.models.ArticleSpecialType,
-            through: db.models.Article_ArticleSpecialType,
+            model: db.models.Country,
+          },
+          {
+            model: db.models.Place,
+          },
+          getArticleScheduleInclude(),
+        ],
+        where: getPublicArticleWhere({
+          articleTypeId: normalizedArticleTypeId,
+        }),
+        order: [["date_written", "DESC"]],
+      });
+
+      return newestArticle;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async getArticleById(id, includeScheduled = false) {
+    const include = [
+      {
+        model: db.models.User,
+      },
+      {
+        model: db.models.GalleryImage,
+        separate: true,
+      },
+      {
+        model: db.models.Video,
+      },
+      {
+        model: db.models.Country,
+      },
+      {
+        model: db.models.Place,
+      },
+      {
+        model: db.models.ArticleType,
+      },
+      getArticleScheduleInclude(),
+      {
+        model: db.models.ArticleAffiliateLink,
+        as: "affiliate_links",
+        separate: true,
+        ...(includeScheduled ? {} : { where: { is_enabled: true } }),
+        order: [["sort_order", "ASC"]],
+        include: [
+          { model: db.models.AffiliatePartner, as: "partner" },
+        ],
+      },
+      {
+        model: db.models.Section,
+        separate: true,
+        order: [["order", "ASC"]],
+        include: [
+          {
+            model: db.models.SectionImage,
+          },
+          {
+            model: db.models.SectionIcon,
           },
         ],
-        order: [[{ model: db.models.Section }, "order", "ASC"]],
+      },
+      {
+        model: db.models.ArticleSpecialType,
+        through: {
+          attributes: [],
+        },
+      },
+    ];
+
+    const findArticle = (queryInclude) =>
+      db.models.Article.findOne({
+        where: includeScheduled
+          ? { id }
+          : getPublicArticleWhere({
+              id,
+            }),
+        include: queryInclude,
       });
+
+    const includeWithoutAffiliateLinks = include.filter(
+      (item) => item.as !== "affiliate_links"
+    );
+
+    try {
+      const article = await findArticle(
+        affiliateTablesAvailable ? include : includeWithoutAffiliateLinks
+      );
+      if (article && !affiliateTablesAvailable) {
+        article.setDataValue("affiliate_links", []);
+      }
       return article;
     } catch (error) {
+      const missingAffiliateTable =
+        error?.original?.code === "ER_NO_SUCH_TABLE" ||
+        /affiliate_partner|article_affiliate_link/i.test(error?.message || "");
+
+      if (missingAffiliateTable) {
+        affiliateTablesAvailable = false;
+        console.warn(
+          "Affiliate tables are not installed; returning the article without affiliate links."
+        );
+        const article = await findArticle(includeWithoutAffiliateLinks);
+        if (article) article.setDataValue("affiliate_links", []);
+        return article;
+      }
+
       console.log(error);
       return `not found article with PK ${id}`;
     }
@@ -97,60 +339,55 @@ class ArticleService {
     let nmbrSameCountry = 0;
 
     if (type == "article") {
-      const startingArticle = await db.models.Article.findByPk(id); // id = article id
+      const startingArticle = await db.models.Article.findOne({
+        include: [getArticleScheduleInclude()],
+        where: getPublicArticleWhere({ id }),
+      });
+
+      if (!startingArticle) {
+        return "No starting article found";
+      }
+
       if (startingArticle.articleTypeId == 1) {
-        // destinacija
-        {
-          startingArticle.placeId && (nmbrSamePlace = 2);
+        if (startingArticle.placeId) {
+          nmbrSamePlace = 2;
         }
-        {
-          startingArticle.placeId
-            ? (nmbrSameCountry = 2)
-            : (nmbrSameCountry = 4);
-        }
+
+        startingArticle.placeId
+          ? (nmbrSameCountry = 2)
+          : (nmbrSameCountry = 4);
       } else if (
         startingArticle.articleTypeId == 2 ||
-        startingArticle.articleTypeId == 3 ||
-        startingArticle.articleTypeId == 4 ||
-        startingArticle.articleTypeId == 5 ||
-        startingArticle.articleTypeId == 6 ||
-        startingArticle.articleTypeId == 7 ||
-        startingArticle.articleTypeId == 8
+        (await isTipsArticleType(startingArticle.articleTypeId))
       ) {
-        // aviokarte ili savjeti
         nmbrSameType = 4;
       }
 
       if (nmbrSameType > 0) {
         let articlesSameType;
-        if (
-          startingArticle.articleTypeId == 3 ||
-          startingArticle.articleTypeId == 4 ||
-          startingArticle.articleTypeId == 5 ||
-          startingArticle.articleTypeId == 6 ||
-          startingArticle.articleTypeId == 7 ||
-          startingArticle.articleTypeId == 8
-        ) {
-          // savjeti
+
+        if (await isTipsArticleType(startingArticle.articleTypeId)) {
           articlesSameType = await db.models.Article.findAll({
-            where: {
+            include: [getArticleScheduleInclude()],
+            where: getPublicArticleWhere({
               articleTypeId: startingArticle.articleTypeId,
-              id: { [Op.notIn]: [id] }, // don't return that article in result
-            },
-            order: Sequelize.literal("rand()"), // return random items, mysql dialect = rand function
+              id: { [Op.notIn]: [id] },
+            }),
+            order: Sequelize.literal("rand()"),
             limit: nmbrSameType,
           });
         } else if (startingArticle.articleTypeId == 2) {
-          // aviokarte
           articlesSameType = await db.models.Article.findAll({
-            where: {
+            include: [getArticleScheduleInclude()],
+            where: getPublicArticleWhere({
               articleTypeId: startingArticle.articleTypeId,
               id: { [Op.notIn]: [id] },
-            },
-            order: [["date_written", "DESC"]], // return 4 newest articles
+            }),
+            order: [["date_written", "DESC"]],
             limit: nmbrSameType,
           });
         }
+
         articlesSameType.forEach((el) => {
           recommendedArticles.push(el);
         });
@@ -158,13 +395,15 @@ class ArticleService {
 
       if (nmbrSamePlace > 0) {
         const articlesSamePlace = await db.models.Article.findAll({
-          where: {
+          include: [getArticleScheduleInclude()],
+          where: getPublicArticleWhere({
             placeId: startingArticle.placeId,
             id: { [Op.notIn]: [id] },
-          },
+          }),
           order: Sequelize.literal("rand()"),
           limit: nmbrSamePlace,
         });
+
         articlesSamePlace.forEach((el) => {
           recommendedArticles.push(el);
         });
@@ -172,33 +411,36 @@ class ArticleService {
 
       if (nmbrSameCountry > 0) {
         const articlesSameCountry = await db.models.Article.findAll({
-          where: {
+          include: [getArticleScheduleInclude()],
+          where: getPublicArticleWhere({
             countryId: startingArticle.countryId,
             id: {
               [Op.notIn]: [
-                id, // don't return that article in result
-                ...recommendedArticles.map((article) => article.id), // don't return already recommended articles
+                id,
+                ...recommendedArticles.map((article) => article.id),
               ],
             },
-          },
+          }),
           order: Sequelize.literal("rand()"),
           limit: nmbrSameCountry,
         });
+
         articlesSameCountry.forEach((el) => {
           recommendedArticles.push(el);
         });
       }
     } else if (type == "country-page" || type == "place-page") {
-      // nije clanak, nego page
       let startingDestination = null;
+
       if (type == "place-page") {
-        startingDestination = await db.models.Place.findByPk(id); // id = place id
+        startingDestination = await db.models.Place.findByPk(id);
       } else {
-        startingDestination = await db.models.Country.findByPk(id); // id = country id
+        startingDestination = await db.models.Country.findByPk(id);
       }
 
       const articlesSelectedCountry = await db.models.Article.findAll({
-        where: {
+        include: [getArticleScheduleInclude()],
+        where: getPublicArticleWhere({
           countryId:
             type == "place-page"
               ? startingDestination.countryId
@@ -206,19 +448,20 @@ class ArticleService {
           id: {
             [Op.notIn]: [id, ...recommendedArticles.map((el) => el.id)],
           },
-        },
+        }),
         order: Sequelize.literal("rand()"),
         limit: 2,
       });
+
       articlesSelectedCountry.forEach((element) => {
         recommendedArticles.push(element);
       });
     }
 
     if (recommendedArticles.length != 4) {
-      // add random destination articles if total number of articles is not 4
       const randomArticles = await db.models.Article.findAll({
-        where: {
+        include: [getArticleScheduleInclude()],
+        where: getPublicArticleWhere({
           articleTypeId: 1,
           id: {
             [Op.notIn]: [
@@ -226,10 +469,11 @@ class ArticleService {
               ...recommendedArticles.map((article) => article.id),
             ],
           },
-        },
+        }),
         order: Sequelize.literal("rand()"),
         limit: 4 - recommendedArticles.length,
       });
+
       randomArticles.forEach((el) => {
         recommendedArticles.push(el);
       });
@@ -244,40 +488,90 @@ class ArticleService {
     description,
     main_image_url,
     date_written,
+    date_updated,
     metatags,
     user_id,
     article_type_id,
     country_id,
     place_id,
-    airport_city_id
+    airport_city_id,
+    is_far_destination,
+    is_tips_featured,
+    publish_at,
+    publish_timezone,
+    notify_subscribers_on_publish
   ) {
+    const transaction = await db.sequelize.transaction();
+
     try {
-      const article = await db.models.Article.create({
-        title: title,
-        subtitle: subtitle,
-        description: description,
-        main_image_url: main_image_url,
-        date_written: date_written,
-        metatags: metatags,
-        userId: user_id, // vanjski kljucevi se moraju pisat camelcase, makar u bazi nisu tak...
-        articleTypeId: article_type_id,
-        countryId: country_id,
-        placeId: place_id,
-        airportCityId: airport_city_id,
-      });
+      const normalizedArticleTypeId = Number(article_type_id);
+      const shouldBeTipsFeatured =
+        (await isTipsArticleType(normalizedArticleTypeId, transaction)) &&
+        parseBooleanValue(is_tips_featured);
+
+      if (shouldBeTipsFeatured) {
+        await this.resetOtherTipsFeaturedArticles(
+          normalizedArticleTypeId,
+          null,
+          transaction
+        );
+      }
+
+      const article = await db.models.Article.create(
+        {
+          title: title,
+          subtitle: subtitle,
+          description: description,
+          main_image_url: main_image_url,
+          date_written: date_written,
+          date_updated: date_updated || null,
+          metatags: metatags,
+          userId: normalizeNullableId(user_id),
+          articleTypeId: normalizedArticleTypeId,
+          countryId: normalizeNullableId(country_id),
+          placeId: normalizeNullableId(place_id),
+          airportCityId: normalizeNullableId(airport_city_id),
+          isFarDestination: parseBooleanValue(is_far_destination),
+          isTipsFeatured: shouldBeTipsFeatured,
+        },
+        {
+          transaction,
+        }
+      );
+
+      if (
+        hasSchedulePayload(
+          publish_at,
+          publish_timezone,
+          notify_subscribers_on_publish
+        )
+      ) {
+        await db.models.ArticleSchedule.create(
+          normalizeSchedulePayload(
+            article.id,
+            publish_at,
+            publish_timezone,
+            notify_subscribers_on_publish
+          ),
+          { transaction }
+        );
+      }
+
+      await transaction.commit();
 
       return article;
     } catch (error) {
+      await transaction.rollback();
       console.log(error);
       return [];
     }
   }
 
-  // dohvati clanke koji u vise vise tablici imaju samo veze s homepageom (prema id-u special article typea)
-  async getHomepageArticles() {
+  async getHomepageArticles(includeScheduled = false) {
     try {
       const articles = await db.models.Article.findAll({
         include: [
+          getArticleScheduleInclude(),
           {
             model: db.models.ArticleSpecialType,
             through: db.models.Article_ArticleSpecialType,
@@ -289,7 +583,9 @@ class ArticleService {
             model: db.models.Country,
           },
         ],
+        where: includeScheduled ? {} : getPublicArticleWhere(),
       });
+
       return articles;
     } catch (error) {
       return [];
@@ -298,22 +594,38 @@ class ArticleService {
 
   async getTopCountryArticle(id) {
     try {
-      const articles = await db.models.Article.findOne({
-        where: {
+      const article = await db.models.Article.findOne({
+        subQuery: false,
+        where: getPublicArticleWhere({
           countryId: id,
-        },
+        }),
         include: [
+          getArticleScheduleInclude(),
           {
             model: db.models.ArticleSpecialType,
-            through: db.models.Article_ArticleSpecialType,
+            through: {
+              attributes: [],
+            },
             where: {
               id: 2,
             },
           },
+          {
+            model: db.models.Section,
+            separate: true,
+            order: [["order", "ASC"]],
+            include: [
+              {
+                model: db.models.SectionIcon,
+              },
+            ],
+          },
         ],
       });
-      return articles;
+
+      return article;
     } catch (error) {
+      console.log(error);
       return [];
     }
   }
@@ -321,10 +633,12 @@ class ArticleService {
   async getArticlesByCountryId(id) {
     try {
       const articles = await db.models.Article.findAll({
-        where: {
+        include: [getArticleScheduleInclude()],
+        where: getPublicArticleWhere({
           countryId: id,
-        },
+        }),
       });
+
       return articles;
     } catch (error) {
       return [];
@@ -334,45 +648,53 @@ class ArticleService {
   async getArticlesByPlaceId(id) {
     try {
       const articles = await db.models.Article.findAll({
-        where: {
+        include: [getArticleScheduleInclude()],
+        where: getPublicArticleWhere({
           placeId: id,
-        },
+        }),
       });
+
       return articles;
     } catch (error) {
       return [];
     }
   }
 
-  async getArticleBySearchTerm(name, page, pageSize) {
+  async getArticleBySearchTerm(name, page, pageSize, includeScheduled = false) {
     const limit = pageSize;
     const offset = (page - 1) * pageSize;
 
     try {
       const searchTermWithoutLastLetter = `%${name.slice(0, -1)}%`;
+      const searchWhere = {
+        [Op.or]: [
+          {
+            title: {
+              [Op.like]: searchTermWithoutLastLetter,
+            },
+          },
+          {
+            metatags: {
+              [Op.like]: searchTermWithoutLastLetter,
+            },
+          },
+        ],
+      };
+
       const articles = await db.models.Article.findAndCountAll({
         limit: limit,
         offset: offset,
         include: [
+          getArticleScheduleInclude(),
           {
             model: db.models.Country,
           },
         ],
-        where: {
-          [Op.or]: [
-            {
-              title: {
-                [Op.like]: searchTermWithoutLastLetter,
-              },
-            },
-            {
-              metatags: {
-                [Op.like]: searchTermWithoutLastLetter,
-              },
-            },
-          ],
-        },
+        where: includeScheduled
+          ? searchWhere
+          : getPublicArticleWhere(searchWhere),
       });
+
       return {
         total: articles.count,
         totalPages: Math.ceil(articles.count / pageSize),
@@ -389,11 +711,13 @@ class ArticleService {
   async updateOrCreateTopCountryArticle(article_id) {
     try {
       const article = await db.models.Article.findByPk(article_id);
+
       if (!article) {
         return "Article not found";
       } else {
         const countryId = article.toJSON().countryId;
         console.log(countryId);
+
         if (!countryId) {
           return "Article country not found";
         } else {
@@ -403,7 +727,7 @@ class ArticleService {
                 articleSpecialTypeId: 2,
               },
               include: {
-                model: db.models.Article, // ovo se moze zbog super many to many veze
+                model: db.models.Article,
                 where: {
                   countryId: countryId,
                 },
@@ -411,8 +735,8 @@ class ArticleService {
             });
 
           let response = null;
+
           if (existingArticle) {
-            //vec postoji top clanak za ovu drzavu - update
             const oldTopArticleId = existingArticle.toJSON().article.id;
 
             response = await db.models.Article_ArticleSpecialType.update(
@@ -421,12 +745,13 @@ class ArticleService {
             );
           } else {
             console.log("ne postoji");
-            // jos ne postoji top clanak za ovu drzavu - insert
+
             response = await db.models.Article_ArticleSpecialType.create({
               articleId: article_id,
-              articleSpecialTypeId: 2, // 2 = top country article
+              articleSpecialTypeId: 2,
             });
           }
+
           console.log(response);
           return article;
         }
@@ -438,14 +763,13 @@ class ArticleService {
   }
 
   async updateOrCreateTopHomepageArticles(article_ids, special_type_id) {
-    console.log(Array.isArray(article_ids)); // Outputs: true
+    console.log(Array.isArray(article_ids));
 
     try {
       console.log(special_type_id);
 
       const existingArticles =
         await db.models.Article_ArticleSpecialType.findAndCountAll({
-          // nadi sve clanke koji imaju taj poseban tip
           where: {
             articleSpecialTypeId: special_type_id,
           },
@@ -457,42 +781,40 @@ class ArticleService {
         special_type_id == 1 ||
         special_type_id == 3
       ) {
-        {
-          // provjeri nove vrijednosti koje nisu u bazi
-          const valuesToAdd = article_ids.filter(
-            (value) =>
-              !existingArticles.rows.some((item) => item.articleId === value)
-          );
+        const valuesToAdd = article_ids.filter(
+          (value) =>
+            !existingArticles.rows.some((item) => item.articleId === value)
+        );
 
-          // articli koji vise nisu u ovom novom arrayu
-          const valuesToRemove = [];
-          existingArticles.rows.map((row) => {
-            const articleIdToCheck = row.toJSON().articleId;
+        const valuesToRemove = [];
 
-            if (!article_ids.includes(articleIdToCheck)) {
-              valuesToRemove.push(row.toJSON().articleId);
-            }
-          });
+        existingArticles.rows.map((row) => {
+          const articleIdToCheck = row.toJSON().articleId;
 
-          // zamijeni ih
-          console.log(valuesToRemove);
-          console.log(valuesToAdd);
-          valuesToRemove.map(async (currRemoveValue, index) => {
-            await db.models.Article_ArticleSpecialType.update(
-              {
-                articleId: valuesToAdd[index],
+          if (!article_ids.includes(articleIdToCheck)) {
+            valuesToRemove.push(row.toJSON().articleId);
+          }
+        });
+
+        console.log(valuesToRemove);
+        console.log(valuesToAdd);
+
+        valuesToRemove.map(async (currRemoveValue, index) => {
+          await db.models.Article_ArticleSpecialType.update(
+            {
+              articleId: valuesToAdd[index],
+              articleSpecialTypeId: special_type_id,
+            },
+            {
+              where: {
+                articleId: currRemoveValue,
                 articleSpecialTypeId: special_type_id,
               },
-              {
-                where: {
-                  articleId: currRemoveValue,
-                  articleSpecialTypeId: special_type_id,
-                },
-              }
-            );
-          });
-        }
+            }
+          );
+        });
       }
+
       return { article_ids: article_ids, special_type_id: special_type_id };
     } catch (error) {
       console.log(error.message);
@@ -508,15 +830,45 @@ class ArticleService {
     metatags,
     main_image_url,
     date_written,
+    date_updated,
     article_type_id,
     user_id,
     country_id,
     place_id,
-    airport_city_id
+    airport_city_id,
+    is_far_destination,
+    is_tips_featured,
+    publish_at,
+    publish_timezone,
+    notify_subscribers_on_publish
   ) {
     console.log("patchArticle");
 
+    const transaction = await db.sequelize.transaction();
+
     try {
+      const articleToUpdate = await db.models.Article.findByPk(id, {
+        transaction,
+      });
+
+      if (!articleToUpdate) {
+        await transaction.rollback();
+        return "Article not found";
+      }
+
+      const normalizedArticleTypeId = Number(article_type_id);
+      const shouldBeTipsFeatured =
+        (await isTipsArticleType(normalizedArticleTypeId, transaction)) &&
+        parseBooleanValue(is_tips_featured);
+
+      if (shouldBeTipsFeatured) {
+        await this.resetOtherTipsFeaturedArticles(
+          normalizedArticleTypeId,
+          id,
+          transaction
+        );
+      }
+
       await db.models.Article.update(
         {
           title: title,
@@ -525,22 +877,63 @@ class ArticleService {
           metatags: metatags,
           main_image_url: main_image_url,
           date_written: date_written,
-          articleTypeId: article_type_id,
-          userId: user_id,
-          countryId: country_id,
-          placeId: place_id,
-          airportCityId: airport_city_id,
+          date_updated: date_updated || null,
+          articleTypeId: normalizedArticleTypeId,
+          userId: normalizeNullableId(user_id) || articleToUpdate.userId,
+          countryId: normalizeNullableId(country_id),
+          placeId: normalizeNullableId(place_id),
+          airportCityId: normalizeNullableId(airport_city_id),
+          isFarDestination: parseBooleanValue(is_far_destination),
+          isTipsFeatured: shouldBeTipsFeatured,
         },
         {
           where: { id: id },
+          transaction,
         }
       );
 
-      const updatedArticle = await db.models.Article.findByPk(id);
+      if (
+        hasSchedulePayload(
+          publish_at,
+          publish_timezone,
+          notify_subscribers_on_publish
+        )
+      ) {
+        const schedulePayload = normalizeSchedulePayload(
+          id,
+          publish_at,
+          publish_timezone,
+          notify_subscribers_on_publish
+        );
+
+        const existingSchedule = await db.models.ArticleSchedule.findOne({
+          where: {
+            articleId: id,
+          },
+          transaction,
+        });
+
+        if (existingSchedule) {
+          await existingSchedule.update(schedulePayload, { transaction });
+        } else {
+          await db.models.ArticleSchedule.create(schedulePayload, {
+            transaction,
+          });
+        }
+      }
+
+      const updatedArticle = await db.models.Article.findByPk(id, {
+        include: [getArticleScheduleInclude()],
+        transaction,
+      });
+
+      await transaction.commit();
+
       console.log("updatedArticle", updatedArticle);
 
       return updatedArticle;
     } catch (error) {
+      await transaction.rollback();
       console.log(error);
       return null;
     }
@@ -561,12 +954,22 @@ class ArticleService {
 
   async deleteTopCountryArticle(id) {
     try {
-      await db.models.Article_ArticleSpecialType.destroy({
-        where: { article_id: id },
-        where: { article_special_type_id: 2 },
+      const article = await db.models.Article.findByPk(id, {
+        attributes: ["countryId"],
       });
 
-      return [];
+      if (!article) {
+        return null;
+      }
+
+      await db.models.Article_ArticleSpecialType.destroy({
+        where: {
+          articleId: id,
+          articleSpecialTypeId: 2,
+        },
+      });
+
+      return article.countryId;
     } catch (error) {
       console.log(error);
       return null;

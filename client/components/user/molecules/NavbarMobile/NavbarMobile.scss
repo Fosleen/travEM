@@ -1,13 +1,22 @@
 @use "@/utils/theme.scss" as *;
 
 .navbar-mobile-container {
-  position: relative;
+  /* uvijek na vrhu i preko loga */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+
+  /* container ne hvata klikove osim djece (da ne “zaključa” page) */
+  pointer-events: none;
 
   .navbar-mobile-icon {
-    position: absolute;
+    position: fixed;
+    top: calc(env(safe-area-inset-top) + 12px);
     right: 16px;
-    top: -64px;
-    z-index: 4;
+    z-index: 10001;
+    pointer-events: auto;
 
     svg {
       background-color: $limeLight;
@@ -22,24 +31,57 @@
   }
 
   .navbar-mobile-menu {
-    position: absolute;
-    z-index: 2;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    z-index: 10000;
     width: 100%;
-    top: -100px;
+
     background-color: $limeLight;
     box-shadow: 0px 2px 8px rgb(126, 126, 126);
+
+    pointer-events: auto;
+
+    max-height: 78vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
     a {
       text-decoration: none;
     }
 
-    .navbar-empty-header {
-      height: 80px;
+    .navbar-mobile-menu-header {
+      padding-top: calc(env(safe-area-inset-top) + 16px);
+      padding-bottom: 10px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .navbar-mobile-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: fit-content;
+        pointer-events: auto;
+
+        img {
+          display: block;
+          width: 102px;
+          height: auto;
+          object-fit: contain;
+        }
+      }
     }
 
     .navbar-mobile-menu-categories {
       display: flex;
       flex-direction: column;
       padding: 8px;
+      gap: 8px;
 
       .navbar-mobile-menu-search {
         width: 100%;
@@ -64,6 +106,7 @@
           gap: 2px;
           font-size: 16px;
           font-weight: 700;
+          cursor: pointer;
 
           &.selected {
             background-color: $green;
@@ -80,11 +123,12 @@
     }
 
     &:last-child {
-      padding-bottom: 8px;
+      padding-bottom: 30px;
     }
   }
 }
 
+/* ===== TABLET MEDIUM ===== */
 @media screen and ($tabletMedium) {
   .navbar-mobile-container {
     .navbar-mobile-menu {

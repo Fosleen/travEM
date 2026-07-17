@@ -8,7 +8,10 @@ class SectionService {
     link_title,
     link_url,
     section_icon_id,
-    article_id
+    article_id,
+    show_visa_info = false,
+    show_best_time_to_visit = false,
+    show_country_language = false
   ) {
     try {
       const section = await db.models.Section.create({
@@ -19,7 +22,11 @@ class SectionService {
         link_url: link_url,
         sectionIconId: section_icon_id,
         articleId: article_id,
+        show_visa_info: Boolean(show_visa_info),
+        show_best_time_to_visit: Boolean(show_best_time_to_visit),
+        show_country_language: Boolean(show_country_language),
       });
+
       return section;
     } catch (error) {
       console.log(error);
@@ -35,7 +42,10 @@ class SectionService {
     link_title,
     link_url,
     section_icon_id,
-    article_id
+    article_id,
+    show_visa_info = false,
+    show_best_time_to_visit = false,
+    show_country_language = false
   ) {
     console.log(id);
 
@@ -49,6 +59,9 @@ class SectionService {
           link_url: link_url,
           sectionIconId: section_icon_id,
           articleId: article_id,
+          show_visa_info: Boolean(show_visa_info),
+          show_best_time_to_visit: Boolean(show_best_time_to_visit),
+          show_country_language: Boolean(show_country_language),
         },
         {
           where: { id: id },

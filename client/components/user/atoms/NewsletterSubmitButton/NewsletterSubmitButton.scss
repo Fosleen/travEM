@@ -1,0 +1,60 @@
+.newsletter-submit-button-inner {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+
+  .newsletter-submit-button-text {
+    position: relative;
+    z-index: 1;
+  }
+
+  .newsletter-submit-button-plane-slot {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    flex-shrink: 0;
+    overflow: visible;
+  }
+
+  .newsletter-submit-button-plane {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    line-height: 1;
+    transform: translate3d(0, -50%, 0);
+    transform-origin: center center;
+    opacity: 1;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: geometricPrecision;
+  }
+
+  .newsletter-submit-button-plane.idle {
+    transform: translate3d(0, -50%, 0);
+    opacity: 1;
+    transition: none;
+  }
+
+  .newsletter-submit-button-plane.armed {
+    transform: translate3d(0, -50%, 0);
+    opacity: 1;
+    transition: none;
+  }
+
+  .newsletter-submit-button-plane.flying {
+    transform: translate3d(42px, -50%, 0);
+    opacity: 0;
+    transition:
+      transform 620ms cubic-bezier(0.22, 0.06, 0.2, 1),
+      opacity 620ms ease-in;
+  }
+}

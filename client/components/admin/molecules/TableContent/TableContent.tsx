@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./TableContent.scss";
 import {
   createColumnHelper,
@@ -13,18 +13,52 @@ import {
 import Button from "../../../atoms/Button";
 import { CaretUpDown, PencilSimpleLine, Trash } from "@phosphor-icons/react";
 import { formatDate } from "../../../../utils/global";
-import {
-  deleteSubscriber,
-  getSubscribers,
-} from "../../../../utils/subscribers";
+import { deleteSubscriber } from "../../../../utils/subscribers";
 import { useRouter } from "next/navigation";
+import {
+  formatDateTimeInTimeZone,
+  getScheduleStatus,
+  ZAGREB_TIME_ZONE,
+} from "@/utils/articleSchedule";
 
 const TableContent = ({ data, type }) => {
-  const [sorting, setSorting] = useState();
+  const [sorting, setSorting] = useState([]);
+  const [tableData, setTableData] = useState(data || []);
   const columnHelper = createColumnHelper();
   const router = useRouter();
 
+  useEffect(() => {
+    setTableData(data || []);
+  }, [data]);
+
+  const handleEdit = async (id: number | string) => {
+    if (type === "country") {
+      router.push(`/admin/drzave/uredi/${id}`);
+    } else if (type === "place") {
+      router.push(`/admin/mjesta/uredi/${id}`);
+    } else if (type === "article") {
+      router.push(`/admin/clanci/uredi/${id}`);
+    }
+  };
+
+  const handleDeleteSubscriber = async (id: number) => {
+    const previousTableData = tableData;
+
+    try {
+      setTableData((currentData) =>
+        currentData.filter((subscriber) => subscriber.id !== id)
+      );
+
+      await deleteSubscriber(id);
+    } catch (error) {
+      console.error("Error deleting subscriber:", error);
+
+      setTableData(previousTableData);
+    }
+  };
+
   let columns;
+
   if (type === "country") {
     columns = [
       columnHelper.accessor("name", {
@@ -83,6 +117,26 @@ const TableContent = ({ data, type }) => {
         header: () => "Datum",
         cell: (info) => formatDate(info.renderValue()),
       }),
+      columnHelper.display({
+        id: "schedule",
+        header: () => "Objava",
+        cell: (row) => {
+          const status = getScheduleStatus(row.row.original);
+
+          return (
+            <div className="article-schedule-cell">
+              <span className={`article-schedule-badge ${status.className}`}>
+                {status.label}
+              </span>
+              {status.date && (
+                <small>
+                  {formatDateTimeInTimeZone(status.date, ZAGREB_TIME_ZONE)}
+                </small>
+              )}
+            </div>
+          );
+        },
+      }),
       columnHelper.accessor("country.name", {
         header: () => "Država",
         cell: (info) => info.renderValue() || "-",
@@ -109,7 +163,10 @@ const TableContent = ({ data, type }) => {
       columnHelper.display({
         id: "actions",
         cell: (row) => (
-          <Button edit onClick={() => handleEdit(row.row.original.id)}>
+          <Button
+            edit
+            onClick={() => handleDeleteSubscriber(row.row.original.id)}
+          >
             <Trash size={16} color="#333333" />
           </Button>
         ),
@@ -117,30 +174,12 @@ const TableContent = ({ data, type }) => {
     ];
   }
 
-  const handleEdit = async (id: number) => {
-    if (type == "country") {
-      router.push(`/admin/drzave/uredi/${id}`);
-    } else if (type == "place") {
-      router.push(`/admin/mjesta/uredi/${id}`);
-    } else if (type == "article") {
-      router.push(`/admin/clanci/uredi/${id}`);
-    } else if (type == "subscribers") {
-      try {
-        await deleteSubscriber(id);
-        getSubscribers();
-      } catch (error) {
-        console.error("Error deleting subscriber:", error);
-      }
-    }
-  };
-
   const table = useReactTable({
-    data,
+    data: tableData,
     columns,
     state: {
       sorting,
     },
-
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
@@ -169,6 +208,7 @@ const TableContent = ({ data, type }) => {
                           header?.getContext()
                         )}
                       </p>
+
                       {index !== headerGroup?.headers?.length - 1 && (
                         <CaretUpDown
                           size={32}
@@ -184,6 +224,7 @@ const TableContent = ({ data, type }) => {
             </tr>
           ))}
         </thead>
+
         <tbody>
           {table?.getRowModel()?.rows?.map((row) => (
             <tr key={row?.id}>
@@ -198,6 +239,7 @@ const TableContent = ({ data, type }) => {
             </tr>
           ))}
         </tbody>
+
         <tfoot>
           {table?.getFooterGroups()?.map((footerGroup) => (
             <tr key={footerGroup?.id}>

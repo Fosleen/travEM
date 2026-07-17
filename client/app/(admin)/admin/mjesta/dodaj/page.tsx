@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 "use client";
+
 import Button from "@/components/atoms/Button";
 import "./AddPlace.scss";
 import { CountriesData } from "@/common/types";
@@ -8,16 +9,29 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import { notifySuccess } from "@/components/atoms/Toast/Toast";
 import Swal from "sweetalert2";
-import * as Yup from "yup";
 import Input from "@/components/atoms/Input";
 import Textarea from "@/components/admin/atoms/Textarea";
 import { Plus, Trash, X } from "@phosphor-icons/react";
 import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
-import { getVisitedCountries } from "@/utils/map";
 import Modal from "@/components/atoms/Modal";
 import AdvancedDropdown from "@/components/admin/atoms/AdvancedDropdown";
 import { addPlace } from "@/utils/places";
 import { useRouter } from "next/navigation";
+import {
+  addMainPlaceImage,
+  addVideoField,
+  bestTimeMonths,
+  buildBestTimeToVisitPayload,
+  createPlaceValidationSchema,
+  deleteMainPlaceImage,
+  deleteVideoField,
+  fetchCountryDropdownOptions,
+  getDefaultBestTimeMonths,
+  grammarRows,
+  hasMainPlaceImage,
+  navigateToPlaces,
+  toggleDialog,
+} from "@/utils/placeFormHelpers";
 
 const AddPlace = () => {
   const router = useRouter();
@@ -35,15 +49,7 @@ const AddPlace = () => {
 
   const fetchData = async () => {
     try {
-      const countriesData = await getVisitedCountries();
-      const newArray = countriesData.map(
-        (el: { id: number; flag_image_url: string; name: string }) => ({
-          id: el.id,
-          url: el.flag_image_url, // because of this new array is needed (for image display in dropdown)
-          name: el.name,
-        })
-      );
-      setCountries(newArray);
+      setCountries(await fetchCountryDropdownOptions());
     } catch (error) {
       console.error("Error occured while fetching data:", error);
     }
@@ -53,20 +59,10 @@ const AddPlace = () => {
     fetchData();
   }, []);
 
-  const handleAddVideo = (arrayHelpers) => {
-    arrayHelpers.push({
-      video_url: "",
-    });
-  };
-
-  const handleDeleteVideo = (arrayHelpers, videoIndex) => {
-    arrayHelpers.remove(videoIndex);
-  };
-
   const handleSave = async (values) => {
     setIsSubmitClicked(true);
 
-    if (validateImages()) {
+    if (hasMainPlaceImage(mainPlaceImage)) {
       Swal.fire({
         title: "Jeste li sigurni?",
         text: "Dodat ćete ovo mjesto",
@@ -87,9 +83,15 @@ const AddPlace = () => {
             parseFloat(values.place_latitude.replace(",", ".")),
             parseFloat(values.place_longitude.replace(",", ".")),
             mainPlaceImage,
-            parseInt(selectedCountryId),
-            values.videos
+            parseInt(values.place_country),
+            values.videos,
+            values.name_genitive,
+            values.name_dative,
+            values.name_accusative,
+            values.name_locative,
+            buildBestTimeToVisitPayload(values)
           );
+
           console.log(placeResponse);
 
           router.push("/admin/mjesta");
@@ -97,58 +99,6 @@ const AddPlace = () => {
         }
       });
     }
-  };
-
-  const handleCancel = () => {
-    router.push("/admin/mjesta");
-  };
-
-  const handleAddImage = () => {
-    setMainPlaceImage(modalInputValue);
-    setModalInputValue("");
-  };
-
-  const handleDeleteImage = () => {
-    setMainPlaceImage(null);
-  };
-
-  const toggleDialog = () => {
-    if (dialogRef && dialogRef.current) {
-      dialogRef.current.hasAttribute("open")
-        ? dialogRef.current.close()
-        : dialogRef.current.showModal();
-    }
-  };
-
-  const ValidationSchema = Yup.object().shape({
-    place_name: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Naslov smije imati max 100 znakova!"),
-    place_latitude: Yup.string()
-      .required("Obavezno polje!")
-      .test(
-        "is-valid-latitude",
-        "Geografska širina mora biti validan decimalni broj!",
-        (value) => !isNaN(parseFloat(value))
-      ),
-    place_longitude: Yup.string()
-      .required("Obavezno polje!")
-      .test(
-        "is-valid-longitude",
-        "Geografska dužina mora biti validan decimalni broj!",
-        (value) => !isNaN(parseFloat(value))
-      ),
-    place_description: Yup.string().required("Obavezno polje!"),
-    place_country: Yup.number().required("Obavezno polje!").integer(),
-    videos: Yup.array().of(
-      Yup.object().shape({
-        video_url: Yup.string().required("Obavezno polje!"),
-      })
-    ),
-  });
-
-  const validateImages = () => {
-    return mainPlaceImage != "" && mainPlaceImage;
   };
 
   return (
@@ -159,14 +109,24 @@ const AddPlace = () => {
           <Formik
             initialValues={{
               place_name: "",
+              name_genitive: "",
+              name_dative: "",
+              name_accusative: "",
+              name_locative: "",
               place_description: "",
               place_country: null,
               place_latitude: "",
               place_longitude: "",
               place_icon_url: "",
+              best_time_to_visit: {
+                subtitle: "",
+                note: "",
+                is_enabled: true,
+                months: getDefaultBestTimeMonths(),
+              },
               videos: [{ video_url: "" }],
             }}
-            validationSchema={ValidationSchema}
+            validationSchema={createPlaceValidationSchema()}
             onSubmit={handleSave}
           >
             {({ values, setFieldValue }) => (
@@ -186,6 +146,7 @@ const AddPlace = () => {
                       className="error-message"
                     />
                   </div>
+
                   <div className="add-place-input">
                     <AdvancedDropdown
                       filter
@@ -207,6 +168,7 @@ const AddPlace = () => {
                       className="error-message"
                     />
                   </div>
+
                   <div className="add-place-row">
                     <div className="add-place-row-item">
                       <Field
@@ -221,6 +183,7 @@ const AddPlace = () => {
                         className="error-message"
                       />
                     </div>
+
                     <div className="add-place-row-item">
                       <Field
                         name="place_longitude"
@@ -235,6 +198,7 @@ const AddPlace = () => {
                       />
                     </div>
                   </div>
+
                   <div className="add-place-input">
                     <Field
                       name="place_description"
@@ -251,13 +215,14 @@ const AddPlace = () => {
                     />
                   </div>
                 </div>
+
                 <div className="add-place-input">
                   <div className="add-place-images-container">
                     {mainPlaceImage ? (
                       <div
                         className="add-place-image"
                         onClick={() => {
-                          handleDeleteImage();
+                          deleteMainPlaceImage(setMainPlaceImage);
                         }}
                       >
                         <div className="add-place-image-remove-icon">
@@ -272,19 +237,176 @@ const AddPlace = () => {
                       <div
                         className="add-place-item"
                         onClick={() => {
-                          toggleDialog();
+                          toggleDialog(dialogRef);
                         }}
                       >
                         <Plus size={32} color="#616161" weight="bold" />
                       </div>
                     )}
                   </div>
+
                   {isSubmitClicked &&
                     (mainPlaceImage == "" || !mainPlaceImage) && (
                       <p className="error-message">Obavezno polje!</p>
                     )}
+
                   <p>* preporuča se slika u omjeru 16:9</p>
                 </div>
+
+                <div className="add-place-grammar-wrapper">
+                  <div className="add-place-grammar-header">
+                    <h6>Padeži naziva mjesta *</h6>
+                    <p>
+                      Unesite oblike koji će se koristiti u tekstovima na
+                      stranici grada.
+                    </p>
+                  </div>
+
+                  <div className="add-place-grammar-table">
+                    <div className="add-place-grammar-row add-place-grammar-row-head">
+                      <div>Padež</div>
+                      <div>Pitanje</div>
+                      <div>Glagol</div>
+                      <div>Naziv mjesta</div>
+                    </div>
+
+                    {grammarRows.map((row) => (
+                      <div className="add-place-grammar-row" key={row.key}>
+                        <div className="add-place-grammar-case">
+                          {row.label}
+                        </div>
+                        <div>{row.question}</div>
+                        <div>{row.example}</div>
+                        <div>
+                          {row.isPreview ? (
+                            <div className="add-place-grammar-preview">
+                              {values.place_name || "Naziv mjesta"}
+                            </div>
+                          ) : (
+                            <>
+                              <Field
+                                name={row.key}
+                                type="text"
+                                as={Input}
+                                label=""
+                                placeholder={row.placeholder}
+                              />
+                              <ErrorMessage
+                                name={row.key}
+                                component="div"
+                                className="error-message"
+                              />
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="add-place-best-time-wrapper">
+                  <div className="add-place-best-time-header">
+                    <div>
+                      <h6>Najbolje vrijeme za posjet *</h6>
+                      <p>
+                        Unesite prosječnu temperaturu i količinu kiše za svaki
+                        mjesec.
+                      </p>
+                    </div>
+
+                    <ToggleSwitch
+                      name={"best-time-enabled"}
+                      description={"Prikaži ovu sekciju na stranici grada"}
+                      value={values.best_time_to_visit.is_enabled}
+                      setter={(value) => {
+                        setFieldValue("best_time_to_visit.is_enabled", value);
+                      }}
+                    />
+                  </div>
+
+                  <div className="add-place-best-time-inputs">
+                    <div className="add-place-input">
+                      <Field
+                        name="best_time_to_visit.subtitle"
+                        type="text"
+                        as={Input}
+                        label="Podnaslov *"
+                        placeholder="npr. Umjerena kontinentalna klima..."
+                      />
+                      <ErrorMessage
+                        name="best_time_to_visit.subtitle"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
+
+                    <div className="add-place-input">
+                      <Field
+                        name="best_time_to_visit.note"
+                        type="text"
+                        as={Textarea}
+                        rows={2}
+                        label="Napomena"
+                        placeholder="npr. Svibanj, lipanj i rujan nude najbolji balans..."
+                      />
+                      <ErrorMessage
+                        name="best_time_to_visit.note"
+                        component="div"
+                        className="error-message"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="add-place-best-time-table">
+                    <div className="add-place-best-time-row add-place-best-time-row-head">
+                      <div>Mjesec</div>
+                      <div>Prosj. temp. °C</div>
+                      <div>Kiša mm</div>
+                    </div>
+
+                    {bestTimeMonths.map((month, index) => (
+                      <div
+                        className="add-place-best-time-row"
+                        key={month.month_key}
+                      >
+                        <div className="add-place-best-time-month">
+                          {month.label}
+                        </div>
+
+                        <div>
+                          <Field
+                            name={`best_time_to_visit.months.${index}.avg_temp_c`}
+                            type="text"
+                            as={Input}
+                            label=""
+                            placeholder="npr. 17"
+                          />
+                          <ErrorMessage
+                            name={`best_time_to_visit.months.${index}.avg_temp_c`}
+                            component="div"
+                            className="error-message"
+                          />
+                        </div>
+
+                        <div>
+                          <Field
+                            name={`best_time_to_visit.months.${index}.avg_rain_mm`}
+                            type="text"
+                            as={Input}
+                            label=""
+                            placeholder="npr. 120"
+                          />
+                          <ErrorMessage
+                            name={`best_time_to_visit.months.${index}.avg_rain_mm`}
+                            component="div"
+                            className="error-message"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="add-place-videos-wrapper">
                   <div className="add-place-video-outer-container">
                     <FieldArray
@@ -301,13 +423,14 @@ const AddPlace = () => {
                                   type="button"
                                   circle
                                   onClick={() => {
-                                    handleAddVideo(arrayHelpers);
+                                    addVideoField(arrayHelpers);
                                   }}
                                 >
                                   +
                                 </Button>
                               )}
                             </div>
+
                             {videos && videos.length > 0
                               ? videos.map((_videos, index) => (
                                   <Fragment key={index}>
@@ -321,7 +444,7 @@ const AddPlace = () => {
                                       />
                                       <div
                                         onClick={() => {
-                                          handleDeleteVideo(
+                                          deleteVideoField(
                                             arrayHelpers,
                                             index
                                           );
@@ -344,6 +467,7 @@ const AddPlace = () => {
                     />
                   </div>
                 </div>
+
                 <div className="add-place-toggle-container">
                   <div className="add-place-toggle-item">
                     <ToggleSwitch
@@ -353,6 +477,7 @@ const AddPlace = () => {
                       setter={setIsOnMapChecked}
                     />
                   </div>
+
                   <div className="add-place-toggle-item">
                     <ToggleSwitch
                       name={"featured-place"}
@@ -361,6 +486,7 @@ const AddPlace = () => {
                       setter={setIsFeaturedChecked}
                     />
                   </div>
+
                   {isFeaturedChecked && (
                     <div className="add-place-toggle-input">
                       <Field
@@ -373,11 +499,16 @@ const AddPlace = () => {
                     </div>
                   )}
                 </div>
+
                 <div className="add-place-buttons">
                   <Button type="submit" adminPrimary>
                     dodaj mjesto
                   </Button>
-                  <Button type="button" white onClick={handleCancel}>
+                  <Button
+                    type="button"
+                    white
+                    onClick={() => navigateToPlaces(router)}
+                  >
                     Odustani
                   </Button>
                 </div>
@@ -388,10 +519,17 @@ const AddPlace = () => {
           <p>Loading...</p>
         )}
       </div>
+
       <Modal
         ref={dialogRef}
-        toggleDialog={toggleDialog}
-        onClick={handleAddImage}
+        toggleDialog={() => toggleDialog(dialogRef)}
+        onClick={() =>
+          addMainPlaceImage({
+            modalInputValue,
+            setMainPlaceImage,
+            setModalInputValue,
+          })
+        }
         modalInputValue={modalInputValue}
         setModalInputValue={setModalInputValue}
       />

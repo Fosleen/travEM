@@ -9,10 +9,53 @@
   width: 100%;
   max-width: 900px;
 
-  h3 {
+  .article-section-title--default {
     font-weight: 800;
     font-size: 24px;
     color: $grey;
+    margin: 0;
+  }
+
+  .article-section-title--with-icon {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+  }
+
+  .article-section-title__icon {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 auto;
+
+    img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+    }
+  }
+
+  .article-section-title__text {
+    font-weight: 900;
+    font-size: 30px;
+    line-height: 1.15;
+    color: $grey;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 520px) {
+    .article-section-title__text {
+      font-size: 26px;
+    }
+  }
+
+  .article-fragment-visa-info,
+  .article-fragment-best-time,
+  .article-fragment-best-time-to-visit,
+  .article-fragment-country-language {
+    width: 100%;
+    max-width: 900px;
   }
 
   .article-html-content {
@@ -22,7 +65,7 @@
 
     p {
       font-size: 16px;
-      line-height: 1.5;
+      line-height: 1.6;
       margin: 0;
 
       @media screen and ($desktop) {
@@ -176,4 +219,8 @@
       height: 500px;
     }
   }
+}
+
+.article-html-content:empty {
+  display: none;
 }

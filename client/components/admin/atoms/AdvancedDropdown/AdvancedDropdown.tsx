@@ -1,10 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { Dropdown } from "primereact/dropdown";
 import "./AdvancedDropdown.scss";
 import { DropdownProps } from "../../../../common/types";
+import { hasAnySectionIconFeature } from "@/utils/sectionSpecialFeatures";
 
 const AdvancedDropdown: FC<DropdownProps> = ({
   label,
@@ -20,76 +21,135 @@ const AdvancedDropdown: FC<DropdownProps> = ({
 }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
+  const getValueId = (value) => {
+    if (value === null || value === undefined) return null;
 
-  useEffect(() => {
-    if (selectedOption) onChange(selectedOption);
-  }, [selectedOption]);
-
-  useEffect(() => {
-    // to update selected value when article section is deleted
-    const option = options.find((option) => option.id === selectedValue);
-    setSelectedOption(option || null);
-  }, [selectedValue, options]);
-
-  useEffect(() => {
-    if (defaultValue) {
-      onChange(defaultValue);
+    if (typeof value === "object") {
+      return value?.id ?? null;
     }
-  }, []);
+
+    return value;
+  };
+
+  const optionsWithEmpty = useMemo(() => {
+    const emptyOption = {
+      id: null,
+      [filterAttribute]: "— Bez odabira —",
+      [imageAttribute]: "",
+      __isEmpty: true,
+    };
+
+    const hasNull =
+      Array.isArray(options) && options.some((option) => option?.id === null);
+
+    return hasNull ? options : [emptyOption, ...(options || [])];
+  }, [options, filterAttribute, imageAttribute]);
+
+  const findOptionByValue = (value) => {
+    const valueId = getValueId(value);
+
+    if (valueId === null || valueId === undefined) return null;
+
+    const list = optionsWithEmpty || [];
+
+    return list.find((item) => item?.id === valueId) || null;
+  };
 
   useEffect(() => {
-    // Update selectedOption with defaultValue if provided
-    if (defaultValue !== null && defaultValue !== undefined) {
-      const defaultOption = options.find(
-        (option) => option.id === defaultValue
-      );
-      console.log(defaultOption);
+    const option = findOptionByValue(selectedValue);
+    setSelectedOption(option);
+  }, [selectedValue, optionsWithEmpty]);
 
-      setSelectedOption(defaultOption);
-    }
-  }, [defaultValue, options]);
+  useEffect(() => {
+    if (defaultValue === null || defaultValue === undefined) return;
+
+    const defaultOption = findOptionByValue(defaultValue);
+    setSelectedOption(defaultOption);
+
+    // Važno:
+    // Ne zovemo onChange ovdje jer defaultValue služi samo za prikaz početne vrijednosti.
+    // Inače komponenta roditelju može poslati null tijekom inicijalizacije.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultValue, optionsWithEmpty]);
 
   const handleSelect = (option) => {
+    if (option?.id === null || option?.__isEmpty) {
+      setSelectedOption(null);
+
+      if (onChange) {
+        onChange(null);
+      }
+
+      return;
+    }
+
     setSelectedOption(option);
+
     if (onChange) {
       onChange(option);
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
+  const getIsSpecialFeatureOption = (option) => {
+    if (!option || option?.id === null || option?.__isEmpty) return false;
+
+    return hasAnySectionIconFeature(option);
+  };
+
   const selectedOptionTemplate = (option, props) => {
-    if (option) {
+    if (!option || option?.id === null || option?.__isEmpty) {
+      return <span className="dropdown-placeholder">{props.placeholder}</span>;
+    }
+
+    const isSpecialFeatureOption = getIsSpecialFeatureOption(option);
+
+    return (
+      <div
+        className={`option-item selected ${
+          isSpecialFeatureOption ? "option-item--special" : ""
+        }`}
+      >
+        {images && option?.[imageAttribute] && (
+          <img
+            alt={option?.[filterAttribute] || ""}
+            src={option?.[imageAttribute]}
+            className="icon"
+          />
+        )}
+
+        {option?.[filterAttribute] && <div>{option?.[filterAttribute]}</div>}
+      </div>
+    );
+  };
+
+  const itemOptionTemplate = (option) => {
+    const isEmpty = option?.id === null || option?.__isEmpty;
+
+    if (isEmpty) {
       return (
-        <div className="option-item selected">
-          {images && (
-            <img
-              alt={option[imageAttribute]}
-              src={option[imageAttribute]}
-              className="icon"
-            />
-          )}
-          {option[filterAttribute] && <div>{option[filterAttribute]}</div>}
+        <div className="option-item option-item--empty">
+          <div>{option?.[filterAttribute] || "— Bez odabira —"}</div>
         </div>
       );
     }
 
-    return <span>{props.placeholder}</span>;
-  };
+    const isSpecialFeatureOption = getIsSpecialFeatureOption(option);
 
-  const itemOptionTemplate: FC<{ url?: string; name?: string }> = (option) => {
     return (
-      <div className="option-item">
-        {images && (
+      <div
+        className={`option-item ${
+          isSpecialFeatureOption ? "option-item--special" : ""
+        }`}
+      >
+        {images && option?.[imageAttribute] && (
           <img
-            alt={option.name}
-            src={option[imageAttribute]}
+            alt={option?.[filterAttribute] || ""}
+            src={option?.[imageAttribute]}
             className="icon"
           />
         )}
-        <div>{option[filterAttribute]}</div>
+
+        <div>{option?.[filterAttribute]}</div>
       </div>
     );
   };
@@ -97,11 +157,12 @@ const AdvancedDropdown: FC<DropdownProps> = ({
   return (
     <div className="dropdown-wrapper">
       {label && <label className="dropdown-label">{label}</label>}
+
       <div className="dropdown-filter-wrapper">
         <Dropdown
           value={selectedOption}
           onChange={(e) => handleSelect(e.value)}
-          options={options}
+          options={optionsWithEmpty}
           optionLabel={filterAttribute}
           placeholder={hardcodedValue}
           filter={filter}

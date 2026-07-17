@@ -5,20 +5,34 @@
   flex-direction: column;
   gap: 8px;
   align-items: center;
+  cursor: default;
+  transition: transform 0.28s ease;
 
   .blog-stats-item-wrapper {
     position: relative;
     max-width: 135px;
     width: 100%;
+    transition: transform 0.28s ease;
 
     .blog-stats-item-image {
       position: relative;
       width: 100%;
-      aspect-ratio: 1; // Makes it square
+      aspect-ratio: 1;
       padding: 8px;
       background-color: $green;
       border-radius: 50%;
       overflow: hidden;
+      transition:
+        transform 0.28s ease,
+        box-shadow 0.28s ease,
+        background-color 0.28s ease;
+
+      img {
+        transition:
+          transform 0.35s ease,
+          opacity 0.28s ease,
+          filter 0.28s ease;
+      }
     }
 
     .blog-stats-item-value {
@@ -30,20 +44,58 @@
       right: 0;
       justify-content: center;
       align-items: center;
+      pointer-events: none;
 
       p {
         font-size: 40px;
         color: $bg;
         font-weight: 600;
         text-shadow: 0 4px 8px rgba($color: #000000, $alpha: 0.5);
+        transition:
+          transform 0.28s ease,
+          text-shadow 0.28s ease;
       }
     }
   }
 
-  p {
+  > p {
     text-align: center;
     font-weight: 700;
     font-size: 16px;
+    transition:
+      transform 0.28s ease,
+      color 0.28s ease;
+  }
+
+  &:hover {
+    transform: translateY(-6px);
+
+    .blog-stats-item-wrapper {
+      transform: scale(1.03);
+    }
+
+    .blog-stats-item-image {
+      transform: scale(1.06);
+      box-shadow: 0 16px 32px rgba($color: #000000, $alpha: 0.18);
+
+      img {
+        transform: scale(1.1) rotate(-3deg);
+        opacity: 0.78;
+        filter: saturate(1.08);
+      }
+    }
+
+    .blog-stats-item-value {
+      p {
+        transform: scale(1.1);
+        text-shadow: 0 7px 14px rgba($color: #000000, $alpha: 0.42);
+      }
+    }
+
+    > p {
+      transform: translateY(2px);
+      color: $grey;
+    }
   }
 }
 
@@ -57,7 +109,7 @@
       }
     }
 
-    p {
+    > p {
       font-size: 20px;
     }
   }
@@ -73,7 +125,7 @@
       }
     }
 
-    p {
+    > p {
       font-size: 16px;
     }
   }
@@ -89,7 +141,7 @@
       }
     }
 
-    p {
+    > p {
       font-size: 24px;
     }
   }

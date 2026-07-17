@@ -1,24 +1,32 @@
 @use "@/utils/theme.scss" as *;
 
 .recommended-map-destinations-container {
-  padding: 16px 16px 0px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   justify-content: space-between;
   width: 100%;
+  box-sizing: border-box;
 
   h2 {
     font-size: 24px;
     font-weight: 700;
     color: $greyMiddleDark;
+    margin: 0;
   }
 
   .recommended-map-destinations-wrapper {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
-    flex-wrap: wrap;
+    width: 100%;
+    box-sizing: border-box;
+
+    /* osigurava da grid itemi nikad ne probiju layout */
+    > * {
+      min-width: 0;
+    }
   }
 }
 
@@ -26,7 +34,7 @@
   .recommended-map-destinations-container {
     .recommended-map-destinations-wrapper {
       gap: 16px;
-      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 }
@@ -37,13 +45,15 @@
     margin: 0 auto;
     flex-direction: row;
 
+    h2 {
+      font-size: 28px;
+    }
+
     .recommended-map-destinations-wrapper {
       display: flex;
       flex-wrap: wrap;
-    }
-
-    h2 {
-      font-size: 28px;
+      width: 100%;
+      gap: 16px;
     }
   }
 }

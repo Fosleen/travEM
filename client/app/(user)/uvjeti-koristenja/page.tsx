@@ -83,7 +83,7 @@ export default function TermsAndConditions() {
       </p>
       <h4>7. Izmjene uvjeta</h4>
       <p>
-        <span className="bold">PutujEM s travEM</span> zadržava pravo izmijeniti
+        <span className="bold">putujEM s travEM</span> zadržava pravo izmijeniti
         ove uvjete korištenja u bilo kojem trenutku. Sve promjene bit će
         objavljene na ovoj stranici i stupit će na snagu odmah nakon objave.
         Preporučujemo vam da redovito pregledavate ove uvjete.
@@ -91,7 +91,7 @@ export default function TermsAndConditions() {
       <h4>8. Kontakt</h4>
       <p>
         Ako imate bilo kakva pitanja o ovim uvjetima korištenja, slobodno nas
-        kontaktirajte na travem.hr@gmail.com
+        kontaktirajte na hello@putujemstravem.com
       </p>
     </div>
   );

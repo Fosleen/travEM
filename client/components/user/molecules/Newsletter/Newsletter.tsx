@@ -1,40 +1,14 @@
-import Button from "../../../atoms/Button";
 import Input from "../../../atoms/Input";
 import "./Newsletter.scss";
 import NewsletterImage from "../../atoms/NewsletterImage";
 import { useState } from "react";
-import { notifyFailure, notifyInfo } from "../../../atoms/Toast/Toast";
-import { addSubscriber } from "../../../../utils/subscribers";
 import Image from "next/image";
+import NewsletterSubmitButton from "../../atoms/NewsletterSubmitButton/NewsletterSubmitButton";
+import { handleSubscriptionClick } from "@/utils/newsletterSubscription";
 
 const Newsletter = () => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignoreS
-  // eslint-disable-next-line
   const [email, setEmail] = useState("");
-
-  const handleSubscriptionClick = async () => {
-    if (!email) {
-      notifyFailure("Molimo unesite email adresu");
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      notifyFailure("Molimo unesite valjanu email adresu");
-      return;
-    }
-
-    try {
-      await addSubscriber(email);
-      notifyInfo(
-        "Uspješno ste se pretplatili na newsletter! Ako ne vidite poruke, provjerite neželjenu poštu (spam mail) i maknite naš mail odande. Hvala."
-      );
-      setEmail("");
-    } catch (error) {
-      notifyFailure("Došlo je do greške prilikom pretplate");
-    }
-  };
+  const [animateTrigger, setAnimateTrigger] = useState(0);
 
   return (
     <div className="newsletter-container">
@@ -52,6 +26,7 @@ const Newsletter = () => {
           />
         </svg>
       </div>
+
       <div className="newsletter-content-container">
         <div className="newsletter-content">
           <div className="newsletter-envelope">
@@ -63,11 +38,14 @@ const Newsletter = () => {
               style={{ width: "auto", height: "auto" }}
             />
           </div>
+
           <div className="newsletter-content-text">
             <h3>Pridruži nam se</h3>
             <p>
-              Inspiriraj se. Primaj popuste na letove. Prvi saznaj sve savjete.
+              Besplatno se pretplati i primaj vodiče, savjete, obavijesti i
+              povoljne aviokarte direktno na svoju e-mail adresu.
             </p>
+
             <div className="newsletter-actions">
               <div className="newsletter-input-container">
                 <Input
@@ -78,14 +56,26 @@ const Newsletter = () => {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
+
               <div className="newsletter-button-container">
-                <Button primary onClick={handleSubscriptionClick}>
-                  pretplati se
-                </Button>
+                <NewsletterSubmitButton
+                  onClick={() =>
+                    handleSubscriptionClick({
+                      email,
+                      setEmail,
+                      setAnimateTrigger,
+                      successMessage:
+                        "Uspješno ste se pretplatili na newsletter! Ako ne vidite poruke, provjerite neželjenu poštu (spam mail) i maknite naš mail odande. Hvala.",
+                    })
+                  }
+                  animateTrigger={animateTrigger}
+                  text="pretplati se"
+                />
               </div>
             </div>
           </div>
         </div>
+
         <div className="newsletter-image">
           <NewsletterImage />
         </div>

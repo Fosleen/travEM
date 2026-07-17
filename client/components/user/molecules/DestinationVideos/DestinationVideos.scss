@@ -28,8 +28,24 @@
 @media screen and ($tabletMedium) {
   .destination-videos-container {
     .destination-videos {
-      gap: 256px;
       height: fit-content;
+
+      &.one-video {
+        gap: 256px;
+        max-width: 760px;
+      }
+
+      &.two-videos {
+        gap: 32px;
+        grid-template-columns: 1fr 1fr;
+        max-width: 100%;
+      }
+
+      &.three-videos {
+        gap: 8px;
+        grid-template-columns: 1fr 1fr 1fr;
+        max-width: 100%;
+      }
     }
   }
 }
@@ -45,9 +61,24 @@
     }
 
     .destination-videos {
-      gap: 8px;
-      grid-template-columns: 1fr 1fr 1fr;
       height: fit-content;
+
+      &.one-video {
+        gap: 256px;
+        max-width: 760px;
+      }
+
+      &.two-videos {
+        gap: 32px;
+        grid-template-columns: 1fr 1fr;
+        max-width: 100%;
+      }
+
+      &.three-videos {
+        gap: 8px;
+        grid-template-columns: 1fr 1fr 1fr;
+        max-width: 100%;
+      }
     }
   }
 }
@@ -60,6 +91,20 @@
 
       .vlog-icon {
         width: 112px;
+      }
+    }
+
+    .destination-videos {
+      &.one-video {
+        max-width: 760px;
+      }
+
+      &.two-videos {
+        max-width: 1100px;
+      }
+
+      &.three-videos {
+        max-width: 100%;
       }
     }
   }

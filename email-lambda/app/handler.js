@@ -1,5 +1,8 @@
 const nodemailer = require("nodemailer");
 const { createEmailTemplate } = require("./emailTemplate");
+const {
+  createReplyNotificationTemplate,
+} = require("./commentReplyNotificationTemplate");
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -91,6 +94,42 @@ const sendNewsletter = async (req, res) => {
   }
 };
 
+const sendCommentReplyNotification = async (req, res) => {
+  try {
+    const { parentComment, reply, article } = req.body;
+
+    if (
+      !parentComment?.email ||
+      !parentComment?.unsubscribe_token ||
+      !reply ||
+      !article?.id
+    ) {
+      return res.status(400).json({ error: "Invalid comment notification payload" });
+    }
+
+    const html = createReplyNotificationTemplate({
+      parentComment,
+      reply,
+      article,
+    });
+
+    const info = await sendEmail(
+      parentComment.email,
+      "Netko ti je odgovorio na komentar na blogu putujEM s travEM.",
+      html
+    );
+
+    res.status(200).json({
+      message: "Comment reply notification sent successfully",
+      messageId: info.messageId,
+    });
+  } catch (error) {
+    console.error("Error sending comment reply notification:", error);
+    res.status(500).json({ error: "Failed to send comment reply notification" });
+  }
+};
+
 module.exports = {
   sendNewsletter,
+  sendCommentReplyNotification,
 };

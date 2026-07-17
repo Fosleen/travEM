@@ -4,6 +4,7 @@
   display: flex;
   gap: 16px;
   align-items: center;
+  margin-bottom: 40px;
 
   img {
     width: 50px;
@@ -19,7 +20,7 @@
 
   a {
     color: $green;
-    font-size: 20px;
+    font-size: 18px;
     text-decoration: none;
 
     &:hover {

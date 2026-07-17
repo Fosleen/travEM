@@ -14,7 +14,6 @@ import {
 } from "@/utils/visaInfo";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import Input from "@/components/atoms/Input";
-import * as Yup from "yup";
 import AdvancedDropdown from "@/components/admin/atoms/AdvancedDropdown";
 import Button from "@/components/atoms/Button";
 import Dropdown from "@/components/atoms/Dropdown";
@@ -22,6 +21,7 @@ import { useRouter } from "next/navigation";
 
 const EditVisaInfo = () => {
   const router = useRouter();
+
   const [countries, setCountries] = useState<Array<CountriesData>>([]);
   const [visaCountries, setVisaCountries] = useState([
     "Hrvatska",
@@ -30,27 +30,35 @@ const EditVisaInfo = () => {
     "Slovenija",
     "Crna Gora",
   ]);
+
   const yesNoValues = [
     { id: 0, name: "Ne" },
     { id: 1, name: "Da" },
   ];
+
   const [checkedInfo, setCheckedInfo] = useState(null);
 
   const [selectedCountry1Id, setSelectedCountry1Id] = useState("");
   const [selectedCountry2Id, setSelectedCountry2Id] = useState("");
 
+  const hasSelectedCountries =
+    selectedCountry1Id !== "" && selectedCountry2Id !== "";
+
+  const isExistingVisaInfo = (info) =>
+    info && typeof info === "object" && info.hasOwnProperty("id");
+
   const fetchData = async () => {
     try {
       const countriesData = await getVisitedCountries();
+
       const filteredAllCountries = countriesData.map(
         (el: { id: number; flag_image_url: string; name: string }) => ({
           id: el.id,
-          url: el.flag_image_url, // because of this new array is needed (for image display in dropdown)
+          url: el.flag_image_url,
           name: el.name,
         })
       );
 
-      // returns only 5 wanted countries (Croatia, BiH, Serbia, Montenegro, Slovenia) with their ID from the database
       const filteredVisaCountries = filteredAllCountries.filter((i) =>
         visaCountries.includes(i.name)
       );
@@ -68,7 +76,8 @@ const EditVisaInfo = () => {
         parseInt(selectedCountry1Id),
         parseInt(selectedCountry2Id)
       );
-      setCheckedInfo(info); // to update formik data and know if method will be POST or PATCH
+
+      setCheckedInfo(info);
     }
   };
 
@@ -83,8 +92,6 @@ const EditVisaInfo = () => {
   }, [selectedCountry1Id, selectedCountry2Id]);
 
   const handleSave = async (values) => {
-    console.log(values);
-
     Swal.fire({
       title: "Jeste li sigurni?",
       text: "Uredit ćete ove informacije o vizama!",
@@ -96,9 +103,10 @@ const EditVisaInfo = () => {
       confirmButtonText: "Da, objavi!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        // decide whether to add or update data
-        if (checkedInfo && checkedInfo.hasOwnProperty("id")) {
-          await patchVisaInfo(
+        let savedInfo;
+
+        if (isExistingVisaInfo(checkedInfo)) {
+          savedInfo = await patchVisaInfo(
             checkedInfo.id,
             values.country_2.id,
             values.country_2.documentation,
@@ -107,7 +115,7 @@ const EditVisaInfo = () => {
             values.country_1_id
           );
         } else {
-          await addVisaInfo(
+          savedInfo = await addVisaInfo(
             values.country_2.id,
             values.country_2.documentation,
             values.country_2.visa_needed,
@@ -116,8 +124,11 @@ const EditVisaInfo = () => {
           );
         }
 
-        router.push("/admin/sadrzaj");
         notifySuccess("Uspješno dodane informacije o vizi!");
+
+        if (savedInfo && typeof savedInfo === "object") {
+          setCheckedInfo(savedInfo);
+        }
       }
     });
   };
@@ -150,7 +161,7 @@ const EditVisaInfo = () => {
                 : "",
             },
           }}
-          enableReinitialize={true} // dynamic changes based on dropdowns
+          enableReinitialize={true}
           onSubmit={handleSave}
         >
           {({ values, setFieldValue }) => (
@@ -165,11 +176,18 @@ const EditVisaInfo = () => {
                   value={values.country_1_id}
                   selectedValue={values.country_1_id}
                   onChange={(value) => {
+                    if (!value) {
+                      setFieldValue("country_1_id", "");
+                      setSelectedCountry1Id("");
+                      return;
+                    }
+
                     setFieldValue("country_1_id", value.id);
                     setSelectedCountry1Id(value.id);
                   }}
                   isDisabled={false}
                 />
+
                 <AdvancedDropdown
                   images
                   label="Država iz koje se dolazi *"
@@ -178,12 +196,19 @@ const EditVisaInfo = () => {
                   value={values.country_2.id}
                   selectedValue={values.country_2.id}
                   onChange={(value) => {
+                    if (!value) {
+                      setFieldValue("country_2.id", "");
+                      setSelectedCountry2Id("");
+                      return;
+                    }
+
                     setFieldValue("country_2.id", value.id);
                     setSelectedCountry2Id(value.id);
                   }}
                   isDisabled={false}
                 />
-                {values.country_2.id && checkedInfo && (
+
+                {hasSelectedCountries && (
                   <div className="add-visa-info-section">
                     <div className="add-visa-info-item">
                       <Field
@@ -197,6 +222,7 @@ const EditVisaInfo = () => {
                         component="div"
                       />
                     </div>
+
                     <div className="add-visa-info-item">
                       <Dropdown
                         label="Potrebna viza *"
@@ -210,6 +236,7 @@ const EditVisaInfo = () => {
                       />
                       <ErrorMessage name="country_1_id" component="div" />
                     </div>
+
                     <div className="add-visa-info-item">
                       <Field
                         name="country_2.additional_info"
@@ -230,6 +257,7 @@ const EditVisaInfo = () => {
                 <Button type="submit" adminPrimary>
                   spremi
                 </Button>
+
                 <Button type="button" white onClick={handleCancel}>
                   Odustani
                 </Button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -9,25 +9,31 @@ import SidebarMenuItem from "../../atoms/SidebarMenuItem";
 import "./SidebarMenu.scss";
 
 const SidebarMenu = () => {
-  const [expirationTime, setExpirationTime] = useState("");
+  const getExpirationTime = () => {
+    if (typeof window === "undefined") {
+      return "";
+    }
+
+    const jwtExpiration = localStorage.getItem("jwtExpiration");
+
+    if (!jwtExpiration) {
+      return "";
+    }
+
+    const expirationDate = new Date(Number(jwtExpiration) * 1000);
+    return expirationDate.toLocaleString("en-GB", { hour12: false });
+  };
+
+  const [expirationTime] = useState(getExpirationTime);
   const router = useRouter();
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     localStorage.clear();
     document.cookie = "jwt=; path=/; max-age=0";
     router.push("/login");
-  };
+  }, [router]);
 
   useEffect(() => {
-    const jwtExpiration = localStorage.getItem("jwtExpiration");
-
-    if (jwtExpiration) {
-      const expirationDate = new Date(Number(jwtExpiration) * 1000);
-      setExpirationTime(
-        expirationDate.toLocaleString("en-GB", { hour12: false })
-      );
-    }
-
     const interval = setInterval(() => {
       const currentTime = Math.floor(Date.now() / 1000);
       const storedExpiration = localStorage.getItem("jwtExpiration");
@@ -38,7 +44,7 @@ const SidebarMenu = () => {
     }, 900000); // Check every 15 minutes
 
     return () => clearInterval(interval);
-  }, []);
+  }, [handleLogout]);
 
   return (
     <div className="sidebar-menu-container">
@@ -58,6 +64,7 @@ const SidebarMenu = () => {
           <SidebarMenuItem text={"Mjesta"} />
           <SidebarMenuItem text={"Sadržaj"} />
           <SidebarMenuItem text={"Newsletter"} />
+          <SidebarMenuItem text={"Komentari"} />
         </div>
       </div>
       <div className="sidebar-menu-items">

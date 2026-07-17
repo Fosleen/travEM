@@ -1,5 +1,10 @@
 import { getArticleTypes } from "@/utils/articleTypes";
-import { getArticles, getRecommendedArticles } from "@/utils/article";
+import {
+  getArticleById,
+  getArticles,
+  getRecommendedArticles,
+  getTipsFeaturedArticle,
+} from "@/utils/article";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { convertFromSlug } from "@/utils/global";
@@ -44,7 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             url: "https://putujemstravem.com/default-og-image.jpg",
             width: 1200,
             height: 630,
-            alt: `Uvjeti korištenja`,
+            alt: `${convertFromSlug(selectedType.name)} - putujEM s travEM`,
           },
         ],
       },
@@ -81,33 +86,48 @@ export default async function Page({ params, searchParams }: Props) {
 
   let initialArticles = null;
   let initialTotalPages = 1;
-  let newestArticleId = null;
+  let initialFeaturedArticle = null;
+  let recommendedBaseArticleId = null;
 
   try {
-    const articlesData = await getArticles(
-      currentPage,
-      8,
-      selectedArticleType.id
-    );
+    const [articlesData, featuredArticleData] = await Promise.all([
+      getArticles(currentPage, 7, selectedArticleType.id),
+      getTipsFeaturedArticle(selectedArticleType.id),
+    ]);
 
     if (articlesData && !articlesData.error) {
       initialArticles = articlesData.data || [];
       initialTotalPages = articlesData.totalPages || 1;
+    }
 
-      if (initialArticles.length > 0) {
-        newestArticleId = initialArticles[0].id;
+    if (featuredArticleData && !featuredArticleData.error) {
+      const fullFeaturedArticle = await getArticleById(
+        featuredArticleData.id,
+        true
+      );
+
+      if (fullFeaturedArticle && !fullFeaturedArticle.error) {
+        initialFeaturedArticle = fullFeaturedArticle;
+      } else {
+        initialFeaturedArticle = featuredArticleData;
       }
+
+      recommendedBaseArticleId = featuredArticleData.id;
+    }
+
+    if (!recommendedBaseArticleId && initialArticles?.length > 0) {
+      recommendedBaseArticleId = initialArticles[0].id;
     }
   } catch (error) {
-    console.error("Error fetching articles:", error);
+    console.error("Error fetching tips and tricks data:", error);
   }
 
   let recommendedArticles = null;
 
-  if (newestArticleId) {
+  if (recommendedBaseArticleId) {
     try {
       const recommended = await getRecommendedArticles(
-        newestArticleId,
+        recommendedBaseArticleId,
         "article"
       );
       recommendedArticles = recommended || [];
@@ -121,6 +141,7 @@ export default async function Page({ params, searchParams }: Props) {
       initialArticleTypes={articleTypes}
       initialSelectedType={selectedArticleType}
       initialArticles={initialArticles}
+      initialFeaturedArticle={initialFeaturedArticle}
       initialTotalPages={initialTotalPages}
       initialRecommendedArticles={recommendedArticles}
       initialPage={currentPage}

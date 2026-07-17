@@ -7,26 +7,25 @@ const HorizontalPostItem: FC<{ isSmall?: boolean; article: Article }> = ({
   isSmall = false,
   article,
 }) => {
+  if (!article) return null;
+
   return (
-    <>
-      {article && (
-        <Link
-          href={`/clanak/${article.id}`}
-          className={`horizontal-post-item-container ${isSmall && "small"}`}
-        >
-          <div
-            className={`horizontal-post-item-image-container ${
-              isSmall && "small"
-            }`}
-          >
-            <img src={article.main_image_url} alt="post-image" />
-          </div>
-          <div className="horizontal-post-item-text-container">
-            <p className={`${isSmall && "small"}`}>{article.title}</p>
-          </div>
-        </Link>
-      )}
-    </>
+    <Link
+      href={`/clanak/${article.id}`}
+      className={`horizontal-post-item-container ${isSmall ? "small" : ""}`}
+    >
+      <div
+        className={`horizontal-post-item-image-container ${
+          isSmall ? "small" : ""
+        }`}
+      >
+        <img src={article.main_image_url} alt={article.title} />
+      </div>
+
+      <div className="horizontal-post-item-text-container">
+        <p className={isSmall ? "small" : ""}>{article.title}</p>
+      </div>
+    </Link>
   );
 };
 

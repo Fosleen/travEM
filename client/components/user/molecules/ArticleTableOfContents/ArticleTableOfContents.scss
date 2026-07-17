@@ -32,7 +32,6 @@
     margin-bottom: 16px;
     margin-top: 8px;
     font-size: 20px;
-    //padding-left: 16px;
   }
 
   ul {
@@ -46,5 +45,65 @@
     @media screen and ($tablet) {
       padding-left: 32px;
     }
+  }
+
+  /* =========================================
+     HOVER "CARD" EFEKT za TableOfContentsItem
+     (isto kao na dropupu)
+  ========================================= */
+
+  /* wrapper koji TableOfContentsItem vraca */
+  ul .table-of-contents-item {
+    position: relative;
+    width: 100%;
+    border-radius: 12px;
+    overflow: visible;
+
+    transition: box-shadow 0.18s ease, transform 0.18s ease;
+
+    &:hover {
+      box-shadow: 0 0 0 2px #2bac82, 0 0 14px rgba(43, 172, 130, 0.35);
+      transform: translateY(-1px);
+    }
+  }
+
+  /* reset jer je <li> unutra */
+  ul .table-of-contents-item > li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* ikonica da se ne stisce i da klik ide na link overlay */
+  ul .table-of-contents-item .table-of-contents-item-image {
+    flex-shrink: 0;
+    pointer-events: none;
+  }
+
+  /* link overlay preko cijelog reda */
+  ul .table-of-contents-item a {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+
+    /* ostavi mjesta za ikonu + malo zraka */
+    padding-left: 46px;
+    padding-right: 10px;
+
+    width: 100%;
+    border-radius: 12px;
+
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+
+    line-height: 1.35;
+  }
+
+  /* opcionalno: da hover lagano oboji pozadinu reda */
+  ul .table-of-contents-item:hover a {
+    background: rgba(43, 172, 130, 0.06);
   }
 }

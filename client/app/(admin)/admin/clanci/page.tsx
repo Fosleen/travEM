@@ -14,7 +14,7 @@ const ArticlesList = () => {
 
   const fetchData = async () => {
     try {
-      const data = await getArticles(page, pageSize);
+      const data = await getArticles(page, pageSize, null, true);
       setArticles(data);
     } catch (error) {
       console.error("error while fetching:", error);
@@ -27,7 +27,7 @@ const ArticlesList = () => {
 
   const fetchSearch = async () => {
     try {
-      const data = await getArticlesByName(searchText, page, pageSize);
+      const data = await getArticlesByName(searchText, page, pageSize, true);
       setArticles(data);
     } catch (error) {
       console.error("error while fetching:", error);

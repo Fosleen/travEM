@@ -19,9 +19,15 @@ import characteristicIcon from "./characteristicIconRoute.js";
 import specificityImage from "./specificityImageRoute.js";
 import specificityItem from "./specificityItemRoute.js";
 import video from "./videoRoute.js";
+import affiliate from "./affiliateRoute.js";
 import airportCity from "./airportCityRoute.js";
 import { verifyToken } from "../middleware/jwt_verify.js";
 import subscriber from "./subscriberRoute.js";
+import placeBestTimeToVisit from "./placeBestTimeToVisitRoute.js";
+import countryBestTimeToVisit from "./countryBestTimeToVisitRoute.js";
+import countryLanguage from "./countryLanguageRoute.js";
+import articleComment from "./articleCommentRoute.js";
+import airplaneTicketPromo from "./airplaneTicketPromoRoute.js";
 
 const router = new Router();
 
@@ -29,6 +35,8 @@ router.use("/homepage", homepage);
 router.use("/footer", footer);
 router.use("/article-types", articleType);
 router.use("/articles", article);
+router.use("/comments", articleComment);
+router.use("/airplane-ticket-promo", airplaneTicketPromo);
 router.use("/sections", section);
 router.use("/section-icons", sectionIcon);
 router.use("/gallery-images", galleryImage);
@@ -47,7 +55,12 @@ router.use("/places", place);
 router.use("/countries", country);
 router.use("/continents", continent);
 router.use("/videos", video);
+router.use("/affiliates", affiliate);
 router.use("/airport-cities", airportCity);
 router.use("/subscribers", subscriber);
+
+router.use("/place-best-time-to-visit", placeBestTimeToVisit);
+router.use("/country-best-time-to-visit", countryBestTimeToVisit);
+router.use("/country-language", countryLanguage);
 
 export default router;

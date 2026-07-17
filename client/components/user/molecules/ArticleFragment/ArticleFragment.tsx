@@ -1,15 +1,36 @@
+// client/components/user/molecules/ArticleFragment/ArticleFragment.tsx
 // @ts-nocheck
 import "./ArticleFragment.scss";
-import { FC } from "react";
+import { FC, useMemo, useState } from "react";
 import { ArticleProps } from "../../../../common/types";
 import DOMPurify from "isomorphic-dompurify";
 import Image from "next/image";
+import Lightbox from "yet-another-react-lightbox";
+import VisaInfo from "@/components/user/molecules/VisaInfo/VisaInfo";
+import BestTimeToVisit from "@/components/user/molecules/BestTimeToVisit/BestTimeToVisit";
+import BestTimeToVisitPlace from "@/components/user/molecules/BestTimeToVisitPlace/BestTimeToVisitPlace";
+import CountryLanguage from "@/components/user/molecules/CountryLanguage/CountryLanguage";
+import { openLightbox } from "@/utils/lightbox";
+import ArticleAffiliateLinks from "@/components/user/molecules/ArticleAffiliateLinks/ArticleAffiliateLinks";
 
 const ArticleFragment: FC<ArticleProps> = ({
   section = {},
   article = {},
   index,
+  showVisaInfo = false,
+  visaInfoCountryId,
+  visaInfoCountryName,
+  showBestTimeToVisit = false,
+  bestTimeCountryId,
+  bestTimeCountrySlug,
+  bestTimePlaceId,
+  bestTimePlaceNameDative,
+  showCountryLanguage = false,
+  countryLanguageCountryId,
 }) => {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
   const sectionId = `odlomak-${index}`;
 
   const images = section?.section_images || [];
@@ -75,6 +96,25 @@ const ArticleFragment: FC<ArticleProps> = ({
             allowFullScreen
           />
         </div>
+      )}
+
+      {lightboxSlides.length > 0 && (
+        <Lightbox
+          open={lightboxOpen}
+          close={() => setLightboxOpen(false)}
+          index={lightboxIndex}
+          slides={lightboxSlides}
+          controller={{
+            closeOnBackdropClick: true,
+          }}
+          carousel={{
+            finite: !hasMultipleImages,
+          }}
+          render={{
+            buttonPrev: hasMultipleImages ? undefined : () => null,
+            buttonNext: hasMultipleImages ? undefined : () => null,
+          }}
+        />
       )}
     </div>
   );

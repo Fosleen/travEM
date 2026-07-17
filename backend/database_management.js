@@ -5,6 +5,12 @@ export const createAssociations = () => {
   db.models.Article.hasOne(db.models.Video);
   db.models.Video.belongsTo(db.models.Article);
 
+  db.models.Article.hasOne(db.models.ArticleSchedule, {
+    foreignKey: { allowNull: false },
+    onDelete: "CASCADE",
+  });
+  db.models.ArticleSchedule.belongsTo(db.models.Article);
+
   db.models.SectionIcon.hasOne(db.models.Section);
   db.models.Section.belongsTo(db.models.SectionIcon);
 
@@ -67,6 +73,69 @@ export const createAssociations = () => {
     foreignKey: { allowNull: false },
   });
   db.models.Section.belongsTo(db.models.Article);
+
+  db.models.Article.hasMany(db.models.ArticleComment, {
+    foreignKey: { allowNull: false },
+    onDelete: "CASCADE",
+  });
+  db.models.ArticleComment.belongsTo(db.models.Article);
+
+  db.models.Article.hasMany(db.models.ArticleAffiliateLink, {
+    foreignKey: { allowNull: false },
+    as: "affiliate_links",
+    onDelete: "CASCADE",
+  });
+  db.models.ArticleAffiliateLink.belongsTo(db.models.Article);
+  db.models.AffiliatePartner.hasMany(db.models.ArticleAffiliateLink, {
+    foreignKey: {
+      name: "affiliatePartnerId",
+      field: "affiliate_partner_id",
+      allowNull: false,
+    },
+  });
+  db.models.ArticleAffiliateLink.belongsTo(db.models.AffiliatePartner, {
+    as: "partner",
+    foreignKey: {
+      name: "affiliatePartnerId",
+      field: "affiliate_partner_id",
+      allowNull: false,
+    },
+  });
+
+  db.models.ArticleComment.hasMany(db.models.ArticleComment, {
+    foreignKey: {
+      name: "parentCommentId",
+      field: "parent_comment_id",
+    },
+    as: "replies",
+  });
+  db.models.ArticleComment.belongsTo(db.models.ArticleComment, {
+    foreignKey: {
+      name: "parentCommentId",
+      field: "parent_comment_id",
+    },
+    as: "parent",
+  });
+
+  db.models.User.hasMany(db.models.ArticleComment, {
+    foreignKey: {
+      name: "adminUserId",
+      field: "admin_user_id",
+    },
+  });
+  db.models.ArticleComment.belongsTo(db.models.User, {
+    foreignKey: {
+      name: "adminUserId",
+      field: "admin_user_id",
+    },
+    as: "admin_user",
+  });
+
+  db.models.ArticleComment.hasMany(db.models.ArticleCommentLike, {
+    foreignKey: { allowNull: false },
+    onDelete: "CASCADE",
+  });
+  db.models.ArticleCommentLike.belongsTo(db.models.ArticleComment);
 
   db.models.Section.hasMany(db.models.SectionImage, {
     foreignKey: { allowNull: false },

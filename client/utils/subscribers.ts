@@ -10,12 +10,23 @@ const getToken = () => {
 export async function getSubscribers(
   page = 1,
   pageSize = 12,
-  noCache: boolean = false
+  noCache: boolean = false,
+  search = ""
 ) {
   try {
     const token = getToken();
+    const query = new URLSearchParams({
+      page: String(page),
+      pageSize: String(pageSize),
+      noCache: String(noCache),
+    });
+
+    if (search.trim()) {
+      query.set("search", search.trim());
+    }
+
     const response = await fetch(
-      `${apiUrl}/subscribers?page=${page}&pageSize=${pageSize}&noCache=${noCache}`,
+      `${apiUrl}/subscribers?${query.toString()}`,
       {
         headers: {
           Accept: "application/json",

@@ -3,13 +3,22 @@ import { Op } from "sequelize";
 import axios from "axios";
 
 class SubscriberService {
-  async getSubscribers(page, pageSize) {
+  async getSubscribers(page, pageSize, search = "") {
     const limit = pageSize;
     const offset = (page - 1) * pageSize;
+    const normalizedSearch = search.trim().toLowerCase();
     try {
       const subscribers = await db.models.Subscriber.findAndCountAll({
         limit: limit,
         offset: offset,
+        where: normalizedSearch
+          ? {
+              email: {
+                [Op.like]: `%${normalizedSearch}%`,
+              },
+            }
+          : undefined,
+        order: [["created_at", "DESC"]],
       });
       return {
         total: subscribers.count,

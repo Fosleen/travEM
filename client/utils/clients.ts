@@ -12,7 +12,7 @@ export const clients = [
   {
     img: "/images/sponsors/Airalo.png",
     name: "Airalo",
-    url: "https://try.airalo.com/putujemm",
+    url: "https://airalo.pxf.io/PzYBez",
   },
   {
     img: "/images/sponsors/DeraHe.png",

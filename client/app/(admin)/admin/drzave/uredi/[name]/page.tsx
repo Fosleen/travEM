@@ -39,6 +39,32 @@ import {
 import { updateSpecificityImage } from "@/utils/specificityImages";
 import { useParams, useRouter } from "next/navigation";
 import { removeCroatianDiacritics } from "@/utils/global";
+import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
+import {
+  addCountryLanguage,
+  getCountryLanguage,
+  patchCountryLanguage,
+} from "@/utils/countryLanguage";
+import {
+  addSpecificityItemField,
+  addVideoField,
+  bestTimeMonths,
+  countryLanguagePhraseLabels,
+  createCountryValidationSchema,
+  deleteCountryImage,
+  deleteSpecificityItemField,
+  deleteVideoField,
+  getDefaultBestTimeRegion,
+  getDefaultBestTimeTitle,
+  getInitialBestTimeToVisit,
+  getInitialCountryLanguage,
+  hasAllCountryImages,
+  navigateToCountries,
+  prepareBestTimeToVisitPayload,
+  prepareCountryLanguagePayload,
+  safeDecodeURIComponent,
+  toggleDialog,
+} from "@/utils/countryFormHelpers";
 
 const EditCountry = () => {
   const params = useParams();
@@ -85,47 +111,6 @@ const EditCountry = () => {
 
   const [selectedSpecificityImage, setSelectedSpecificityImage] = useState([]);
   const [isSubmitClicked, setIsSubmitClicked] = useState(false);
-
-  const ValidationSchema = Yup.object().shape({
-    country_name: Yup.string().required("Obavezno polje!"),
-    country_description: Yup.string()
-      .required("Obavezno polje!")
-      .max(100, "Opis smije imati max 100 znakova!"),
-    country_color: Yup.string().required("Obavezno polje!"),
-    characteristics: Yup.array().of(
-      Yup.object().shape({
-        icon: Yup.string().required("Obavezno polje!"),
-        title: Yup.string()
-          .required("Obavezno polje !")
-          .max(80, "Naslov smije imati max 80 znakova!"),
-        description: Yup.string()
-          .required("Obavezno polje!")
-          .max(80, "Opis smije imati max 80 znakova!"),
-      }),
-    ),
-    specificities: Yup.array().of(
-      Yup.object().shape({
-        title: Yup.string()
-          .required("Obavezno polje!")
-          .max(45, "Naslov smije imati max 100 znakova!"),
-        specificity_items: Yup.array().of(
-          Yup.object().shape({
-            title: Yup.string()
-              .required("Obavezno polje!")
-              .max(30, "Naslov smije imati max 30 znakova!"),
-            description: Yup.string()
-              .required("Obavezno polje!")
-              .max(100, "Opis smije imati max 100 znakova!"),
-          }),
-        ),
-      }),
-    ),
-    videos: Yup.array().of(
-      Yup.object().shape({
-        video_url: Yup.string().required("Obavezno polje!"),
-      }),
-    ),
-  });
 
   const validateImages = () => {
     let areAllImagesFilledIn = true;

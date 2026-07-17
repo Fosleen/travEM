@@ -14,27 +14,6 @@ export default function SubscribersPage() {
   const [pageSize, setPageSize] = useState(8);
   const [searchText, setSearchText] = useState("");
 
-  const fetchSubscribersData = async () => {
-    try {
-      const response = await getSubscribers(page, pageSize);
-      const formattedData = {
-        data: response.data || [],
-        total: response.total || 0,
-        pageSize: response.pageSize || pageSize,
-        totalPages: response.totalPages || 0,
-      };
-      setSubscribers(formattedData);
-    } catch (error) {
-      console.error("Error while fetching:", error);
-      setSubscribers({
-        data: [],
-        total: 0,
-        pageSize: pageSize,
-        totalPages: 0,
-      });
-    }
-  };
-
   const fetchSubscribersStats = async () => {
     try {
       const response = await getSubscribersStats();
@@ -46,9 +25,51 @@ export default function SubscribersPage() {
   };
 
   useEffect(() => {
-    fetchSubscribersData();
+    let cancelled = false;
+
+    const timer = window.setTimeout(async () => {
+      try {
+        const response = await getSubscribers(
+          page,
+          pageSize,
+          false,
+          searchText
+        );
+
+        if (cancelled) return;
+
+        setSubscribers({
+          data: response.data || [],
+          total: response.total || 0,
+          pageSize: response.pageSize || pageSize,
+          totalPages: response.totalPages || 0,
+        });
+      } catch (error) {
+        if (cancelled) return;
+
+        console.error("Error while fetching:", error);
+        setSubscribers({
+          data: [],
+          total: 0,
+          pageSize,
+          totalPages: 0,
+        });
+      }
+    }, 300);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [pageSize, page, searchText]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchText]);
+
+  useEffect(() => {
     fetchSubscribersStats();
-  }, [pageSize, page]);
+  }, []);
 
   return (
     <div className="subs-list-container">

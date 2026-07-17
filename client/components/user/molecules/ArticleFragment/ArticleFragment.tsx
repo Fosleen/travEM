@@ -33,35 +33,153 @@ const ArticleFragment: FC<ArticleProps> = ({
 
   const sectionId = `odlomak-${index}`;
 
-  const images = section?.section_images || [];
-  const hasOne = images?.length === 1;
-  const hasTwo = images?.length === 2;
+  const images = useMemo(
+    () =>
+      (section?.section_images || []).filter((image) => image?.url?.trim?.()),
+    [section?.section_images]
+  );
+
+  const hasOne = images.length === 1;
+  const hasTwo = images.length === 2;
+  const hasMultipleImages = images.length > 1;
+
+  const iconUrl = section?.section_icon?.url?.trim?.() || "";
+  const hasIcon = Boolean(iconUrl);
+
+  const title = (section?.subtitle || "").trim();
+  const hasTitle = title.length > 0;
+
+  const hasHtmlContent =
+    typeof section?.text === "string" &&
+    section.text.replace(/<[^>]*>/g, "").trim().length > 0;
+
+  const hasVideo = Boolean(article?.video?.url?.trim());
+  const hasAffiliateLinks = Boolean(
+    article?.affiliate_links?.some((link) => link.is_enabled)
+  );
+
+  const shouldRenderVisaInfo =
+    showVisaInfo && Boolean(visaInfoCountryId) && Boolean(visaInfoCountryName);
+
+  const shouldRenderBestTimeToVisit =
+    showBestTimeToVisit &&
+    Boolean(bestTimeCountryId) &&
+    Boolean(bestTimeCountrySlug);
+
+  const shouldRenderPlaceBestTimeToVisit =
+    shouldRenderBestTimeToVisit && Boolean(bestTimePlaceId);
+
+  const shouldRenderCountryBestTimeToVisit =
+    shouldRenderBestTimeToVisit && !bestTimePlaceId;
+
+  const shouldRenderCountryLanguage =
+    showCountryLanguage && Boolean(countryLanguageCountryId);
+
+  const hasAnything =
+    hasTitle ||
+    hasHtmlContent ||
+    hasOne ||
+    hasTwo ||
+    hasVideo ||
+    hasAffiliateLinks ||
+    shouldRenderVisaInfo ||
+    shouldRenderBestTimeToVisit ||
+    shouldRenderCountryLanguage;
+
+  if (!hasAnything) return null;
+
+  const lightboxSlides = images.map((image) => ({
+    src: image.url.trim(),
+    alt: image.alt || "Article image",
+  }));
 
   return (
     <div className="article-wrapper" id={sectionId}>
-      <h3>{section?.subtitle}</h3>
+      {hasTitle &&
+        (hasIcon ? (
+          <div className="article-section-title article-section-title--with-icon">
+            <div className="article-section-title__icon" aria-hidden="true">
+              <img src={iconUrl} alt="" />
+            </div>
+            <h2 className="article-section-title__text">{title}</h2>
+          </div>
+        ) : (
+          <h3 className="article-section-title article-section-title--default">
+            {title}
+          </h3>
+        ))}
 
-      <div
-        className="article-html-content"
-        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(section?.text) }}
-      />
+      {shouldRenderVisaInfo && (
+        <div className="article-fragment-visa-info">
+          <VisaInfo
+            countryId={visaInfoCountryId}
+            countryName={visaInfoCountryName}
+          />
+        </div>
+      )}
+
+      {shouldRenderPlaceBestTimeToVisit && (
+        <div className="article-fragment-best-time">
+          <BestTimeToVisitPlace
+            placeId={bestTimePlaceId}
+            placeNameDative={bestTimePlaceNameDative}
+          />
+        </div>
+      )}
+
+      {shouldRenderCountryBestTimeToVisit && (
+        <div className="article-fragment-best-time">
+          <BestTimeToVisit
+            countryId={bestTimeCountryId}
+            countrySlug={bestTimeCountrySlug}
+          />
+        </div>
+      )}
+
+      {shouldRenderCountryLanguage && (
+        <div className="article-fragment-country-language">
+          <CountryLanguage
+            countryId={countryLanguageCountryId}
+            variant="article"
+          />
+        </div>
+      )}
+
+      {hasHtmlContent && (
+        <div
+          className="article-html-content"
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(section?.text) }}
+        />
+      )}
 
       {hasOne && (
         <div className="article-fragment-image-wrapper">
-          <Image
-            alt={images[0]?.alt || "Article image"}
-            src={images[0]?.url?.trim()}
-            width={images[0]?.width || 1200}
-            height={images[0]?.height || 800}
-            sizes="(max-width: 768px) 100vw, (max-width: 1300px) 90vw, 900px"
-            className="article-fragment-image"
-          />
+          <div
+            className="article-fragment-image-clickable"
+            onClick={() =>
+              openLightbox({ index: 0, setLightboxIndex, setLightboxOpen })
+            }
+          >
+            <Image
+              alt={images[0]?.alt || "Article image"}
+              src={images[0]?.url?.trim()}
+              width={images[0]?.width || 1200}
+              height={images[0]?.height || 800}
+              sizes="(max-width: 768px) 100vw, (max-width: 1300px) 90vw, 900px"
+              className="article-fragment-image"
+            />
+          </div>
         </div>
       )}
 
       {hasTwo && (
         <div className="article-fragment-images-wrapper">
-          <div className="article-fragment-image-frame">
+          <div
+            className="article-fragment-image-frame article-fragment-image-frame--clickable"
+            onClick={() =>
+              openLightbox({ index: 0, setLightboxIndex, setLightboxOpen })
+            }
+          >
             <Image
               alt={images[0]?.alt || "Article image"}
               src={images[0]?.url?.trim()}
@@ -72,7 +190,12 @@ const ArticleFragment: FC<ArticleProps> = ({
             />
           </div>
 
-          <div className="article-fragment-image-frame">
+          <div
+            className="article-fragment-image-frame article-fragment-image-frame--clickable"
+            onClick={() =>
+              openLightbox({ index: 1, setLightboxIndex, setLightboxOpen })
+            }
+          >
             <Image
               alt={images[1]?.alt || "Article image"}
               src={images[1]?.url?.trim()}
@@ -85,7 +208,11 @@ const ArticleFragment: FC<ArticleProps> = ({
         </div>
       )}
 
-      {article?.video?.url?.trim() && (
+      {hasAffiliateLinks && (
+        <ArticleAffiliateLinks links={article.affiliate_links} />
+      )}
+
+      {hasVideo && (
         <div className="article-fragment-video-wrapper">
           <h4>Pogledajte naš video:</h4>
           <iframe

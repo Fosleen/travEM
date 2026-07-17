@@ -87,9 +87,10 @@ const TableContent = ({ data, type }) => {
         header: () => "Naziv",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor("country.name", {
+      columnHelper.accessor((row) => row.country?.name ?? "-", {
+        id: "countryName",
         header: () => "Država",
-        cell: (info) => info.renderValue(),
+        cell: (info) => info.getValue(),
       }),
       columnHelper.display({
         id: "actions",
@@ -109,9 +110,10 @@ const TableContent = ({ data, type }) => {
         header: () => "Naslov",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor("article_type.name", {
+      columnHelper.accessor((row) => row.article_type?.name ?? "-", {
+        id: "articleTypeName",
         header: () => "Tip",
-        cell: (info) => info.renderValue(),
+        cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("date_written", {
         header: () => "Datum",
@@ -137,9 +139,10 @@ const TableContent = ({ data, type }) => {
           );
         },
       }),
-      columnHelper.accessor("country.name", {
+      columnHelper.accessor((row) => row.country?.name ?? "-", {
+        id: "countryName",
         header: () => "Država",
-        cell: (info) => info.renderValue() || "-",
+        cell: (info) => info.getValue(),
       }),
       columnHelper.display({
         id: "actions",

@@ -14,6 +14,10 @@ const Pagination: FC<ExtendedPaginationProps> = ({
   currentPage,
   scrollToTop = true,
 }) => {
+  const normalizedTotalPages = Number.isFinite(totalPages)
+    ? Math.max(0, Math.ceil(totalPages))
+    : 0;
+
   const handlePageClick = (event: { selected: number }) => {
     if (scrollToTop && typeof window !== "undefined") {
       window.scrollTo({ top: 0, behavior: "auto" });
@@ -26,6 +30,14 @@ const Pagination: FC<ExtendedPaginationProps> = ({
     }
   };
 
+  if (normalizedTotalPages <= 1) {
+    return null;
+  }
+
+  const normalizedCurrentPage = Number.isFinite(currentPage)
+    ? Math.min(Math.max(1, Math.floor(currentPage as number)), normalizedTotalPages)
+    : 1;
+
   return (
     <div className="pagination-wrapper">
       <ReactPaginate
@@ -33,7 +45,7 @@ const Pagination: FC<ExtendedPaginationProps> = ({
         onPageChange={handlePageClick}
         pageRangeDisplayed={3}
         marginPagesDisplayed={2}
-        pageCount={totalPages}
+        pageCount={normalizedTotalPages}
         previousLabel="<"
         pageClassName="page-item"
         pageLinkClassName="page-link"
@@ -47,7 +59,7 @@ const Pagination: FC<ExtendedPaginationProps> = ({
         containerClassName="pagination"
         activeClassName="active-pagination"
         renderOnZeroPageCount={null}
-        forcePage={currentPage ? currentPage - 1 : 0}
+        forcePage={normalizedCurrentPage - 1}
       />
     </div>
   );

@@ -18,7 +18,7 @@ export async function getArticleById(
   includeScheduled: boolean = noCache
 ) {
   try {
-    console.log(`Fetching article ${id} from ${apiUrl}/articles/${id}`);
+   // console.log(`Fetching article ${id} from ${apiUrl}/articles/${id}`);
     const token = getToken();
     const includeScheduledQuery = includeScheduled
       ? "&includeScheduled=true"
@@ -45,7 +45,7 @@ export async function getArticleById(
     }
 
     const data = await response.json();
-    console.log("Article fetched successfully:", data.title);
+   // console.log("Article fetched successfully:", data.title);
     return data;
   } catch (error) {
     console.error("Fetch error:", error);
@@ -404,7 +404,7 @@ export async function updateArticle(
     return data.error;
   }
 
-  console.log("data", data);
+ // console.log("data", data);
 
   return data;
 }

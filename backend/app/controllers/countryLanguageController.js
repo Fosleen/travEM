@@ -8,9 +8,9 @@ class CountryLanguageController {
     const response = await service.getByCountryId(countryId, includeInactive);
 
     if (!response) {
-      res.status(404).json({
-        error: `No language data found for country id ${countryId}`,
-      });
+      // Language data is optional for a country. Return a successful empty
+      // result so public pages can omit the block without producing a 404.
+      res.status(200).json(null);
     } else {
       res.status(200).json(response);
     }

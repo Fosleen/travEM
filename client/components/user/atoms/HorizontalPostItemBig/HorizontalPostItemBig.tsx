@@ -4,6 +4,7 @@ import { formatDate } from "../../../../utils/global";
 import { HorizontalPostItemBigProps } from "../../../../common/types";
 import Image from "next/image";
 import Link from "next/link";
+import { toUrlSlug } from "@/utils/url";
 
 const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
   stretched,
@@ -15,7 +16,7 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
   const href =
     type === "article"
       ? `/clanak/${data?.id}`
-      : `/destinacija/${data.name?.toLowerCase()}`;
+      : `/destinacija/${toUrlSlug(data.name || "")}`;
 
   const flagUrl =
     (data as any)?.country?.flag_image_url || (data as any)?.flag_image_url;

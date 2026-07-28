@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { apiUrl } from "@/utils/api";
+import { toUrlSlug } from "@/utils/url";
 
 const baseUrl = "https://www.putujemstravem.com";
 
@@ -103,7 +104,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const countryPages: MetadataRoute.Sitemap = (countries || [])
     .filter((country: any) => country?.name)
     .map((country: any) => {
-      const slug = encodeURIComponent(String(country.name).toLowerCase());
+      const slug = toUrlSlug(String(country.name));
       return {
         url: `${baseUrl}/destinacija/${slug}`,
         lastModified: toDate(country.updated_at ?? country.updatedAt, now),
@@ -115,10 +116,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const placePages: MetadataRoute.Sitemap = (places || [])
     .filter((place: any) => place?.name && place?.country?.name)
     .map((place: any) => {
-      const countrySlug = encodeURIComponent(
-        String(place.country.name).toLowerCase()
-      );
-      const placeSlug = encodeURIComponent(String(place.name).toLowerCase());
+      const countrySlug = toUrlSlug(String(place.country.name));
+      const placeSlug = toUrlSlug(String(place.name));
 
       return {
         url: `${baseUrl}/destinacija/${countrySlug}/${placeSlug}`,

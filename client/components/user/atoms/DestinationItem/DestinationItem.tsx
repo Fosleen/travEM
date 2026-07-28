@@ -1,6 +1,7 @@
 import Link from "next/link";
 import "./DestinationItem.scss";
 import { FC } from "react";
+import { toUrlSlug } from "@/utils/url";
 
 const DestinationItem: FC<{
   mapItem?: boolean;
@@ -20,10 +21,10 @@ const DestinationItem: FC<{
   badgeText,
 }) => {
   const destinationPath = planeTickets
-    ? `/aviokarte/${name.toLowerCase()}`
+    ? `/aviokarte/${toUrlSlug(name)}`
     : countryName
-    ? `/destinacija/${countryName.toLowerCase()}/${name.toLowerCase()}`
-    : `/destinacija/${name.toLowerCase()}`;
+    ? `/destinacija/${toUrlSlug(countryName)}/${toUrlSlug(name)}`
+    : `/destinacija/${toUrlSlug(name)}`;
 
   return (
     <Link

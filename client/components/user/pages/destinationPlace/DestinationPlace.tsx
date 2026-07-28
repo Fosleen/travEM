@@ -9,6 +9,7 @@ import RecommendedPosts from "../../molecules/RecommendedPosts";
 import BestTimeToVisitPlace from "../../molecules/BestTimeToVisitPlace/BestTimeToVisitPlace";
 import CountryLanguage from "../../molecules/CountryLanguage/CountryLanguage";
 import { getCountryLocative } from "@/utils/countryGrammar";
+import { toUrlSlug } from "@/utils/url";
 import "./DestinationPlace.scss";
 
 interface Article {
@@ -95,7 +96,7 @@ const getArticleHref = (article: any) => {
 };
 
 const getCountryHref = (country: Country) => {
-  return `/destinacija/${country?.name?.toLowerCase()}`;
+  return `/destinacija/${toUrlSlug(country?.name || "")}`;
 };
 
 const getArticleSections = (article: any) => {

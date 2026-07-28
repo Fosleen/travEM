@@ -2,9 +2,9 @@ import { cache } from "react";
 import { getCountriesByName, getCountryById } from "@/utils/countries";
 import { getFavoriteArticleByCountry } from "@/utils/article";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import DestinationCountry from "@/components/user/pages/destinationCountry/DestinationCountry";
-import { safeDecodeURIComponent } from "@/utils/url";
+import { fromUrlSlug, toUrlSlug } from "@/utils/url";
 
 type Props = {
   params: Promise<{ countryName: string }>;
@@ -22,7 +22,7 @@ const getCachedCountryById = cache(async (countryId: number) => {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { countryName } = await params;
-  const decodedCountryName = safeDecodeURIComponent(countryName);
+  const decodedCountryName = fromUrlSlug(countryName);
 
   try {
     const tempData = await getCachedCountriesByName(decodedCountryName, 1, 1);
@@ -46,19 +46,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const title = `putujEM s travEM - ${country.name}`;
     const description =
       country.description || "Otkrijte svijet uz Emu i Matiju!";
+    const canonicalUrl = `https://www.putujemstravem.com/destinacija/${toUrlSlug(
+      country.name
+    )}`;
 
     return {
       title,
       description,
       keywords: metaKeywords,
+      alternates: {
+        canonical: canonicalUrl,
+      },
       openGraph: {
         title,
         description,
         images: [country.main_image_url],
         type: "website",
-        url: `https://putujemstravem.com/destinacija/${encodeURIComponent(
-          decodedCountryName
-        )}`,
+        url: canonicalUrl,
         siteName: "putujEM s travEM",
       },
       twitter: {
@@ -79,7 +83,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { countryName } = await params;
-  const decodedCountryName = safeDecodeURIComponent(countryName);
+  const decodedCountryName = fromUrlSlug(countryName);
 
   const tempData = await getCachedCountriesByName(decodedCountryName, 1, 1);
 
@@ -92,6 +96,12 @@ export default async function Page({ params }: Props) {
 
   if (!countryData || countryData.error) {
     notFound();
+  }
+
+  const canonicalCountrySlug = toUrlSlug(countryData.name);
+
+  if (countryName !== canonicalCountrySlug) {
+    permanentRedirect(`/destinacija/${canonicalCountrySlug}`);
   }
 
   let favoriteArticle = null;

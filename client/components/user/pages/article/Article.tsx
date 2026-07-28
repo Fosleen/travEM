@@ -21,6 +21,7 @@ import ArticleSupportCallToAction from "@/components/user/molecules/ArticleSuppo
 import { parseBooleanValue } from "@/utils/parseBooleanValue";
 import { openLightbox } from "@/utils/lightbox";
 import ArticleComments from "@/components/user/molecules/ArticleComments";
+import { toUrlSlug } from "@/utils/url";
 
 interface ArticleProps {
   initialArticle: any;
@@ -50,12 +51,14 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
   const sectionsLength = articleContent?.sections?.length || 0;
 
   const handleCountryClick = () => {
-    router.push(`/destinacija/${articleContent.country.name.toLowerCase()}`);
+    router.push(`/destinacija/${toUrlSlug(articleContent.country.name)}`);
   };
 
   const handlePlaceClick = () => {
     router.push(
-      `/destinacija/${articleContent.country.name.toLowerCase()}/${articleContent.place.name.toLowerCase()}`
+      `/destinacija/${toUrlSlug(articleContent.country.name)}/${toUrlSlug(
+        articleContent.place.name
+      )}`
     );
   };
 

@@ -8,26 +8,11 @@ import { FC, useContext, useEffect, useState } from "react";
 import { getCountriesByContinent } from "../../../../utils/countries";
 import { getPlacesByCountry } from "../../../../utils/places";
 import { CountryContext } from "@/context/CountryContext";
+import { toUrlSlug } from "@/utils/url";
 
 const PLACES_CACHE_KEY = "destinations-menu-places-cache-v1";
 const PLACES_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 sata
 const MOBILE_VISIBLE_COUNTRIES_COUNT = 5;
-
-const slugify = (value: string) => {
-  return value
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d")
-    .replace(/č/g, "c")
-    .replace(/ć/g, "c")
-    .replace(/ž/g, "z")
-    .replace(/š/g, "s")
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-]/g, "")
-    .replace(/-+/g, "-")
-    .trim();
-};
 
 const normalizePlacesResponse = (response: any) => {
   if (!response) return [];
@@ -272,7 +257,7 @@ const DestinationsMenuItem: FC<{
     index?: number
   ) => {
     const places = placesByCountry[el.id] || [];
-    const countrySlug = slugify(el.name);
+    const countrySlug = toUrlSlug(el.name);
 
     return (
       <div
@@ -302,7 +287,7 @@ const DestinationsMenuItem: FC<{
                 {places.map((place: { id: number; name: string }) => (
                   <Link
                     key={place.id}
-                    href={`/destinacija/${countrySlug}/${slugify(place.name)}`}
+                    href={`/destinacija/${countrySlug}/${toUrlSlug(place.name)}`}
                     className="destination-city-chip"
                   >
                     {place.name}

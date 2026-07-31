@@ -127,6 +127,15 @@ export interface PopupContentData {
   image_url: string;
 }
 
+export interface FooterPartnerData {
+  id: number;
+  name: string;
+  image_url: string;
+  target_url: string;
+  sort_order: number;
+  is_active: boolean;
+}
+
 export interface EditBannerData {
   banner_title: string;
   banner_small_text: string;

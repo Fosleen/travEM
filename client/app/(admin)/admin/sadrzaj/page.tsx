@@ -7,10 +7,6 @@ const EditHomepageMenu = () => {
       <h2>Što želiš mijenjati od sadržaja bloga?</h2>
       <div className="edit-homepage-menu-items">
         <EditHomepageMenuItem text="Hero" url="/admin/uredi-hero" />
-        <EditHomepageMenuItem
-          text="Newsletter popup"
-          url="/admin/uredi-popup"
-        />
         <EditHomepageMenuItem text="Top 3 članka" url="/admin/uredi-top-tri" />
         <EditHomepageMenuItem
           text="Ravni banner i preporučeni članci"
@@ -37,6 +33,14 @@ const EditHomepageMenu = () => {
           url="/admin/uredi-aviokarte-promo"
         />
         <EditHomepageMenuItem text="Footer" url="/admin/uredi-footer" />
+        <EditHomepageMenuItem
+          text="Partneri u footeru"
+          url="/admin/uredi-footer-partnere"
+        />
+        <EditHomepageMenuItem
+          text="Newsletter popup"
+          url="/admin/uredi-popup"
+        />
       </div>
     </div>
   );

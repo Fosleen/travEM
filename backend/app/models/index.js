@@ -39,6 +39,7 @@ import AirplaneTicketPromo from "./airplaneTicketPromo.js";
 import AffiliatePartner from "./affiliatePartner.js";
 import ArticleAffiliateLink from "./articleAffiliateLink.js";
 import PopupContent from "./popupContent.js";
+import FooterPartner from "./footerPartner.js";
 
 const db = {};
 
@@ -145,6 +146,10 @@ db.models.ArticleAffiliateLink = ArticleAffiliateLink(
   Sequelize.DataTypes
 );
 db.models.PopupContent = PopupContent(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+db.models.FooterPartner = FooterPartner(
   sequelizeConnection,
   Sequelize.DataTypes
 );

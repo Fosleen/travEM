@@ -29,6 +29,7 @@ import countryLanguage from "./countryLanguageRoute.js";
 import articleComment from "./articleCommentRoute.js";
 import airplaneTicketPromo from "./airplaneTicketPromoRoute.js";
 import popupContent from "./popupContentRoute.js";
+import footerPartner from "./footerPartnerRoute.js";
 
 const router = new Router();
 
@@ -60,6 +61,7 @@ router.use("/affiliates", affiliate);
 router.use("/airport-cities", airportCity);
 router.use("/subscribers", subscriber);
 router.use("/popup-content", popupContent);
+router.use("/footer-partners", footerPartner);
 
 router.use("/place-best-time-to-visit", placeBestTimeToVisit);
 router.use("/country-best-time-to-visit", countryBestTimeToVisit);

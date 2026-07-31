@@ -8,10 +8,9 @@ import Input from "../../../atoms/Input";
 import "./PopUp.scss";
 import NewsletterSubmitButton from "../../atoms/NewsletterSubmitButton/NewsletterSubmitButton";
 import { handleSubscriptionClick } from "@/utils/newsletterSubscription";
+import { getPopupContent } from "@/utils/popupContent";
 
 const travemLogo = "/images/travem-logo-hero.webp";
-const popUpBg = "/images/popupbg.webp";
-
 const POPUP_DELAY_MS = 60000;
 const REQUIRED_SCROLL_PERCENT = 30;
 const EXIT_INTENT_MIN_TIME_MS = 10000;
@@ -90,9 +89,16 @@ const PopUp = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [animateTrigger, setAnimateTrigger] = useState(0);
+  const [popupImageUrl, setPopupImageUrl] = useState("");
 
   const hasTriggeredPopupRef = useRef(false);
   const isExitIntentReadyRef = useRef(false);
+
+  useEffect(() => {
+    getPopupContent()
+      .then((content) => setPopupImageUrl(content.image_url))
+      .catch((error) => console.error("Error fetching popup image:", error));
+  }, []);
 
   const migrateOldPopupStorage = () => {
     const hasOldClosedValue = localStorage.getItem(STORAGE_KEYS.oldClosed);
@@ -270,9 +276,11 @@ const PopUp = () => {
           </div>
         </div>
 
-        <div className="email-popup-img-section">
-          <img alt="Newsletter pozadina" src={popUpBg} />
-        </div>
+        {popupImageUrl && (
+          <div className="email-popup-img-section">
+            <img alt="Newsletter pozadina" src={popupImageUrl} />
+          </div>
+        )}
       </div>
     </div>
   );

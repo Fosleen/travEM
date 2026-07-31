@@ -38,6 +38,7 @@ import ArticleCommentLike from "./articleCommentLike.js";
 import AirplaneTicketPromo from "./airplaneTicketPromo.js";
 import AffiliatePartner from "./affiliatePartner.js";
 import ArticleAffiliateLink from "./articleAffiliateLink.js";
+import PopupContent from "./popupContent.js";
 
 const db = {};
 
@@ -140,6 +141,10 @@ db.models.AffiliatePartner = AffiliatePartner(
   Sequelize.DataTypes
 );
 db.models.ArticleAffiliateLink = ArticleAffiliateLink(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+db.models.PopupContent = PopupContent(
   sequelizeConnection,
   Sequelize.DataTypes
 );

@@ -122,6 +122,11 @@ export interface FooterData {
   image_url: string;
 }
 
+export interface PopupContentData {
+  id: number;
+  image_url: string;
+}
+
 export interface EditBannerData {
   banner_title: string;
   banner_small_text: string;

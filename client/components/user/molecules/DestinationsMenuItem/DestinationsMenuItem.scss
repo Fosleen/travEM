@@ -339,6 +339,12 @@
       box-shadow: 0 8px 18px rgba(0, 0, 0, 0.035);
     }
 
+    .destination-country-group-surface--with-cities
+      .destination-item-container.flag.long-name {
+      width: 100%;
+      flex-basis: 100%;
+    }
+
     .destination-city-slot {
       width: auto;
       flex: 0 1 auto;

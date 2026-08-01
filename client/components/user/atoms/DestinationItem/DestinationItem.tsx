@@ -25,6 +25,7 @@ const DestinationItem: FC<{
     : countryName
     ? `/destinacija/${toUrlSlug(countryName)}/${toUrlSlug(name)}`
     : `/destinacija/${toUrlSlug(name)}`;
+  const hasLongName = Array.from(name.trim()).length > 10;
 
   return (
     <Link
@@ -33,7 +34,7 @@ const DestinationItem: FC<{
         (mapItem || filterMenuItem) && "has-icon full-width"
       } ${filterMenuItem && "flag"} ${mapItem && "sights"} ${
         badgeText && "has-badge"
-      }`}
+      } ${hasLongName && "long-name"}`}
     >
       {badgeText && <span className="destination-item-badge">{badgeText}</span>}
       {filterMenuItem && (

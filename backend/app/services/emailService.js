@@ -58,7 +58,7 @@ const createEmailTemplate = (article) => {
             <img src="${article.mainArticleImage}" alt="Article Image" class="article-image">
             <h1 class="article-title">${article.article_title}</h1>
             <p class="article-description">${article.article_description}</p>
-            <a href="https://www.putujemstravem.com/clanak/${article.id}" class="read-more-btn">
+            <a href="https://www.putujemstravem.com/clanak/${article.slug || article.id}" class="read-more-btn">
               Pročitaj više
             </a>
             <div class="footer">

@@ -10,10 +10,12 @@ import BestTimeToVisitPlace from "../../molecules/BestTimeToVisitPlace/BestTimeT
 import CountryLanguage from "../../molecules/CountryLanguage/CountryLanguage";
 import { getCountryLocative } from "@/utils/countryGrammar";
 import { toUrlSlug } from "@/utils/url";
+import { getArticleUrl } from "@/utils/articleUrl";
 import "./DestinationPlace.scss";
 
 interface Article {
   id: number;
+  slug?: string;
   title: string;
   subtitle?: string;
   description?: string;
@@ -92,7 +94,7 @@ const getArticleDescription = (article: any) => {
 };
 
 const getArticleHref = (article: any) => {
-  return `/clanak/${article?.id}`;
+  return getArticleUrl(article);
 };
 
 const getCountryHref = (country: Country) => {

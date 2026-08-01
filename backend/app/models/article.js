@@ -9,6 +9,11 @@ export default (sequelize, DataTypes) => {
         autoIncrement: true,
       },
       title: { type: DataTypes.STRING(100), allowNull: false },
+      slug: {
+        type: DataTypes.STRING(160),
+        allowNull: false,
+        unique: true,
+      },
       subtitle: { type: DataTypes.STRING(100) },
       description: { type: DataTypes.STRING(100) },
       main_image_url: { type: DataTypes.STRING },

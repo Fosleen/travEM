@@ -8,6 +8,7 @@ import AirplaneTicketsHero from "../../atoms/AirplaneTicketsHero/AirplaneTickets
 import AirplaneTicketsPromoCard from "../../atoms/AirplaneTicketsPromoCard/AirplaneTicketsPromoCard";
 import AirplaneTicketsCarouselRow from "../../atoms/AirplaneTicketsCarouselRow/AirplaneTicketsCarouselRow";
 import AirplaneTicketsNewsletterCallToAction from "../../molecules/AirplaneTicketsNewsletterCallToAction/AirplaneTicketsNewsletterCallToAction";
+import { getArticleUrl } from "@/utils/articleUrl";
 
 const PROMO_IMAGE_URL =
   "https://live.staticflickr.com/65535/54231796537_ee931fd0bb_b.jpg";
@@ -16,6 +17,7 @@ import "./AirplaneTickets.scss";
 
 type Article = {
   id: number;
+  slug?: string;
   title: string;
   subtitle: string;
   description: string;
@@ -41,6 +43,7 @@ type AirplaneTicketsProps = {
     button_text?: string;
     featured_article?: {
       id?: number;
+      slug?: string;
       main_image_url?: string;
     } | null;
   } | null;
@@ -212,7 +215,7 @@ const AirplaneTickets = ({
   );
 
   const promoHref = promo?.featured_article?.id
-    ? `/clanak/${promo.featured_article.id}`
+    ? getArticleUrl(promo.featured_article)
     : "/clanak/356";
 
   const promoImageUrl =

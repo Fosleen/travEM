@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { getArticleUrl } from "@/utils/articleUrl";
 import "./MainCountryPost.scss";
 import Image from "next/image";
 import { useMemo, useRef } from "react";
@@ -49,7 +50,7 @@ const MainCountryPost = ({ article }: any) => {
         id: section?.id || index,
         title: getSectionSubtitle(section),
         icon: getSectionIcon(section),
-        href: `/clanak/${article.id}#odlomak-${index}`,
+        href: `${getArticleUrl(article)}#odlomak-${index}`,
       }))
       .filter((section: any) => section.title)
       .slice(0, 4);
@@ -99,7 +100,7 @@ const MainCountryPost = ({ article }: any) => {
       onMouseLeave={handleLeave}
     >
       <Link
-        href={`/clanak/${article.id}`}
+        href={getArticleUrl(article)}
         className="main-country-post-main-link"
         onFocus={handleEnter}
         onBlur={handleLeave}

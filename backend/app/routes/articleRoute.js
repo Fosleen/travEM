@@ -277,6 +277,9 @@ router.get("/place/:id", controller.getArticlesByPlaceId);
  */
 router.get("/search/:name", controller.getArticleBySearchTerm);
 
+// Public article lookup by its immutable URL slug.
+router.get("/slug/:slug", controller.getArticleBySlug);
+
 // GET /api/v1/articles/1
 /**
  * @openapi

@@ -9,6 +9,7 @@ import { convertFromSlug } from "@/utils/global";
 import { Article, ArticleType, Nullable } from "@/common/types";
 import Pagination from "@/components/atoms/Pagination";
 import { parseBooleanValue } from "@/utils/parseBooleanValue";
+import { getArticleUrl } from "@/utils/articleUrl";
 
 interface TipsAndTricksProps {
   initialArticleTypes: Array<ArticleType>;
@@ -227,7 +228,7 @@ const formatArticleDate = (dateValue: string) => {
 };
 
 const getArticleHref = (article: any) => {
-  return `/clanak/${article?.id}`;
+  return getArticleUrl(article);
 };
 
 const getReadableTipTitle = (selectedArticleType: ArticleType) => {

@@ -5,6 +5,7 @@ import { HorizontalPostItemBigProps } from "../../../../common/types";
 import Image from "next/image";
 import Link from "next/link";
 import { toUrlSlug } from "@/utils/url";
+import { getArticleUrl } from "@/utils/articleUrl";
 
 const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
   stretched,
@@ -15,7 +16,7 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
 }) => {
   const href =
     type === "article"
-      ? `/clanak/${data?.id}`
+      ? getArticleUrl(data)
       : `/destinacija/${toUrlSlug(data.name || "")}`;
 
   const flagUrl =

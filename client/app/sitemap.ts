@@ -77,9 +77,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const articlePages: MetadataRoute.Sitemap = (articles || [])
-    .filter((article: any) => article?.id)
+    .filter((article: any) => article?.slug)
     .map((article: any) => ({
-      url: `${SITE_URL}/clanak/${article.id}`,
+      url: `${SITE_URL}/clanak/${encodeURIComponent(article.slug)}`,
       lastModified: toDate(
         article.updated_at ??
           article.updatedAt ??

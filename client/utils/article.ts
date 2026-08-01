@@ -475,3 +475,24 @@ export async function removeTopCountryArticle(articleId: number) {
 
   return data;
 }
+
+export async function getArticleBySlug(slug: string) {
+  try {
+    const response = await fetch(
+      `${apiUrl}/articles/slug/${encodeURIComponent(slug)}`,
+      {
+        cache: "no-store",
+        headers: { Accept: "application/json" },
+      }
+    );
+
+    if (!response.ok) {
+      return { error: true, status: response.status };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching article by slug:", error);
+    return { error: true };
+  }
+}

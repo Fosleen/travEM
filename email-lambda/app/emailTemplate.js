@@ -457,7 +457,7 @@ const createEmailTemplate = (article, userEmail) => {
                         >
                             <a
                             href="https://www.putujemstravem.com/clanak/${
-                              article.id
+                            article.slug || article.id
                             }"
                             target="_blank"
                             class="mobile-button text-white"

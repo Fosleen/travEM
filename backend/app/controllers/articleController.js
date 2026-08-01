@@ -120,6 +120,31 @@ class ArticleController {
     }
   }
 
+  async getArticleBySlug(req, res) {
+    try {
+      const useCache = req.query.noCache !== "true";
+      const { slug } = req.params;
+      const includeScheduled = canIncludeScheduledArticles(req);
+      const cacheKey = includeScheduled
+        ? `article-slug:${slug}:admin`
+        : `article-slug:${slug}`;
+
+      const response = await getOrSetCache(
+        cacheKey,
+        () => articleService.getArticleBySlug(slug, includeScheduled),
+        useCache
+      );
+
+      if (!response) {
+        return res.status(404).json({ error: "Article not found" });
+      }
+
+      return res.status(200).json(response);
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
   async addArticle(req, res) {
     try {
       const response = await articleService.addArticle(
@@ -338,6 +363,10 @@ class ArticleController {
       } else {
         await clearCache(`article:${req.params.id}`);
         await clearCache(`article:${req.params.id}:admin`);
+        if (response?.slug) {
+          await clearCache(`article-slug:${response.slug}`);
+          await clearCache(`article-slug:${response.slug}:admin`);
+        }
         await clearCacheByPattern("continent-countries:*");
         res.status(200).json(response);
       }
@@ -354,6 +383,10 @@ class ArticleController {
       if (response) {
         await clearCache(`article:${id}`);
         await clearCache(`article:${id}:admin`);
+        if (response.slug) {
+          await clearCache(`article-slug:${response.slug}`);
+          await clearCache(`article-slug:${response.slug}:admin`);
+        }
         await clearCacheByPattern("continent-countries:*");
         res.status(200).json({});
       } else {

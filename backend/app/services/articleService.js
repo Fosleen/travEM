@@ -1,5 +1,6 @@
 import db from "../models/index.js";
 import { Op, Sequelize } from "sequelize";
+import { createUniqueArticleSlug } from "../utils/articleSlug.js";
 
 let affiliateTablesAvailable = true;
 
@@ -237,7 +238,7 @@ class ArticleService {
     }
   }
 
-  async getArticleById(id, includeScheduled = false) {
+  async getArticle(where, includeScheduled = false) {
     const include = [
       {
         model: db.models.User,
@@ -292,11 +293,7 @@ class ArticleService {
 
     const findArticle = (queryInclude) =>
       db.models.Article.findOne({
-        where: includeScheduled
-          ? { id }
-          : getPublicArticleWhere({
-              id,
-            }),
+        where: includeScheduled ? where : getPublicArticleWhere(where),
         include: queryInclude,
       });
 
@@ -328,8 +325,16 @@ class ArticleService {
       }
 
       console.log(error);
-      return `not found article with PK ${id}`;
+      return null;
     }
+  }
+
+  async getArticleById(id, includeScheduled = false) {
+    return this.getArticle({ id }, includeScheduled);
+  }
+
+  async getArticleBySlug(slug, includeScheduled = false) {
+    return this.getArticle({ slug }, includeScheduled);
   }
 
   async getRecommendedArticles(id, type) {
@@ -505,6 +510,9 @@ class ArticleService {
 
     try {
       const normalizedArticleTypeId = Number(article_type_id);
+      const slug = await createUniqueArticleSlug(db.models.Article, title, {
+        transaction,
+      });
       const shouldBeTipsFeatured =
         (await isTipsArticleType(normalizedArticleTypeId, transaction)) &&
         parseBooleanValue(is_tips_featured);
@@ -520,6 +528,7 @@ class ArticleService {
       const article = await db.models.Article.create(
         {
           title: title,
+          slug,
           subtitle: subtitle,
           description: description,
           main_image_url: main_image_url,
@@ -941,11 +950,17 @@ class ArticleService {
 
   async deleteArticle(id) {
     try {
+      const article = await db.models.Article.findByPk(id);
+
+      if (!article) {
+        return null;
+      }
+
       await db.models.Article.destroy({
         where: { id: id },
       });
 
-      return [];
+      return article;
     } catch (error) {
       console.log(error);
       return null;

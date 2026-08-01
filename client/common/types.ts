@@ -231,6 +231,7 @@ export interface PlacesData {
   countryId?: number;
   articles?: Array<{
     id: number;
+    slug?: string;
     title: string;
     subtitle?: string;
     description?: string;
@@ -266,8 +267,9 @@ export interface SectionIconsData {
 }
 
 export interface Article {
-  [x: string]: number;
+  [x: string]: unknown;
   id: number;
+  slug: string;
   title: string;
   subtitle: string;
   description: string;
@@ -300,6 +302,7 @@ export interface HorizontalPostItemBigProps {
   type?: string;
   data: {
     id: number;
+    slug?: string;
     main_image_url: string;
     title?: string;
     name?: string;

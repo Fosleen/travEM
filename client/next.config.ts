@@ -7,7 +7,11 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    qualities: [75, 90, 100],
+    // Flickr and ImageKit already serve the site's media. Sending those files
+    // through /_next/image creates a second optimization/cache layer and can
+    // exhaust Vercel Hobby quotas. Keep next/image's layout and lazy-loading
+    // behavior, but deliver every source directly from its existing host.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",

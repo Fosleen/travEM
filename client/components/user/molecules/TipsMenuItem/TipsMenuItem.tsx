@@ -28,7 +28,6 @@ const TipsMenuItem: FC<{
         className="icon-top-left"
         width={96}
         height={96}
-        quality={90}
       />
       <Image
         src={icon}
@@ -36,7 +35,6 @@ const TipsMenuItem: FC<{
         className="icon-bottom-right"
         width={96}
         height={96}
-        quality={90}
       />
     </Link>
   );

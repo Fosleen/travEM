@@ -111,6 +111,7 @@ const MainCountryPost = ({ article }: any) => {
             alt={`${article.title} background`}
             width={4000}
             height={2000}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         </div>
 

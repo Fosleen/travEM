@@ -11,7 +11,6 @@ import CountryPlaces from "@/components/user/molecules/CountryPlaces";
 import React, { useMemo, useState } from "react";
 import RecommendedPosts from "@/components/user/molecules/RecommendedPosts";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 
@@ -238,7 +237,6 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
                   alt={image.alt || "Gallery image"}
                   width={image.width || 600}
                   height={image.height || 400}
-                  quality={90}
                   sizes="(max-width: 768px) 50vw, 33vw"
                   style={{
                     width: "100%",

@@ -9,7 +9,7 @@ const { sendNewsletter, sendCommentReplyNotification } = require("./handler");
 const app = express();
 
 const corsOptions = {
-  origin: "https://putujemstravem.com",
+  origin: "https://www.putujemstravem.com",
   credentials: true,
   methods: "POST",
   allowedHeaders: "Content-Type, Authorization",

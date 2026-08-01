@@ -18,7 +18,7 @@ const truncateText = (value = "", maxLength = 250) => {
 };
 
 const getArticleUrl = (articleId) =>
-  `${process.env.API_URL || "https://putujemstravem.com"}/clanak/${articleId}`;
+  `${process.env.API_URL || "https://www.putujemstravem.com"}/clanak/${articleId}`;
 
 const createReplyNotificationTemplate = ({ parentComment, reply, article }) => {
   const articleUrl = getArticleUrl(article.id);

@@ -3,6 +3,7 @@ import { getCountryPlaces } from "@/utils/countries";
 import Article from "@/components/user/pages/article/Article";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { SITE_URL } from "@/utils/site";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -19,17 +20,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const keywords = `putujem s travem, ${article.metatags}`;
+  const canonicalUrl = `${SITE_URL}/clanak/${id}`;
 
   return {
     title: article.title || "putujEM s travEM",
     description: article.description || "Otkrijte svijet uz Emu i Matiju!",
     keywords: keywords,
+    alternates: { canonical: canonicalUrl },
     openGraph: {
       title: article.title || "putujEM s travEM",
       description: article.description || "Otkrijte svijet uz Emu i Matiju!",
       images: [article.main_image_url],
       type: "article",
-      url: `https://putujemstravem.com/clanak/${id}`,
+      url: canonicalUrl,
     },
     twitter: {
       card: "summary_large_image",

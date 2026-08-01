@@ -28,13 +28,13 @@ export async function generateMetadata({
       title: title,
       description: description,
       type: "website",
-      url: `https://putujemstravem.com/pretrazivanje?naslov=${encodeURIComponent(
+      url: `https://www.putujemstravem.com/pretrazivanje?naslov=${encodeURIComponent(
         searchQuery
       )}`,
       siteName: "putujEM s travEM",
       images: [
         {
-          url: "https://putujemstravem.com/default-og-image.jpg",
+          url: "https://www.putujemstravem.com/default-og-image.jpg",
           width: 1200,
           height: 630,
           alt: `Uvjeti korištenja`,

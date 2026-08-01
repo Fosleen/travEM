@@ -1,6 +1,5 @@
 import { MetadataRoute } from "next";
-
-const baseUrl = "https://www.putujemstravem.com";
+import { SITE_URL } from "@/utils/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -10,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
       },
     ],
-    sitemap: [`${baseUrl}/sitemap.xml`],
-    host: baseUrl,
+    sitemap: [`${SITE_URL}/sitemap.xml`],
+    host: SITE_URL,
   };
 }

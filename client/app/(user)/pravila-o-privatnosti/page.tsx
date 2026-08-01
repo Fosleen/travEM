@@ -1,4 +1,21 @@
 import "./PrivacyPolicy.scss";
+import type { Metadata } from "next";
+import { SITE_URL } from "@/utils/site";
+
+export const metadata: Metadata = {
+  title: "Pravila o privatnosti - putujEM s travEM",
+  description:
+    "Pravila o privatnosti web stranice putujEM s travEM i informacije o obradi osobnih podataka.",
+  alternates: { canonical: `${SITE_URL}/pravila-o-privatnosti` },
+  openGraph: {
+    title: "Pravila o privatnosti - putujEM s travEM",
+    description:
+      "Pravila o privatnosti web stranice putujEM s travEM i informacije o obradi osobnih podataka.",
+    type: "website",
+    url: `${SITE_URL}/pravila-o-privatnosti`,
+    images: [`${SITE_URL}/default-og-image.jpg`],
+  },
+};
 
 const PrivacyPolicy = () => {
   return (

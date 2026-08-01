@@ -14,6 +14,12 @@ function isTokenExpired(token: string): boolean {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  if (request.nextUrl.hostname === "putujemstravem.com") {
+    const canonicalUrl = request.nextUrl.clone();
+    canonicalUrl.hostname = "www.putujemstravem.com";
+    return NextResponse.redirect(canonicalUrl, 308);
+  }
+
   if (pathname === "/login") {
     return NextResponse.next();
   }
@@ -31,5 +37,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/login"],
+  matcher: ["/:path*"],
 };

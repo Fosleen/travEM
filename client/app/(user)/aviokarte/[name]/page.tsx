@@ -3,6 +3,7 @@ import AirplaneTickets from "@/components/user/pages/airplaneTickets/AirplaneTic
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAirplaneTicketPromo } from "@/utils/airplaneTicketPromo";
+import { SITE_URL } from "@/utils/site";
 
 type Props = {
   params: Promise<{ name: string }>;
@@ -20,19 +21,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = `Aviokarte ${cityName} - putujEM s travEM`;
   const description = `Pronađite najbolje aviokarte za ${cityName}. Pratite najnovije ponude i letove.`;
   const keywords = `aviokarte, ${decodedName}, letovi, putovanje, putujemstravem, ${cityName}`;
+  const canonicalUrl = `${SITE_URL}/aviokarte/${encodeURIComponent(
+    decodedName
+  )}`;
 
   return {
     title,
     description,
     keywords,
+    alternates: { canonical: canonicalUrl },
     openGraph: {
       title,
       description,
       type: "website",
-      url: `https://putujemstravem.com/aviokarte/${name}`,
+      url: canonicalUrl,
       images: [
         {
-          url: "https://putujemstravem.com/default-og-image.jpg",
+          url: `${SITE_URL}/default-og-image.jpg`,
           width: 1200,
           height: 630,
           alt: `Aviokarte ${cityName}`,
@@ -43,7 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
       title,
       description,
-      images: ["https://putujemstravem.com/default-og-image.jpg"],
+      images: [`${SITE_URL}/default-og-image.jpg`],
     },
   };
 }

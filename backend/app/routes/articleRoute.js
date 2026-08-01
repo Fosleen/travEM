@@ -2,6 +2,7 @@ import { Router } from "express";
 import controller from "../controllers/articleController.js";
 import commentController from "../controllers/articleCommentController.js";
 import { verifyToken } from "../middleware/jwt_verify.js";
+import { commentRateLimit } from "../middleware/commentRateLimit.js";
 
 const router = new Router();
 
@@ -56,9 +57,10 @@ const router = new Router();
 router.get("/", controller.getArticles);
 
 router.get("/:articleId/comments", commentController.getArticleComments);
-router.post("/:articleId/comments", commentController.addComment);
+router.post("/:articleId/comments", commentRateLimit, commentController.addComment);
 router.post(
   "/:articleId/comments/:commentId/replies",
+  commentRateLimit,
   commentController.addReply
 );
 router.post(

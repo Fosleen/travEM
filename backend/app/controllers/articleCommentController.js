@@ -129,6 +129,24 @@ class ArticleCommentController {
     }
   }
 
+  async dismissComment(req, res) {
+    try {
+      const result = await service.dismissComment(
+        req.params.commentId,
+        req.user?.id
+      );
+
+      if (result.error) {
+        return res.status(result.statusCode || 400).json({ error: result.error });
+      }
+
+      res.status(200).json(result);
+    } catch (error) {
+      console.error("Error dismissing comment:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
   async likeComment(req, res) {
     try {
       const result = await service.likeComment(

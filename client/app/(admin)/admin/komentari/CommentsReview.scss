@@ -6,6 +6,25 @@
   gap: 18px;
   padding: 24px;
 
+  button {
+    transition: background-color 180ms ease, color 180ms ease,
+      box-shadow 180ms ease, transform 180ms ease;
+
+    &:hover:not(:disabled) {
+      box-shadow: 0 8px 18px rgba($grey, 0.18);
+      transform: translateY(-2px);
+    }
+
+    &:active:not(:disabled) {
+      box-shadow: 0 4px 10px rgba($grey, 0.14);
+      transform: translateY(0) scale(0.97);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
   h1 {
     margin: 0;
     color: $grey;
@@ -66,6 +85,7 @@
 }
 
 .comments-review-item {
+  position: relative;
   border: 1px solid $greyMiddle;
   border-radius: 8px;
   background: #fff;
@@ -79,6 +99,38 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .comments-review button {
+    transition: none;
+
+    &:hover:not(:disabled),
+    &:active:not(:disabled) {
+      transform: none;
+    }
+  }
+}
+
+.comments-review-dismiss {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: $textPrimary;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: $greyMiddle;
+    color: $grey;
+  }
+}
+
 .comments-review-meta,
 .comments-review-context,
 .comments-review-actions {
@@ -88,6 +140,7 @@
 }
 
 .comments-review-meta {
+  padding-right: 40px;
   justify-content: space-between;
   color: $textPrimary;
 
@@ -105,6 +158,48 @@
   time {
     font-size: 13px;
   }
+}
+
+.comments-review-published-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    border-radius: 6px;
+    padding: 9px 12px;
+    background: rgba($green, 0.12);
+    color: $green;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .comments-review-liked {
+    background: $green;
+    color: #fff;
+  }
+}
+
+.comments-review-delete {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: $delete !important;
+  color: #fff !important;
+}
+
+.comments-review-standalone-delete {
+  margin-top: 10px;
+  border: 0;
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .comments-review-context {

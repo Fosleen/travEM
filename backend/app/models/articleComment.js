@@ -43,6 +43,7 @@ export default (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: DataTypes.NOW,
       },
+      reviewed_at: { type: DataTypes.DATE, allowNull: true },
       deleted_at: { type: DataTypes.DATE, allowNull: true },
     },
     {

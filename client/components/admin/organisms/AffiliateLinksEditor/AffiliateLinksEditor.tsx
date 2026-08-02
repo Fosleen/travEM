@@ -1,16 +1,9 @@
 "use client";
 
 import { Plus, Trash } from "@phosphor-icons/react";
-import { useCallback, useEffect, useState } from "react";
 import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
 import { ArticleAffiliateLink } from "@/utils/affiliateLinks";
 import "./AffiliateLinksEditor.scss";
-
-interface AffiliateIcon {
-  fileName: string;
-  label: string;
-  url: string;
-}
 
 interface Props {
   value: ArticleAffiliateLink[];
@@ -18,26 +11,6 @@ interface Props {
 }
 
 const AffiliateLinksEditor = ({ value, onChange }: Props) => {
-  const [icons, setIcons] = useState<AffiliateIcon[]>([]);
-  const [openIconPicker, setOpenIconPicker] = useState<number | null>(null);
-
-  const loadIcons = useCallback(async () => {
-    try {
-      const response = await fetch("/api/affiliate-icons", {
-        cache: "no-store",
-      });
-      if (!response.ok) throw new Error("Icons could not be loaded");
-      setIcons(await response.json());
-    } catch (error) {
-      console.error("Affiliate icons could not be loaded:", error);
-      setIcons([]);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadIcons();
-  }, [loadIcons]);
-
   const updateLink = (index: number, patch: Partial<ArticleAffiliateLink>) => {
     onChange(
       value.map((link, currentIndex) =>
@@ -55,23 +28,14 @@ const AffiliateLinksEditor = ({ value, onChange }: Props) => {
     });
   };
 
-  const addDraftPartner = async () => {
-    const availableIcons = icons.length
-      ? icons
-      : await fetch("/api/affiliate-icons", { cache: "no-store" })
-          .then((response) => (response.ok ? response.json() : []))
-          .catch(() => []);
-
-    if (!icons.length && availableIcons.length) setIcons(availableIcons);
-
+  const addDraftPartner = () => {
     const temporaryId = -Date.now();
-    const iconUrl = availableIcons[0]?.url || "";
     onChange([
       ...value,
       {
         affiliate_partner_id: temporaryId,
         url: "",
-        icon_url: iconUrl,
+        icon_url: "",
         is_enabled: true,
         sort_order: value.length,
         update_default_url: false,
@@ -81,7 +45,7 @@ const AffiliateLinksEditor = ({ value, onChange }: Props) => {
           name: "",
           label: "",
           default_url: "",
-          icon_url: iconUrl,
+          icon_url: "",
           sort_order: value.length * 10 + 10,
         },
       },
@@ -157,56 +121,22 @@ const AffiliateLinksEditor = ({ value, onChange }: Props) => {
               }
             />
 
-            <div className="affiliate-editor__icon-picker">
-              <button
-                type="button"
-                className="affiliate-editor__icon-trigger"
-                aria-label={`Ikona za ${link.partner.name || "partnera"}`}
-                aria-expanded={openIconPicker === link.affiliate_partner_id}
-                onClick={() => {
-                  loadIcons();
-                  setOpenIconPicker(
-                    openIconPicker === link.affiliate_partner_id
-                      ? null
-                      : link.affiliate_partner_id
-                  );
-                }}
-              >
-                {(link.icon_url || link.partner.icon_url) ? (
-                  <img
-                    src={link.icon_url || link.partner.icon_url}
-                    alt="Odabrana ikona"
-                  />
-                ) : (
-                  <span>—</span>
-                )}
-                <span aria-hidden="true">⌄</span>
-              </button>
-
-              {openIconPicker === link.affiliate_partner_id && (
-                <div
-                  className="affiliate-editor__icon-menu"
-                  role="listbox"
-                  aria-label="Dostupne affiliate ikone"
-                >
-                  {icons.map((icon) => (
-                    <button
-                      type="button"
-                      role="option"
-                      aria-selected={link.icon_url === icon.url}
-                      className={link.icon_url === icon.url ? "is-selected" : ""}
-                      key={icon.url}
-                      title={icon.label}
-                      onClick={() => {
-                        updateLink(index, { icon_url: icon.url });
-                        setOpenIconPicker(null);
-                      }}
-                    >
-                      <img src={icon.url} alt={icon.label} />
-                    </button>
-                  ))}
-                </div>
+            <div className="affiliate-editor__icon-url">
+              {(link.icon_url || link.partner.icon_url) && (
+                <img
+                  src={link.icon_url || link.partner.icon_url}
+                  alt="Pregled ikone"
+                />
               )}
+              <input
+                aria-label={`URL ikone za ${link.partner.name || "partnera"}`}
+                placeholder="https://..."
+                type="url"
+                value={link.icon_url || ""}
+                onChange={(event) =>
+                  updateLink(index, { icon_url: event.target.value })
+                }
+              />
             </div>
 
             <ToggleSwitch

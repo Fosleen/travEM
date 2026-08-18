@@ -13,7 +13,8 @@ const Marquee = () => {
   useEffect(() => {
     getFooterPartners()
       .then(setPartners)
-      .catch((error) => console.error("Error fetching footer partners:", error));
+      // Partners are optional page chrome; an API outage should simply hide it.
+      .catch(() => setPartners([]));
   }, []);
 
   if (partners.length === 0) return null;

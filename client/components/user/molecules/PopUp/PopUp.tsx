@@ -97,7 +97,9 @@ const PopUp = () => {
   useEffect(() => {
     getPopupContent()
       .then((content) => setPopupImageUrl(content.image_url))
-      .catch((error) => console.error("Error fetching popup image:", error));
+      // The image is optional. If the API is temporarily unavailable, keep the
+      // text-only popup instead of surfacing a handled request as a dev overlay.
+      .catch(() => setPopupImageUrl(""));
   }, []);
 
   const migrateOldPopupStorage = () => {

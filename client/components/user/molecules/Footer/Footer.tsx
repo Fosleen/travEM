@@ -146,11 +146,10 @@ const Footer: FC<FooterProps> = ({
           rel="noopener noreferrer"
         >
           <Image
-            src="/images/logo-light.png"
+            src="https://ik.imagekit.io/travEM/Sponzori/Fosleen%20logo-light.png?updatedAt=1785507272050"
             alt="fosleen-logo"
             width={100}
             height={40}
-            style={{ width: "auto", height: "auto" }}
             priority
           />
         </a>

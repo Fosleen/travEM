@@ -28,10 +28,12 @@ import Swal from "sweetalert2";
 import { notifyFailure, notifySuccess } from "@/components/atoms/Toast/Toast";
 import {
   createTopCountryArticle,
+  createTopPlaceArticle,
   deleteArticleById,
   getArticleById,
   getFavoriteArticleByCountry,
   removeTopCountryArticle,
+  removeTopPlaceArticle,
   updateArticle,
 } from "@/utils/article";
 import { addSection, deleteSection, updateSection } from "@/utils/sections";
@@ -126,6 +128,8 @@ const EditArticle = () => {
   const [isMainCountryPostChecked, setIsMainCountryPostChecked] =
     useState(false);
   const [isMainCountryPost, setIsMainCountryPost] = useState(false);
+  const [isMainPlacePostChecked, setIsMainPlacePostChecked] = useState(false);
+  const [isMainPlacePost, setIsMainPlacePost] = useState(false);
   const [isFarDestinationChecked, setIsFarDestinationChecked] = useState(false);
   const [isTipsFeaturedChecked, setIsTipsFeaturedChecked] = useState(false);
   const [isScheduleChecked, setIsScheduleChecked] = useState(false);
@@ -430,6 +434,12 @@ const flatRemovedImages = removedSectionImages;
 
       console.log("✅ Top country article handled");
 
+      if (isMainPlacePostChecked && values.article_place) {
+        await createTopPlaceArticle(id);
+      } else if (isMainPlacePost) {
+        await removeTopPlaceArticle(id);
+      }
+
       console.log("Handling video...");
       const hasVideo =
         values.article_video && values.article_video.trim() !== "";
@@ -597,6 +607,13 @@ const flatRemovedImages = removedSectionImages;
         setMainArticleImage(articleData.main_image_url);
         setIsMainCountryPostChecked(isSetAsMainCountryPost?.id == id);
         setIsMainCountryPost(isSetAsMainCountryPost?.id == id);
+        const isSetAsMainPlacePost =
+          Number(
+            articleData.place?.featured_article_id ??
+              articleData.place?.featuredArticleId
+          ) === Number(id);
+        setIsMainPlacePostChecked(isSetAsMainPlacePost);
+        setIsMainPlacePost(isSetAsMainPlacePost);
         setSelectedCountryId(articleData.countryId || "");
         setIsFarDestinationChecked(Boolean(articleData.isFarDestination));
         setIsTipsFeaturedChecked(parseBooleanValue(articleData.isTipsFeatured));
@@ -1618,6 +1635,18 @@ const flatRemovedImages = removedSectionImages;
                             description={"Postavi kao glavni članak države"}
                             value={isMainCountryPostChecked}
                             setter={setIsMainCountryPostChecked}
+                          />
+                        </div>
+                      )}
+
+                    {values.article_place &&
+                      values.article_type == ARTICLE_TYPE_DESTINATION_ID && (
+                        <div className="add-article-toggle-item">
+                          <ToggleSwitch
+                            name={"main-place-post"}
+                            description={"Postavi kao glavni članak mjesta"}
+                            value={isMainPlacePostChecked}
+                            setter={setIsMainPlacePostChecked}
                           />
                         </div>
                       )}

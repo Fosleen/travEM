@@ -462,6 +462,12 @@ router.put(
   controller.updateOrCreateTopCountryArticle
 );
 
+router.put(
+  "/place/top",
+  verifyToken,
+  controller.updateOrCreateTopPlaceArticle
+);
+
 // PUT /api/v1/articles/homepage/1
 router.put(
   "/homepage/:specialTypeId",
@@ -536,6 +542,12 @@ router.delete(
   "/country/top/:id",
   verifyToken,
   controller.deleteTopCountryArticle
+);
+
+router.delete(
+  "/place/top/:id",
+  verifyToken,
+  controller.deleteTopPlaceArticle
 );
 
 export default router;

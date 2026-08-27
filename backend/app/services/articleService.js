@@ -771,6 +771,40 @@ class ArticleService {
     }
   }
 
+  async updateOrCreateTopPlaceArticle(article_id) {
+    const transaction = await db.sequelize.transaction();
+
+    try {
+      const article = await db.models.Article.findByPk(article_id, { transaction });
+
+      if (!article) {
+        await transaction.rollback();
+        return "Article not found";
+      }
+      if (!article.placeId) {
+        await transaction.rollback();
+        return "Article place not found";
+      }
+
+      await db.models.Place.update(
+        { featured_article_id: null },
+        { where: { featured_article_id: article.id }, transaction }
+      );
+
+      await db.models.Place.update(
+        { featured_article_id: article.id },
+        { where: { id: article.placeId }, transaction }
+      );
+
+      await transaction.commit();
+      return article;
+    } catch (error) {
+      await transaction.rollback();
+      console.log(error);
+      return null;
+    }
+  }
+
   async updateOrCreateTopHomepageArticles(article_ids, special_type_id) {
     console.log(Array.isArray(article_ids));
 
@@ -956,6 +990,11 @@ class ArticleService {
         return null;
       }
 
+      await db.models.Place.update(
+        { featured_article_id: null },
+        { where: { featured_article_id: id } }
+      );
+
       await db.models.Article.destroy({
         where: { id: id },
       });
@@ -988,6 +1027,20 @@ class ArticleService {
     } catch (error) {
       console.log(error);
       return null;
+    }
+  }
+
+  async deleteTopPlaceArticle(id) {
+    try {
+      const [updatedCount] = await db.models.Place.update(
+        { featured_article_id: null },
+        { where: { featured_article_id: id } }
+      );
+
+      return updatedCount > 0;
+    } catch (error) {
+      console.log(error);
+      return false;
     }
   }
 }

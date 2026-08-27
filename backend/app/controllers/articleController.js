@@ -319,6 +319,30 @@ class ArticleController {
     }
   }
 
+  async updateOrCreateTopPlaceArticle(req, res) {
+    try {
+      const response = await articleService.updateOrCreateTopPlaceArticle(
+        req.body.article_id
+      );
+
+      if (response === "Article not found") {
+        return res.status(404).json({ error: "Article not found" });
+      }
+
+      if (response === "Article place not found") {
+        return res.status(400).json({ error: "Article does not belong to a place" });
+      }
+
+      if (!response) {
+        return res.status(500).json({ error: "Internal server error" });
+      }
+
+      return res.status(200).json(response);
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
   async updateOrCreateTopHomepageArticles(req, res) {
     const response = await articleService.updateOrCreateTopHomepageArticles(
       req.body.article_id,
@@ -408,6 +432,20 @@ class ArticleController {
       } else {
         return res.status(500).json({ error: "Internal server error" });
       }
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
+  async deleteTopPlaceArticle(req, res) {
+    try {
+      const response = await articleService.deleteTopPlaceArticle(req.params.id);
+
+      if (!response) {
+        return res.status(404).json({ error: "Article is not featured for a place" });
+      }
+
+      return res.status(200).json({});
     } catch (error) {
       return res.status(500).json({ error: "Internal server error" });
     }

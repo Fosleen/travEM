@@ -476,6 +476,41 @@ export async function removeTopCountryArticle(articleId: number) {
   return data;
 }
 
+export async function createTopPlaceArticle(articleId: number) {
+  const token = getToken();
+  const response = await fetch(`${apiUrl}/articles/place/top`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    method: "PUT",
+    body: JSON.stringify({ article_id: articleId }),
+  });
+  const data = await response.json();
+
+  if (!response.ok) throw new Error(data.error || "Istaknuti članak nije spremljen.");
+  return data;
+}
+
+export async function removeTopPlaceArticle(articleId: number) {
+  const token = getToken();
+  const response = await fetch(`${apiUrl}/articles/place/top/${articleId}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    method: "DELETE",
+  });
+
+  if (response.status === 404) return {};
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Istaknuti članak nije uklonjen.");
+  return data;
+}
+
 export async function getArticleBySlug(slug: string) {
   try {
     const response = await fetch(

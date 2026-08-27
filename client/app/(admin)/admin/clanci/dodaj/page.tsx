@@ -18,7 +18,11 @@ import {
 } from "@/common/types";
 import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
 import AdvancedDropdown from "@/components/admin/atoms/AdvancedDropdown";
-import { addArticle, createTopCountryArticle } from "@/utils/article";
+import {
+  addArticle,
+  createTopCountryArticle,
+  createTopPlaceArticle,
+} from "@/utils/article";
 import { addSection } from "@/utils/sections";
 import Modal from "@/components/atoms/Modal";
 import { addSectionImage } from "@/utils/sectionImages";
@@ -106,6 +110,7 @@ const AddArticlePage = () => {
 
   const [isMainCountryPostChecked, setIsMainCountryPostChecked] =
     useState(false);
+  const [isMainPlacePostChecked, setIsMainPlacePostChecked] = useState(false);
   const [isNotifySubscribersChecked, setIsNotifySubscribersChecked] =
     useState(true);
   const [isFarDestinationChecked, setIsFarDestinationChecked] = useState(false);
@@ -213,6 +218,10 @@ const AddArticlePage = () => {
             await Promise.all([
               isMainCountryPostChecked
                 ? createTopCountryArticle(articleResponse.id)
+                : Promise.resolve(),
+
+              isMainPlacePostChecked && values.article_place
+                ? createTopPlaceArticle(articleResponse.id)
                 : Promise.resolve(),
 
               Promise.all(
@@ -1223,6 +1232,18 @@ const AddArticlePage = () => {
                           description={"Dodaj članak kao glavni za državu"}
                           value={isMainCountryPostChecked}
                           setter={setIsMainCountryPostChecked}
+                        />
+                      </div>
+                    )}
+
+                  {values.article_place &&
+                    values.article_type == ARTICLE_TYPE_DESTINATION_ID && (
+                      <div className="add-article-toggle-item">
+                        <ToggleSwitch
+                          name={"main-place-post"}
+                          description={"Dodaj članak kao glavni za mjesto"}
+                          value={isMainPlacePostChecked}
+                          setter={setIsMainPlacePostChecked}
                         />
                       </div>
                     )}

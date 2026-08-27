@@ -11,14 +11,20 @@ import DestinationsMap from "@/components/organisms/DestinationsMap";
 import { useContext, useEffect, useMemo } from "react";
 import { ArticleContext } from "@/context/ArticleContext";
 import RecommendedMapDestinations from "@/components/user/molecules/RecommendedMapDestinations";
-import { Article, HomepageData } from "@/common/types";
+import { Article, FooterPartnerData, HomepageData } from "@/common/types";
+import PartnerShowcase from "@/components/user/molecules/PartnerShowcase";
 
 interface HomepageProps {
   initialContent: HomepageData;
   initialArticles: Array<Article>;
+  initialPartners: FooterPartnerData[];
 }
 
-const Homepage = ({ initialContent, initialArticles }: HomepageProps) => {
+const Homepage = ({
+  initialContent,
+  initialArticles,
+  initialPartners,
+}: HomepageProps) => {
   const { setHomepageArticlesContextData } = useContext(ArticleContext);
 
   useEffect(() => {
@@ -61,10 +67,13 @@ const Homepage = ({ initialContent, initialArticles }: HomepageProps) => {
     <div className="homepage-container">
       <HomepageHero homepageContent={initialContent} />
       <FavoritePosts homepageArticles={favoriteArticles} />
-      <HomepageBanner
-        homepageContent={initialContent}
-        homepageArticles={bannerArticles}
-      />
+      <div className="homepage-partners-banner-group">
+        <PartnerShowcase partners={initialPartners} />
+        <HomepageBanner
+          homepageContent={initialContent}
+          homepageArticles={bannerArticles}
+        />
+      </div>
       <RecommendedMapDestinations />
       <DestinationsMap initialLatitude={51.1657} initialLongitude={10.4515} />
       <BlogStats homepageContent={initialContent} />

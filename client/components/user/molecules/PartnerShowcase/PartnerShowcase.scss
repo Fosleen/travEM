@@ -1,0 +1,152 @@
+@use "@/utils/theme.scss" as *;
+
+.partner-showcase {
+  width: 100%;
+  padding: 8px 16px 14px;
+  overflow: hidden;
+  background-color: $bg;
+
+  &__content {
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  h2 {
+    width: fit-content;
+    margin: 0 auto 18px;
+    padding-bottom: 5px;
+    border-bottom: 3px solid $limeGreen;
+    color: $grey;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    text-align: center;
+  }
+
+  &__logos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 24px;
+    align-items: stretch;
+
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+      min-height: 72px;
+
+      &:focus-visible {
+        border-radius: 4px;
+        outline: 2px solid $limeGreen;
+        outline-offset: 4px;
+      }
+
+      &:hover img,
+      &:focus-visible img {
+        opacity: 1;
+        transform: rotate(-1deg) translateY(-2px) scale(1.04);
+      }
+    }
+
+    img {
+      width: auto;
+      max-width: 148px;
+      height: auto;
+      max-height: 62px;
+      opacity: 0.92;
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+    }
+  }
+
+  &__toggle {
+    display: flex;
+    margin: 16px auto 0;
+    padding: 6px 12px;
+    border: 0;
+    border-radius: 999px;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    color: $green;
+    cursor: pointer;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+
+    svg {
+      transition: transform 0.25s ease;
+    }
+
+    &.is-expanded svg {
+      transform: rotate(180deg);
+    }
+
+    &:hover,
+    &:focus-visible {
+      background-color: $limeLight;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $green;
+      outline-offset: 2px;
+    }
+  }
+
+  &__expandable {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition:
+      grid-template-rows 0.35s ease,
+      opacity 0.25s ease,
+      transform 0.35s ease;
+
+    &.is-expanded {
+      grid-template-rows: 1fr;
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  &__expandable-inner {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  &__logos--remaining {
+    padding-top: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .partner-showcase__logos img,
+  .partner-showcase__toggle svg,
+  .partner-showcase__expandable {
+    transition: none;
+  }
+}
+
+@media screen and ($tablet) {
+  .partner-showcase {
+    padding: 12px 24px 18px;
+
+    &__logos {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 24px clamp(24px, 4vw, 56px);
+
+      a {
+        min-height: 88px;
+      }
+
+      img {
+        max-width: 180px;
+        max-height: 72px;
+      }
+    }
+  }
+}

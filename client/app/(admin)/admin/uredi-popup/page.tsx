@@ -63,7 +63,7 @@ const EditPopup = () => {
           />
         </div>
       )}
-      <p>* preporuča se vodoravna fotografija</p>
+      <p>* preporuča se okomita fotografija</p>
       {isUrlShown && (
         <div className="edit-popup-buttons">
           <Button adminPrimary onClick={handleSave}>

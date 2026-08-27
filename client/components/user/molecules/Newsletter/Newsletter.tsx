@@ -35,7 +35,7 @@ const Newsletter = () => {
               alt="envelope-icon"
               width={320}
               height={320}
-              style={{ width: "auto", height: "auto" }}
+              style={{ width: "86px", height: "auto" }}
             />
           </div>
 

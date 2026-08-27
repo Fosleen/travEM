@@ -14,11 +14,15 @@ import {
 } from "@/utils/footerPartners";
 import "./EditFooterPartners.scss";
 
-type PartnerDraft = Pick<FooterPartnerData, "name" | "image_url" | "target_url" | "is_active">;
+type PartnerDraft = Pick<
+  FooterPartnerData,
+  "name" | "image_url" | "showcase_image_url" | "target_url" | "is_active"
+>;
 
 const emptyDraft: PartnerDraft = {
   name: "",
   image_url: "",
+  showcase_image_url: "",
   target_url: "",
   is_active: true,
 };
@@ -57,6 +61,7 @@ const EditFooterPartners = () => {
     setDraft({
       name: partner.name,
       image_url: partner.image_url,
+      showcase_image_url: partner.showcase_image_url || "",
       target_url: partner.target_url,
       is_active: partner.is_active,
     });
@@ -149,8 +154,8 @@ const EditFooterPartners = () => {
     <div className="footer-partners-editor">
       <div className="footer-partners-editor__header">
         <div>
-          <h2>Partneri u footeru</h2>
-          <p>Uredi logotipe, poveznice, vidljivost i redoslijed partnera.</p>
+          <h2>Partneri</h2>
+          <p>Uredi logotipe za footer i naslovnicu, poveznice, vidljivost i redoslijed.</p>
         </div>
         <Button adminPrimary onClick={() => {
           setEditingId(null);
@@ -182,10 +187,26 @@ const EditFooterPartners = () => {
             </div>
             <div className="footer-partner-form__fields">
               <label>Naziv<input autoFocus required value={draft.name} onChange={(event) => setDraft({ ...draft, name: event.target.value })} /></label>
-              <label>URL logotipa<input required type="url" placeholder="https://..." value={draft.image_url} onChange={(event) => setDraft({ ...draft, image_url: event.target.value })} /></label>
+              <label>URL svijetlog logotipa (footer)<input required type="url" placeholder="https://..." value={draft.image_url} onChange={(event) => setDraft({ ...draft, image_url: event.target.value })} /></label>
+              <label>URL tamnog logotipa (naslovnica)<input required type="url" placeholder="https://..." value={draft.showcase_image_url || ""} onChange={(event) => setDraft({ ...draft, showcase_image_url: event.target.value })} /></label>
               <label>URL poveznice<input required type="url" placeholder="https://..." value={draft.target_url} onChange={(event) => setDraft({ ...draft, target_url: event.target.value })} /></label>
             </div>
-            {draft.image_url && <div className="footer-partner-form__preview"><span>Pregled</span><img src={draft.image_url} alt="Pregled logotipa" /></div>}
+            {(draft.image_url || draft.showcase_image_url) && (
+              <div className="footer-partner-form__previews">
+                {draft.image_url && (
+                  <div className="footer-partner-form__preview is-footer">
+                    <span>Footer</span>
+                    <img src={draft.image_url} alt="Pregled svijetlog logotipa" />
+                  </div>
+                )}
+                {draft.showcase_image_url && (
+                  <div className="footer-partner-form__preview is-showcase">
+                    <span>Naslovnica</span>
+                    <img src={draft.showcase_image_url} alt="Pregled tamnog logotipa" />
+                  </div>
+                )}
+              </div>
+            )}
             <div className="footer-partner-form__actions">
               <Button adminPrimary type="submit" disabled={isSaving}>{isSaving ? "spremanje..." : "spremi"}</Button>
               <Button white onClick={closeForm} disabled={isSaving}>odustani</Button>
@@ -208,7 +229,10 @@ const EditFooterPartners = () => {
                 <button disabled={index === 0 || Boolean(search)} onClick={() => movePartner(index, -1)} aria-label={`Pomakni ${partner.name} gore`}><CaretUp /></button>
                 <button disabled={index === partners.length - 1 || Boolean(search)} onClick={() => movePartner(index, 1)} aria-label={`Pomakni ${partner.name} dolje`}><CaretDown /></button>
               </div>
-              <div className="footer-partner-row__logo"><img src={partner.image_url} alt={`${partner.name} logo`} /></div>
+              <div className="footer-partner-row__logos">
+                <span className="is-footer"><img src={partner.image_url} alt={`${partner.name} svijetli logo`} /></span>
+                <span className="is-showcase"><img src={partner.showcase_image_url || partner.image_url} alt={`${partner.name} tamni logo`} /></span>
+              </div>
               <div className="footer-partner-row__details"><strong>{partner.name}</strong><a href={partner.target_url} target="_blank" rel="noopener noreferrer">{partner.target_url}</a></div>
               <label className="footer-partner-row__visibility"><input type="checkbox" checked={partner.is_active} onChange={() => togglePartner(partner)} /><span>{partner.is_active ? "Prikazan" : "Skriven"}</span></label>
               <div className="footer-partner-row__actions">

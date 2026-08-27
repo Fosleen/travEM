@@ -34,7 +34,7 @@ const EditHomepageMenu = () => {
         />
         <EditHomepageMenuItem text="Footer" url="/admin/uredi-footer" />
         <EditHomepageMenuItem
-          text="Partneri u footeru"
+          text="Partneri"
           url="/admin/uredi-footer-partnere"
         />
         <EditHomepageMenuItem

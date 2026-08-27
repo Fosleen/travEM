@@ -26,7 +26,10 @@ export async function getFooterPartnersAdmin(): Promise<FooterPartnerData[]> {
 }
 
 export async function createFooterPartner(
-  partner: Pick<FooterPartnerData, "name" | "image_url" | "target_url" | "is_active">
+  partner: Pick<
+    FooterPartnerData,
+    "name" | "image_url" | "showcase_image_url" | "target_url" | "is_active"
+  >
 ): Promise<FooterPartnerData> {
   return parseResponse(await fetch(`${apiUrl}/footer-partners`, {
     method: "POST",

@@ -168,3 +168,19 @@
     }
   }
 }
+
+@media screen and ($desktop2k) {
+  .newsletter-container {
+    .newsletter-content-container {
+      .newsletter-content {
+        .newsletter-envelope {
+          top: 32px;
+
+          img {
+            width: 112px !important;
+          }
+        }
+      }
+    }
+  }
+}

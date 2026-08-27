@@ -3,6 +3,7 @@ import { getHomepageArticles } from "@/utils/article";
 import { Metadata } from "next";
 import Homepage from "@/components/user/pages/homepage/Homepage";
 import { SITE_URL } from "@/utils/site";
+import { getFooterPartners } from "@/utils/footerPartners";
 
 export async function generateMetadata(): Promise<Metadata> {
   const homepageContent = await getHomepage();
@@ -31,10 +32,17 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Page() {
-  const homepageContent = await getHomepage();
-  const articles = await getHomepageArticles();
+  const [homepageContent, articles, partners] = await Promise.all([
+    getHomepage(),
+    getHomepageArticles(),
+    getFooterPartners().catch(() => []),
+  ]);
 
   return (
-    <Homepage initialContent={homepageContent} initialArticles={articles} />
+    <Homepage
+      initialContent={homepageContent}
+      initialArticles={articles}
+      initialPartners={partners}
+    />
   );
 }

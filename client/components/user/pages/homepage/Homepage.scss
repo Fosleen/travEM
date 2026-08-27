@@ -7,6 +7,20 @@
   gap: 16px;
 }
 
+.homepage-partners-banner-group {
+  display: flex;
+  width: 100%;
+  margin-top: -8px;
+  flex-direction: column;
+  gap: 0;
+}
+
+@media screen and ($desktop) {
+  .homepage-partners-banner-group {
+    margin-top: -24px;
+  }
+}
+
 @media screen and ($desktop) {
   .homepage-container {
     gap: 48px;

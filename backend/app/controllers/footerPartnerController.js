@@ -26,8 +26,16 @@ class FooterPartnerController {
 
   async createPartner(req, res) {
     try {
-      if (!req.body.name?.trim() || !req.body.image_url || !req.body.target_url) {
-        return res.status(400).json({ error: "Name, image URL and target URL are required" });
+      if (
+        !req.body.name?.trim() ||
+        !req.body.image_url ||
+        !req.body.showcase_image_url ||
+        !req.body.target_url
+      ) {
+        return res.status(400).json({
+          error:
+            "Name, footer image URL, showcase image URL and target URL are required",
+        });
       }
       const partner = await service.createPartner(req.body);
       await clearPartnerCache();

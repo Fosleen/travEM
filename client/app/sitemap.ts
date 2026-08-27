@@ -81,7 +81,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .map((article: any) => ({
       url: `${SITE_URL}/clanak/${encodeURIComponent(article.slug)}`,
       lastModified: toDate(
-        article.updated_at ??
+        article.date_updated ??
+          article.dateUpdated ??
+          article.updated_at ??
           article.updatedAt ??
           article.date_written ??
           article.dateWritten,

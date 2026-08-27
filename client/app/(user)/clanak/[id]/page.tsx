@@ -16,6 +16,27 @@ const getArticleForPublicRoute = cache(async (value: string) => {
     : getArticleBySlug(value);
 });
 
+const getDateValue = (value: unknown): string | undefined => {
+  if (!value) return undefined;
+
+  const date = new Date(value as string | number | Date);
+  return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+};
+
+const getArticleDates = (article: any) => {
+  const publishedTime = getDateValue(
+    article.date_written ?? article.dateWritten
+  );
+  const modifiedTime = getDateValue(
+    article.date_updated ?? article.dateUpdated
+  );
+
+  return {
+    publishedTime,
+    modifiedTime: modifiedTime ?? publishedTime,
+  };
+};
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const article = await getArticleForPublicRoute(id);
@@ -28,6 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const keywords = `putujem s travem, ${article.metatags}`;
   const canonicalUrl = `${SITE_URL}/clanak/${article.slug || article.id}`;
+  const { publishedTime, modifiedTime } = getArticleDates(article);
 
   return {
     title: article.title || "putujEM s travEM",
@@ -40,6 +62,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: [article.main_image_url],
       type: "article",
       url: canonicalUrl,
+      publishedTime,
+      modifiedTime,
     },
     twitter: {
       card: "summary_large_image",
@@ -66,10 +90,61 @@ export default async function Page({ params }: Props) {
     ? await getCountryPlaces(articleContent.placeId)
     : [];
 
+  const canonicalUrl = `${SITE_URL}/clanak/${
+    articleContent.slug || articleContent.id
+  }`;
+  const { publishedTime, modifiedTime } = getArticleDates(articleContent);
+  const authorName =
+    articleContent.user?.username === "Dox" ||
+    articleContent.user?.username === "Ema"
+      ? "putujEM s travEM - Ema i Matija"
+      : `${articleContent.user?.first_name || ""} ${
+          articleContent.user?.last_name || ""
+        }`.trim() || "putujEM s travEM";
+
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `${canonicalUrl}#article`,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonicalUrl,
+    },
+    headline: articleContent.title,
+    description: articleContent.description,
+    image: articleContent.main_image_url
+      ? [articleContent.main_image_url]
+      : undefined,
+    datePublished: publishedTime,
+    dateModified: modifiedTime,
+    author: {
+      "@type": "Person",
+      name: authorName,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "putujEM s travEM",
+      url: SITE_URL,
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_URL}/images/travem-logo-grey.webp`,
+      },
+    },
+    url: canonicalUrl,
+  };
+
   return (
-    <Article
-      initialArticle={articleContent}
-      initialCountryPlaces={countryPlaces}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(articleJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
+      <Article
+        initialArticle={articleContent}
+        initialCountryPlaces={countryPlaces}
+      />
+    </>
   );
 }

@@ -132,6 +132,7 @@ const EditArticle = () => {
   const [isMainPlacePost, setIsMainPlacePost] = useState(false);
   const [isFarDestinationChecked, setIsFarDestinationChecked] = useState(false);
   const [isTipsFeaturedChecked, setIsTipsFeaturedChecked] = useState(false);
+  const [shouldUpdateArticleDate, setShouldUpdateArticleDate] = useState(false);
   const [isScheduleChecked, setIsScheduleChecked] = useState(false);
   const [scheduleDateTime, setScheduleDateTime] = useState("");
   const [scheduleTimezone, setScheduleTimezone] = useState(getBrowserTimeZone());
@@ -223,7 +224,7 @@ const EditArticle = () => {
         metatagsString,
         mainArticleImage,
         article.date_written,
-        todaysDate,
+        shouldUpdateArticleDate ? todaysDate : article.date_updated || null,
         values.article_type,
         values.article_country,
         values.article_place,
@@ -1671,6 +1672,15 @@ const flatRemovedImages = removedSectionImages;
                         </p>
                       </div>
                     )}
+
+                    <div className="edit-article-toggle-item">
+                      <ToggleSwitch
+                        name={"update-article-date"}
+                        description={"Označi članak kao ažuriran danas"}
+                        value={shouldUpdateArticleDate}
+                        setter={setShouldUpdateArticleDate}
+                      />
+                    </div>
                   </div>
 
                   {getScheduleStatus(article).className === "scheduled" && (

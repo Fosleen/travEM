@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import HorizontalPostItemBig from "@/components/user/atoms/HorizontalPostItemBig/HorizontalPostItemBig";
 import "./TipsAndTricks.scss";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import { convertFromSlug } from "@/utils/global";
 import { Article, ArticleType, Nullable } from "@/common/types";
 import Pagination from "@/components/atoms/Pagination";
@@ -21,9 +21,6 @@ interface TipsAndTricksProps {
   initialPage: number;
   tip: string;
 }
-
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:25060/api/v1";
 
 const TIPS_SCROLL_STORAGE_KEY = "tips-and-tricks-scroll-y";
 
@@ -312,30 +309,6 @@ const getFeaturedArticle = (articles: Array<Article>) => {
   return getNewestArticle(articles);
 };
 
-const normalizeFetchedArticle = (data: any) => {
-  return data?.data || data?.article || data;
-};
-
-const fetchFullArticleById = async (articleId: number | string) => {
-  try {
-    const response = await fetch(`${API_URL}/articles/${articleId}?noCache=true`, {
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      console.warn("Failed to fetch full featured article:", response.status);
-      return null;
-    }
-
-    const data = await response.json();
-
-    return normalizeFetchedArticle(data);
-  } catch (error) {
-    console.warn("Failed to fetch full featured article:", error);
-    return null;
-  }
-};
-
 const TipsAndTricks = ({
   initialArticleTypes,
   initialSelectedType,
@@ -349,8 +322,6 @@ const TipsAndTricks = ({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-
-  const [fullFeaturedArticle, setFullFeaturedArticle] = useState<any>(null);
 
   const selectedArticleType = initialSelectedType;
   const articles = initialArticles || [];
@@ -366,10 +337,7 @@ const TipsAndTricks = ({
   const featuredArticlePreview =
     initialFeaturedArticle || getFeaturedArticle(articles);
 
-  const featuredArticle =
-    fullFeaturedArticle && getArticleSections(fullFeaturedArticle).length > 0
-      ? fullFeaturedArticle
-      : featuredArticlePreview;
+  const featuredArticle = featuredArticlePreview;
 
   const featuredDateInfo = getArticleDateInfo(featuredArticle);
   const featuredOverviewItems = getFeaturedOverviewItems(featuredArticle);
@@ -389,34 +357,6 @@ const TipsAndTricks = ({
 
   const introText =
     currentTipVisual.intro || selectedArticleType?.description || "";
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadFullFeaturedArticle = async () => {
-      setFullFeaturedArticle(null);
-
-      if (!featuredArticlePreview?.id) {
-        return;
-      }
-
-      const fullArticle = await fetchFullArticleById(
-        (featuredArticlePreview as any).id
-      );
-
-      if (!isMounted) return;
-
-      if (fullArticle) {
-        setFullFeaturedArticle(fullArticle);
-      }
-    };
-
-    loadFullFeaturedArticle();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [tip, featuredArticlePreview?.id]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;

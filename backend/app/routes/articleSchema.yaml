@@ -42,6 +42,9 @@ components:
         airportCityId:
           type: integer
           example: null
+        domagoPartnerEnabled:
+          type: boolean
+          default: false
         article_type:
           $ref: "#/components/schemas/ArticleType"
         airport_city:
@@ -312,6 +315,9 @@ components:
         airport_city_id:
           type: integer
           example: null
+        domago_partner_enabled:
+          type: boolean
+          default: false
 
     AddArticleResponse:
       $ref: "#/components/schemas/ArticleBasic"

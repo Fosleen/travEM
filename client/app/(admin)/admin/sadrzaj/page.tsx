@@ -41,6 +41,10 @@ const EditHomepageMenu = () => {
           text="Newsletter popup"
           url="/admin/uredi-popup"
         />
+        <EditHomepageMenuItem
+          text="Partner Banner"
+          url="/admin/uredi-domago-banner"
+        />
       </div>
     </div>
   );

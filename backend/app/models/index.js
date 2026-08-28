@@ -40,6 +40,7 @@ import AffiliatePartner from "./affiliatePartner.js";
 import ArticleAffiliateLink from "./articleAffiliateLink.js";
 import PopupContent from "./popupContent.js";
 import FooterPartner from "./footerPartner.js";
+import DomagoPartnerBanner from "./domagoPartnerBanner.js";
 
 const db = {};
 
@@ -153,6 +154,7 @@ db.models.FooterPartner = FooterPartner(
   sequelizeConnection,
   Sequelize.DataTypes
 );
+db.models.DomagoPartnerBanner = DomagoPartnerBanner(sequelizeConnection, Sequelize.DataTypes);
 
 db.models.Article_ArticleSpecialType =
   article_articleSpecialType(sequelizeConnection);

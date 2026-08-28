@@ -3,6 +3,19 @@ import { Op, Sequelize } from "sequelize";
 import { createUniqueArticleSlug } from "../utils/articleSlug.js";
 
 let affiliateTablesAvailable = true;
+const DOMAGO_SPECIAL_TYPE = "domago_partner";
+
+const setDomagoPartnerState = async (articleId, enabled, transaction) => {
+  let specialType = await db.models.ArticleSpecialType.findOne({ where: { name: DOMAGO_SPECIAL_TYPE }, transaction });
+  if (!specialType && !parseBooleanValue(enabled)) return;
+  if (!specialType) specialType = await db.models.ArticleSpecialType.create({ name: DOMAGO_SPECIAL_TYPE }, { transaction });
+  const where = { articleId, articleSpecialTypeId: specialType.id };
+  if (parseBooleanValue(enabled)) {
+    await db.models.Article_ArticleSpecialType.findOrCreate({ where, defaults: where, transaction });
+  } else {
+    await db.models.Article_ArticleSpecialType.destroy({ where, transaction });
+  }
+};
 
 const parseBooleanValue = (value) => {
   if (typeof value === "boolean") return value;
@@ -308,6 +321,7 @@ class ArticleService {
       if (article && !affiliateTablesAvailable) {
         article.setDataValue("affiliate_links", []);
       }
+      if (article) article.setDataValue("domagoPartnerEnabled", article.article_special_types?.some((type) => type.name === DOMAGO_SPECIAL_TYPE) || false);
       return article;
     } catch (error) {
       const missingAffiliateTable =
@@ -320,7 +334,10 @@ class ArticleService {
           "Affiliate tables are not installed; returning the article without affiliate links."
         );
         const article = await findArticle(includeWithoutAffiliateLinks);
-        if (article) article.setDataValue("affiliate_links", []);
+        if (article) {
+          article.setDataValue("affiliate_links", []);
+          article.setDataValue("domagoPartnerEnabled", article.article_special_types?.some((type) => type.name === DOMAGO_SPECIAL_TYPE) || false);
+        }
         return article;
       }
 
@@ -502,6 +519,7 @@ class ArticleService {
     airport_city_id,
     is_far_destination,
     is_tips_featured,
+    domago_partner_enabled,
     publish_at,
     publish_timezone,
     notify_subscribers_on_publish
@@ -566,6 +584,7 @@ class ArticleService {
         );
       }
 
+      await setDomagoPartnerState(article.id, domago_partner_enabled, transaction);
       await transaction.commit();
 
       return article;
@@ -881,6 +900,7 @@ class ArticleService {
     airport_city_id,
     is_far_destination,
     is_tips_featured,
+    domago_partner_enabled,
     publish_at,
     publish_timezone,
     notify_subscribers_on_publish
@@ -970,6 +990,7 @@ class ArticleService {
         transaction,
       });
 
+      await setDomagoPartnerState(id, domago_partner_enabled, transaction);
       await transaction.commit();
 
       console.log("updatedArticle", updatedArticle);

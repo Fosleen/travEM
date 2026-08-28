@@ -26,42 +26,46 @@ const Homepage = ({
   initialPartners,
 }: HomepageProps) => {
   const { setHomepageArticlesContextData } = useContext(ArticleContext);
+  const articles = useMemo(
+    () => (Array.isArray(initialArticles) ? initialArticles : []),
+    [initialArticles]
+  );
 
   useEffect(() => {
-    setHomepageArticlesContextData(initialArticles);
-  }, [initialArticles, setHomepageArticlesContextData]);
+    setHomepageArticlesContextData(articles);
+  }, [articles, setHomepageArticlesContextData]);
 
   const favoriteArticles = useMemo(() => {
-    return initialArticles.filter((article) =>
+    return articles.filter((article) =>
       article.article_special_types?.some(
         (type) => type.name === "top_homepage_article"
       )
     );
-  }, [initialArticles]);
+  }, [articles]);
 
   const bannerArticles = useMemo(() => {
-    return initialArticles.filter((article) =>
+    return articles.filter((article) =>
       article.article_special_types?.some(
         (type) => type.name === "banner_homepage_article"
       )
     );
-  }, [initialArticles]);
+  }, [articles]);
 
   const horizontalArticles = useMemo(() => {
-    return initialArticles.filter((article) =>
+    return articles.filter((article) =>
       article.article_special_types?.some(
         (type) => type.name === "horizontal_homepage_article"
       )
     );
-  }, [initialArticles]);
+  }, [articles]);
 
   const verticalArticles = useMemo(() => {
-    return initialArticles.filter((article) =>
+    return articles.filter((article) =>
       article.article_special_types?.some(
         (type) => type.name === "vertical_homepage_article"
       )
     );
-  }, [initialArticles]);
+  }, [articles]);
 
   return (
     <div className="homepage-container">

@@ -132,6 +132,7 @@ const EditArticle = () => {
   const [isMainPlacePost, setIsMainPlacePost] = useState(false);
   const [isFarDestinationChecked, setIsFarDestinationChecked] = useState(false);
   const [isTipsFeaturedChecked, setIsTipsFeaturedChecked] = useState(false);
+  const [isDomagoPartnerChecked, setIsDomagoPartnerChecked] = useState(false);
   const [shouldUpdateArticleDate, setShouldUpdateArticleDate] = useState(false);
   const [isScheduleChecked, setIsScheduleChecked] = useState(false);
   const [scheduleDateTime, setScheduleDateTime] = useState("");
@@ -231,6 +232,7 @@ const EditArticle = () => {
         values.article_airport_city_id,
         isFarDestinationChecked,
         isTipsArticleType(values.article_type) && isTipsFeaturedChecked,
+        isDomagoPartnerChecked,
         shouldSendSchedulePayload ? publishAt : undefined,
         shouldSendSchedulePayload ? scheduleTimezone : undefined,
         shouldSendSchedulePayload
@@ -618,6 +620,7 @@ const flatRemovedImages = removedSectionImages;
         setSelectedCountryId(articleData.countryId || "");
         setIsFarDestinationChecked(Boolean(articleData.isFarDestination));
         setIsTipsFeaturedChecked(parseBooleanValue(articleData.isTipsFeatured));
+        setIsDomagoPartnerChecked(parseBooleanValue(articleData.domagoPartnerEnabled));
         const schedule = articleData.article_schedule;
         const scheduleStatus = getScheduleStatus(articleData);
         const isScheduledArticle = scheduleStatus.className === "scheduled";
@@ -1672,6 +1675,15 @@ const flatRemovedImages = removedSectionImages;
                         </p>
                       </div>
                     )}
+
+                    <div className="edit-article-toggle-item">
+                      <ToggleSwitch
+                        name={"domago-partner"}
+                        description={"Partner banner"}
+                        value={isDomagoPartnerChecked}
+                        setter={setIsDomagoPartnerChecked}
+                      />
+                    </div>
 
                     <div className="edit-article-toggle-item">
                       <ToggleSwitch

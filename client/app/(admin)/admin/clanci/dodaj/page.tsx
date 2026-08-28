@@ -115,6 +115,7 @@ const AddArticlePage = () => {
     useState(true);
   const [isFarDestinationChecked, setIsFarDestinationChecked] = useState(false);
   const [isTipsFeaturedChecked, setIsTipsFeaturedChecked] = useState(false);
+  const [isDomagoPartnerChecked, setIsDomagoPartnerChecked] = useState(false);
   const [isScheduleChecked, setIsScheduleChecked] = useState(false);
   const [scheduleDateTime, setScheduleDateTime] = useState("");
   const [scheduleTimezone, setScheduleTimezone] = useState(getBrowserTimeZone());
@@ -192,6 +193,7 @@ const AddArticlePage = () => {
               parseInt(values.article_airport_city_id),
               isFarDestinationChecked,
               isTipsArticleType(values.article_type) && isTipsFeaturedChecked,
+              isDomagoPartnerChecked,
               isScheduleChecked ? publishAt : undefined,
               isScheduleChecked ? scheduleTimezone : undefined,
               isScheduleChecked ? isNotifySubscribersChecked : undefined
@@ -1268,6 +1270,15 @@ const AddArticlePage = () => {
                       </p>
                     </div>
                   )}
+
+                  <div className="add-article-toggle-item">
+                    <ToggleSwitch
+                      name={"domago-partner"}
+                      description={"Partner banner"}
+                      value={isDomagoPartnerChecked}
+                      setter={setIsDomagoPartnerChecked}
+                    />
+                  </div>
 
                   <div className="add-article-toggle-item">
                     <ToggleSwitch

@@ -162,6 +162,7 @@ class ArticleController {
         req.body.airport_city_id,
         req.body.is_far_destination,
         req.body.is_tips_featured,
+        req.body.domago_partner_enabled,
         req.body.publish_at,
         req.body.publish_timezone,
         req.body.notify_subscribers_on_publish
@@ -375,6 +376,7 @@ class ArticleController {
         req.body.airport_city_id,
         req.body.is_far_destination,
         req.body.is_tips_featured,
+        req.body.domago_partner_enabled,
         req.body.publish_at,
         req.body.publish_timezone,
         req.body.notify_subscribers_on_publish

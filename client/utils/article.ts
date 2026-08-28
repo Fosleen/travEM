@@ -69,13 +69,13 @@ export async function getArticlesByType(
     if (!response.ok) {
       const errorData = await response.json();
       console.log(errorData.error);
-      return { error: errorData.error };
+      return [];
     }
 
     return await response.json();
   } catch (error) {
     console.error("Error fetching articles by type:", error);
-    return { error: error.message };
+    return [];
   }
 }
 
@@ -269,6 +269,7 @@ export async function addArticle(
   airport_city_id: number | null,
   is_far_destination: boolean = false,
   is_tips_featured: boolean = false,
+  domago_partner_enabled: boolean = false,
   publish_at?: string | null,
   publish_timezone?: string,
   notify_subscribers_on_publish?: boolean
@@ -290,6 +291,7 @@ export async function addArticle(
     airport_city_id,
     is_far_destination,
     is_tips_featured,
+    domago_partner_enabled,
     ...(publish_at !== undefined ? { publish_at } : {}),
     ...(publish_timezone !== undefined ? { publish_timezone } : {}),
     ...(notify_subscribers_on_publish !== undefined
@@ -360,6 +362,7 @@ export async function updateArticle(
   airport_city_id: number | null,
   is_far_destination: boolean = false,
   is_tips_featured: boolean = false,
+  domago_partner_enabled: boolean = false,
   publish_at?: string | null,
   publish_timezone?: string,
   notify_subscribers_on_publish?: boolean
@@ -378,6 +381,7 @@ export async function updateArticle(
     place_id,
     is_far_destination,
     is_tips_featured,
+    domago_partner_enabled,
     ...(publish_at !== undefined ? { publish_at } : {}),
     ...(publish_timezone !== undefined ? { publish_timezone } : {}),
     ...(notify_subscribers_on_publish !== undefined

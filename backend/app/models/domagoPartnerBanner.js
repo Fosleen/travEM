@@ -1,0 +1,23 @@
+export default (sequelize, DataTypes) =>
+  sequelize.define("domago_partner_banner", {
+    partnerLogoUrl: { type: DataTypes.STRING(2048), allowNull: false, defaultValue: "" },
+    partnerLogoAlt: { type: DataTypes.STRING, allowNull: false, defaultValue: "Partner" },
+    partnerLogoScale: { type: DataTypes.FLOAT, allowNull: false, defaultValue: 2 },
+    siteLogoUrl: { type: DataTypes.STRING(2048), allowNull: false, defaultValue: "" },
+    siteLogoAlt: { type: DataTypes.STRING, allowNull: false, defaultValue: "putujEM s travEM" },
+    heroImageUrl: { type: DataTypes.STRING(2048), allowNull: false, defaultValue: "" },
+    heroImageAlt: { type: DataTypes.STRING, allowNull: false, defaultValue: "" },
+    headlineLine1: { type: DataTypes.STRING, allowNull: false, defaultValue: "" },
+    headlineLine2Prefix: { type: DataTypes.STRING, allowNull: false, defaultValue: "" },
+    headlineAccent: { type: DataTypes.STRING, allowNull: false, defaultValue: "" },
+    description: { type: DataTypes.TEXT, allowNull: false },
+    ctaLabel: { type: DataTypes.STRING, allowNull: false, defaultValue: "" },
+    ctaUrl: { type: DataTypes.STRING(2048), allowNull: false, defaultValue: "" },
+    openCtaInNewTab: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    note: { type: DataTypes.STRING, allowNull: false, defaultValue: "" },
+    accentColor: { type: DataTypes.STRING(20), allowNull: false, defaultValue: "#ff9418" },
+    showStamp: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    stampTopText: { type: DataTypes.STRING, allowNull: false, defaultValue: "" },
+    stampMainText: { type: DataTypes.STRING, allowNull: false, defaultValue: "" },
+    stampBottomText: { type: DataTypes.STRING, allowNull: false, defaultValue: "" },
+  }, { underscored: true, timestamps: false, freezeTableName: true });

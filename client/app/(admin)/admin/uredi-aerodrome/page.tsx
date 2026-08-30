@@ -11,7 +11,7 @@ import {
   getAirportCities,
   updateAirportCity,
 } from "@/utils/airportCities";
-import { getAirportHeroImage } from "@/utils/airportVisuals";
+import { getAirportBannerImage } from "@/utils/airportBanner";
 import "./AirportAdmin.scss";
 
 type Draft = Omit<AirportCityData, "id">;
@@ -119,7 +119,7 @@ export default function AirportAdminPage() {
               <label className="wide">URL banner fotografije<input required={isAdding} type="url" placeholder="https://..." value={draft.banner_image_url || ""} onChange={(e) => setDraft({ ...draft, banner_image_url: e.target.value })} /></label>
             </div>
             <div className="airport-form__switches"><label><input type="checkbox" checked={draft.is_in_croatia} onChange={(e) => setDraft({ ...draft, is_in_croatia: e.target.checked })} /><span><strong>Iz Hrvatske</strong><small>Prikaži u hrvatskoj grupi</small></span></label><label><input type="checkbox" checked={draft.is_active} onChange={(e) => setDraft({ ...draft, is_active: e.target.checked })} /><span><strong>Prikazan javno</strong><small>Vidljiv u meniju i na hub stranici</small></span></label></div>
-            {(draft.banner_image_url || draft.name) && <div className="airport-form__preview"><span>Pregled bannera</span><Image src={(draft.banner_image_url || getAirportHeroImage(draft.name)).trim()} alt="Pregled bannera" width={1000} height={420} unoptimized /></div>}
+            {draft.banner_image_url && <div className="airport-form__preview"><span>Pregled bannera</span><Image src={getAirportBannerImage(draft.banner_image_url)} alt="Pregled bannera" width={1000} height={420} unoptimized /></div>}
             <div className="airport-form__actions"><Button adminPrimary type="submit" disabled={saving}>{saving ? "spremanje..." : "spremi aerodrom"}</Button><Button white onClick={reset} disabled={saving}>odustani</Button></div>
           </form>
         </div>
@@ -128,7 +128,7 @@ export default function AirportAdminPage() {
       <div className="airport-admin__toolbar"><input type="search" placeholder="Pretraži aerodrome..." value={search} onChange={(e) => setSearch(e.target.value)} /><span>{visible.length} od {airports.length}</span></div>
       <div className="airport-list">{visible.map((airport) => (
         <article key={airport.id} className={airport.is_active ? "" : "is-inactive"}>
-          <div className="airport-row__visual"><Image className="banner" src={(airport.banner_image_url || getAirportHeroImage(airport.name)).trim()} alt={`Banner za ${airport.name}`} width={240} height={110} unoptimized /><Image className="flag" src={airport.flag_url.trim()} alt={`Zastava za ${airport.name}`} width={32} height={32} unoptimized /></div>
+          <div className="airport-row__visual"><Image className="banner" src={getAirportBannerImage(airport.banner_image_url)} alt={`Banner za ${airport.name}`} width={240} height={110} unoptimized /><Image className="flag" src={airport.flag_url.trim()} alt={`Zastava za ${airport.name}`} width={32} height={32} unoptimized /></div>
           <div className="airport-row__details"><strong>{airport.name}</strong><div><span className={airport.is_in_croatia ? "group croatia" : "group"}>{airport.is_in_croatia ? "Iz Hrvatske" : "Ostali"}</span><span className="order">Redoslijed: {airport.display_order ?? "—"}</span></div></div>
           <label className="airport-row__visibility"><input type="checkbox" checked={airport.is_active} onChange={() => toggle(airport)} /><span>{airport.is_active ? "Prikazan" : "Skriven"}</span></label>
           <button className="airport-row__edit" type="button" onClick={() => edit(airport)} aria-label={`Uredi ${airport.name}`}><PencilSimpleLine size={20} /></button>

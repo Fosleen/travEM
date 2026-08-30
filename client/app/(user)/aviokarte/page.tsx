@@ -3,7 +3,7 @@ import Image from "next/image";
 import HorizontalPostItemBig from "@/components/user/atoms/HorizontalPostItemBig";
 import "@/components/user/pages/contentHubs/ContentHubs.scss";
 import { getAirportCities } from "@/utils/airportCities";
-import { getAirportHeroImage } from "@/utils/airportVisuals";
+import { getAirportBannerImage } from "@/utils/airportBanner";
 import { SITE_URL } from "@/utils/site";
 import { toUrlSlug } from "@/utils/url";
 
@@ -28,8 +28,7 @@ export default async function AirplaneTicketsPage() {
   const zagrebAirport = airports.find(
     (airport) => airport.name.trim().toLowerCase() === "zagreb"
   );
-  const hubHeroImage =
-    zagrebAirport?.banner_image_url || getAirportHeroImage("Zagreb");
+  const hubHeroImage = getAirportBannerImage(zagrebAirport?.banner_image_url);
   const groups = [
     {
       title: "Iz Hrvatske",
@@ -118,8 +117,9 @@ export default async function AirplaneTicketsPage() {
                 data={{
                   id: airport.id,
                   name: airport.name,
-                  main_image_url:
-                    airport.banner_image_url || getAirportHeroImage(airport.name),
+                  main_image_url: getAirportBannerImage(
+                    airport.banner_image_url
+                  ),
                   flag_image_url: airport.flag_url,
                 }}
               />

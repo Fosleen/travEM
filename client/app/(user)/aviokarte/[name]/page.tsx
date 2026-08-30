@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { getAirplaneTicketPromo } from "@/utils/airplaneTicketPromo";
 import { SITE_URL } from "@/utils/site";
 import { getAirportCities } from "@/utils/airportCities";
-import { getAirportHeroImage } from "@/utils/airportVisuals";
+import { getAirportBannerImage } from "@/utils/airportBanner";
 import { toUrlSlug } from "@/utils/url";
 
 type Props = {
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? airports.find((item: any) => toUrlSlug(item.name) === toUrlSlug(decodedName))
     : null;
   const cityName = airport?.name || decodedName;
-  const imageUrl = airport?.banner_image_url || getAirportHeroImage(cityName);
+  const imageUrl = getAirportBannerImage(airport?.banner_image_url);
 
   const title = `Aviokarte ${cityName} - putujEM s travEM`;
   const description = `Pronađite najbolje aviokarte za ${cityName}. Pratite najnovije ponude i letove.`;
@@ -107,7 +107,7 @@ export default async function Page({ params }: Props) {
     <AirplaneTickets
       initialTickets={filteredTickets}
       cityName={airport.name}
-      heroImageUrl={airport.banner_image_url || getAirportHeroImage(airport.name)}
+      heroImageUrl={getAirportBannerImage(airport.banner_image_url)}
       recommendedId={recommendedId}
       promo={promoData && !promoData.error ? promoData : null}
     />

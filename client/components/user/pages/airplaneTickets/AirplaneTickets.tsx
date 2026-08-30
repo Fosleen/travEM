@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use client";
 
 import { Fragment, useMemo } from "react";
@@ -9,7 +8,7 @@ import AirplaneTicketsPromoCard from "../../atoms/AirplaneTicketsPromoCard/Airpl
 import AirplaneTicketsCarouselRow from "../../atoms/AirplaneTicketsCarouselRow/AirplaneTicketsCarouselRow";
 import AirplaneTicketsNewsletterCallToAction from "../../molecules/AirplaneTicketsNewsletterCallToAction/AirplaneTicketsNewsletterCallToAction";
 import { getArticleUrl } from "@/utils/articleUrl";
-import { getAirportHeroImage } from "@/utils/airportVisuals";
+import { getAirportBannerImage } from "@/utils/airportBanner";
 
 const PROMO_IMAGE_URL =
   "https://live.staticflickr.com/65535/54231796537_ee931fd0bb_b.jpg";
@@ -152,7 +151,7 @@ const AirplaneTickets = ({
     ? `Najnovije ponude i povoljni letovi iz ${cityGenitive}.`
     : `Najnovije ponude i povoljni letovi iz ${formattedCityName}.`;
 
-  const resolvedHeroImageUrl = heroImageUrl || getAirportHeroImage(formattedCityName);
+  const resolvedHeroImageUrl = getAirportBannerImage(heroImageUrl);
 
   const { closeTickets, farTickets } = useMemo(() => {
     const tickets = (initialTickets ?? []).filter(isAirplaneTicketArticle);

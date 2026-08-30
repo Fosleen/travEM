@@ -1,0 +1,179 @@
+@use "@/utils/theme.scss" as *;
+
+.bookme-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1024px;
+  width: 100%;
+  margin: 0;
+  padding: 24px;
+  box-sizing: border-box;
+  color: $grey;
+
+  > header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    h1 { margin: 0; color: $grey; font-size: 32px; }
+    p { margin: 5px 0 0; color: $textPrimary; }
+  }
+
+  h2 { margin: 0 0 16px; color: $grey; font-size: 22px; }
+
+  button {
+    border: 0;
+    border-radius: 6px;
+    padding: 10px 16px;
+    background: $green;
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+
+    &:hover:not(:disabled) { background: $greenHover; box-shadow: 0 8px 18px rgba($green, .2); transform: translateY(-2px); }
+    &:active:not(:disabled) { transform: translateY(0) scale(.98); }
+    &:disabled { opacity: .5; cursor: not-allowed; }
+  }
+}
+
+.bookme-tabs {
+  display: flex;
+  padding: 4px;
+  border-radius: 8px;
+  background: $greyLight;
+
+  button {
+    background: transparent;
+    color: $textPrimary;
+    box-shadow: none !important;
+    transform: none !important;
+
+    &.active { background: $green; color: #fff; }
+    &:hover:not(.active) { background: $greyMiddle; color: $grey; }
+  }
+}
+
+.bookme-editor,
+.bookme-program-list,
+.bookme-inquiries article {
+  border: 1px solid $greyMiddle;
+  border-radius: 8px;
+  background: #fff;
+  padding: 22px;
+}
+
+.bookme-hero-editor {
+  > p { margin: -7px 0 18px; color: $textPrimary; line-height: 1.55; }
+  label { display: flex; flex-direction: column; gap: 7px; color: $greyMiddleDark; font-size: 14px; font-weight: 700; }
+}
+
+.bookme-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+
+  label:not(.checkbox) { display: flex; flex-direction: column; gap: 7px; color: $greyMiddleDark; font-size: 14px; font-weight: 700; }
+  .full { grid-column: 1 / -1; }
+  .checkbox { display: flex; align-items: center; gap: 9px; color: $textPrimary; font-size: 14px; font-weight: 600; }
+}
+
+.bookme-editor input,
+.bookme-editor textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px 13px;
+  border: 1px solid $greyMiddle;
+  border-radius: 6px;
+  background: #fff;
+  color: $grey;
+  font: inherit;
+
+  &:focus { border-color: $green; outline: 2px solid rgba($green, .15); }
+}
+
+.bookme-editor textarea { resize: vertical; line-height: 1.55; }
+.bookme-editor input[type="checkbox"] { width: auto; accent-color: $green; }
+
+.bookme-hero-preview {
+  width: 100%;
+  height: clamp(180px, 26vw, 360px);
+  margin-top: 16px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: $greyLight;
+  img { width: 100%; height: 100%; object-fit: cover; }
+}
+
+.bookme-images {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  padding-top: 4px;
+  border-top: 1px solid $greyMiddle;
+  label { flex: 1; }
+}
+
+.bookme-image-list {
+  display: grid;
+  gap: 8px;
+
+  > div { display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 8px; border-radius: 7px; background: $greyLight; }
+  img { width: 72px; height: 48px; border-radius: 4px; object-fit: cover; }
+  span { overflow: hidden; color: $textPrimary; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+  button { padding: 8px 11px; background: $delete; &:hover { background: #872222; } }
+}
+
+.bookme-editor-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 20px; .secondary { background: $greyMiddleDark; } }
+
+.bookme-program-list {
+  h2 { margin-bottom: 8px; }
+  > p { color: $textPrimary; }
+
+  article {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid $greyMiddle;
+
+    &:last-child { border-bottom: 0; }
+    > div { display: flex; align-items: center; gap: 9px; }
+    strong { color: $grey; }
+    span { color: $textPrimary; font-size: 13px; }
+    button { padding: 8px 11px; }
+    .danger { background: $delete; }
+  }
+}
+
+.bookme-inquiries {
+  display: grid;
+  gap: 14px;
+
+  > p { margin: 0; color: $textPrimary; }
+  article { position: relative; }
+  h2 { margin: 0; padding-right: 80px; }
+  .date { margin: 4px 0 16px; color: $textPrimary; font-size: 13px; }
+  .dismiss { position: absolute; top: 14px; right: 14px; padding: 8px 11px; background: $greyMiddleDark; }
+  dl { display: grid; grid-template-columns: 150px 1fr; gap: 8px 20px; margin: 0; }
+  dt { color: $grey; font-weight: 700; }
+  dd { margin: 0; color: $textPrimary; }
+  a { color: $greenHover; font-weight: 700; }
+  .message { margin: 18px 0 0; padding: 14px; border-radius: 6px; background: $greyLight; color: $grey; line-height: 1.6; white-space: pre-wrap; }
+}
+
+@media (max-width: 760px) {
+  .bookme-admin { padding: 18px; > header { align-items: stretch; flex-direction: column; } }
+  .bookme-tabs { align-self: flex-start; }
+  .bookme-grid { grid-template-columns: 1fr; > * { grid-column: 1 !important; } }
+  .bookme-images { align-items: stretch; flex-direction: column; }
+  .bookme-program-list article { align-items: flex-start; flex-direction: column; > div { flex-wrap: wrap; } }
+  .bookme-inquiries dl { grid-template-columns: 1fr; gap: 3px; dd { margin-bottom: 7px; } }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bookme-admin button { transition: none; &:hover:not(:disabled), &:active:not(:disabled) { transform: none; } }
+}

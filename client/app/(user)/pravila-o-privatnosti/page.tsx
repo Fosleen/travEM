@@ -65,6 +65,28 @@ const PrivacyPolicy = () => {
         ako to nije nužno radi pružanja usluga ili ako to zahtijeva zakon.
       </p>
 
+      <h4>Upiti za organizaciju medenog mjeseca</h4>
+      <p>
+        Kada pošaljete upit putem stranice za organizaciju medenog mjeseca,
+        obrađujemo ime i prezime, adresu e-pošte, broj putnika, odabrani program
+        te ostale podatke koje nam dobrovoljno navedete, poput telefonskog
+        broja, okvirnog datuma, budžeta, željenih destinacija, polaznog
+        aerodroma i poruke. Podatke koristimo isključivo kako bismo pregledali
+        vaš zahtjev, kontaktirali vas i poduzeli radnje na vaš zahtjev prije
+        mogućeg ugovaranja usluge planiranja putovanja. Pravna osnova obrade je
+        poduzimanje radnji na zahtjev ispitanika prije sklapanja ugovora.
+      </p>
+      <p>
+        Upit se šalje na našu službenu adresu e-pošte i privremeno prikazuje
+        ovlaštenim administratorima. Nakon obrade administrator ga uklanja s
+        nadzorne ploče, a kopiju u sustavu e-pošte čuvamo samo onoliko dugo
+        koliko je potrebno za komunikaciju, mogući poslovni odnos i ispunjenje
+        zakonskih obveza. Podatke iz upita ne koristimo za newsletter ili drugo
+        izravno oglašavanje bez zasebne pravne osnove. Radi zaštite obrasca od
+        zlouporabe privremeno obrađujemo IP adresu i vrijeme slanja za potrebe
+        ograničenja prekomjernih pokušaja.
+      </p>
+
       <h4>Google AdSense i Google Analytics</h4>
       <p>
         Naša web stranica koristi Google AdSense za prikazivanje oglasa. Google
@@ -78,7 +100,8 @@ const PrivacyPolicy = () => {
       <h4>Vaša prava</h4>
       <p>
         Imate pravo zatražiti pristup, ispravak, brisanje ili ograničenje obrade
-        vaših osobnih podataka te će se u roku od 30 dana od Vašeg zahtjeva po
+        vaših osobnih podataka, pravo na prenosivost kada je primjenjivo te
+        pravo podnijeti pritužbu Agenciji za zaštitu osobnih podataka. U roku od 30 dana od Vašeg zahtjeva po
         potrebi ažurirati Vaši podaci. Ukoliko zbog određenog razloga nije
         moguće ispoštovati Vaš zahtjev u roku od 30 dana, obavijestit ćemo Vas o
         tome. Ako želite ostvariti bilo koje od ovih prava ili imate bilo kakvih

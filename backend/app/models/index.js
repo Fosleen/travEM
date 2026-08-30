@@ -41,6 +41,10 @@ import ArticleAffiliateLink from "./articleAffiliateLink.js";
 import PopupContent from "./popupContent.js";
 import FooterPartner from "./footerPartner.js";
 import DomagoPartnerBanner from "./domagoPartnerBanner.js";
+import HoneymoonProgram from "./honeymoonProgram.js";
+import HoneymoonProgramImage from "./honeymoonProgramImage.js";
+import HoneymoonInquiry from "./honeymoonInquiry.js";
+import HoneymoonSetting from "./honeymoonSetting.js";
 
 const db = {};
 
@@ -155,6 +159,10 @@ db.models.FooterPartner = FooterPartner(
   Sequelize.DataTypes
 );
 db.models.DomagoPartnerBanner = DomagoPartnerBanner(sequelizeConnection, Sequelize.DataTypes);
+db.models.HoneymoonProgram = HoneymoonProgram(sequelizeConnection, Sequelize.DataTypes);
+db.models.HoneymoonProgramImage = HoneymoonProgramImage(sequelizeConnection, Sequelize.DataTypes);
+db.models.HoneymoonInquiry = HoneymoonInquiry(sequelizeConnection, Sequelize.DataTypes);
+db.models.HoneymoonSetting = HoneymoonSetting(sequelizeConnection, Sequelize.DataTypes);
 
 db.models.Article_ArticleSpecialType =
   article_articleSpecialType(sequelizeConnection);

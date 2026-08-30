@@ -1,6 +1,20 @@
 import db from "./app/models/index.js";
 
 export const createAssociations = () => {
+  db.models.HoneymoonProgram.hasMany(db.models.HoneymoonProgramImage, {
+    foreignKey: { name: "honeymoonProgramId", field: "honeymoon_program_id", allowNull: false },
+    as: "images",
+    onDelete: "CASCADE",
+  });
+  db.models.HoneymoonProgramImage.belongsTo(db.models.HoneymoonProgram, {
+    foreignKey: { name: "honeymoonProgramId", field: "honeymoon_program_id", allowNull: false },
+  });
+  db.models.HoneymoonProgram.hasMany(db.models.HoneymoonInquiry, {
+    foreignKey: { name: "honeymoonProgramId", field: "honeymoon_program_id", allowNull: true },
+  });
+  db.models.HoneymoonInquiry.belongsTo(db.models.HoneymoonProgram, {
+    foreignKey: { name: "honeymoonProgramId", field: "honeymoon_program_id", allowNull: true },
+  });
   // 1:1
   db.models.Article.hasOne(db.models.Video);
   db.models.Video.belongsTo(db.models.Article);

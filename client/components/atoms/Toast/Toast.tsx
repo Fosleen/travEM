@@ -11,8 +11,8 @@ const defaultOptions: ToastOptions = {
   theme: "light",
 };
 
-export const notifySuccess = (message: string) =>
-  toast.success(message, defaultOptions);
+export const notifySuccess = (message: string, autoClose = 800) =>
+  toast.success(message, { ...defaultOptions, autoClose });
 
 export const notifyFailure = (message: string) =>
   toast.error(message, defaultOptions);

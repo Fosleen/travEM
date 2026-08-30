@@ -31,6 +31,7 @@ import airplaneTicketPromo from "./airplaneTicketPromoRoute.js";
 import popupContent from "./popupContentRoute.js";
 import footerPartner from "./footerPartnerRoute.js";
 import domagoPartnerBanner from "./domagoPartnerBannerRoute.js";
+import honeymoon from "./honeymoonRoute.js";
 
 const router = new Router();
 
@@ -64,6 +65,7 @@ router.use("/subscribers", subscriber);
 router.use("/popup-content", popupContent);
 router.use("/footer-partners", footerPartner);
 router.use("/domago-partner-banner", domagoPartnerBanner);
+router.use("/honeymoon", honeymoon);
 
 router.use("/place-best-time-to-visit", placeBestTimeToVisit);
 router.use("/country-best-time-to-visit", countryBestTimeToVisit);

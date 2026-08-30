@@ -71,14 +71,18 @@ const createEmailTemplate = (article) => {
     `;
 };
 
-export const sendEmail = async (to, subject, html) => {
+export const sendEmail = async (to, subject, html, options = {}) => {
   try {
     const info = await transporter.sendMail({
-      from: "Putujem s travEM",
+      from: `"putujEM s travEM" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,
+      ...options,
     });
+    if (info.rejected?.length) {
+      throw new Error(`Email recipient rejected: ${info.rejected.join(", ")}`);
+    }
     console.log("Email sent: %s", info.messageId);
     return info;
   } catch (error) {

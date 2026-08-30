@@ -23,10 +23,13 @@ export const metadata: Metadata = {
 export default async function AirplaneTicketsPage() {
   const response = await getAirportCities();
   const airports = Array.isArray(response)
-    ? [...response].sort((a, b) =>
-        a.name.localeCompare(b.name, "hr", { sensitivity: "base" })
-      )
+    ? [...response]
     : [];
+  const zagrebAirport = airports.find(
+    (airport) => airport.name.trim().toLowerCase() === "zagreb"
+  );
+  const hubHeroImage =
+    zagrebAirport?.banner_image_url || getAirportHeroImage("Zagreb");
   const groups = [
     {
       title: "Iz Hrvatske",
@@ -50,7 +53,7 @@ export default async function AirplaneTicketsPage() {
     <div className="content-hub">
       <header className="content-hub__intro content-hub__intro--airports">
         <Image
-          src={getAirportHeroImage("Zagreb")}
+          src={hubHeroImage}
           alt=""
           fill
           sizes="100vw"
@@ -115,7 +118,8 @@ export default async function AirplaneTicketsPage() {
                 data={{
                   id: airport.id,
                   name: airport.name,
-                  main_image_url: getAirportHeroImage(airport.name),
+                  main_image_url:
+                    airport.banner_image_url || getAirportHeroImage(airport.name),
                   flag_image_url: airport.flag_url,
                 }}
               />

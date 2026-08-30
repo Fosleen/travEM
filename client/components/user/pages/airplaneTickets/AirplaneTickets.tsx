@@ -37,6 +37,7 @@ type Article = {
 type AirplaneTicketsProps = {
   initialTickets: Article[];
   cityName: string;
+  heroImageUrl?: string;
   recommendedId: number | null;
   promo?: {
     top_text?: string;
@@ -133,6 +134,7 @@ const AirplaneTicketsSection = ({
 const AirplaneTickets = ({
   initialTickets,
   cityName,
+  heroImageUrl,
   recommendedId,
   promo,
 }: AirplaneTicketsProps) => {
@@ -150,7 +152,7 @@ const AirplaneTickets = ({
     ? `Najnovije ponude i povoljni letovi iz ${cityGenitive}.`
     : `Najnovije ponude i povoljni letovi iz ${formattedCityName}.`;
 
-  const heroImageUrl = getAirportHeroImage(formattedCityName);
+  const resolvedHeroImageUrl = heroImageUrl || getAirportHeroImage(formattedCityName);
 
   const { closeTickets, farTickets } = useMemo(() => {
     const tickets = (initialTickets ?? []).filter(isAirplaneTicketArticle);
@@ -187,7 +189,7 @@ const AirplaneTickets = ({
   return (
     <div className="airplane-tickets-parent-wrapper">
       <AirplaneTicketsHero
-        imageUrl={heroImageUrl}
+        imageUrl={resolvedHeroImageUrl}
         title={airportTitle}
         subtitle={heroSubtitle}
       />

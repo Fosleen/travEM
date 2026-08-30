@@ -316,6 +316,16 @@ export interface HorizontalPostItemBigProps {
   };
 }
 
+export interface AirportCityData {
+  id: number;
+  name: string;
+  flag_url: string;
+  is_in_croatia: boolean;
+  banner_image_url?: string | null;
+  is_active: boolean;
+  display_order?: number | null;
+}
+
 export interface PageCountProps {
   total: number;
   page: number;

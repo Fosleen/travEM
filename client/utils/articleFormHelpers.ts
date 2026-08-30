@@ -194,7 +194,7 @@ export const fetchArticleFormOptions = async () => {
       getArticleTypes(),
       getVisitedCountries(),
       getSectionIcons(),
-      getAirportCities(),
+      getAirportCities(true),
     ]);
 
   return {

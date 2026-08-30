@@ -32,6 +32,10 @@ const EditHomepageMenu = () => {
           text="Aviokarte promo"
           url="/admin/uredi-aviokarte-promo"
         />
+        <EditHomepageMenuItem
+          text="Aerodromi i banneri"
+          url="/admin/uredi-aerodrome"
+        />
         <EditHomepageMenuItem text="Footer" url="/admin/uredi-footer" />
         <EditHomepageMenuItem
           text="Partneri"

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, FC } from "react";
+import { FC } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import SocialMediaLinks from "../../atoms/SocialMediaLinks/SocialMediaLinks";
@@ -19,43 +19,7 @@ const Footer: FC<FooterProps> = ({
   setIsPlaneTicketsMenuShown,
   setIsDestinationsMenuShown,
   setIsTipsMenuShown,
-  setOpenNav,
-  setSelectedSubcategory,
 }) => {
-  const [isDesktop, setDesktop] = useState(false);
-
-  useEffect(() => {
-    const updateMedia = () => {
-      setDesktop(window.innerWidth >= 1024);
-    };
-
-    updateMedia();
-
-    window.addEventListener("resize", updateMedia);
-    return () => window.removeEventListener("resize", updateMedia);
-  }, []);
-
-  const goToTop = (type: string) => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-
-    closeAllMenus();
-    if (isDesktop) {
-      if (type == "destinacije") {
-        setIsDestinationsMenuShown(true);
-      } else if (type == "savjeti") {
-        setIsTipsMenuShown(true);
-      } else if (type == "aviokarte") {
-        setIsPlaneTicketsMenuShown(true);
-      }
-    } else {
-      setOpenNav(true);
-      setSelectedSubcategory(type);
-    }
-  };
-
   const closeAllMenus = () => {
     setIsPlaneTicketsMenuShown(false);
     setIsDestinationsMenuShown(false);
@@ -63,34 +27,31 @@ const Footer: FC<FooterProps> = ({
   };
 
   return (
-    <div className="footer-container">
+    <div className="footer-container" data-nosnippet>
       <div className="footer-list">
         <div className="footer-list-item">
           <div className="footer-list-item-title">BRZE POVEZNICE</div>
-          <div
+          <Link
+            href="/destinacije"
             className="footer-list-item-content"
-            onClick={() => {
-              goToTop("destinacije");
-            }}
+            onClick={closeAllMenus}
           >
             Destinacije
-          </div>
-          <div
+          </Link>
+          <Link
+            href="/savjeti"
             className="footer-list-item-content"
-            onClick={() => {
-              goToTop("savjeti");
-            }}
+            onClick={closeAllMenus}
           >
             Savjeti
-          </div>
-          <div
+          </Link>
+          <Link
+            href="/aviokarte"
             className="footer-list-item-content"
-            onClick={() => {
-              goToTop("aviokarte");
-            }}
+            onClick={closeAllMenus}
           >
             Aviokarte
-          </div>
+          </Link>
           <Link
             href="https://www.discovercars.com/?a_aid=travEM"
             target="_blank"

@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { CaretDown } from "@phosphor-icons/react";
 import Search from "../../../atoms/Search";
 import SocialMediaLinks from "../../atoms/SocialMediaLinks/SocialMediaLinks";
+import Link from "next/link";
 import "./NavbarDesktop.scss";
 
 const NavbarDesktop: FC<{
@@ -75,6 +76,11 @@ const NavbarDesktop: FC<{
           onMouseOver={handleDestinationsMouseOver}
         >
           Destinacije <CaretDown size={16} weight="bold" />
+          <Link
+            href="/destinacije"
+            className="navbar-item-overlay-link"
+            aria-label="Sve destinacije"
+          />
         </div>
 
         <div
@@ -84,6 +90,11 @@ const NavbarDesktop: FC<{
           onMouseOver={handleTipsMouseOver}
         >
           Savjeti <CaretDown size={16} weight="bold" />
+          <Link
+            href="/savjeti"
+            className="navbar-item-overlay-link"
+            aria-label="Svi savjeti za putovanja"
+          />
         </div>
 
         <div
@@ -93,6 +104,11 @@ const NavbarDesktop: FC<{
           onMouseOver={handlePlaneTicketsMouseOver}
         >
           Aviokarte <CaretDown size={16} weight="bold" />
+          <Link
+            href="/aviokarte"
+            className="navbar-item-overlay-link"
+            aria-label="Svi polazni aerodromi i aviokarte"
+          />
         </div>
       </div>
 

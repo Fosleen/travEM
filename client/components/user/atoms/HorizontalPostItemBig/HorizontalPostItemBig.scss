@@ -34,6 +34,30 @@
     }
   }
 
+  &.airport {
+    height: auto;
+    aspect-ratio: 16 / 7;
+
+    .favorite-post-item-icon-container {
+      width: 44px;
+      height: 44px;
+      padding: 2px;
+      overflow: hidden;
+      background: $bg;
+
+      .favorite-post-item-icon {
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        object-fit: cover;
+      }
+    }
+
+    .horizontal-post-item-big-text-container {
+      padding: 18px 20px;
+    }
+  }
+
   .favorite-post-item-icon-container {
     position: absolute;
     left: -14px;
@@ -159,7 +183,7 @@
     font-size: 24px;
     font-weight: bold;
 
-    @media screen and ($tabletMedium) {
+@media screen and ($tabletMedium) {
       font-size: 20px;
     }
   }

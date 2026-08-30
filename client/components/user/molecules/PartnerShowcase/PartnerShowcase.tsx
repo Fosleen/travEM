@@ -29,7 +29,11 @@ const PartnerShowcase = ({ partners }: PartnerShowcaseProps) => {
   const hasMorePartners = partners.length > INITIAL_PARTNER_COUNT;
 
   return (
-    <section className="partner-showcase" aria-labelledby="partner-showcase-title">
+    <section
+      className="partner-showcase"
+      aria-labelledby="partner-showcase-title"
+      data-nosnippet
+    >
       <div className="partner-showcase__content">
         <h2 id="partner-showcase-title">Hvala našim partnerima</h2>
 

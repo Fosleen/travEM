@@ -301,15 +301,18 @@ export interface HorizontalPostItemBigProps {
   thin?: boolean;
   hasDate?: boolean;
   type?: string;
+  href?: string;
+  variant?: "airport";
   data: {
     id: number;
     slug?: string;
     main_image_url: string;
     title?: string;
     name?: string;
-    subtitle: string;
-    date_written: Date | string;
+    subtitle?: string;
+    date_written?: Date | string;
     date_updated?: Date | string | null;
+    flag_image_url?: string;
   };
 }
 

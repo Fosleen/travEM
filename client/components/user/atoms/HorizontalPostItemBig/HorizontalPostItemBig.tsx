@@ -12,15 +12,21 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
   thin,
   hasDate = true,
   type = "article",
+  href: customHref,
+  variant,
   data,
 }) => {
-  const href =
-    type === "article"
+  const href = customHref ||
+    (type === "article"
       ? getArticleUrl(data)
-      : `/destinacija/${toUrlSlug(data.name || "")}`;
+      : `/destinacija/${toUrlSlug(data.name || "")}`);
 
-  const flagUrl =
+  const rawFlagUrl =
     (data as any)?.country?.flag_image_url || (data as any)?.flag_image_url;
+  const flagUrl = rawFlagUrl ? String(rawFlagUrl).trim() : "";
+  const mainImageUrl = data?.main_image_url
+    ? String(data.main_image_url).trim()
+    : "";
 
   const formattedDate = data?.date_written
     ? formatDate(new Date(data.date_written))
@@ -31,17 +37,24 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
       <div
         className={`horizontal-post-item-big-container ${
           stretched ? "stretched" : ""
-        }${thin ? " thin" : ""}`}
+        }${thin ? " thin" : ""}${variant ? ` ${variant}` : ""}`}
       >
         {flagUrl && (
           <div className="favorite-post-item-icon-container">
-            <img className="favorite-post-item-icon" src={flagUrl} alt="flag" />
+            <Image
+              className="favorite-post-item-icon"
+              src={flagUrl}
+              alt="Zastava"
+              width={38}
+              height={38}
+              unoptimized
+            />
           </div>
         )}
 
         <div className="horizontal-post-item-big-image-container">
           <Image
-            src={data?.main_image_url}
+            src={mainImageUrl}
             alt={data?.title || data?.name || "Post image"}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -54,13 +67,15 @@ const HorizontalPostItemBig: FC<HorizontalPostItemBigProps> = ({
         <div className="horizontal-post-item-big-text-container">
           <h4>{type === "article" ? data?.title : data?.name}</h4>
 
-          <div className="horizontal-post-item-big-inner-text-container">
-            <p>{data?.subtitle}</p>
+          {variant !== "airport" && (
+            <div className="horizontal-post-item-big-inner-text-container">
+              <p>{data?.subtitle}</p>
 
-            {!stretched && hasDate && formattedDate && (
-              <p>{formattedDate}</p>
-            )}
-          </div>
+              {!stretched && hasDate && formattedDate && (
+                <p>{formattedDate}</p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </Link>

@@ -38,11 +38,45 @@ export default async function Page() {
     getFooterPartners().catch(() => []),
   ]);
 
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
+    url: SITE_URL,
+    name: "putujEM s travEM",
+    alternateName: ["Putujem s Travem", "putujemstravem.com"],
+  };
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE_URL}/#organization`,
+    name: "putujEM s travEM",
+    url: SITE_URL,
+    logo: `${SITE_URL}/images/travem-logo-grey.webp`,
+    email: "hello@putujemstravem.com",
+    sameAs: [
+      "https://www.youtube.com/@travem",
+      "https://www.facebook.com/putujemstravem",
+      "https://www.instagram.com/putujem_s_travem/",
+    ],
+  };
+
   return (
-    <Homepage
-      initialContent={homepageContent}
-      initialArticles={articles}
-      initialPartners={partners}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([websiteJsonLd, organizationJsonLd]).replace(
+            /</g,
+            "\\u003c"
+          ),
+        }}
+      />
+      <Homepage
+        initialContent={homepageContent}
+        initialArticles={articles}
+        initialPartners={partners}
+      />
+    </>
   );
 }

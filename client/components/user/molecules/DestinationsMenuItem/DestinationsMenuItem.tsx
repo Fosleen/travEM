@@ -10,7 +10,7 @@ import { getPlacesByCountry } from "../../../../utils/places";
 import { CountryContext } from "@/context/CountryContext";
 import { toUrlSlug } from "@/utils/url";
 
-const PLACES_CACHE_KEY = "destinations-menu-places-cache-v1";
+const PLACES_CACHE_KEY = "destinations-menu-places-cache-v2";
 const PLACES_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 sata
 const MOBILE_VISIBLE_COUNTRIES_COUNT = 5;
 
@@ -60,6 +60,13 @@ const setCachedPlaces = (placesData: Record<number, any[]>) => {
 
   try {
     const existingCache = getCachedPlaces();
+    const successfulPlaces = Object.fromEntries(
+      Object.entries(placesData).filter(
+        ([, places]) => Array.isArray(places) && places.length > 0
+      )
+    );
+
+    if (Object.keys(successfulPlaces).length === 0) return;
 
     localStorage.setItem(
       PLACES_CACHE_KEY,
@@ -67,7 +74,7 @@ const setCachedPlaces = (placesData: Record<number, any[]>) => {
         createdAt: Date.now(),
         data: {
           ...existingCache,
-          ...placesData,
+          ...successfulPlaces,
         },
       })
     );
@@ -138,7 +145,10 @@ const DestinationsMenuItem: FC<{
 
       const initialPlacesFromCache = countriesData.reduce(
         (acc: Record<number, any[]>, country) => {
-          if (cachedPlaces[country.id]) {
+          if (
+            Array.isArray(cachedPlaces[country.id]) &&
+            cachedPlaces[country.id].length > 0
+          ) {
             acc[country.id] = cachedPlaces[country.id];
           }
 
@@ -155,7 +165,9 @@ const DestinationsMenuItem: FC<{
       }
 
       const countriesWithoutCache = countriesData.filter(
-        (country) => !cachedPlaces[country.id]
+        (country) =>
+          !Array.isArray(cachedPlaces[country.id]) ||
+          cachedPlaces[country.id].length === 0
       );
 
       if (countriesWithoutCache.length === 0) {

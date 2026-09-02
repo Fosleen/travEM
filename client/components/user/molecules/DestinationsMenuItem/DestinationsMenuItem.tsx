@@ -277,6 +277,12 @@ const DestinationsMenuItem: FC<{
           places.length > 0
             ? "destination-country-block--with-cities"
             : "destination-country-block--no-cities"
+        } ${
+          places.length === 1
+            ? "destination-country-block--single-city"
+            : places.length > 1
+              ? "destination-country-block--multiple-cities"
+              : ""
         }`}
         key={el.id}
         style={
@@ -286,7 +292,16 @@ const DestinationsMenuItem: FC<{
         }
       >
         {places.length > 0 ? (
-          <div className="destination-country-group-surface destination-country-group-surface--with-cities">
+          <div
+            className="destination-country-group-surface destination-country-group-surface--with-cities"
+            style={
+              {
+                "--destination-country-flag": `url("${String(
+                  el.flag_image_url || ""
+                ).replace(/"/g, "%22")}")`,
+              } as React.CSSProperties
+            }
+          >
             <DestinationItem
               filterMenuItem
               name={el.name}

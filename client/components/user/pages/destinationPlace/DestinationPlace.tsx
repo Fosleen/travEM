@@ -9,6 +9,8 @@ import RecommendedPosts from "../../molecules/RecommendedPosts";
 import BestTimeToVisitPlace from "../../molecules/BestTimeToVisitPlace/BestTimeToVisitPlace";
 import CountryLanguage from "../../molecules/CountryLanguage/CountryLanguage";
 import HorizontalPostItemBig from "../../atoms/HorizontalPostItemBig/HorizontalPostItemBig";
+import Pagination from "@/components/atoms/Pagination";
+import { useState } from "react";
 import { getCountryLocative } from "@/utils/countryGrammar";
 import { toUrlSlug } from "@/utils/url";
 import { getArticleUrl } from "@/utils/articleUrl";
@@ -53,6 +55,8 @@ interface DestinationPlaceProps {
   initialPlace: Place;
   placeName: string;
 }
+
+const OTHER_ARTICLES_PER_PAGE = 4;
 
 const getPlaceCase = (
   place: Place,
@@ -201,6 +205,14 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
         (article: any) => Number(article?.id) !== Number(featuredArticle?.id)
       )
     : articles;
+  const [articlesPage, setArticlesPage] = useState(1);
+  const articlesTotalPages = Math.ceil(
+    otherArticles.length / OTHER_ARTICLES_PER_PAGE
+  );
+  const paginatedArticles = otherArticles.slice(
+    (articlesPage - 1) * OTHER_ARTICLES_PER_PAGE,
+    articlesPage * OTHER_ARTICLES_PER_PAGE
+  );
 
   return (
     <div className="destination-place-page-container">
@@ -322,8 +334,10 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
                 </h2>
               </div>
 
-              <div className="destination-place-articles-grid">
-                {otherArticles.map((article: any, index: number) => (
+              <div
+                className={`destination-place-articles-grid count-${paginatedArticles.length}`}
+              >
+                {paginatedArticles.map((article: any, index: number) => (
                   <div
                     className="destination-place-article-item"
                     key={article.id || index}
@@ -332,6 +346,13 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
                   </div>
                 ))}
               </div>
+
+              <Pagination
+                totalPages={articlesTotalPages}
+                currentPage={articlesPage}
+                onPageChange={setArticlesPage}
+                scrollToTop={false}
+              />
             </section>
           )}
         </section>

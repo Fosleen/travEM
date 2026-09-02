@@ -540,6 +540,10 @@
     .destination-place-article-item:nth-child(8n + 6) {
       grid-column: span 2;
     }
+
+    &.count-4 .destination-place-article-item:nth-child(4) {
+      grid-column: 1 / -1;
+    }
   }
 
   .destination-place-videos-container {

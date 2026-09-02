@@ -621,11 +621,35 @@
     }
 
     .destination-country-group-surface--with-cities {
+      isolation: isolate;
       padding-left: 10px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.36);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.52);
 
       &::before {
-        left: 4px;
-        width: 2px;
+        display: none;
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        inset: -45%;
+        background-image: var(--destination-country-flag);
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        filter: blur(28px) saturate(1.15);
+        opacity: 0.12;
+        pointer-events: none;
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.44);
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, 0.64),
+          0 8px 22px rgba(0, 0, 0, 0.05);
       }
     }
 

@@ -97,6 +97,10 @@
           }
         }
 
+        &[data-list="ordered"] {
+          list-style: decimal;
+        }
+
         &[data-list="unchecked"] {
           &::before {
             content: "☐";

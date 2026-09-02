@@ -8,6 +8,7 @@ import DestinationVideos from "../../molecules/DestinationVideos";
 import RecommendedPosts from "../../molecules/RecommendedPosts";
 import BestTimeToVisitPlace from "../../molecules/BestTimeToVisitPlace/BestTimeToVisitPlace";
 import CountryLanguage from "../../molecules/CountryLanguage/CountryLanguage";
+import HorizontalPostItemBig from "../../atoms/HorizontalPostItemBig/HorizontalPostItemBig";
 import { getCountryLocative } from "@/utils/countryGrammar";
 import { toUrlSlug } from "@/utils/url";
 import { getArticleUrl } from "@/utils/articleUrl";
@@ -321,38 +322,14 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
                 </h2>
               </div>
 
-              <div
-                className={`destination-place-articles-grid count-${otherArticles.length}`}
-              >
+              <div className="destination-place-articles-grid">
                 {otherArticles.map((article: any, index: number) => (
-                  <Link
-                    href={getArticleHref(article)}
-                    className="destination-place-article-card"
+                  <div
+                    className="destination-place-article-item"
                     key={article.id || index}
                   >
-                    <div className="destination-place-article-image-wrapper">
-                      {getArticleImage(article) ? (
-                        <img
-                          src={getArticleImage(article)}
-                          alt={getArticleTitle(article)}
-                        />
-                      ) : (
-                        <div className="destination-place-image-placeholder" />
-                      )}
-                    </div>
-
-                    <div className="destination-place-article-content">
-                      <h3>{getArticleTitle(article)}</h3>
-
-                      {getArticleDescription(article) && (
-                        <p>{getArticleDescription(article)}</p>
-                      )}
-
-                      <div className="destination-place-article-meta">
-                        <span>Pročitaj više →</span>
-                      </div>
-                    </div>
-                  </Link>
+                    <HorizontalPostItemBig data={article} />
+                  </div>
                 ))}
               </div>
             </section>

@@ -189,7 +189,7 @@
     max-width: 100%;
     box-sizing: border-box;
     margin-bottom: auto;
-    background: $lightBlue;
+    background: $green;
     color: #ffffff;
     border-radius: 999px;
     padding: 8px 13px;
@@ -259,7 +259,12 @@
   font-weight: 900;
 
   span {
-    color: $limeGreen;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 10px 16px;
+    background: $limeGreen;
+    color: $grey;
   }
 
   @media screen and (max-width: 360px) {
@@ -391,13 +396,13 @@
   margin-top: auto;
   min-height: 42px;
   border-radius: 999px;
-  border: 1px solid rgba(120, 164, 215, 0.28);
+  border: 1px solid rgba($green, 0.34);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   text-decoration: none;
-  color: $lightBlue;
+  color: $green;
   font-size: 13px;
   font-weight: 900;
   transition:
@@ -405,11 +410,11 @@
     transform 0.18s ease;
 
   span {
-    color: $lightBlue;
+    color: $green;
   }
 
   &:hover {
-    background: rgba(120, 164, 215, 0.1);
+    background: rgba($limeGreen, 0.28);
     transform: translateY(-1px);
   }
 }
@@ -423,83 +428,16 @@
 .destination-place-articles-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 18px;
+  gap: 16px;
 }
 
-.destination-place-article-card {
-  overflow: hidden;
-  border-radius: 16px;
-  background: #ffffff;
-  border: 1px solid rgba(120, 164, 215, 0.18);
-  box-shadow: 0 10px 28px rgba(0, 32, 64, 0.06);
-  text-decoration: none;
-  color: $textPrimary;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-  display: flex;
-  flex-direction: column;
+.destination-place-article-item {
   min-width: 0;
-  min-height: 100%;
+  overflow: visible;
 
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 16px 36px rgba(0, 32, 64, 0.11);
-
-    img {
-      transform: scale(1.04);
-    }
-  }
-}
-
-.destination-place-article-image-wrapper {
-  height: 188px;
-  overflow: hidden;
-  background: $greyMiddle;
-
-  img,
-  .destination-place-image-placeholder {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  > a {
     display: block;
-    transition: transform 0.35s ease;
-  }
-}
-
-.destination-place-article-content {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-
-  h3 {
-    margin: 0;
-    font-size: 18px;
-    line-height: 1.16;
-    color: $textPrimary;
-  }
-
-  p {
-    margin: 8px 0 0;
-    color: rgba(51, 51, 51, 0.68);
-    font-size: 13px;
-    line-height: 1.4;
-  }
-}
-
-.destination-place-article-meta {
-  margin-top: auto;
-  padding-top: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  color: $lightBlue;
-  font-size: 12px;
-  font-weight: 800;
-
-  span {
-    color: $lightBlue;
+    text-decoration: none;
   }
 }
 
@@ -543,9 +481,6 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .destination-place-article-image-wrapper {
-    height: 204px;
-  }
 }
 
 @media screen and ($desktop) {
@@ -572,94 +507,35 @@
     &.has-overview {
       grid-template-columns: minmax(0, 1fr) 340px;
       align-items: stretch;
+
+      .destination-place-featured-card,
+      .destination-place-overview {
+        min-width: 0;
+        min-height: 380px;
+        height: 100%;
+      }
     }
   }
 
   .destination-place-articles-grid {
     grid-template-columns: repeat(6, minmax(0, 1fr));
-    grid-auto-flow: row;
-    align-items: stretch;
 
-    .destination-place-article-card {
+    .destination-place-article-item:nth-child(8n + 1),
+    .destination-place-article-item:nth-child(8n + 2),
+    .destination-place-article-item:nth-child(8n + 7),
+    .destination-place-article-item:nth-child(8n + 8) {
       grid-column: span 3;
     }
 
-    .destination-place-article-card:nth-child(6n + 1),
-    .destination-place-article-card:nth-child(6n + 2) {
-      grid-column: span 3;
-    }
-
-    .destination-place-article-card:nth-child(6n + 3) {
+    .destination-place-article-item:nth-child(8n + 3) {
       grid-column: 1 / -1;
     }
 
-    .destination-place-article-card:nth-child(6n + 4),
-    .destination-place-article-card:nth-child(6n + 5),
-    .destination-place-article-card:nth-child(6n + 6) {
+    .destination-place-article-item:nth-child(8n + 4),
+    .destination-place-article-item:nth-child(8n + 5),
+    .destination-place-article-item:nth-child(8n + 6) {
       grid-column: span 2;
     }
-
-    &.count-1 {
-      grid-template-columns: 1fr;
-
-      .destination-place-article-card {
-        grid-column: 1 / -1;
-      }
-    }
-
-    &.count-2 {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-
-      .destination-place-article-card {
-        grid-column: auto;
-      }
-    }
-
-    &.count-3 {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-
-      .destination-place-article-card:first-child,
-      .destination-place-article-card:nth-child(2) {
-        grid-column: span 3;
-      }
-
-      .destination-place-article-card:nth-child(3) {
-        grid-column: 1 / -1;
-      }
-    }
-
-    &.count-4 {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-
-      .destination-place-article-card:first-child,
-      .destination-place-article-card:nth-child(2),
-      .destination-place-article-card:nth-child(3),
-      .destination-place-article-card:nth-child(4) {
-        grid-column: span 3;
-      }
-    }
-
-    &.count-5 {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-
-      .destination-place-article-card:first-child,
-      .destination-place-article-card:nth-child(2) {
-        grid-column: span 3;
-      }
-
-      .destination-place-article-card:nth-child(3) {
-        grid-column: 1 / -1;
-      }
-
-      .destination-place-article-card:nth-child(4),
-      .destination-place-article-card:nth-child(5) {
-        grid-column: span 3;
-      }
-    }
-  }
-
-  .destination-place-article-image-wrapper {
-    height: 220px;
   }
 
   .destination-place-videos-container {

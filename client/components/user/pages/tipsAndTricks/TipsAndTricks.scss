@@ -396,26 +396,60 @@
   flex-direction: column;
   gap: 18px;
   min-width: 0;
+
+  &.has-overview {
+    @media screen and ($desktop) {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: stretch;
+
+      .tips-and-tricks-featured-card,
+      .tips-and-tricks-overview {
+        min-width: 0;
+        height: 100%;
+      }
+
+      .tips-and-tricks-featured-card,
+      .tips-and-tricks-featured-body {
+        min-height: 380px;
+      }
+
+      .tips-and-tricks-featured-body {
+        padding: 28px;
+      }
+
+      .tips-and-tricks-overview {
+        padding: 18px;
+        gap: 12px;
+
+        li a {
+          min-height: 44px;
+          padding-top: 6px;
+          padding-bottom: 6px;
+        }
+      }
+    }
+  }
 }
 
 .tips-and-tricks-featured-card {
+  position: relative;
   overflow: hidden;
-  display: grid;
-  grid-template-columns: 1fr;
+  display: block;
   width: 100%;
-  border-radius: 18px;
-  background: #ffffff;
-  border: 1px solid rgba(120, 164, 215, 0.16);
+  min-height: 390px;
+  border-radius: 16px;
+  background: $greyMiddle;
   text-decoration: none;
-  color: $textPrimary;
-  box-shadow: 0 14px 36px rgba(0, 32, 64, 0.08);
+  color: #ffffff;
+  box-shadow: 0 0 12px rgb(199, 199, 199);
   transition:
     transform 0.22s ease,
     box-shadow 0.22s ease;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 18px 42px rgba(0, 32, 64, 0.14);
+    box-shadow: 0 12px 26px rgba(51, 51, 51, 0.22);
 
     img {
       transform: scale(1.04);
@@ -423,26 +457,21 @@
   }
 
   @media screen and ($tablet) {
-    grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.95fr);
-    height: 280px;
+    min-height: 430px;
   }
 
   @media screen and ($desktop) {
-    grid-template-columns: minmax(0, 1.12fr) minmax(360px, 0.88fr);
-    height: 300px;
+    min-height: 460px;
   }
 
   @media screen and ($desktopLarge) {
-    height: 320px;
+    min-height: 480px;
   }
 }
 
 .tips-and-tricks-featured-image-wrapper {
-  position: relative;
-  width: 100%;
-  height: 230px;
-  overflow: hidden;
-  background: $greyMiddle;
+  position: absolute;
+  inset: 0;
 
   img,
   .tips-and-tricks-image-placeholder {
@@ -464,54 +493,48 @@
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(0deg, rgba(0, 0, 0, 0.28), transparent 56%),
-      linear-gradient(90deg, rgba(0, 0, 0, 0.18), transparent 68%);
-  }
-
-  @media screen and ($tablet) {
-    height: 100%;
-    min-height: 0;
-
-    img {
-      aspect-ratio: auto;
-    }
+      linear-gradient(0deg, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.42) 48%, transparent 78%),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.34), transparent 72%);
   }
 }
 
 .tips-and-tricks-featured-label {
   position: absolute;
-  z-index: 2;
-  top: 14px;
-  left: 14px;
-  max-width: calc(100% - 28px);
+  z-index: 3;
+  top: 16px;
+  left: 16px;
+  max-width: calc(100% - 32px);
   border-radius: 999px;
-  padding: 7px 12px;
-  background: $lightBlue;
+  padding: 8px 13px;
+  background: $green;
   color: #ffffff;
   text-transform: uppercase;
   font-size: 11px;
   font-weight: 900;
-  letter-spacing: 0.035em;
+  letter-spacing: 0.045em;
   line-height: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
 }
 
 .tips-and-tricks-featured-body {
+  position: relative;
+  z-index: 2;
   min-width: 0;
-  padding: 18px 16px;
+  min-height: 390px;
+  padding: 24px 20px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  background: #ffffff;
+  justify-content: flex-end;
+  align-items: flex-start;
+  background: transparent;
 
   h3 {
     margin: 0;
     font-size: clamp(24px, 6.8vw, 40px);
     line-height: 1.02;
     letter-spacing: -0.045em;
-    color: $textPrimary;
+    max-width: 780px;
+    color: #ffffff;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -524,7 +547,8 @@
     margin: 12px 0 0;
     font-size: 14px;
     line-height: 1.42;
-    color: rgba(51, 51, 51, 0.72);
+    max-width: 680px;
+    color: rgba(255, 255, 255, 0.9);
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 3;
@@ -534,11 +558,12 @@
   }
 
   @media screen and ($tablet) {
-    padding: 22px;
+    min-height: 430px;
+    padding: 32px;
   }
 
   @media screen and ($tabletMedium) {
-    padding: 26px;
+    padding: 38px;
 
     h3 {
       font-size: clamp(32px, 4vw, 46px);
@@ -547,6 +572,14 @@
     p {
       font-size: 16px;
     }
+  }
+
+  @media screen and ($desktop) {
+    min-height: 460px;
+  }
+
+  @media screen and ($desktopLarge) {
+    min-height: 480px;
   }
 }
 
@@ -564,11 +597,35 @@
     width: fit-content;
     border-radius: 999px;
     padding: 8px 12px;
-    background: $lightBlue;
+    background: rgba(255, 255, 255, 0.16);
     color: #ffffff;
+    backdrop-filter: blur(8px);
     font-size: 12px;
     font-weight: 900;
     line-height: 1;
+  }
+}
+
+.tips-and-tricks-featured-link {
+  margin-top: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: $limeGreen;
+  color: $grey;
+  font-size: 13px;
+  font-weight: 900;
+
+  span {
+    font-size: 18px;
+    line-height: 1;
+    transition: transform 0.18s ease;
+  }
+
+  .tips-and-tricks-featured-card:hover & span {
+    transform: translateX(3px);
   }
 }
 
@@ -754,7 +811,7 @@
 .tips-and-tricks-articles-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 18px;
+  gap: 16px;
 
   @media screen and ($tabletMedium) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -762,187 +819,33 @@
 
   @media screen and ($desktop) {
     grid-template-columns: repeat(6, minmax(0, 1fr));
-    grid-auto-flow: row;
-    align-items: stretch;
 
-    .tips-and-tricks-article-card {
+    .tips-and-tricks-article-item:nth-child(8n + 1),
+    .tips-and-tricks-article-item:nth-child(8n + 2),
+    .tips-and-tricks-article-item:nth-child(8n + 7),
+    .tips-and-tricks-article-item:nth-child(8n + 8) {
       grid-column: span 3;
     }
 
-    .tips-and-tricks-article-card:nth-child(6n + 1),
-    .tips-and-tricks-article-card:nth-child(6n + 2) {
-      grid-column: span 3;
-    }
-
-    .tips-and-tricks-article-card:nth-child(6n + 3) {
+    .tips-and-tricks-article-item:nth-child(8n + 3) {
       grid-column: 1 / -1;
     }
 
-    .tips-and-tricks-article-card:nth-child(6n + 4),
-    .tips-and-tricks-article-card:nth-child(6n + 5),
-    .tips-and-tricks-article-card:nth-child(6n + 6) {
+    .tips-and-tricks-article-item:nth-child(8n + 4),
+    .tips-and-tricks-article-item:nth-child(8n + 5),
+    .tips-and-tricks-article-item:nth-child(8n + 6) {
       grid-column: span 2;
     }
-
-    &.count-1 {
-      grid-template-columns: 1fr;
-
-      .tips-and-tricks-article-card {
-        grid-column: 1 / -1;
-      }
-    }
-
-    &.count-2 {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-
-      .tips-and-tricks-article-card {
-        grid-column: auto;
-      }
-    }
-
-    &.count-3 {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-
-      .tips-and-tricks-article-card:first-child,
-      .tips-and-tricks-article-card:nth-child(2) {
-        grid-column: span 3;
-      }
-
-      .tips-and-tricks-article-card:nth-child(3) {
-        grid-column: 1 / -1;
-      }
-    }
-
-    &.count-4 {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-
-      .tips-and-tricks-article-card:first-child,
-      .tips-and-tricks-article-card:nth-child(2) {
-        grid-column: span 3;
-      }
-
-      .tips-and-tricks-article-card:nth-child(3),
-      .tips-and-tricks-article-card:nth-child(4) {
-        grid-column: span 3;
-      }
-    }
-
-    &.count-5 {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-
-      .tips-and-tricks-article-card:first-child,
-      .tips-and-tricks-article-card:nth-child(2) {
-        grid-column: span 3;
-      }
-
-      .tips-and-tricks-article-card:nth-child(3) {
-        grid-column: 1 / -1;
-      }
-
-      .tips-and-tricks-article-card:nth-child(4),
-      .tips-and-tricks-article-card:nth-child(5) {
-        grid-column: span 3;
-      }
-    }
   }
 }
 
-.tips-and-tricks-article-card {
-  overflow: hidden;
-  border-radius: 16px;
-  background: #ffffff;
-  border: 1px solid rgba(120, 164, 215, 0.18);
-  box-shadow: 0 10px 28px rgba(0, 32, 64, 0.06);
-  text-decoration: none;
-  color: $textPrimary;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-  display: flex;
-  flex-direction: column;
+.tips-and-tricks-article-item {
   min-width: 0;
-  min-height: 100%;
+  overflow: visible;
 
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 16px 36px rgba(0, 32, 64, 0.11);
-
-    img {
-      transform: scale(1.04);
-    }
-  }
-}
-
-.tips-and-tricks-article-image-wrapper {
-  height: 188px;
-  overflow: hidden;
-  background: $greyMiddle;
-
-  @media screen and ($tabletMedium) {
-    height: 204px;
-  }
-
-  @media screen and ($desktop) {
-    height: 220px;
-  }
-
-  img,
-  .tips-and-tricks-image-placeholder {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  > a {
     display: block;
-    transition: transform 0.35s ease;
-  }
-}
-
-.tips-and-tricks-article-content {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-
-  h3 {
-    margin: 0;
-    font-size: 18px;
-    line-height: 1.16;
-    color: $textPrimary;
-  }
-
-  p {
-    margin: 8px 0 0;
-    color: rgba(51, 51, 51, 0.68);
-    font-size: 13px;
-    line-height: 1.4;
-  }
-}
-
-.tips-and-tricks-article-meta {
-  margin-top: auto;
-  padding-top: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  color: rgba(51, 51, 51, 0.58);
-  font-size: 12px;
-  font-weight: 800;
-
-  span:first-child {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    line-height: 1.3;
-  }
-
-  strong {
-    color: rgba(51, 51, 51, 0.78);
-    font-weight: 900;
-  }
-
-  span:last-child {
-    color: $lightBlue;
-    white-space: nowrap;
+    text-decoration: none;
   }
 }
 

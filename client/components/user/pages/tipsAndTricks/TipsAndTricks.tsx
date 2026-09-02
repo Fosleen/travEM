@@ -499,6 +499,10 @@ const TipsAndTricks = ({
                       <span>{formatArticleDate(featuredDateInfo.value)}</span>
                     </div>
                   )}
+
+                  <span className="tips-and-tricks-featured-link">
+                    Pročitaj vodič <span aria-hidden="true">→</span>
+                  </span>
                 </div>
               </Link>
 
@@ -551,48 +555,15 @@ const TipsAndTricks = ({
                 <h2>Još savjeta iz rubrike {displayedSelectedTitle}</h2>
               </div>
 
-              <div
-                className={`tips-and-tricks-articles-grid count-${otherArticles.length}`}
-              >
-                {otherArticles.map((article: any, index) => {
-                  const articleDateInfo = getArticleDateInfo(article);
-
-                  return (
-                    <Link
-                      href={getArticleHref(article)}
-                      className="tips-and-tricks-article-card"
-                      key={article.id || index}
-                    >
-                      <div className="tips-and-tricks-article-image-wrapper">
-                        {getArticleImage(article) ? (
-                          <img
-                            src={getArticleImage(article)}
-                            alt={getArticleTitle(article)}
-                          />
-                        ) : (
-                          <div className="tips-and-tricks-image-placeholder" />
-                        )}
-                      </div>
-
-                      <div className="tips-and-tricks-article-content">
-                        <h3>{getArticleTitle(article)}</h3>
-
-                        {getArticleDescription(article) && (
-                          <p>{getArticleDescription(article)}</p>
-                        )}
-
-                        <div className="tips-and-tricks-article-meta">
-                          {articleDateInfo.value && (
-                            <span>
-                              {formatArticleDate(articleDateInfo.value)}
-                            </span>
-                          )}
-                          <span>Pročitaj više →</span>
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
+              <div className="tips-and-tricks-articles-grid">
+                {otherArticles.map((article: any, index) => (
+                  <div
+                    className="tips-and-tricks-article-item"
+                    key={article.id || index}
+                  >
+                    <HorizontalPostItemBig data={article} />
+                  </div>
+                ))}
               </div>
             </section>
           )}

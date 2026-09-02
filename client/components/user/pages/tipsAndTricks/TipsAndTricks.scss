@@ -767,13 +767,13 @@
   margin-top: auto;
   min-height: 44px;
   border-radius: 999px;
-  border: 1px solid rgba(120, 164, 215, 0.34);
+  border: 1px solid rgba($green, 0.34);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   text-decoration: none;
-  color: $lightBlue;
+  color: $green;
   font-size: 13px;
   font-weight: 900;
   transition:
@@ -781,7 +781,7 @@
     transform 0.18s ease;
 
   &:hover {
-    background: rgba(120, 164, 215, 0.1);
+    background: rgba($limeGreen, 0.28);
     transform: translateY(-1px);
   }
 }

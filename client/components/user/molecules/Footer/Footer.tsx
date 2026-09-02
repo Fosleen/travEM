@@ -95,6 +95,13 @@ const Footer: FC<FooterProps> = ({
           >
             hello@putujemstravem.com
           </a>
+          <Link
+            href="/medeni-mjesec"
+            className="footer-list-item-content"
+            onClick={closeAllMenus}
+          >
+            Planiranje medenog mjeseca
+          </Link>
           <span className="footer-list-item-links">
             <SocialMediaLinks />
           </span>

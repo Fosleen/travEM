@@ -16,8 +16,12 @@
   padding: 0 16px;
 }
 
+.destination-place-language-container:empty {
+  display: none;
+}
+
 .destination-place-breadcrumb-wrapper {
-  margin-top: -8px;
+  margin-top: -16px;
   margin-bottom: -8px;
 }
 
@@ -547,6 +551,11 @@
   .destination-place-page-container {
     padding: 0;
     gap: 80px;
+  }
+
+  .destination-place-breadcrumb-wrapper {
+    margin-top: -52px;
+    margin-bottom: -52px;
   }
 
   .destination-place-content-container,

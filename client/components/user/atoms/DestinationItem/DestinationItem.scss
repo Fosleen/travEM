@@ -47,6 +47,16 @@
     text-transform: uppercase;
     white-space: nowrap;
     pointer-events: none;
+
+    &.hit {
+      background: #ef8b2c;
+      color: #ffffff;
+    }
+
+    &.destination-item-badge--end {
+      right: 8px;
+      left: auto;
+    }
   }
 
   .flag-icon {

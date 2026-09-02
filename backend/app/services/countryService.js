@@ -31,6 +31,43 @@ const getPublicArticleWhere = (additionalWhere = {}) => ({
 });
 
 class CountriesService {
+  async updateHitCountries(countryIds) {
+    const normalizedIds = [
+      ...new Set(
+        (Array.isArray(countryIds) ? countryIds : [])
+          .map(Number)
+          .filter(Number.isInteger)
+      ),
+    ];
+
+    const transaction = await db.sequelize.transaction();
+
+    try {
+      await db.models.Country.update(
+        { is_hit: false },
+        { where: {}, transaction }
+      );
+
+      if (normalizedIds.length > 0) {
+        await db.models.Country.update(
+          { is_hit: true },
+          { where: { id: { [Op.in]: normalizedIds } }, transaction }
+        );
+      }
+
+      await transaction.commit();
+
+      return db.models.Country.findAll({
+        where: { is_hit: true },
+        order: [["name", "ASC"]],
+      });
+    } catch (error) {
+      await transaction.rollback();
+      console.log(error);
+      return null;
+    }
+  }
+
   async getCountries(page, pageSize) {
     const limit = pageSize;
     const offset = (page - 1) * pageSize;

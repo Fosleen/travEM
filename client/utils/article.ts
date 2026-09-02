@@ -90,8 +90,8 @@ export async function getRecommendedArticles(id: number, type: string) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.log(errorData.error);
-      return { error: errorData.error };
+      console.warn("Homepage articles are temporarily unavailable:", errorData.error);
+      return [];
     }
 
     return await response.json();
@@ -223,8 +223,8 @@ export async function getHomepageArticles(noCache: boolean = false) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching homepage articles:", error);
-    return { error: error.message };
+    console.warn("Homepage articles are temporarily unavailable:", error);
+    return [];
   }
 }
 

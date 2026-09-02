@@ -265,7 +265,7 @@ const DestinationsMenuItem: FC<{
   const continentGenitive = getContinentGenitive(title);
 
   const renderCountryBlock = (
-    el: { id: number; name: string; flag_image_url: string; is_new?: boolean },
+    el: { id: number; name: string; flag_image_url: string; is_new?: boolean; is_hit?: boolean },
     index?: number
   ) => {
     const places = placesByCountry[el.id] || [];
@@ -292,6 +292,8 @@ const DestinationsMenuItem: FC<{
               name={el.name}
               iconUrl={el.flag_image_url}
               badgeText={el.is_new ? "Novo" : undefined}
+              badgeEndText={el.is_hit ? "Hit" : undefined}
+              badgeEndVariant="hit"
             />
 
             <div className="destination-city-slot">
@@ -314,6 +316,8 @@ const DestinationsMenuItem: FC<{
             name={el.name}
             iconUrl={el.flag_image_url}
             badgeText={el.is_new ? "Novo" : undefined}
+            badgeEndText={el.is_hit ? "Hit" : undefined}
+            badgeEndVariant="hit"
           />
         )}
       </div>

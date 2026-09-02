@@ -6,6 +6,7 @@ export default (sequelize, DataTypes) => {
       description: { type: DataTypes.STRING(100), allowNull: false },
       main_image_url: { type: DataTypes.STRING, allowNull: false },
       flag_image_url: { type: DataTypes.STRING, allowNull: false },
+      is_hit: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     },
     {
       underscored: true,

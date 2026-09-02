@@ -29,6 +29,10 @@ const EditHomepageMenu = () => {
           url="/admin/uredi-vize"
         />
         <EditHomepageMenuItem
+          text={'"Hit" države'}
+          url="/admin/uredi-hit-drzave"
+        />
+        <EditHomepageMenuItem
           text="Aviokarte promo"
           url="/admin/uredi-aviokarte-promo"
         />

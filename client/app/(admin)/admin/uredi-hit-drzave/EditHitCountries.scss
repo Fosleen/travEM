@@ -1,0 +1,57 @@
+@use "@/utils/theme.scss" as *;
+
+.edit-hit-countries {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 760px;
+  padding-right: 12px;
+}
+
+.edit-hit-countries-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  h2,
+  p { margin: 0; }
+
+  p { margin-top: 6px; color: $grey; }
+}
+
+.edit-hit-countries-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.edit-hit-country-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.edit-hit-country-remove {
+  border: 0;
+  padding: 6px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.edit-hit-countries-empty {
+  margin: 0;
+  padding: 18px;
+  border-radius: 10px;
+  background: rgba($lightBlue, 0.1);
+}
+
+.edit-hit-countries-message { margin: 0; font-weight: 700; color: $green; }
+
+.edit-hit-countries-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}

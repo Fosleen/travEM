@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useMemo } from "react";
 import { Editor } from "primereact/editor";
 import "./AdvancedEditor.scss";
 import { AdvancedEditorProps } from "../../../common/types";
@@ -21,25 +21,7 @@ const AdvancedEditor: FC<AdvancedEditorProps> = ({
   onChange,
   value = "",
 }) => {
-  const normalizedInitialValue = normalizeEditorValue(value);
-
-  const [editorValue, setEditorValue] = useState(normalizedInitialValue);
-
-  const editorValueRef = useRef(normalizedInitialValue);
-  const lastFormikValueRef = useRef(normalizedInitialValue);
-
-  useEffect(() => {
-    const nextValue = normalizeEditorValue(value);
-
-    if (nextValue === editorValueRef.current) {
-      lastFormikValueRef.current = nextValue;
-      return;
-    }
-
-    editorValueRef.current = nextValue;
-    lastFormikValueRef.current = nextValue;
-    setEditorValue(nextValue);
-  }, [value]);
+  const editorValue = normalizeEditorValue(value);
 
   const header = useMemo(
     () => (
@@ -87,11 +69,9 @@ const AdvancedEditor: FC<AdvancedEditorProps> = ({
   const commitValueToFormik = (nextValue: string) => {
     const normalizedNextValue = normalizeEditorValue(nextValue);
 
-    if (!onChange || normalizedNextValue === lastFormikValueRef.current) {
+    if (!onChange || normalizedNextValue === editorValue) {
       return;
     }
-
-    lastFormikValueRef.current = normalizedNextValue;
 
     onChange({
       target: {
@@ -106,27 +86,20 @@ const AdvancedEditor: FC<AdvancedEditorProps> = ({
     textValue: string;
     source?: string;
   }) => {
-    const nextValue = normalizeEditorValue(e.htmlValue);
-
-    if (nextValue === editorValueRef.current) {
+    // Quill also emits text-change events while PrimeReact is applying the
+    // controlled `value`. Feeding those API-originated events back into local
+    // state makes the editor alternate between Quill's HTML and Formik's HTML
+    // and can cause an infinite React update loop.
+    if (e.source !== "user") {
       return;
     }
 
-    editorValueRef.current = nextValue;
-    setEditorValue(nextValue);
-
-    if (e.source === "user") {
-      commitValueToFormik(nextValue);
-    }
+    const nextValue = normalizeEditorValue(e.htmlValue);
+    commitValueToFormik(nextValue);
   };
 
   return (
-    <div
-      className="editor-wrapper"
-      onBlurCapture={() => {
-        commitValueToFormik(editorValueRef.current);
-      }}
-    >
+    <div className="editor-wrapper">
       {label && (
         <label htmlFor={name} className="editor-label">
           {label}

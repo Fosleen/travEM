@@ -77,6 +77,9 @@ import {
   zonedDateTimeLocalToUtcIso,
 } from "@/utils/articleSchedule";
 import AffiliateLinksEditor from "@/components/admin/organisms/AffiliateLinksEditor/AffiliateLinksEditor";
+import UnsavedChangesGuard, {
+  confirmDiscardChanges,
+} from "@/components/admin/atoms/UnsavedChangesGuard";
 import {
   getAffiliatePartners,
   mergeArticleAffiliateLinks,
@@ -299,8 +302,8 @@ const AddArticlePage = () => {
     }
   };
 
-  const handleCancel = () => {
-    navigateToArticles(router);
+  const handleCancel = async () => {
+    if (await confirmDiscardChanges()) navigateToArticles(router);
   };
 
   const handleDeleteSection = (arrayHelpers: any, sectionIndex: number) => {
@@ -408,8 +411,9 @@ const AddArticlePage = () => {
             validationSchema={articleValidationSchema}
             onSubmit={handleSave}
           >
-            {({ values, setFieldValue }) => (
+            {({ values, setFieldValue, isSubmitting }) => (
               <Form className="add-article-form">
+                <UnsavedChangesGuard active={!isSubmitting} />
                 <div className="add-article-inputs">
                   <div className="add-article-input">
                     <Field

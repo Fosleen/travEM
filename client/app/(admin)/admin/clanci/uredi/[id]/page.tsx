@@ -41,6 +41,9 @@ import { addSectionImage, deleteSectionImage } from "@/utils/sectionImages";
 import { addGalleryImage, deleteGalleryImage } from "@/utils/galleryImages";
 import { addVideo, updateVideo, deleteVideo } from "@/utils/videos";
 import AdvancedEditor from "@/components/atoms/AdvancedEditor";
+import UnsavedChangesGuard, {
+  confirmDiscardChanges,
+} from "@/components/admin/atoms/UnsavedChangesGuard";
 import {
   getSubscribersWithoutPagination,
   sendNewsletterToSubscribers,
@@ -510,8 +513,8 @@ const flatRemovedImages = removedSectionImages;
     }
   };
 
-  const handleCancel = () => {
-    navigateToArticles(router);
+  const handleCancel = async () => {
+    if (await confirmDiscardChanges()) navigateToArticles(router);
   };
 
   const handleDeleteSection = (arrayHelpers, sectionIndex) => {
@@ -743,8 +746,9 @@ const flatRemovedImages = removedSectionImages;
               onSubmit={handleSave}
               enableReinitialize={true}
             >
-              {({ values, setFieldValue }) => (
+              {({ values, setFieldValue, isSubmitting }) => (
                 <Form className="edit-article-form">
+                  <UnsavedChangesGuard active={!isSubmitting} />
                   <div className="edit-article-inputs">
                     <div className="edit-article-input">
                       <Field

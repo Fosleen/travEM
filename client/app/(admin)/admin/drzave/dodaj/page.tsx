@@ -10,6 +10,9 @@ import Swal from "sweetalert2";
 import Modal from "@/components/atoms/Modal";
 import Button from "@/components/atoms/Button";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
+import UnsavedChangesGuard, {
+  confirmDiscardChanges,
+} from "@/components/admin/atoms/UnsavedChangesGuard";
 import Input from "@/components/atoms/Input";
 import Textarea from "@/components/admin/atoms/Textarea";
 import { getColors } from "@/utils/colors";
@@ -150,8 +153,8 @@ const AddCountry = () => {
     }
   };
 
-  const handleCancel = () => {
-    navigateToCountries(router);
+  const handleCancel = async () => {
+    if (await confirmDiscardChanges()) navigateToCountries(router);
   };
 
   const handleAddImage = () => {
@@ -308,8 +311,9 @@ const AddCountry = () => {
             validationSchema={createCountryValidationSchema("add")}
             onSubmit={handleSave}
           >
-            {({ values, setFieldValue }) => (
+            {({ values, setFieldValue, isSubmitting }) => (
               <Form className="add-country-form">
+                <UnsavedChangesGuard active={!isSubmitting} />
                 <div className="add-country-inputs">
                   <div className="add-country-inputs-row">
                     <div className="add-country-input">

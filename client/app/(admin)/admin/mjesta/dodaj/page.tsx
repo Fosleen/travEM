@@ -7,6 +7,9 @@ import "./AddPlace.scss";
 import { CountriesData } from "@/common/types";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
+import UnsavedChangesGuard, {
+  confirmDiscardChanges,
+} from "@/components/admin/atoms/UnsavedChangesGuard";
 import { notifySuccess } from "@/components/atoms/Toast/Toast";
 import Swal from "sweetalert2";
 import Input from "@/components/atoms/Input";
@@ -129,8 +132,9 @@ const AddPlace = () => {
             validationSchema={createPlaceValidationSchema()}
             onSubmit={handleSave}
           >
-            {({ values, setFieldValue }) => (
+            {({ values, setFieldValue, isSubmitting }) => (
               <Form className="add-place-form">
+                <UnsavedChangesGuard active={!isSubmitting} />
                 <div className="add-place-inputs">
                   <div className="add-place-input">
                     <Field
@@ -507,7 +511,9 @@ const AddPlace = () => {
                   <Button
                     type="button"
                     white
-                    onClick={() => navigateToPlaces(router)}
+                    onClick={async () => {
+                      if (await confirmDiscardChanges()) navigateToPlaces(router);
+                    }}
                   >
                     Odustani
                   </Button>

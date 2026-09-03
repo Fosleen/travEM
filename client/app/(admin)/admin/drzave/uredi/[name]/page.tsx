@@ -10,6 +10,9 @@ import { notifySuccess } from "@/components/atoms/Toast/Toast";
 import Modal from "@/components/atoms/Modal";
 import Button from "@/components/atoms/Button";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
+import UnsavedChangesGuard, {
+  confirmDiscardChanges,
+} from "@/components/admin/atoms/UnsavedChangesGuard";
 import AdvancedDropdown from "@/components/admin/atoms/AdvancedDropdown";
 import Textarea from "@/components/admin/atoms/Textarea";
 import { Plus, Trash, X } from "@phosphor-icons/react";
@@ -309,8 +312,8 @@ const EditCountry = () => {
     }
   };
 
-  const handleCancel = () => {
-    navigateToCountries(router);
+  const handleCancel = async () => {
+    if (await confirmDiscardChanges()) navigateToCountries(router);
   };
 
   const handleAddImage = () => {
@@ -592,8 +595,9 @@ const EditCountry = () => {
             onSubmit={handleSave}
             enableReinitialize={true}
           >
-            {({ values, setFieldValue }) => (
+            {({ values, setFieldValue, isSubmitting }) => (
               <Form className="edit-country-form">
+                <UnsavedChangesGuard active={!isSubmitting} />
                 <div className="edit-country-inputs">
                   <div className="edit-country-inputs-row">
                     <div className="edit-country-input">

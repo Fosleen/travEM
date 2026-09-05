@@ -181,6 +181,28 @@ export const addArticleFormImage = ({
       ],
       ...prevSectionImages.slice(sectionSelected + 1),
     ]);
+
+    // A section image is useful in the article gallery as well. Keep it there
+    // independently so removing it from a section does not remove it from the
+    // gallery, and avoid adding the same URL more than once.
+    setOtherArticleImages((prev: any[]) => {
+      const normalizedUrl = modalInputValue.trim();
+      const alreadyInGallery = prev.some(
+        (image) => String(image?.url || "").trim() === normalizedUrl
+      );
+
+      if (!normalizedUrl || alreadyInGallery) return prev;
+
+      return [
+        ...prev,
+        {
+          url: normalizedUrl,
+          ...(includeOtherImageDimensions
+            ? { width: imageWidthValue, height: imageHeightValue }
+            : {}),
+        },
+      ];
+    });
   }
 
   setModalInputValue("");
@@ -194,7 +216,7 @@ export const fetchArticleFormOptions = async () => {
       getArticleTypes(),
       getVisitedCountries(),
       getSectionIcons(),
-      getAirportCities(),
+      getAirportCities(true),
     ]);
 
   return {

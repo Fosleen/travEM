@@ -14,7 +14,7 @@ const ArticleHero = ({ article }) => {
     <div className="article-hero-container">
       <div className="article-hero-left">
         <div className="article-hero-titles">
-          <h2>{article.title}</h2>
+          <h1>{article.title}</h1>
         </div>
 
         <div className="article-hero-meta">

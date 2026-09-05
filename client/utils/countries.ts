@@ -210,3 +210,24 @@ export async function updateCountry(country: CountriesData) {
   console.log(data);
   return data;
 }
+
+export async function updateHitCountries(countryIds: number[]) {
+  const token = getToken();
+  const response = await fetch(`${apiUrl}/countries/hit`, {
+    method: "PATCH",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ country_ids: countryIds }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Spremanje Hit država nije uspjelo.");
+  }
+
+  return data;
+}

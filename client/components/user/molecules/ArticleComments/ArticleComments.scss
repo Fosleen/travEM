@@ -261,6 +261,24 @@
     cursor: pointer;
   }
 
+  button:not(.article-comment-like-button) {
+    border-radius: 6px;
+    padding: 6px 8px;
+    transition: background-color 180ms ease, color 180ms ease,
+      box-shadow 180ms ease, transform 180ms ease;
+
+    &:hover:not(:disabled) {
+      background: rgba($green, 0.1);
+      box-shadow: 0 6px 14px rgba($green, 0.14);
+      transform: translateY(-2px);
+    }
+
+    &:active:not(:disabled) {
+      box-shadow: 0 3px 8px rgba($green, 0.12);
+      transform: translateY(0) scale(0.97);
+    }
+  }
+
   .article-comment-like-button {
     min-width: 48px;
     height: 34px;
@@ -301,6 +319,22 @@
     align-items: center;
     gap: 5px;
     color: $delete;
+
+    &:hover:not(:disabled) {
+      background: rgba($delete, 0.1);
+      box-shadow: 0 6px 14px rgba($delete, 0.14);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article-comment-actions button:not(.article-comment-like-button) {
+    transition: none;
+
+    &:hover:not(:disabled),
+    &:active:not(:disabled) {
+      transform: none;
+    }
   }
 }
 

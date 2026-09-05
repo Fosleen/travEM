@@ -3,7 +3,7 @@ const { generateUnsubscribeToken, getArticleTypeBadge } = require("./utils");
 const createEmailTemplate = (article, userEmail) => {
   const badge = getArticleTypeBadge(article.article_type_id);
   const unsubscribeToken = generateUnsubscribeToken(userEmail);
-  const unsubscribeUrl = `https://putujemstravem.com/otkazi-pretplatu?userToken=${unsubscribeToken}`;
+  const unsubscribeUrl = `https://www.putujemstravem.com/otkazi-pretplatu?userToken=${unsubscribeToken}`;
 
   return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -456,8 +456,8 @@ const createEmailTemplate = (article, userEmail) => {
                           "
                         >
                             <a
-                            href="https://putujemstravem.com/clanak/${
-                              article.id
+                            href="https://www.putujemstravem.com/clanak/${
+                            article.slug || article.id
                             }"
                             target="_blank"
                             class="mobile-button text-white"

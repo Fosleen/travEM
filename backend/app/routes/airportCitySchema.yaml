@@ -15,6 +15,17 @@ components:
         is_in_croatia:
           type: boolean
           example: true
+        banner_image_url:
+          type: string
+          nullable: true
+          example: https://example.com/zagreb-airport.jpg
+        is_active:
+          type: boolean
+          example: true
+        display_order:
+          type: integer
+          nullable: true
+          example: 10
 
     GetAllAirportCitiesResponse:
       type: array

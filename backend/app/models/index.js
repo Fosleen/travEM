@@ -38,6 +38,13 @@ import ArticleCommentLike from "./articleCommentLike.js";
 import AirplaneTicketPromo from "./airplaneTicketPromo.js";
 import AffiliatePartner from "./affiliatePartner.js";
 import ArticleAffiliateLink from "./articleAffiliateLink.js";
+import PopupContent from "./popupContent.js";
+import FooterPartner from "./footerPartner.js";
+import DomagoPartnerBanner from "./domagoPartnerBanner.js";
+import HoneymoonProgram from "./honeymoonProgram.js";
+import HoneymoonProgramImage from "./honeymoonProgramImage.js";
+import HoneymoonInquiry from "./honeymoonInquiry.js";
+import HoneymoonSetting from "./honeymoonSetting.js";
 
 const db = {};
 
@@ -143,6 +150,19 @@ db.models.ArticleAffiliateLink = ArticleAffiliateLink(
   sequelizeConnection,
   Sequelize.DataTypes
 );
+db.models.PopupContent = PopupContent(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+db.models.FooterPartner = FooterPartner(
+  sequelizeConnection,
+  Sequelize.DataTypes
+);
+db.models.DomagoPartnerBanner = DomagoPartnerBanner(sequelizeConnection, Sequelize.DataTypes);
+db.models.HoneymoonProgram = HoneymoonProgram(sequelizeConnection, Sequelize.DataTypes);
+db.models.HoneymoonProgramImage = HoneymoonProgramImage(sequelizeConnection, Sequelize.DataTypes);
+db.models.HoneymoonInquiry = HoneymoonInquiry(sequelizeConnection, Sequelize.DataTypes);
+db.models.HoneymoonSetting = HoneymoonSetting(sequelizeConnection, Sequelize.DataTypes);
 
 db.models.Article_ArticleSpecialType =
   article_articleSpecialType(sequelizeConnection);

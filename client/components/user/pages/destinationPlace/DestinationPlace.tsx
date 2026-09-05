@@ -8,11 +8,17 @@ import DestinationVideos from "../../molecules/DestinationVideos";
 import RecommendedPosts from "../../molecules/RecommendedPosts";
 import BestTimeToVisitPlace from "../../molecules/BestTimeToVisitPlace/BestTimeToVisitPlace";
 import CountryLanguage from "../../molecules/CountryLanguage/CountryLanguage";
+import HorizontalPostItemBig from "../../atoms/HorizontalPostItemBig/HorizontalPostItemBig";
+import Pagination from "@/components/atoms/Pagination";
+import { useState } from "react";
 import { getCountryLocative } from "@/utils/countryGrammar";
+import { toUrlSlug } from "@/utils/url";
+import { getArticleUrl } from "@/utils/articleUrl";
 import "./DestinationPlace.scss";
 
 interface Article {
   id: number;
+  slug?: string;
   title: string;
   subtitle?: string;
   description?: string;
@@ -49,6 +55,8 @@ interface DestinationPlaceProps {
   initialPlace: Place;
   placeName: string;
 }
+
+const OTHER_ARTICLES_PER_PAGE = 4;
 
 const getPlaceCase = (
   place: Place,
@@ -91,11 +99,11 @@ const getArticleDescription = (article: any) => {
 };
 
 const getArticleHref = (article: any) => {
-  return `/clanak/${article?.id}`;
+  return getArticleUrl(article);
 };
 
 const getCountryHref = (country: Country) => {
-  return `/destinacija/${country?.name?.toLowerCase()}`;
+  return `/destinacija/${toUrlSlug(country?.name || "")}`;
 };
 
 const getArticleSections = (article: any) => {
@@ -197,6 +205,14 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
         (article: any) => Number(article?.id) !== Number(featuredArticle?.id)
       )
     : articles;
+  const [articlesPage, setArticlesPage] = useState(1);
+  const articlesTotalPages = Math.ceil(
+    otherArticles.length / OTHER_ARTICLES_PER_PAGE
+  );
+  const paginatedArticles = otherArticles.slice(
+    (articlesPage - 1) * OTHER_ARTICLES_PER_PAGE,
+    articlesPage * OTHER_ARTICLES_PER_PAGE
+  );
 
   return (
     <div className="destination-place-page-container">
@@ -319,39 +335,24 @@ const DestinationPlace = ({ initialPlace, placeName }: DestinationPlaceProps) =>
               </div>
 
               <div
-                className={`destination-place-articles-grid count-${otherArticles.length}`}
+                className={`destination-place-articles-grid count-${paginatedArticles.length}`}
               >
-                {otherArticles.map((article: any, index: number) => (
-                  <Link
-                    href={getArticleHref(article)}
-                    className="destination-place-article-card"
+                {paginatedArticles.map((article: any, index: number) => (
+                  <div
+                    className="destination-place-article-item"
                     key={article.id || index}
                   >
-                    <div className="destination-place-article-image-wrapper">
-                      {getArticleImage(article) ? (
-                        <img
-                          src={getArticleImage(article)}
-                          alt={getArticleTitle(article)}
-                        />
-                      ) : (
-                        <div className="destination-place-image-placeholder" />
-                      )}
-                    </div>
-
-                    <div className="destination-place-article-content">
-                      <h3>{getArticleTitle(article)}</h3>
-
-                      {getArticleDescription(article) && (
-                        <p>{getArticleDescription(article)}</p>
-                      )}
-
-                      <div className="destination-place-article-meta">
-                        <span>Pročitaj više →</span>
-                      </div>
-                    </div>
-                  </Link>
+                    <HorizontalPostItemBig data={article} />
+                  </div>
                 ))}
               </div>
+
+              <Pagination
+                totalPages={articlesTotalPages}
+                currentPage={articlesPage}
+                onPageChange={setArticlesPage}
+                scrollToTop={false}
+              />
             </section>
           )}
         </section>

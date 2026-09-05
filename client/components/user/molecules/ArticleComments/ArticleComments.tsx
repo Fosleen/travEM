@@ -35,6 +35,8 @@ const emptyForm = {
   notifyOnReply: false,
 };
 
+const COMMENT_USERNAME_STORAGE_KEY = "travem_comment_username";
+
 const getVisitorId = () => {
   const storageKey = "travem_comment_visitor_id";
   const existingId = localStorage.getItem(storageKey);
@@ -180,6 +182,7 @@ const ArticleComments = ({ articleId }: ArticleCommentsProps) => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [savedUsername, setSavedUsername] = useState("");
 
   const totalComments = useMemo(() => {
     return comments.reduce(
@@ -199,6 +202,14 @@ const ArticleComments = ({ articleId }: ArticleCommentsProps) => {
     });
 
     setLikedCommentIds(getLikedCommentIds());
+
+    const storedUsername = (
+      localStorage.getItem(COMMENT_USERNAME_STORAGE_KEY) || ""
+    ).trim();
+    if (storedUsername) {
+      setSavedUsername(storedUsername);
+      setMainForm((current) => ({ ...current, username: storedUsername }));
+    }
 
     const token = localStorage.getItem("jwt");
     setIsAdmin(!isTokenExpired(token));
@@ -227,11 +238,18 @@ const ArticleComments = ({ articleId }: ArticleCommentsProps) => {
     setReplyForms((current) => ({
       ...current,
       [commentId]: {
-        ...(current[commentId] || emptyForm),
+        ...(current[commentId] || { ...emptyForm, username: savedUsername }),
         [name]: type === "checkbox" ? checked : value,
         ...(name === "email" && value.trim() ? { notifyOnReply: true } : {}),
       },
     }));
+  };
+
+  const rememberUsername = (username: string) => {
+    const normalizedUsername = username.trim();
+    localStorage.setItem(COMMENT_USERNAME_STORAGE_KEY, normalizedUsername);
+    setSavedUsername(normalizedUsername);
+    return normalizedUsername;
   };
 
   const handleMainSubmit = async (event) => {
@@ -242,7 +260,8 @@ const ArticleComments = ({ articleId }: ArticleCommentsProps) => {
 
     try {
       const result = await addArticleComment(articleId, mainForm);
-      setMainForm(emptyForm);
+      const username = rememberUsername(mainForm.username);
+      setMainForm({ ...emptyForm, username });
 
       if (result.moderation?.status === "pending") {
         setMessage("Komentar je zaprimljen i bit će objavljen nakon pregleda.");
@@ -264,12 +283,20 @@ const ArticleComments = ({ articleId }: ArticleCommentsProps) => {
     setError("");
 
     try {
+      const submittedForm = replyForms[commentId] || {
+        ...emptyForm,
+        username: savedUsername,
+      };
       const result = await addArticleCommentReply(
         articleId,
         commentId,
-        replyForms[commentId] || emptyForm
+        submittedForm
       );
-      setReplyForms((current) => ({ ...current, [commentId]: emptyForm }));
+      const username = rememberUsername(submittedForm.username);
+      setReplyForms((current) => ({
+        ...current,
+        [commentId]: { ...emptyForm, username },
+      }));
       setOpenReplyId(null);
 
       if (result.moderation?.status === "pending") {
@@ -362,7 +389,10 @@ const ArticleComments = ({ articleId }: ArticleCommentsProps) => {
     });
 
   const renderComment = (comment: ArticleComment, isReply = false) => {
-    const replyForm = replyForms[comment.id] || emptyForm;
+    const replyForm = replyForms[comment.id] || {
+      ...emptyForm,
+      username: savedUsername,
+    };
     const liked = likedCommentIds.includes(comment.id);
 
     return (

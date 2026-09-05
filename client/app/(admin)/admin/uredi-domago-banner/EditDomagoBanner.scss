@@ -1,0 +1,73 @@
+@use "@/utils/theme.scss" as *;
+
+.edit-domago-banner {
+  display: flex;
+  max-width: 1024px;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 12px;
+  margin-bottom: 40px;
+
+  > h2 { margin: 0; color: $grey; }
+  > p { max-width: 760px; margin: 0; color: $textPrimary; line-height: 1.5; }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    padding: 16px;
+    border: 2px solid $greyMiddle;
+    border-radius: 8px;
+
+    > label {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      color: $grey;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 112px;
+      padding: 14px 16px;
+      color: $grey;
+      background: $bg;
+      border: 1px solid $lightBlue;
+      border-radius: 8px;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.5;
+      resize: vertical;
+
+      &:focus-visible { outline: 2px solid rgba($green, 0.25); outline-offset: 2px; }
+    }
+
+    input[type="color"] { min-height: 48px; padding: 6px 10px; cursor: pointer; }
+  }
+
+  &__toggles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 32px;
+    padding: 16px;
+    border: 2px solid $greyMiddle;
+    border-radius: 8px;
+    background: $bg;
+
+    .toggle-switch-container { margin: 0; }
+  }
+
+  > .button { align-self: flex-start; margin-top: 8px; }
+}
+
+@media screen and (max-width: 767px) {
+  .edit-domago-banner {
+    padding-right: 0;
+    &__grid { grid-template-columns: 1fr; > label { font-size: 20px; } }
+    &__toggles { flex-direction: column; gap: 16px; }
+    > .button { width: 100%; }
+  }
+}

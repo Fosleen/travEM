@@ -13,6 +13,8 @@ import Characteristics from "../../atoms/Characteristics";
 import Specificities from "../../atoms/Specificities";
 import { CountriesData } from "@/common/types";
 import CountryLanguage from "../../molecules/CountryLanguage/CountryLanguage";
+import Pagination from "@/components/atoms/Pagination";
+import { useState } from "react";
 
 import BestTimeToVisit from "../../molecules/BestTimeToVisit/BestTimeToVisit";
 import { safeDecodeURIComponent } from "@/utils/url";
@@ -23,6 +25,8 @@ interface DestinationCountryProps {
   countryName: string;
 }
 
+const OTHER_ARTICLES_PER_PAGE = 4;
+
 const DestinationCountry = ({
   initialCountry,
   initialFavoriteArticle,
@@ -30,6 +34,17 @@ const DestinationCountry = ({
 }: DestinationCountryProps) => {
   const country = initialCountry;
   const favoriteArticle = initialFavoriteArticle;
+  const otherArticles = (country.articles || []).filter(
+    (article) => Number(article.id) !== Number(favoriteArticle?.id)
+  );
+  const [articlesPage, setArticlesPage] = useState(1);
+  const articlesTotalPages = Math.ceil(
+    otherArticles.length / OTHER_ARTICLES_PER_PAGE
+  );
+  const paginatedArticles = otherArticles.slice(
+    (articlesPage - 1) * OTHER_ARTICLES_PER_PAGE,
+    articlesPage * OTHER_ARTICLES_PER_PAGE
+  );
 
   const decodedCountryName = safeDecodeURIComponent(countryName);
 
@@ -77,12 +92,12 @@ const DestinationCountry = ({
         <CountryLanguage countryId={country.id} />
       </div>
 
-      {country.articles && country.articles.length > 0 && (
+      {otherArticles.length > 0 && (
         <div className="destination-country-posts-container">
           <h2>Pročitajte naše članke</h2>
 
           <div className="destination-country-posts">
-            {country.articles.map((el, index) => (
+            {paginatedArticles.map((el, index) => (
               <HorizontalPostItemBig
                 thin
                 hasDate={false}
@@ -91,6 +106,13 @@ const DestinationCountry = ({
               />
             ))}
           </div>
+
+          <Pagination
+            totalPages={articlesTotalPages}
+            currentPage={articlesPage}
+            onPageChange={setArticlesPage}
+            scrollToTop={false}
+          />
         </div>
       )}
 

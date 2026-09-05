@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { getArticleUrl } from "@/utils/articleUrl";
 import "./MainCountryPost.scss";
 import Image from "next/image";
 import { useMemo, useRef } from "react";
@@ -36,6 +37,7 @@ const getSectionIcon = (section: any) => {
 const MainCountryPost = ({ article }: any) => {
   const lottieRef = useRef<LottieRefCurrentProps | null>(null);
   const savedFrameRef = useRef(0);
+  const mainImageUrl = String(article?.main_image_url || "").trimEnd();
 
   const previewSections = useMemo(() => {
     const sections = getArticleSections(article);
@@ -49,7 +51,7 @@ const MainCountryPost = ({ article }: any) => {
         id: section?.id || index,
         title: getSectionSubtitle(section),
         icon: getSectionIcon(section),
-        href: `/clanak/${article.id}#odlomak-${index}`,
+        href: `${getArticleUrl(article)}#odlomak-${index}`,
       }))
       .filter((section: any) => section.title)
       .slice(0, 4);
@@ -99,27 +101,32 @@ const MainCountryPost = ({ article }: any) => {
       onMouseLeave={handleLeave}
     >
       <Link
-        href={`/clanak/${article.id}`}
+        href={getArticleUrl(article)}
         className="main-country-post-main-link"
         onFocus={handleEnter}
         onBlur={handleLeave}
       >
         <div className="main-country-post-bg-image-container">
-          <Image
-            src={article.main_image_url}
-            alt={`${article.title} background`}
-            width={4000}
-            height={2000}
-          />
+          {mainImageUrl && (
+            <Image
+              src={mainImageUrl}
+              alt={`${article.title} background`}
+              width={4000}
+              height={2000}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          )}
         </div>
 
         <div className="main-country-post-top-image-container">
-          <img
-            src={article.main_image_url}
-            alt={`${article.title} post-image`}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            style={{ objectFit: "cover" }}
-          />
+          {mainImageUrl && (
+            <img
+              src={mainImageUrl}
+              alt={`${article.title} post-image`}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              style={{ objectFit: "cover" }}
+            />
+          )}
         </div>
 
         <div className="main-country-icon-container">

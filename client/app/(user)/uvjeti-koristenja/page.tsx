@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import "./TermsAndConditions.scss";
+import { SITE_URL } from "@/utils/site";
 
 export const metadata: Metadata = {
   title: "Uvjeti korištenja - putujEM s travEM",
@@ -7,15 +8,16 @@ export const metadata: Metadata = {
     "Uvjeti korištenja web stranice putujEM s travEM. Pročitajte pravila i smjernice za korištenje naših usluga.",
   keywords:
     "uvjeti korištenja, pravila, terms and conditions, putovanje, travem",
+  alternates: { canonical: `${SITE_URL}/uvjeti-koristenja` },
   openGraph: {
     title: "Uvjeti korištenja - putujEM s travEM",
     description: "Uvjeti korištenja web stranice putujEM s travEM.",
     type: "website",
-    url: "https://putujemstravem.com/uvjeti-koristenja",
+    url: `${SITE_URL}/uvjeti-koristenja`,
     siteName: "putujEM s travEM",
     images: [
       {
-        url: "https://putujemstravem.com/default-og-image.jpg",
+        url: `${SITE_URL}/default-og-image.jpg`,
         width: 1200,
         height: 630,
         alt: `Uvjeti korištenja`,

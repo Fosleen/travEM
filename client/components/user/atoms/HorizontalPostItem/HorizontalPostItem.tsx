@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getArticleUrl } from "@/utils/articleUrl";
 import "./HorizontalPostItem.scss";
 import { FC } from "react";
 import { Article } from "../../../../common/types";
@@ -11,7 +12,7 @@ const HorizontalPostItem: FC<{ isSmall?: boolean; article: Article }> = ({
 
   return (
     <Link
-      href={`/clanak/${article.id}`}
+      href={getArticleUrl(article)}
       className={`horizontal-post-item-container ${isSmall ? "small" : ""}`}
     >
       <div

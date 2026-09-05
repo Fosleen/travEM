@@ -122,6 +122,21 @@ export interface FooterData {
   image_url: string;
 }
 
+export interface PopupContentData {
+  id: number;
+  image_url: string;
+}
+
+export interface FooterPartnerData {
+  id: number;
+  name: string;
+  image_url: string;
+  showcase_image_url: string | null;
+  target_url: string;
+  sort_order: number;
+  is_active: boolean;
+}
+
 export interface EditBannerData {
   banner_title: string;
   banner_small_text: string;
@@ -217,6 +232,7 @@ export interface PlacesData {
   countryId?: number;
   articles?: Array<{
     id: number;
+    slug?: string;
     title: string;
     subtitle?: string;
     description?: string;
@@ -252,8 +268,9 @@ export interface SectionIconsData {
 }
 
 export interface Article {
-  [x: string]: number;
+  [x: string]: unknown;
   id: number;
+  slug: string;
   title: string;
   subtitle: string;
   description: string;
@@ -284,15 +301,29 @@ export interface HorizontalPostItemBigProps {
   thin?: boolean;
   hasDate?: boolean;
   type?: string;
+  href?: string;
+  variant?: "airport";
   data: {
     id: number;
+    slug?: string;
     main_image_url: string;
     title?: string;
     name?: string;
-    subtitle: string;
-    date_written: Date | string;
+    subtitle?: string;
+    date_written?: Date | string;
     date_updated?: Date | string | null;
+    flag_image_url?: string;
   };
+}
+
+export interface AirportCityData {
+  id: number;
+  name: string;
+  flag_url: string;
+  is_in_croatia: boolean;
+  banner_image_url?: string | null;
+  is_active: boolean;
+  display_order?: number | null;
 }
 
 export interface PageCountProps {

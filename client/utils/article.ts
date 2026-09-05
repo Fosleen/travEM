@@ -69,13 +69,13 @@ export async function getArticlesByType(
     if (!response.ok) {
       const errorData = await response.json();
       console.log(errorData.error);
-      return { error: errorData.error };
+      return [];
     }
 
     return await response.json();
   } catch (error) {
     console.error("Error fetching articles by type:", error);
-    return { error: error.message };
+    return [];
   }
 }
 
@@ -90,8 +90,8 @@ export async function getRecommendedArticles(id: number, type: string) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.log(errorData.error);
-      return { error: errorData.error };
+      console.warn("Homepage articles are temporarily unavailable:", errorData.error);
+      return [];
     }
 
     return await response.json();
@@ -223,8 +223,8 @@ export async function getHomepageArticles(noCache: boolean = false) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching homepage articles:", error);
-    return { error: error.message };
+    console.warn("Homepage articles are temporarily unavailable:", error);
+    return [];
   }
 }
 
@@ -269,6 +269,7 @@ export async function addArticle(
   airport_city_id: number | null,
   is_far_destination: boolean = false,
   is_tips_featured: boolean = false,
+  domago_partner_enabled: boolean = false,
   publish_at?: string | null,
   publish_timezone?: string,
   notify_subscribers_on_publish?: boolean
@@ -290,6 +291,7 @@ export async function addArticle(
     airport_city_id,
     is_far_destination,
     is_tips_featured,
+    domago_partner_enabled,
     ...(publish_at !== undefined ? { publish_at } : {}),
     ...(publish_timezone !== undefined ? { publish_timezone } : {}),
     ...(notify_subscribers_on_publish !== undefined
@@ -360,6 +362,7 @@ export async function updateArticle(
   airport_city_id: number | null,
   is_far_destination: boolean = false,
   is_tips_featured: boolean = false,
+  domago_partner_enabled: boolean = false,
   publish_at?: string | null,
   publish_timezone?: string,
   notify_subscribers_on_publish?: boolean
@@ -378,6 +381,7 @@ export async function updateArticle(
     place_id,
     is_far_destination,
     is_tips_featured,
+    domago_partner_enabled,
     ...(publish_at !== undefined ? { publish_at } : {}),
     ...(publish_timezone !== undefined ? { publish_timezone } : {}),
     ...(notify_subscribers_on_publish !== undefined
@@ -474,4 +478,60 @@ export async function removeTopCountryArticle(articleId: number) {
   }
 
   return data;
+}
+
+export async function createTopPlaceArticle(articleId: number) {
+  const token = getToken();
+  const response = await fetch(`${apiUrl}/articles/place/top`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    method: "PUT",
+    body: JSON.stringify({ article_id: articleId }),
+  });
+  const data = await response.json();
+
+  if (!response.ok) throw new Error(data.error || "Istaknuti članak nije spremljen.");
+  return data;
+}
+
+export async function removeTopPlaceArticle(articleId: number) {
+  const token = getToken();
+  const response = await fetch(`${apiUrl}/articles/place/top/${articleId}`, {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    method: "DELETE",
+  });
+
+  if (response.status === 404) return {};
+
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Istaknuti članak nije uklonjen.");
+  return data;
+}
+
+export async function getArticleBySlug(slug: string) {
+  try {
+    const response = await fetch(
+      `${apiUrl}/articles/slug/${encodeURIComponent(slug)}`,
+      {
+        cache: "no-store",
+        headers: { Accept: "application/json" },
+      }
+    );
+
+    if (!response.ok) {
+      return { error: true, status: response.status };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching article by slug:", error);
+    return { error: true };
+  }
 }

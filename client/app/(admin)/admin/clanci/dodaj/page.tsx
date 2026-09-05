@@ -18,7 +18,11 @@ import {
 } from "@/common/types";
 import ToggleSwitch from "@/components/admin/atoms/ToggleSwitch";
 import AdvancedDropdown from "@/components/admin/atoms/AdvancedDropdown";
-import { addArticle, createTopCountryArticle } from "@/utils/article";
+import {
+  addArticle,
+  createTopCountryArticle,
+  createTopPlaceArticle,
+} from "@/utils/article";
 import { addSection } from "@/utils/sections";
 import Modal from "@/components/atoms/Modal";
 import { addSectionImage } from "@/utils/sectionImages";
@@ -73,6 +77,9 @@ import {
   zonedDateTimeLocalToUtcIso,
 } from "@/utils/articleSchedule";
 import AffiliateLinksEditor from "@/components/admin/organisms/AffiliateLinksEditor/AffiliateLinksEditor";
+import UnsavedChangesGuard, {
+  confirmDiscardChanges,
+} from "@/components/admin/atoms/UnsavedChangesGuard";
 import {
   getAffiliatePartners,
   mergeArticleAffiliateLinks,
@@ -106,10 +113,12 @@ const AddArticlePage = () => {
 
   const [isMainCountryPostChecked, setIsMainCountryPostChecked] =
     useState(false);
+  const [isMainPlacePostChecked, setIsMainPlacePostChecked] = useState(false);
   const [isNotifySubscribersChecked, setIsNotifySubscribersChecked] =
     useState(true);
   const [isFarDestinationChecked, setIsFarDestinationChecked] = useState(false);
   const [isTipsFeaturedChecked, setIsTipsFeaturedChecked] = useState(false);
+  const [isDomagoPartnerChecked, setIsDomagoPartnerChecked] = useState(false);
   const [isScheduleChecked, setIsScheduleChecked] = useState(false);
   const [scheduleDateTime, setScheduleDateTime] = useState("");
   const [scheduleTimezone, setScheduleTimezone] = useState(getBrowserTimeZone());
@@ -187,6 +196,7 @@ const AddArticlePage = () => {
               parseInt(values.article_airport_city_id),
               isFarDestinationChecked,
               isTipsArticleType(values.article_type) && isTipsFeaturedChecked,
+              isDomagoPartnerChecked,
               isScheduleChecked ? publishAt : undefined,
               isScheduleChecked ? scheduleTimezone : undefined,
               isScheduleChecked ? isNotifySubscribersChecked : undefined
@@ -213,6 +223,10 @@ const AddArticlePage = () => {
             await Promise.all([
               isMainCountryPostChecked
                 ? createTopCountryArticle(articleResponse.id)
+                : Promise.resolve(),
+
+              isMainPlacePostChecked && values.article_place
+                ? createTopPlaceArticle(articleResponse.id)
                 : Promise.resolve(),
 
               Promise.all(
@@ -288,8 +302,8 @@ const AddArticlePage = () => {
     }
   };
 
-  const handleCancel = () => {
-    navigateToArticles(router);
+  const handleCancel = async () => {
+    if (await confirmDiscardChanges()) navigateToArticles(router);
   };
 
   const handleDeleteSection = (arrayHelpers: any, sectionIndex: number) => {
@@ -397,8 +411,9 @@ const AddArticlePage = () => {
             validationSchema={articleValidationSchema}
             onSubmit={handleSave}
           >
-            {({ values, setFieldValue }) => (
+            {({ values, setFieldValue, isSubmitting }) => (
               <Form className="add-article-form">
+                <UnsavedChangesGuard active={!isSubmitting} />
                 <div className="add-article-inputs">
                   <div className="add-article-input">
                     <Field
@@ -1227,6 +1242,18 @@ const AddArticlePage = () => {
                       </div>
                     )}
 
+                  {values.article_place &&
+                    values.article_type == ARTICLE_TYPE_DESTINATION_ID && (
+                      <div className="add-article-toggle-item">
+                        <ToggleSwitch
+                          name={"main-place-post"}
+                          description={"Dodaj članak kao glavni za mjesto"}
+                          value={isMainPlacePostChecked}
+                          setter={setIsMainPlacePostChecked}
+                        />
+                      </div>
+                    )}
+
                   {isTipsArticleType(values.article_type) && (
                     <div className="add-article-toggle-item add-article-toggle-item-highlight">
                       <ToggleSwitch
@@ -1247,6 +1274,15 @@ const AddArticlePage = () => {
                       </p>
                     </div>
                   )}
+
+                  <div className="add-article-toggle-item">
+                    <ToggleSwitch
+                      name={"domago-partner"}
+                      description={"Partner banner"}
+                      value={isDomagoPartnerChecked}
+                      setter={setIsDomagoPartnerChecked}
+                    />
+                  </div>
 
                   <div className="add-article-toggle-item">
                     <ToggleSwitch

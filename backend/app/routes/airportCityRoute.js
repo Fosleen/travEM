@@ -1,5 +1,6 @@
 import { Router } from "express";
 import controller from "../controllers/airportCityController.js";
+import { verifyToken } from "../middleware/jwt_verify.js";
 
 const router = new Router();
 
@@ -33,6 +34,9 @@ const router = new Router();
  *                          $ref: '#/components/schemas/ServerErrorResponse'
  */
 
+router.get("/admin", verifyToken, controller.getAirportCitiesAdmin);
+router.post("/", verifyToken, controller.createAirportCity);
+router.patch("/:id", verifyToken, controller.updateAirportCity);
 router.get("/", controller.getAirportCities);
 
 export default router;

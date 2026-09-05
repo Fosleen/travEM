@@ -18,7 +18,9 @@ const TipsMenuItem: FC<{
   return (
     <Link
       href={`/savjeti/${removeCroatianDiacritics(convertToSlug(linkTitle))}`}
-      className="tips-menu-item-container"
+      className={`tips-menu-item-container ${
+        title.length > 20 ? "tips-menu-item-container--long-title" : ""
+      }`}
       onClick={onClick}
     >
       <h2>{title}</h2>
@@ -28,7 +30,6 @@ const TipsMenuItem: FC<{
         className="icon-top-left"
         width={96}
         height={96}
-        quality={90}
       />
       <Image
         src={icon}
@@ -36,7 +37,6 @@ const TipsMenuItem: FC<{
         className="icon-bottom-right"
         width={96}
         height={96}
-        quality={90}
       />
     </Link>
   );

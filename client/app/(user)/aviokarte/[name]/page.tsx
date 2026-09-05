@@ -3,6 +3,10 @@ import AirplaneTickets from "@/components/user/pages/airplaneTickets/AirplaneTic
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAirplaneTicketPromo } from "@/utils/airplaneTicketPromo";
+import { SITE_URL } from "@/utils/site";
+import { getAirportCities } from "@/utils/airportCities";
+import { getAirportBannerImage } from "@/utils/airportBanner";
+import { toUrlSlug } from "@/utils/url";
 
 type Props = {
   params: Promise<{ name: string }>;
@@ -12,27 +16,33 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { name } = await params;
 
   const decodedName = decodeURIComponent(name);
-  const cityName = decodedName
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ");
+  const airports = await getAirportCities();
+  const airport = Array.isArray(airports)
+    ? airports.find((item: any) => toUrlSlug(item.name) === toUrlSlug(decodedName))
+    : null;
+  const cityName = airport?.name || decodedName;
+  const imageUrl = getAirportBannerImage(airport?.banner_image_url);
 
   const title = `Aviokarte ${cityName} - putujEM s travEM`;
   const description = `Pronađite najbolje aviokarte za ${cityName}. Pratite najnovije ponude i letove.`;
   const keywords = `aviokarte, ${decodedName}, letovi, putovanje, putujemstravem, ${cityName}`;
+  const canonicalUrl = `${SITE_URL}/aviokarte/${encodeURIComponent(
+    decodedName
+  )}`;
 
   return {
     title,
     description,
     keywords,
+    alternates: { canonical: canonicalUrl },
     openGraph: {
       title,
       description,
       type: "website",
-      url: `https://putujemstravem.com/aviokarte/${name}`,
+      url: canonicalUrl,
       images: [
         {
-          url: "https://putujemstravem.com/default-og-image.jpg",
+          url: imageUrl,
           width: 1200,
           height: 630,
           alt: `Aviokarte ${cityName}`,
@@ -43,7 +53,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
       title,
       description,
-      images: ["https://putujemstravem.com/default-og-image.jpg"],
+      images: [imageUrl],
     },
   };
 }
@@ -54,18 +64,27 @@ export default async function Page({ params }: Props) {
   // Also decode in the page component
   const decodedName = decodeURIComponent(name);
 
-  const [articlesData, promoData] = await Promise.all([
+  const [articlesData, promoData, airportsData] = await Promise.all([
     getArticlesByType(1, 12, 2),
     getAirplaneTicketPromo(),
+    getAirportCities(),
   ]);
 
   if (!articlesData || articlesData.error) {
     notFound();
   }
 
+  const airport = Array.isArray(airportsData)
+    ? airportsData.find(
+        (item: any) => toUrlSlug(item.name) === toUrlSlug(decodedName)
+      )
+    : null;
+
+  if (!airport) notFound();
+
   const filteredTickets = articlesData.data.filter(
     (article: any) =>
-      article.airport_city?.name?.toLowerCase() === decodedName.toLowerCase()
+      toUrlSlug(article.airport_city?.name || "") === toUrlSlug(airport.name)
   );
 
   let recommendedId = null;
@@ -87,7 +106,8 @@ export default async function Page({ params }: Props) {
   return (
     <AirplaneTickets
       initialTickets={filteredTickets}
-      cityName={decodedName}
+      cityName={airport.name}
+      heroImageUrl={getAirportBannerImage(airport.banner_image_url)}
       recommendedId={recommendedId}
       promo={promoData && !promoData.error ? promoData : null}
     />

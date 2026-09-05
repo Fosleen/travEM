@@ -128,7 +128,7 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
         alt="suitcase"
         width={320}
         height={320}
-        style={{ width: "auto", height: "auto" }}
+        style={{ width: "112px", height: "auto" }}
       />
 
       <div className="homepage-hero-left">
@@ -140,7 +140,7 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
           alt="plane"
           width={120}
           height={120}
-          style={{ width: "auto", height: "auto" }}
+          style={{ width: "70px", height: "auto" }}
         />
       </div>
 

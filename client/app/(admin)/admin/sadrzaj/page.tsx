@@ -29,10 +29,30 @@ const EditHomepageMenu = () => {
           url="/admin/uredi-vize"
         />
         <EditHomepageMenuItem
+          text={'"Hit" države'}
+          url="/admin/uredi-hit-drzave"
+        />
+        <EditHomepageMenuItem
           text="Aviokarte promo"
           url="/admin/uredi-aviokarte-promo"
         />
+        <EditHomepageMenuItem
+          text="Aerodromi i banneri"
+          url="/admin/uredi-aerodrome"
+        />
         <EditHomepageMenuItem text="Footer" url="/admin/uredi-footer" />
+        <EditHomepageMenuItem
+          text="Partneri"
+          url="/admin/uredi-footer-partnere"
+        />
+        <EditHomepageMenuItem
+          text="Newsletter popup"
+          url="/admin/uredi-popup"
+        />
+        <EditHomepageMenuItem
+          text="Partner Banner"
+          url="/admin/uredi-domago-banner"
+        />
       </div>
     </div>
   );

@@ -266,3 +266,21 @@ export async function updateCommentStatus(
 
   return data;
 }
+
+export async function dismissComment(commentId: number) {
+  const token = getToken();
+  const response = await fetch(`${apiUrl}/comments/${commentId}/dismiss`, {
+    method: "PATCH",
+    headers: {
+      Accept: "application/json",
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  });
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Failed to dismiss comment");
+  }
+
+  return data;
+}

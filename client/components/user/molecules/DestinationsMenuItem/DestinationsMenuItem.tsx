@@ -8,26 +8,11 @@ import { FC, useContext, useEffect, useState } from "react";
 import { getCountriesByContinent } from "../../../../utils/countries";
 import { getPlacesByCountry } from "../../../../utils/places";
 import { CountryContext } from "@/context/CountryContext";
+import { toUrlSlug } from "@/utils/url";
 
-const PLACES_CACHE_KEY = "destinations-menu-places-cache-v1";
+const PLACES_CACHE_KEY = "destinations-menu-places-cache-v2";
 const PLACES_CACHE_TTL = 1000 * 60 * 60 * 24; // 24 sata
 const MOBILE_VISIBLE_COUNTRIES_COUNT = 5;
-
-const slugify = (value: string) => {
-  return value
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d")
-    .replace(/č/g, "c")
-    .replace(/ć/g, "c")
-    .replace(/ž/g, "z")
-    .replace(/š/g, "s")
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-]/g, "")
-    .replace(/-+/g, "-")
-    .trim();
-};
 
 const normalizePlacesResponse = (response: any) => {
   if (!response) return [];
@@ -75,6 +60,13 @@ const setCachedPlaces = (placesData: Record<number, any[]>) => {
 
   try {
     const existingCache = getCachedPlaces();
+    const successfulPlaces = Object.fromEntries(
+      Object.entries(placesData).filter(
+        ([, places]) => Array.isArray(places) && places.length > 0
+      )
+    );
+
+    if (Object.keys(successfulPlaces).length === 0) return;
 
     localStorage.setItem(
       PLACES_CACHE_KEY,
@@ -82,7 +74,7 @@ const setCachedPlaces = (placesData: Record<number, any[]>) => {
         createdAt: Date.now(),
         data: {
           ...existingCache,
-          ...placesData,
+          ...successfulPlaces,
         },
       })
     );
@@ -153,7 +145,10 @@ const DestinationsMenuItem: FC<{
 
       const initialPlacesFromCache = countriesData.reduce(
         (acc: Record<number, any[]>, country) => {
-          if (cachedPlaces[country.id]) {
+          if (
+            Array.isArray(cachedPlaces[country.id]) &&
+            cachedPlaces[country.id].length > 0
+          ) {
             acc[country.id] = cachedPlaces[country.id];
           }
 
@@ -170,7 +165,9 @@ const DestinationsMenuItem: FC<{
       }
 
       const countriesWithoutCache = countriesData.filter(
-        (country) => !cachedPlaces[country.id]
+        (country) =>
+          !Array.isArray(cachedPlaces[country.id]) ||
+          cachedPlaces[country.id].length === 0
       );
 
       if (countriesWithoutCache.length === 0) {
@@ -268,11 +265,11 @@ const DestinationsMenuItem: FC<{
   const continentGenitive = getContinentGenitive(title);
 
   const renderCountryBlock = (
-    el: { id: number; name: string; flag_image_url: string; is_new?: boolean },
+    el: { id: number; name: string; flag_image_url: string; is_new?: boolean; is_hit?: boolean },
     index?: number
   ) => {
     const places = placesByCountry[el.id] || [];
-    const countrySlug = slugify(el.name);
+    const countrySlug = toUrlSlug(el.name);
 
     return (
       <div
@@ -280,6 +277,12 @@ const DestinationsMenuItem: FC<{
           places.length > 0
             ? "destination-country-block--with-cities"
             : "destination-country-block--no-cities"
+        } ${
+          places.length === 1
+            ? "destination-country-block--single-city"
+            : places.length > 1
+              ? "destination-country-block--multiple-cities"
+              : ""
         }`}
         key={el.id}
         style={
@@ -289,12 +292,23 @@ const DestinationsMenuItem: FC<{
         }
       >
         {places.length > 0 ? (
-          <div className="destination-country-group-surface destination-country-group-surface--with-cities">
+          <div
+            className="destination-country-group-surface destination-country-group-surface--with-cities"
+            style={
+              {
+                "--destination-country-flag": `url("${String(
+                  el.flag_image_url || ""
+                ).replace(/"/g, "%22")}")`,
+              } as React.CSSProperties
+            }
+          >
             <DestinationItem
               filterMenuItem
               name={el.name}
               iconUrl={el.flag_image_url}
               badgeText={el.is_new ? "Novo" : undefined}
+              badgeEndText={el.is_hit ? "Hit" : undefined}
+              badgeEndVariant="hit"
             />
 
             <div className="destination-city-slot">
@@ -302,7 +316,7 @@ const DestinationsMenuItem: FC<{
                 {places.map((place: { id: number; name: string }) => (
                   <Link
                     key={place.id}
-                    href={`/destinacija/${countrySlug}/${slugify(place.name)}`}
+                    href={`/destinacija/${countrySlug}/${toUrlSlug(place.name)}`}
                     className="destination-city-chip"
                   >
                     {place.name}
@@ -317,6 +331,8 @@ const DestinationsMenuItem: FC<{
             name={el.name}
             iconUrl={el.flag_image_url}
             badgeText={el.is_new ? "Novo" : undefined}
+            badgeEndText={el.is_hit ? "Hit" : undefined}
+            badgeEndVariant="hit"
           />
         )}
       </div>

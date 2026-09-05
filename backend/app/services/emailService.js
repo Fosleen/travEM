@@ -58,7 +58,7 @@ const createEmailTemplate = (article) => {
             <img src="${article.mainArticleImage}" alt="Article Image" class="article-image">
             <h1 class="article-title">${article.article_title}</h1>
             <p class="article-description">${article.article_description}</p>
-            <a href="https://putujemstravem.com/clanak/${article.id}" class="read-more-btn">
+            <a href="https://www.putujemstravem.com/clanak/${article.slug || article.id}" class="read-more-btn">
               Pročitaj više
             </a>
             <div class="footer">
@@ -71,14 +71,18 @@ const createEmailTemplate = (article) => {
     `;
 };
 
-export const sendEmail = async (to, subject, html) => {
+export const sendEmail = async (to, subject, html, options = {}) => {
   try {
     const info = await transporter.sendMail({
-      from: "Putujem s travEM",
+      from: `"putujEM s travEM" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,
+      ...options,
     });
+    if (info.rejected?.length) {
+      throw new Error(`Email recipient rejected: ${info.rejected.join(", ")}`);
+    }
     console.log("Email sent: %s", info.messageId);
     return info;
   } catch (error) {

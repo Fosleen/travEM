@@ -6,6 +6,20 @@ import {
 import service from "../services/countryService.js";
 
 class CountriesController {
+  async updateHitCountries(req, res) {
+    const response = await service.updateHitCountries(req.body.country_ids);
+
+    if (!response) {
+      return res.status(500).json({ error: "Error updating hit countries" });
+    }
+
+    await clearCacheByPattern("countries-page:*");
+    await clearCacheByPattern("continent-countries:*");
+    await clearCacheByPattern("country:*");
+
+    return res.status(200).json(response);
+  }
+
   async getCountries(req, res) {
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 200;

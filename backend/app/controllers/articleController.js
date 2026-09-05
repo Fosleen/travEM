@@ -120,6 +120,31 @@ class ArticleController {
     }
   }
 
+  async getArticleBySlug(req, res) {
+    try {
+      const useCache = req.query.noCache !== "true";
+      const { slug } = req.params;
+      const includeScheduled = canIncludeScheduledArticles(req);
+      const cacheKey = includeScheduled
+        ? `article-slug:${slug}:admin`
+        : `article-slug:${slug}`;
+
+      const response = await getOrSetCache(
+        cacheKey,
+        () => articleService.getArticleBySlug(slug, includeScheduled),
+        useCache
+      );
+
+      if (!response) {
+        return res.status(404).json({ error: "Article not found" });
+      }
+
+      return res.status(200).json(response);
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
   async addArticle(req, res) {
     try {
       const response = await articleService.addArticle(
@@ -137,6 +162,7 @@ class ArticleController {
         req.body.airport_city_id,
         req.body.is_far_destination,
         req.body.is_tips_featured,
+        req.body.domago_partner_enabled,
         req.body.publish_at,
         req.body.publish_timezone,
         req.body.notify_subscribers_on_publish
@@ -294,6 +320,30 @@ class ArticleController {
     }
   }
 
+  async updateOrCreateTopPlaceArticle(req, res) {
+    try {
+      const response = await articleService.updateOrCreateTopPlaceArticle(
+        req.body.article_id
+      );
+
+      if (response === "Article not found") {
+        return res.status(404).json({ error: "Article not found" });
+      }
+
+      if (response === "Article place not found") {
+        return res.status(400).json({ error: "Article does not belong to a place" });
+      }
+
+      if (!response) {
+        return res.status(500).json({ error: "Internal server error" });
+      }
+
+      return res.status(200).json(response);
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
   async updateOrCreateTopHomepageArticles(req, res) {
     const response = await articleService.updateOrCreateTopHomepageArticles(
       req.body.article_id,
@@ -326,6 +376,7 @@ class ArticleController {
         req.body.airport_city_id,
         req.body.is_far_destination,
         req.body.is_tips_featured,
+        req.body.domago_partner_enabled,
         req.body.publish_at,
         req.body.publish_timezone,
         req.body.notify_subscribers_on_publish
@@ -338,6 +389,10 @@ class ArticleController {
       } else {
         await clearCache(`article:${req.params.id}`);
         await clearCache(`article:${req.params.id}:admin`);
+        if (response?.slug) {
+          await clearCache(`article-slug:${response.slug}`);
+          await clearCache(`article-slug:${response.slug}:admin`);
+        }
         await clearCacheByPattern("continent-countries:*");
         res.status(200).json(response);
       }
@@ -354,6 +409,10 @@ class ArticleController {
       if (response) {
         await clearCache(`article:${id}`);
         await clearCache(`article:${id}:admin`);
+        if (response.slug) {
+          await clearCache(`article-slug:${response.slug}`);
+          await clearCache(`article-slug:${response.slug}:admin`);
+        }
         await clearCacheByPattern("continent-countries:*");
         res.status(200).json({});
       } else {
@@ -375,6 +434,20 @@ class ArticleController {
       } else {
         return res.status(500).json({ error: "Internal server error" });
       }
+    } catch (error) {
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+
+  async deleteTopPlaceArticle(req, res) {
+    try {
+      const response = await articleService.deleteTopPlaceArticle(req.params.id);
+
+      if (!response) {
+        return res.status(404).json({ error: "Article is not featured for a place" });
+      }
+
+      return res.status(200).json({});
     } catch (error) {
       return res.status(500).json({ error: "Internal server error" });
     }

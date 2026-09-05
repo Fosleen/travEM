@@ -10,7 +10,6 @@ const ArticleReadMore = ({ section }) => {
         alt="procitaj vise"
         width={50}
         height={50}
-        quality={100}
         priority
       />
       {/* <h2>Pročitaj:</h2> */}

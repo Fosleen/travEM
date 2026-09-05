@@ -1,0 +1,193 @@
+@use "@/utils/theme.scss" as *;
+
+.airport-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-right: 12px;
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+
+    h1 { font-size: 32px; }
+    p { margin-top: 6px; color: $textPrimary; }
+    .button { display: flex; align-items: center; gap: 7px; }
+  }
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    input {
+      width: min(420px, 100%);
+      padding: 11px 13px;
+      border: 1px solid $greyMiddle;
+      border-radius: 8px;
+      background: white;
+      font: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+
+      &:focus { outline: 0; border-color: $green; box-shadow: 0 0 0 3px rgba($green, 0.14); }
+    }
+
+    span { color: $textPrimary; white-space: nowrap; }
+  }
+}
+
+.airport-modal {
+  position: fixed;
+  z-index: 1100;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba($bgFooter, 0.58);
+  backdrop-filter: blur(3px);
+  animation: airport-backdrop-in 0.18s ease-out;
+}
+
+.airport-form {
+  width: min(860px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px;
+  border: 2px solid rgba($green, 0.25);
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 24px 70px rgba($bgFooter, 0.28);
+  animation: airport-dialog-in 0.2s ease-out;
+
+  &__title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    > div { display: flex; align-items: center; gap: 10px; }
+    > div > span { display: inline-flex; padding: 8px; border-radius: 50%; background: $limeLight; color: $green; }
+    > button { display: inline-flex; padding: 7px; border: 0; border-radius: 50%; background: $greyLight; cursor: pointer; transition: background 0.2s, transform 0.2s; }
+    > button:hover { background: $greyMiddle; transform: rotate(4deg); }
+  }
+
+  &__fields {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 14px;
+
+    label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
+    .wide { grid-column: 1 / -1; }
+    input { padding: 11px 12px; border: 1px solid $greyMiddle; border-radius: 8px; font: inherit; font-weight: 400; transition: border-color 0.2s, box-shadow 0.2s; }
+    input:focus { outline: 0; border-color: $green; box-shadow: 0 0 0 3px rgba($green, 0.14); }
+  }
+
+  &__switches {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+
+    label { display: flex; align-items: center; gap: 11px; padding: 12px; border: 1px solid #e2e8e5; border-radius: 10px; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+    label:hover { border-color: rgba($green, 0.55); background: rgba($limeLight, 0.4); }
+    input { width: 18px; height: 18px; accent-color: $green; }
+    span { display: flex; flex-direction: column; gap: 2px; }
+    small { color: $textPrimary; }
+  }
+
+  &__preview {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    color: $textPrimary;
+    font-size: 13px;
+
+    img { width: 100%; height: 210px; object-fit: cover; border-radius: 11px; }
+  }
+
+  &__actions { display: flex; gap: 8px; }
+}
+
+.airport-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  article {
+    display: grid;
+    grid-template-columns: 190px minmax(200px, 1fr) 110px 44px;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 14px;
+    border: 1px solid #e2e8e5;
+    border-radius: 12px;
+    background: white;
+    transition: opacity 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+
+    &:hover { border-color: rgba($green, 0.5); box-shadow: 0 7px 18px rgba($bgFooter, 0.08); transform: translateY(-1px); }
+    &.is-inactive { opacity: 0.55; }
+  }
+
+  &__empty { padding: 30px; text-align: center; color: $textPrimary; }
+}
+
+.airport-row {
+  &__visual {
+    position: relative;
+    height: 82px;
+
+    .banner { width: 100%; height: 82px; object-fit: cover; border-radius: 9px; }
+    .flag { position: absolute; left: 8px; top: 8px; width: 32px; height: 32px; border: 2px solid white; border-radius: 50%; object-fit: cover; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); }
+  }
+
+  &__details {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+
+    strong { font-size: 18px; }
+    > div { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .group, .order { padding: 5px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .group { background: rgba($lightBlue, 0.18); color: $grey; }
+    .group.croatia { background: rgba($limeGreen, 0.42); }
+    .order { background: $greyLight; color: $textPrimary; }
+  }
+
+  &__visibility { display: flex; align-items: center; gap: 7px; cursor: pointer; white-space: nowrap; input { width: 17px; height: 17px; accent-color: $green; } }
+  &__edit { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 0; border-radius: 50%; background: $greyLight; color: $textPrimary; cursor: pointer; transition: background 0.2s, color 0.2s, transform 0.2s; }
+  &__edit:hover { background: $green; color: white; transform: scale(1.06); }
+}
+
+@keyframes airport-backdrop-in { from { opacity: 0; } }
+@keyframes airport-dialog-in { from { opacity: 0; transform: translateY(12px) scale(0.985); } }
+
+@media screen and (max-width: 900px) {
+  .airport-list article { grid-template-columns: 150px minmax(170px, 1fr) 44px; }
+  .airport-row__visibility { grid-column: 2; }
+  .airport-row__edit { grid-column: 3; grid-row: 1 / span 2; }
+}
+
+@media screen and (max-width: 620px) {
+  .airport-admin__header { flex-direction: column; }
+  .airport-modal { padding: 12px; }
+  .airport-form { max-height: calc(100vh - 24px); padding: 16px; }
+  .airport-form__fields, .airport-form__switches { grid-template-columns: 1fr; }
+  .airport-form__fields .wide { grid-column: auto; }
+  .airport-form__actions { flex-direction: column; }
+  .airport-list article { grid-template-columns: 110px 1fr 38px; gap: 10px; padding: 10px; }
+  .airport-row__visual, .airport-row__visual .banner { height: 72px; }
+  .airport-row__details strong { font-size: 16px; }
+  .airport-row__visibility { grid-column: 2 / span 2; }
+  .airport-row__edit { grid-column: 3; grid-row: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .airport-modal, .airport-form { animation: none; }
+  .airport-list article, .airport-row__edit { transition: none; }
+}

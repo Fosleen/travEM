@@ -65,6 +65,7 @@ const SidebarMenu = () => {
           <SidebarMenuItem text={"Sadržaj"} />
           <SidebarMenuItem text={"Newsletter"} />
           <SidebarMenuItem text={"Komentari"} />
+          <SidebarMenuItem text={"BookMe"} />
         </div>
       </div>
       <div className="sidebar-menu-items">

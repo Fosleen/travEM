@@ -4,11 +4,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import HorizontalPostItemBig from "@/components/user/atoms/HorizontalPostItemBig/HorizontalPostItemBig";
 import "./TipsAndTricks.scss";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import { convertFromSlug } from "@/utils/global";
 import { Article, ArticleType, Nullable } from "@/common/types";
 import Pagination from "@/components/atoms/Pagination";
 import { parseBooleanValue } from "@/utils/parseBooleanValue";
+import { getArticleUrl } from "@/utils/articleUrl";
 
 interface TipsAndTricksProps {
   initialArticleTypes: Array<ArticleType>;
@@ -20,9 +21,6 @@ interface TipsAndTricksProps {
   initialPage: number;
   tip: string;
 }
-
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:25060/api/v1";
 
 const TIPS_SCROLL_STORAGE_KEY = "tips-and-tricks-scroll-y";
 
@@ -227,7 +225,7 @@ const formatArticleDate = (dateValue: string) => {
 };
 
 const getArticleHref = (article: any) => {
-  return `/clanak/${article?.id}`;
+  return getArticleUrl(article);
 };
 
 const getReadableTipTitle = (selectedArticleType: ArticleType) => {
@@ -311,30 +309,6 @@ const getFeaturedArticle = (articles: Array<Article>) => {
   return getNewestArticle(articles);
 };
 
-const normalizeFetchedArticle = (data: any) => {
-  return data?.data || data?.article || data;
-};
-
-const fetchFullArticleById = async (articleId: number | string) => {
-  try {
-    const response = await fetch(`${API_URL}/articles/${articleId}?noCache=true`, {
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      console.warn("Failed to fetch full featured article:", response.status);
-      return null;
-    }
-
-    const data = await response.json();
-
-    return normalizeFetchedArticle(data);
-  } catch (error) {
-    console.warn("Failed to fetch full featured article:", error);
-    return null;
-  }
-};
-
 const TipsAndTricks = ({
   initialArticleTypes,
   initialSelectedType,
@@ -348,8 +322,6 @@ const TipsAndTricks = ({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-
-  const [fullFeaturedArticle, setFullFeaturedArticle] = useState<any>(null);
 
   const selectedArticleType = initialSelectedType;
   const articles = initialArticles || [];
@@ -365,10 +337,7 @@ const TipsAndTricks = ({
   const featuredArticlePreview =
     initialFeaturedArticle || getFeaturedArticle(articles);
 
-  const featuredArticle =
-    fullFeaturedArticle && getArticleSections(fullFeaturedArticle).length > 0
-      ? fullFeaturedArticle
-      : featuredArticlePreview;
+  const featuredArticle = featuredArticlePreview;
 
   const featuredDateInfo = getArticleDateInfo(featuredArticle);
   const featuredOverviewItems = getFeaturedOverviewItems(featuredArticle);
@@ -388,34 +357,6 @@ const TipsAndTricks = ({
 
   const introText =
     currentTipVisual.intro || selectedArticleType?.description || "";
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadFullFeaturedArticle = async () => {
-      setFullFeaturedArticle(null);
-
-      if (!featuredArticlePreview?.id) {
-        return;
-      }
-
-      const fullArticle = await fetchFullArticleById(
-        (featuredArticlePreview as any).id
-      );
-
-      if (!isMounted) return;
-
-      if (fullArticle) {
-        setFullFeaturedArticle(fullArticle);
-      }
-    };
-
-    loadFullFeaturedArticle();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [tip, featuredArticlePreview?.id]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -558,6 +499,10 @@ const TipsAndTricks = ({
                       <span>{formatArticleDate(featuredDateInfo.value)}</span>
                     </div>
                   )}
+
+                  <span className="tips-and-tricks-featured-link">
+                    Pročitaj vodič <span aria-hidden="true">→</span>
+                  </span>
                 </div>
               </Link>
 
@@ -610,48 +555,15 @@ const TipsAndTricks = ({
                 <h2>Još savjeta iz rubrike {displayedSelectedTitle}</h2>
               </div>
 
-              <div
-                className={`tips-and-tricks-articles-grid count-${otherArticles.length}`}
-              >
-                {otherArticles.map((article: any, index) => {
-                  const articleDateInfo = getArticleDateInfo(article);
-
-                  return (
-                    <Link
-                      href={getArticleHref(article)}
-                      className="tips-and-tricks-article-card"
-                      key={article.id || index}
-                    >
-                      <div className="tips-and-tricks-article-image-wrapper">
-                        {getArticleImage(article) ? (
-                          <img
-                            src={getArticleImage(article)}
-                            alt={getArticleTitle(article)}
-                          />
-                        ) : (
-                          <div className="tips-and-tricks-image-placeholder" />
-                        )}
-                      </div>
-
-                      <div className="tips-and-tricks-article-content">
-                        <h3>{getArticleTitle(article)}</h3>
-
-                        {getArticleDescription(article) && (
-                          <p>{getArticleDescription(article)}</p>
-                        )}
-
-                        <div className="tips-and-tricks-article-meta">
-                          {articleDateInfo.value && (
-                            <span>
-                              {formatArticleDate(articleDateInfo.value)}
-                            </span>
-                          )}
-                          <span>Pročitaj više →</span>
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
+              <div className="tips-and-tricks-articles-grid">
+                {otherArticles.map((article: any, index) => (
+                  <div
+                    className="tips-and-tricks-article-item"
+                    key={article.id || index}
+                  >
+                    <HorizontalPostItemBig data={article} />
+                  </div>
+                ))}
               </div>
             </section>
           )}

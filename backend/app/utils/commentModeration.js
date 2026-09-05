@@ -58,6 +58,32 @@ const spamPatterns = [
 
 const hasRepeatedNoise = (text) => /(.)\1{8,}/.test(text);
 
+const getVowelRatio = (value) => {
+  const letters = normalizeText(value).replace(/[^a-z]/g, "");
+  if (!letters.length) return 0;
+  return (letters.match(/[aeiou]/g) || []).length / letters.length;
+};
+
+const looksGenerated = (value, minimumLength = 14) => {
+  const compact = normalizeText(value).replace(/[^a-z]/g, "");
+  if (compact.length < minimumLength) return false;
+
+  const vowelRatio = getVowelRatio(compact);
+  return vowelRatio < 0.18 || vowelRatio > 0.68;
+};
+
+const hasSuspiciousEmail = (email = "") => {
+  const [localPart = "", domain = ""] = email.toLowerCase().split("@");
+  const normalizedDomain = normalizeText(domain).replace(/\s/g, "");
+  const abusiveDomain = /(jeb|fuck|spam|trash|fake)/i.test(normalizedDomain);
+  const randomLocalPart =
+    localPart.length >= 12 &&
+    /\d/.test(localPart) &&
+    looksGenerated(localPart, 10);
+
+  return abusiveDomain || randomLocalPart;
+};
+
 export const isReservedUsername = (username) => {
   const normalizedUsername = normalizeText(username);
   const compactUsername = compactText(username);
@@ -70,7 +96,7 @@ export const isReservedUsername = (username) => {
   });
 };
 
-export const moderateComment = ({ username, body }) => {
+export const moderateComment = ({ username, email, body }) => {
   const normalizedBody = normalizeText(body);
   const rejectPatterns = getConfiguredPatterns("COMMENT_REJECT_PATTERNS");
   const pendingPatterns = getConfiguredPatterns("COMMENT_PENDING_PATTERNS");
@@ -132,6 +158,20 @@ export const moderateComment = ({ username, body }) => {
     return {
       status: "pending",
       reason: "Ponavljanje znakova",
+    };
+  }
+
+  if (hasSuspiciousEmail(email)) {
+    return {
+      status: "pending",
+      reason: "Sumnjiva email adresa",
+    };
+  }
+
+  if (looksGenerated(body)) {
+    return {
+      status: "pending",
+      reason: "Mogući nasumično generiran sadržaj",
     };
   }
 

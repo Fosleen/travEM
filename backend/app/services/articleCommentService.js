@@ -196,6 +196,7 @@ class ArticleCommentService {
     return await db.models.ArticleComment.findAll({
       where: {
         deleted_at: null,
+        reviewed_at: null,
         is_admin_reply: false,
         ...(answeredIds.length > 0 && { id: { [Op.notIn]: answeredIds } }),
       },
@@ -329,9 +330,41 @@ class ArticleCommentService {
       return { error: "Komentar nije pronađen", statusCode: 404 };
     }
 
-    await this.softDeleteCommentTree(commentId);
+    await this.deleteCommentTree(commentId);
 
     return { success: true };
+  }
+
+  async dismissComment(commentId, userId) {
+    if (!(await this.isAdminUser(userId))) {
+      return { error: "Potreban je administratorski pristup", statusCode: 403 };
+    }
+
+    const comment = await db.models.ArticleComment.findOne({
+      where: { id: commentId, deleted_at: null },
+    });
+
+    if (!comment) {
+      return { error: "Komentar nije pronađen", statusCode: 404 };
+    }
+
+    await comment.update({ reviewed_at: new Date(), updated_at: new Date() });
+    return { success: true };
+  }
+
+  async deleteCommentTree(commentId) {
+    const childComments = await db.models.ArticleComment.findAll({
+      where: { parentCommentId: commentId },
+    });
+
+    for (const childComment of childComments) {
+      await this.deleteCommentTree(childComment.id);
+    }
+
+    await db.models.ArticleCommentLike.destroy({
+      where: { articleCommentId: commentId },
+    });
+    await db.models.ArticleComment.destroy({ where: { id: commentId } });
   }
 
   async softDeleteCommentTree(commentId) {
@@ -379,6 +412,11 @@ class ArticleCommentService {
 
     if (!comment) {
       return { error: "Komentar nije pronađen", statusCode: 404 };
+    }
+
+    if (status === COMMENT_STATUS.REJECTED) {
+      await this.deleteCommentTree(commentId);
+      return { success: true, deleted: true };
     }
 
     await comment.update({

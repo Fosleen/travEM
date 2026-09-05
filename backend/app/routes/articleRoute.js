@@ -2,6 +2,7 @@ import { Router } from "express";
 import controller from "../controllers/articleController.js";
 import commentController from "../controllers/articleCommentController.js";
 import { verifyToken } from "../middleware/jwt_verify.js";
+import { commentRateLimit } from "../middleware/commentRateLimit.js";
 
 const router = new Router();
 
@@ -56,9 +57,10 @@ const router = new Router();
 router.get("/", controller.getArticles);
 
 router.get("/:articleId/comments", commentController.getArticleComments);
-router.post("/:articleId/comments", commentController.addComment);
+router.post("/:articleId/comments", commentRateLimit, commentController.addComment);
 router.post(
   "/:articleId/comments/:commentId/replies",
+  commentRateLimit,
   commentController.addReply
 );
 router.post(
@@ -275,6 +277,9 @@ router.get("/place/:id", controller.getArticlesByPlaceId);
  */
 router.get("/search/:name", controller.getArticleBySearchTerm);
 
+// Public article lookup by its immutable URL slug.
+router.get("/slug/:slug", controller.getArticleBySlug);
+
 // GET /api/v1/articles/1
 /**
  * @openapi
@@ -457,6 +462,12 @@ router.put(
   controller.updateOrCreateTopCountryArticle
 );
 
+router.put(
+  "/place/top",
+  verifyToken,
+  controller.updateOrCreateTopPlaceArticle
+);
+
 // PUT /api/v1/articles/homepage/1
 router.put(
   "/homepage/:specialTypeId",
@@ -531,6 +542,12 @@ router.delete(
   "/country/top/:id",
   verifyToken,
   controller.deleteTopCountryArticle
+);
+
+router.delete(
+  "/place/top/:id",
+  verifyToken,
+  controller.deleteTopPlaceArticle
 );
 
 export default router;

@@ -1,7 +1,7 @@
 @use "@/utils/theme.scss" as *;
 
 .favorite-posts-container {
-  margin-top: 80px;
+  margin-top: 24px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -35,5 +35,11 @@
 
     /* još malo "luksuza" na widescreenu */
     gap: 48px;
+  }
+}
+
+@media screen and ($desktop2k) {
+  .favorite-posts-container {
+    margin-top: min(0px, calc((1080px - 100vh) / 3));
   }
 }

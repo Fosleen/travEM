@@ -22,7 +22,7 @@ class AffiliateService {
       name: normalizeText(payload.name),
       label: normalizeText(payload.label),
       default_url: assertHttpUrl(payload.default_url),
-      icon_url: normalizeText(payload.icon_url),
+      icon_url: assertHttpUrl(payload.icon_url),
       sort_order: Number(payload.sort_order) || 0,
     });
   }
@@ -35,7 +35,7 @@ class AffiliateService {
     if (payload.name !== undefined) updates.name = normalizeText(payload.name);
     if (payload.label !== undefined) updates.label = normalizeText(payload.label);
     if (payload.icon_url !== undefined) {
-      updates.icon_url = normalizeText(payload.icon_url);
+      updates.icon_url = assertHttpUrl(payload.icon_url);
     }
     if (payload.sort_order !== undefined) {
       updates.sort_order = Number(payload.sort_order) || 0;
@@ -62,7 +62,7 @@ class AffiliateService {
         articleId: Number(articleId),
         affiliatePartnerId: Number(link.affiliate_partner_id),
         url: link.url ? assertHttpUrl(link.url) : null,
-        icon_url: normalizeText(link.icon_url) || null,
+        icon_url: link.icon_url ? assertHttpUrl(link.icon_url) : null,
         is_enabled: link.is_enabled !== false,
         sort_order: Number.isFinite(Number(link.sort_order))
           ? Number(link.sort_order)

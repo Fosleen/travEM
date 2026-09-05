@@ -8,20 +8,29 @@ const NewsletterImage = () => {
     useState<Nullable<FooterData>>(null);
 
   useEffect(() => {
-    fetchData();
+    let isCancelled = false;
+
+    const fetchData = async () => {
+      try {
+        const content = await getFooter();
+        if (!isCancelled) {
+          setFooterContent(content);
+        }
+      } catch (error) {
+        console.warn(
+          "Error occurred while fetching newsletter image data:",
+          error
+        );
+      }
+    };
+
+    void fetchData();
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const content = await getFooter();
-      setFooterContent(content);
-    } catch (error) {
-      console.error(
-        "Error occured while fetching newsletter image data:",
-        error
-      );
-    }
-  };
   return (
     <div className="newsletter-image-container">
       {footerContent && (

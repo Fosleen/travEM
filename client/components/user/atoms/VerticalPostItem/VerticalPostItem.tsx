@@ -1,12 +1,13 @@
 import "./VerticalPostItem.scss";
 import Link from "next/link";
+import { getArticleUrl } from "@/utils/articleUrl";
 import { FC } from "react";
 import { Article } from "../../../../common/types";
 
 const VerticalPostItem: FC<{ article: Article }> = ({ article }) => {
   return (
     <Link
-      href={`/clanak/${article.id}`}
+      href={getArticleUrl(article)}
       className="vertical-post-item-container"
       aria-label={article.title}
     >

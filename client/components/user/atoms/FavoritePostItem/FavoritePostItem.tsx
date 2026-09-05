@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getArticleUrl } from "@/utils/articleUrl";
 import "./FavoritePostItem.scss";
 import { FC } from "react";
 import { Article } from "../../../../common/types";
@@ -8,7 +9,7 @@ const FavoritePostItem: FC<{ article: Article }> = ({ article }) => {
     <>
       {article && (
         <Link
-          href={`/clanak/${article.id}`}
+          href={getArticleUrl(article)}
           className="favorite-post-item-container"
         >
           <div className="favorite-post-item-content">

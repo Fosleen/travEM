@@ -64,8 +64,9 @@ export async function getPlacesByName(
   pageSize = 12,
   noCache: boolean = false
 ) {
+  const encodedName = encodeURIComponent(name);
   const response = await fetch(
-    `${apiUrl}/places/search/${name}?page=${page}&pageSize=${pageSize}&noCache=${noCache}`,
+    `${apiUrl}/places/search/${encodedName}?page=${page}&pageSize=${pageSize}&noCache=${noCache}`,
     {
       cache: "no-store",
     }

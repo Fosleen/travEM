@@ -12,8 +12,11 @@ import "primeicons/primeicons.css";
 import GoogleAnalytics from "@/components/atoms/GoogleAnalytics/GoogleAnalytics";
 import GoogleAdSense from "@/components/atoms/GoogleAdSense/GoogleAdSense";
 import UXTweak from "@/components/atoms/UXTweak/UXTweak";
+import type { Metadata } from "next";
+import { SITE_URL } from "@/utils/site";
 
-export const metadata = {
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   verification: {
     google: "PHVKpg8LweUjIPPjYVVs6RRymMs9DmxBN4q99VM_L2k",
   },

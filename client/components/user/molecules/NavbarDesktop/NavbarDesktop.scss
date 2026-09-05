@@ -33,6 +33,7 @@
   }
 
   .navbar-item {
+    position: relative;
     padding: 8px 16px;
     display: flex;
     align-items: center;
@@ -42,6 +43,12 @@
     font-weight: 700;
     color: $grey;
     cursor: pointer;
+
+    .navbar-item-overlay-link {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+    }
 
     svg {
       fill: $grey;

@@ -1,10 +1,24 @@
-import { clients } from "../../../../utils/clients";
+"use client";
+
 import { default as MarqueeElement } from "react-fast-marquee";
 import Link from "next/link";
 import "./Marquee.scss";
-import Image from "next/image";
+import { useEffect, useState } from "react";
+import { FooterPartnerData } from "@/common/types";
+import { getFooterPartners } from "@/utils/footerPartners";
 
 const Marquee = () => {
+  const [partners, setPartners] = useState<FooterPartnerData[]>([]);
+
+  useEffect(() => {
+    getFooterPartners()
+      .then(setPartners)
+      // Partners are optional page chrome; an API outage should simply hide it.
+      .catch(() => setPartners([]));
+  }, []);
+
+  if (partners.length === 0) return null;
+
   return (
     <div className="sponsors-parent-wrapper">
       <MarqueeElement
@@ -13,21 +27,16 @@ const Marquee = () => {
         pauseOnClick={false}
         play={true}
         speed={20}
+        autoFill={true}
       >
-        {clients.map((client, index) => (
+        {partners.map((partner) => (
           <Link
-            href={client.url.trim()}
-            key={index}
+            href={partner.target_url}
+            key={partner.id}
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Image
-              src={client.img}
-              alt={`${client.name || "sponsor"} logo`}
-              width={120}
-              height={60}
-              style={{ width: "auto", height: "auto" }}
-            />
+            <img src={partner.image_url} alt={`${partner.name} logo`} />
           </Link>
         ))}
       </MarqueeElement>

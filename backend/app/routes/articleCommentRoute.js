@@ -8,6 +8,7 @@ router.get("/unsubscribe", controller.unsubscribe);
 router.get("/admin", verifyToken, controller.getAdminComments);
 router.get("/pending", verifyToken, controller.getPendingComments);
 router.patch("/:commentId/status", verifyToken, controller.setCommentStatus);
+router.patch("/:commentId/dismiss", verifyToken, controller.dismissComment);
 router.delete("/:commentId", verifyToken, controller.deleteComment);
 router.post("/:commentId/like", controller.likeComment);
 router.delete("/:commentId/like", controller.unlikeComment);

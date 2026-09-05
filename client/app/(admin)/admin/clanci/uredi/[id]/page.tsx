@@ -28,10 +28,12 @@ import Swal from "sweetalert2";
 import { notifyFailure, notifySuccess } from "@/components/atoms/Toast/Toast";
 import {
   createTopCountryArticle,
+  createTopPlaceArticle,
   deleteArticleById,
   getArticleById,
   getFavoriteArticleByCountry,
   removeTopCountryArticle,
+  removeTopPlaceArticle,
   updateArticle,
 } from "@/utils/article";
 import { addSection, deleteSection, updateSection } from "@/utils/sections";
@@ -39,6 +41,9 @@ import { addSectionImage, deleteSectionImage } from "@/utils/sectionImages";
 import { addGalleryImage, deleteGalleryImage } from "@/utils/galleryImages";
 import { addVideo, updateVideo, deleteVideo } from "@/utils/videos";
 import AdvancedEditor from "@/components/atoms/AdvancedEditor";
+import UnsavedChangesGuard, {
+  confirmDiscardChanges,
+} from "@/components/admin/atoms/UnsavedChangesGuard";
 import {
   getSubscribersWithoutPagination,
   sendNewsletterToSubscribers,
@@ -126,8 +131,12 @@ const EditArticle = () => {
   const [isMainCountryPostChecked, setIsMainCountryPostChecked] =
     useState(false);
   const [isMainCountryPost, setIsMainCountryPost] = useState(false);
+  const [isMainPlacePostChecked, setIsMainPlacePostChecked] = useState(false);
+  const [isMainPlacePost, setIsMainPlacePost] = useState(false);
   const [isFarDestinationChecked, setIsFarDestinationChecked] = useState(false);
   const [isTipsFeaturedChecked, setIsTipsFeaturedChecked] = useState(false);
+  const [isDomagoPartnerChecked, setIsDomagoPartnerChecked] = useState(false);
+  const [shouldUpdateArticleDate, setShouldUpdateArticleDate] = useState(false);
   const [isScheduleChecked, setIsScheduleChecked] = useState(false);
   const [scheduleDateTime, setScheduleDateTime] = useState("");
   const [scheduleTimezone, setScheduleTimezone] = useState(getBrowserTimeZone());
@@ -219,13 +228,14 @@ const EditArticle = () => {
         metatagsString,
         mainArticleImage,
         article.date_written,
-        todaysDate,
+        shouldUpdateArticleDate ? todaysDate : article.date_updated || null,
         values.article_type,
         values.article_country,
         values.article_place,
         values.article_airport_city_id,
         isFarDestinationChecked,
         isTipsArticleType(values.article_type) && isTipsFeaturedChecked,
+        isDomagoPartnerChecked,
         shouldSendSchedulePayload ? publishAt : undefined,
         shouldSendSchedulePayload ? scheduleTimezone : undefined,
         shouldSendSchedulePayload
@@ -430,6 +440,12 @@ const flatRemovedImages = removedSectionImages;
 
       console.log("✅ Top country article handled");
 
+      if (isMainPlacePostChecked && values.article_place) {
+        await createTopPlaceArticle(id);
+      } else if (isMainPlacePost) {
+        await removeTopPlaceArticle(id);
+      }
+
       console.log("Handling video...");
       const hasVideo =
         values.article_video && values.article_video.trim() !== "";
@@ -497,8 +513,8 @@ const flatRemovedImages = removedSectionImages;
     }
   };
 
-  const handleCancel = () => {
-    navigateToArticles(router);
+  const handleCancel = async () => {
+    if (await confirmDiscardChanges()) navigateToArticles(router);
   };
 
   const handleDeleteSection = (arrayHelpers, sectionIndex) => {
@@ -597,9 +613,17 @@ const flatRemovedImages = removedSectionImages;
         setMainArticleImage(articleData.main_image_url);
         setIsMainCountryPostChecked(isSetAsMainCountryPost?.id == id);
         setIsMainCountryPost(isSetAsMainCountryPost?.id == id);
+        const isSetAsMainPlacePost =
+          Number(
+            articleData.place?.featured_article_id ??
+              articleData.place?.featuredArticleId
+          ) === Number(id);
+        setIsMainPlacePostChecked(isSetAsMainPlacePost);
+        setIsMainPlacePost(isSetAsMainPlacePost);
         setSelectedCountryId(articleData.countryId || "");
         setIsFarDestinationChecked(Boolean(articleData.isFarDestination));
         setIsTipsFeaturedChecked(parseBooleanValue(articleData.isTipsFeatured));
+        setIsDomagoPartnerChecked(parseBooleanValue(articleData.domagoPartnerEnabled));
         const schedule = articleData.article_schedule;
         const scheduleStatus = getScheduleStatus(articleData);
         const isScheduledArticle = scheduleStatus.className === "scheduled";
@@ -722,8 +746,9 @@ const flatRemovedImages = removedSectionImages;
               onSubmit={handleSave}
               enableReinitialize={true}
             >
-              {({ values, setFieldValue }) => (
+              {({ values, setFieldValue, isSubmitting }) => (
                 <Form className="edit-article-form">
+                  <UnsavedChangesGuard active={!isSubmitting} />
                   <div className="edit-article-inputs">
                     <div className="edit-article-input">
                       <Field
@@ -1622,6 +1647,18 @@ const flatRemovedImages = removedSectionImages;
                         </div>
                       )}
 
+                    {values.article_place &&
+                      values.article_type == ARTICLE_TYPE_DESTINATION_ID && (
+                        <div className="add-article-toggle-item">
+                          <ToggleSwitch
+                            name={"main-place-post"}
+                            description={"Postavi kao glavni članak mjesta"}
+                            value={isMainPlacePostChecked}
+                            setter={setIsMainPlacePostChecked}
+                          />
+                        </div>
+                      )}
+
                     {isTipsArticleType(values.article_type) && (
                       <div className="edit-article-toggle-item edit-article-toggle-item-highlight">
                         <ToggleSwitch
@@ -1642,6 +1679,24 @@ const flatRemovedImages = removedSectionImages;
                         </p>
                       </div>
                     )}
+
+                    <div className="edit-article-toggle-item">
+                      <ToggleSwitch
+                        name={"domago-partner"}
+                        description={"Partner banner"}
+                        value={isDomagoPartnerChecked}
+                        setter={setIsDomagoPartnerChecked}
+                      />
+                    </div>
+
+                    <div className="edit-article-toggle-item">
+                      <ToggleSwitch
+                        name={"update-article-date"}
+                        description={"Označi članak kao ažuriran danas"}
+                        value={shouldUpdateArticleDate}
+                        setter={setShouldUpdateArticleDate}
+                      />
+                    </div>
                   </div>
 
                   {getScheduleStatus(article).className === "scheduled" && (

@@ -1,7 +1,21 @@
 import db from "../models/index.js";
 import { Op, Sequelize } from "sequelize";
+import { createUniqueArticleSlug } from "../utils/articleSlug.js";
 
 let affiliateTablesAvailable = true;
+const DOMAGO_SPECIAL_TYPE = "domago_partner";
+
+const setDomagoPartnerState = async (articleId, enabled, transaction) => {
+  let specialType = await db.models.ArticleSpecialType.findOne({ where: { name: DOMAGO_SPECIAL_TYPE }, transaction });
+  if (!specialType && !parseBooleanValue(enabled)) return;
+  if (!specialType) specialType = await db.models.ArticleSpecialType.create({ name: DOMAGO_SPECIAL_TYPE }, { transaction });
+  const where = { articleId, articleSpecialTypeId: specialType.id };
+  if (parseBooleanValue(enabled)) {
+    await db.models.Article_ArticleSpecialType.findOrCreate({ where, defaults: where, transaction });
+  } else {
+    await db.models.Article_ArticleSpecialType.destroy({ where, transaction });
+  }
+};
 
 const parseBooleanValue = (value) => {
   if (typeof value === "boolean") return value;
@@ -237,7 +251,7 @@ class ArticleService {
     }
   }
 
-  async getArticleById(id, includeScheduled = false) {
+  async getArticle(where, includeScheduled = false) {
     const include = [
       {
         model: db.models.User,
@@ -292,11 +306,7 @@ class ArticleService {
 
     const findArticle = (queryInclude) =>
       db.models.Article.findOne({
-        where: includeScheduled
-          ? { id }
-          : getPublicArticleWhere({
-              id,
-            }),
+        where: includeScheduled ? where : getPublicArticleWhere(where),
         include: queryInclude,
       });
 
@@ -311,6 +321,7 @@ class ArticleService {
       if (article && !affiliateTablesAvailable) {
         article.setDataValue("affiliate_links", []);
       }
+      if (article) article.setDataValue("domagoPartnerEnabled", article.article_special_types?.some((type) => type.name === DOMAGO_SPECIAL_TYPE) || false);
       return article;
     } catch (error) {
       const missingAffiliateTable =
@@ -323,13 +334,24 @@ class ArticleService {
           "Affiliate tables are not installed; returning the article without affiliate links."
         );
         const article = await findArticle(includeWithoutAffiliateLinks);
-        if (article) article.setDataValue("affiliate_links", []);
+        if (article) {
+          article.setDataValue("affiliate_links", []);
+          article.setDataValue("domagoPartnerEnabled", article.article_special_types?.some((type) => type.name === DOMAGO_SPECIAL_TYPE) || false);
+        }
         return article;
       }
 
       console.log(error);
-      return `not found article with PK ${id}`;
+      return null;
     }
+  }
+
+  async getArticleById(id, includeScheduled = false) {
+    return this.getArticle({ id }, includeScheduled);
+  }
+
+  async getArticleBySlug(slug, includeScheduled = false) {
+    return this.getArticle({ slug }, includeScheduled);
   }
 
   async getRecommendedArticles(id, type) {
@@ -497,6 +519,7 @@ class ArticleService {
     airport_city_id,
     is_far_destination,
     is_tips_featured,
+    domago_partner_enabled,
     publish_at,
     publish_timezone,
     notify_subscribers_on_publish
@@ -505,6 +528,9 @@ class ArticleService {
 
     try {
       const normalizedArticleTypeId = Number(article_type_id);
+      const slug = await createUniqueArticleSlug(db.models.Article, title, {
+        transaction,
+      });
       const shouldBeTipsFeatured =
         (await isTipsArticleType(normalizedArticleTypeId, transaction)) &&
         parseBooleanValue(is_tips_featured);
@@ -520,6 +546,7 @@ class ArticleService {
       const article = await db.models.Article.create(
         {
           title: title,
+          slug,
           subtitle: subtitle,
           description: description,
           main_image_url: main_image_url,
@@ -557,6 +584,7 @@ class ArticleService {
         );
       }
 
+      await setDomagoPartnerState(article.id, domago_partner_enabled, transaction);
       await transaction.commit();
 
       return article;
@@ -762,6 +790,40 @@ class ArticleService {
     }
   }
 
+  async updateOrCreateTopPlaceArticle(article_id) {
+    const transaction = await db.sequelize.transaction();
+
+    try {
+      const article = await db.models.Article.findByPk(article_id, { transaction });
+
+      if (!article) {
+        await transaction.rollback();
+        return "Article not found";
+      }
+      if (!article.placeId) {
+        await transaction.rollback();
+        return "Article place not found";
+      }
+
+      await db.models.Place.update(
+        { featured_article_id: null },
+        { where: { featured_article_id: article.id }, transaction }
+      );
+
+      await db.models.Place.update(
+        { featured_article_id: article.id },
+        { where: { id: article.placeId }, transaction }
+      );
+
+      await transaction.commit();
+      return article;
+    } catch (error) {
+      await transaction.rollback();
+      console.log(error);
+      return null;
+    }
+  }
+
   async updateOrCreateTopHomepageArticles(article_ids, special_type_id) {
     console.log(Array.isArray(article_ids));
 
@@ -838,6 +900,7 @@ class ArticleService {
     airport_city_id,
     is_far_destination,
     is_tips_featured,
+    domago_partner_enabled,
     publish_at,
     publish_timezone,
     notify_subscribers_on_publish
@@ -927,6 +990,7 @@ class ArticleService {
         transaction,
       });
 
+      await setDomagoPartnerState(id, domago_partner_enabled, transaction);
       await transaction.commit();
 
       console.log("updatedArticle", updatedArticle);
@@ -941,11 +1005,22 @@ class ArticleService {
 
   async deleteArticle(id) {
     try {
+      const article = await db.models.Article.findByPk(id);
+
+      if (!article) {
+        return null;
+      }
+
+      await db.models.Place.update(
+        { featured_article_id: null },
+        { where: { featured_article_id: id } }
+      );
+
       await db.models.Article.destroy({
         where: { id: id },
       });
 
-      return [];
+      return article;
     } catch (error) {
       console.log(error);
       return null;
@@ -973,6 +1048,20 @@ class ArticleService {
     } catch (error) {
       console.log(error);
       return null;
+    }
+  }
+
+  async deleteTopPlaceArticle(id) {
+    try {
+      const [updatedCount] = await db.models.Place.update(
+        { featured_article_id: null },
+        { where: { featured_article_id: id } }
+      );
+
+      return updatedCount > 0;
+    } catch (error) {
+      console.log(error);
+      return false;
     }
   }
 }

@@ -50,6 +50,8 @@ const router = new Router();
  */
 router.get("/", controller.getCountries);
 
+router.patch("/hit", verifyToken, controller.updateHitCountries);
+
 // GET /api/v1/countries/5
 
 /**

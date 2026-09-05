@@ -4,9 +4,14 @@ import { useEffect, useState } from "react";
 import {
   addAdminCommentReply,
   AdminArticleComment,
+  deleteComment,
+  dismissComment,
   getAdminComments,
+  likeComment,
+  unlikeComment,
   updateCommentStatus,
 } from "@/utils/articleComments";
+import { ThumbsUp, Trash, X } from "@phosphor-icons/react";
 import "./CommentsReview.scss";
 
 const formatDateTime = (value: string) =>
@@ -18,12 +23,23 @@ const formatDateTime = (value: string) =>
     minute: "2-digit",
   }).format(new Date(value));
 
+const getAdminLikeVisitorId = () => {
+  const storageKey = "travem_admin_comment_visitor_id";
+  const storedId = localStorage.getItem(storageKey);
+  if (storedId) return storedId;
+
+  const visitorId = crypto.randomUUID();
+  localStorage.setItem(storageKey, visitorId);
+  return visitorId;
+};
+
 const CommentsReviewPage = () => {
   const [comments, setComments] = useState<AdminArticleComment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [actionCommentId, setActionCommentId] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [replyBodies, setReplyBodies] = useState<Record<number, string>>({});
+  const [likedCommentIds, setLikedCommentIds] = useState<number[]>([]);
 
   const loadPendingComments = async () => {
     setIsLoading(true);
@@ -41,6 +57,11 @@ const CommentsReviewPage = () => {
 
   useEffect(() => {
     loadPendingComments();
+    try {
+      setLikedCommentIds(JSON.parse(localStorage.getItem("travem_admin_liked_comments") || "[]"));
+    } catch {
+      setLikedCommentIds([]);
+    }
   }, []);
 
   const handleStatusChange = async (
@@ -52,11 +73,71 @@ const CommentsReviewPage = () => {
 
     try {
       await updateCommentStatus(commentId, status);
-      setComments((current) => current.map((comment) =>
-        comment.id === commentId ? { ...comment, status } : comment
-      ));
+      setComments((current) =>
+        status === "rejected"
+          ? current.filter(({ id }) => id !== commentId)
+          : current.map((comment) =>
+              comment.id === commentId ? { ...comment, status } : comment
+            )
+      );
     } catch (statusError: any) {
       setError(statusError.message || "Status komentara nije moguće promijeniti.");
+    } finally {
+      setActionCommentId(null);
+    }
+  };
+
+  const removeCard = (commentId: number) =>
+    setComments((current) => current.filter(({ id }) => id !== commentId));
+
+  const handleDismiss = async (commentId: number) => {
+    setActionCommentId(commentId);
+    setError("");
+    try {
+      await dismissComment(commentId);
+      removeCard(commentId);
+    } catch (dismissError: any) {
+      setError(dismissError.message || "Komentar nije moguće maknuti s nadzorne ploče.");
+    } finally {
+      setActionCommentId(null);
+    }
+  };
+
+  const handleDelete = async (commentId: number) => {
+    if (!window.confirm("Trajno obrisati ovaj komentar i sve njegove odgovore?")) return;
+
+    setActionCommentId(commentId);
+    setError("");
+    try {
+      await deleteComment(commentId);
+      removeCard(commentId);
+    } catch (deleteError: any) {
+      setError(deleteError.message || "Komentar nije moguće obrisati.");
+    } finally {
+      setActionCommentId(null);
+    }
+  };
+
+  const handleLike = async (commentId: number) => {
+    setActionCommentId(commentId);
+    setError("");
+    try {
+      const isLiked = likedCommentIds.includes(commentId);
+      const result = isLiked
+        ? await unlikeComment(commentId, getAdminLikeVisitorId())
+        : await likeComment(commentId, getAdminLikeVisitorId());
+      const nextLikedIds = isLiked
+        ? likedCommentIds.filter((id) => id !== commentId)
+        : [...likedCommentIds, commentId];
+      setLikedCommentIds(nextLikedIds);
+      localStorage.setItem("travem_admin_liked_comments", JSON.stringify(nextLikedIds));
+      setComments((current) => current.map((comment) =>
+        comment.id === commentId
+          ? { ...comment, likeCount: result.likeCount }
+          : comment
+      ));
+    } catch (likeError: any) {
+      setError(likeError.message || "Komentar nije moguće označiti sa sviđa mi se.");
     } finally {
       setActionCommentId(null);
     }
@@ -103,6 +184,18 @@ const CommentsReviewPage = () => {
         <div className="comments-review-list">
           {comments.map((comment) => (
             <article key={comment.id} className="comments-review-item">
+              {comment.status === "published" && (
+                <button
+                  type="button"
+                  className="comments-review-dismiss"
+                  onClick={() => handleDismiss(comment.id)}
+                  disabled={actionCommentId === comment.id}
+                  aria-label="Makni s nadzorne ploče"
+                  title="Pregledano — makni s nadzorne ploče"
+                >
+                  <X size={20} weight="bold" />
+                </button>
+              )}
               <div className="comments-review-meta">
                 <div>
                   <strong>{comment.username}</strong>
@@ -131,6 +224,15 @@ const CommentsReviewPage = () => {
               )}
 
               {comment.status === "published" && (
+                <>
+                <div className="comments-review-published-actions">
+                  <button type="button" className={likedCommentIds.includes(comment.id) ? "comments-review-liked" : ""} onClick={() => handleLike(comment.id)} disabled={actionCommentId === comment.id}>
+                    <ThumbsUp size={18} weight={likedCommentIds.includes(comment.id) ? "fill" : "regular"} /> Sviđa mi se ({comment.likeCount || 0})
+                  </button>
+                  <button type="button" className="comments-review-delete" onClick={() => handleDelete(comment.id)} disabled={actionCommentId === comment.id}>
+                    <Trash size={18} /> Obriši
+                  </button>
+                </div>
                 <div className="comments-review-reply">
                   <textarea
                     aria-label={`Odgovor za ${comment.username}`}
@@ -143,6 +245,13 @@ const CommentsReviewPage = () => {
                     {actionCommentId === comment.id ? "Slanje..." : "Odgovori"}
                   </button>
                 </div>
+                </>
+              )}
+
+              {comment.status !== "published" && (
+                <button type="button" className="comments-review-delete comments-review-standalone-delete" onClick={() => handleDelete(comment.id)} disabled={actionCommentId === comment.id}>
+                  <Trash size={18} /> Obriši
+                </button>
               )}
             </article>
           ))}

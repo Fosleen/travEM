@@ -4,6 +4,7 @@ import "./CountryPlaces.scss";
 import Image from "next/image";
 import Link from "next/link";
 import { getCountryGenitive } from "@/utils/countryGrammar";
+import { toUrlSlug } from "@/utils/url";
 
 const TAIL_SPLIT = {
   5: 2,
@@ -45,9 +46,7 @@ const CountryPlaces = ({ places = [], countryName }) => {
   const desktopRows = chunkPlacesForDesktop(places);
 
   const getPlaceHref = (placeName) =>
-    `/destinacija/${encodeURIComponent(
-      countryName.toLowerCase()
-    )}/${encodeURIComponent(placeName.toLowerCase())}`;
+    `/destinacija/${toUrlSlug(countryName)}/${toUrlSlug(placeName)}`;
 
   return (
     <section className="country-places-container">

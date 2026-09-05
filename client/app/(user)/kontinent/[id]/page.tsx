@@ -4,6 +4,7 @@ import { getCountriesByContinent } from "@/utils/countries";
 import Continent from "@/components/user/pages/continent/Continent";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { SITE_URL } from "@/utils/site";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -24,21 +25,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     continent.description ||
     `Otkrijte destinacije na kontinentu ${continent.name}. Pratite naša putovanja i savjete.`;
   const keywords = `${continent.name}, putovanje, destinacije, putujemstravem`;
+  const canonicalUrl = `${SITE_URL}/kontinent/${id}`;
 
   return {
     title,
     description,
     keywords,
+    alternates: { canonical: canonicalUrl },
     openGraph: {
       title,
       description,
       type: "website",
-      url: `https://putujemstravem.com/kontinent/${id}`,
+      url: canonicalUrl,
       images: [
         {
           url:
             continent.image_url ||
-            "https://putujemstravem.com/default-og-image.jpg",
+            `${SITE_URL}/default-og-image.jpg`,
           width: 1200,
           height: 630,
           alt: continent.name,
@@ -51,7 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       images: [
         continent.image_url ||
-          "https://putujemstravem.com/default-og-image.jpg",
+          `${SITE_URL}/default-og-image.jpg`,
       ],
     },
   };

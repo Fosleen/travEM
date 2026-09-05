@@ -1,21 +1,23 @@
 // app/kontakt/page.tsx
 import Contact from "@/components/user/pages/contact/Contact";
 import { Metadata } from "next";
+import { SITE_URL } from "@/utils/site";
 
 export const metadata: Metadata = {
   title: "Kontakt - putujEM s travEM",
   description:
     "Želite surađivati s nama? Kontaktirajte nas putem kontakt forme. Radujemo se Vašoj poruci i budućoj suradnji.",
   keywords: "kontakt, suradnja, putujemstravem, email, poruka",
+  alternates: { canonical: `${SITE_URL}/kontakt` },
   openGraph: {
     title: "Kontakt - putujEM s travEM",
     description:
       "Želite surađivati s nama? Kontaktirajte nas putem kontakt forme. Radujemo se Vašoj poruci i budućoj suradnji.",
     type: "website",
-    url: "https://putujemstravem.com/kontakt",
+    url: `${SITE_URL}/kontakt`,
     images: [
       {
-        url: "https://putujemstravem.com/default-og-image.jpg",
+        url: `${SITE_URL}/default-og-image.jpg`,
         width: 1200,
         height: 630,
         alt: "Kontakt - putujEM s travEM",
@@ -27,7 +29,7 @@ export const metadata: Metadata = {
     title: "Kontakt - putujEM s travEM",
     description:
       "Želite surađivati s nama? Kontaktirajte nas putem kontakt forme. Radujemo se Vašoj poruci i budućoj suradnji.",
-    images: ["https://putujemstravem.com/default-og-image.jpg"],
+    images: [`${SITE_URL}/default-og-image.jpg`],
   },
 };
 

@@ -75,8 +75,15 @@ export const persistAffiliatePartners = async (
     if (!link.partner.name.trim() || !link.partner.label.trim()) {
       throw new Error("Svaki affiliate partner mora imati naslov i tekst poveznice.");
     }
-    if (!link.url.trim() || !link.icon_url) {
+    if (!link.url.trim() || !link.icon_url?.trim()) {
       throw new Error("Svaki affiliate partner mora imati URL i ikonu.");
+    }
+
+    try {
+      const iconUrl = new URL(link.icon_url);
+      if (!["http:", "https:"].includes(iconUrl.protocol)) throw new Error();
+    } catch {
+      throw new Error("URL affiliate ikone mora biti valjana HTTP(S) poveznica.");
     }
 
     if (link.partner.id <= 0) {
@@ -84,7 +91,7 @@ export const persistAffiliatePartners = async (
         name: link.partner.name.trim(),
         label: link.partner.label.trim(),
         default_url: link.url.trim(),
-        icon_url: link.icon_url,
+        icon_url: link.icon_url.trim(),
         sort_order: link.sort_order,
       });
       persistedLinks.push({
@@ -100,7 +107,7 @@ export const persistAffiliatePartners = async (
     const updatedPartner = await updateAffiliatePartner(link.partner.id, {
       name: link.partner.name.trim(),
       label: link.partner.label.trim(),
-      icon_url: link.icon_url,
+      icon_url: link.icon_url.trim(),
       sort_order: link.partner.sort_order,
       ...(link.update_default_url ? { default_url: link.url.trim() } : {}),
     });

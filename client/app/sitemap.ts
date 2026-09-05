@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 import { apiUrl } from "@/utils/api";
-
-const baseUrl = "https://www.putujemstravem.com";
+import { toUrlSlug } from "@/utils/url";
+import { SITE_URL } from "@/utils/site";
 
 type ListResponse<T> = { data?: T[] } | T[];
 
@@ -51,25 +51,49 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticPages: MetadataRoute.Sitemap = [
     {
-      url: `${baseUrl}/`,
+      url: `${SITE_URL}/`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: `${baseUrl}/kontakt`,
+      url: `${SITE_URL}/kontakt`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
-      url: `${baseUrl}/pravila-o-privatnosti`,
+      url: `${SITE_URL}/medeni-mjesec`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${SITE_URL}/destinacije`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/savjeti`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/aviokarte`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: `${SITE_URL}/pravila-o-privatnosti`,
       lastModified: now,
       changeFrequency: "yearly",
       priority: 0.4,
     },
     {
-      url: `${baseUrl}/uvjeti-koristenja`,
+      url: `${SITE_URL}/uvjeti-koristenja`,
       lastModified: now,
       changeFrequency: "yearly",
       priority: 0.4,
@@ -77,11 +101,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   const articlePages: MetadataRoute.Sitemap = (articles || [])
-    .filter((article: any) => article?.id)
+    .filter((article: any) => article?.slug)
     .map((article: any) => ({
-      url: `${baseUrl}/clanak/${article.id}`,
+      url: `${SITE_URL}/clanak/${encodeURIComponent(article.slug)}`,
       lastModified: toDate(
-        article.updated_at ??
+        article.date_updated ??
+          article.dateUpdated ??
+          article.updated_at ??
           article.updatedAt ??
           article.date_written ??
           article.dateWritten,
@@ -94,7 +120,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const continentPages: MetadataRoute.Sitemap = (continents || [])
     .filter((continent: any) => continent?.id)
     .map((continent: any) => ({
-      url: `${baseUrl}/kontinent/${continent.id}`,
+      url: `${SITE_URL}/kontinent/${continent.id}`,
       lastModified: toDate(continent.updated_at ?? continent.updatedAt, now),
       changeFrequency: "monthly",
       priority: 0.5,
@@ -103,9 +129,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const countryPages: MetadataRoute.Sitemap = (countries || [])
     .filter((country: any) => country?.name)
     .map((country: any) => {
-      const slug = encodeURIComponent(String(country.name).toLowerCase());
+      const slug = toUrlSlug(String(country.name));
       return {
-        url: `${baseUrl}/destinacija/${slug}`,
+        url: `${SITE_URL}/destinacija/${slug}`,
         lastModified: toDate(country.updated_at ?? country.updatedAt, now),
         changeFrequency: "weekly",
         priority: 0.6,
@@ -115,13 +141,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const placePages: MetadataRoute.Sitemap = (places || [])
     .filter((place: any) => place?.name && place?.country?.name)
     .map((place: any) => {
-      const countrySlug = encodeURIComponent(
-        String(place.country.name).toLowerCase()
-      );
-      const placeSlug = encodeURIComponent(String(place.name).toLowerCase());
+      const countrySlug = toUrlSlug(String(place.country.name));
+      const placeSlug = toUrlSlug(String(place.name));
 
       return {
-        url: `${baseUrl}/destinacija/${countrySlug}/${placeSlug}`,
+        url: `${SITE_URL}/destinacija/${countrySlug}/${placeSlug}`,
         lastModified: toDate(place.updated_at ?? place.updatedAt, now),
         changeFrequency: "weekly",
         priority: 0.6,
@@ -131,7 +155,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const tipPages: MetadataRoute.Sitemap = (articleTypes || [])
     .filter((type: any) => type?.name)
     .map((type: any) => ({
-      url: `${baseUrl}/savjeti/${encodeURIComponent(String(type.name))}`,
+      url: `${SITE_URL}/savjeti/${encodeURIComponent(String(type.name))}`,
       lastModified: toDate(type.updated_at ?? type.updatedAt, now),
       changeFrequency: "monthly",
       priority: 0.5,
@@ -140,7 +164,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const airplanePages: MetadataRoute.Sitemap = (airportCities || [])
     .filter((city: any) => city?.name)
     .map((city: any) => ({
-      url: `${baseUrl}/aviokarte/${encodeURIComponent(
+      url: `${SITE_URL}/aviokarte/${encodeURIComponent(
         String(city.name).toLowerCase()
       )}`,
       lastModified: toDate(city.updated_at ?? city.updatedAt, now),

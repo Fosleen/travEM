@@ -9,9 +9,9 @@ import "./Article.scss";
 import ArticleReadMore from "@/components/user/atoms/ArticleReadMore";
 import CountryPlaces from "@/components/user/molecules/CountryPlaces";
 import React, { useMemo, useState } from "react";
+import { useEffect } from "react";
 import RecommendedPosts from "@/components/user/molecules/RecommendedPosts";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 
@@ -21,6 +21,9 @@ import ArticleSupportCallToAction from "@/components/user/molecules/ArticleSuppo
 import { parseBooleanValue } from "@/utils/parseBooleanValue";
 import { openLightbox } from "@/utils/lightbox";
 import ArticleComments from "@/components/user/molecules/ArticleComments";
+import { toUrlSlug } from "@/utils/url";
+import DomagoPartnerBanner from "@/components/user/molecules/DomagoPartnerBanner/DomagoPartnerBanner";
+import { getDomagoPartnerBanner } from "@/utils/domagoPartnerBanner";
 
 interface ArticleProps {
   initialArticle: any;
@@ -40,22 +43,90 @@ const getSupportInsertIndex = (sectionsLength: number) => {
   return Math.floor(sectionsLength * 0.65);
 };
 
+const findDomagoInsertIndex = (
+  targetIndex: number,
+  sectionsLength: number,
+  newsletterIndex: number,
+  usedIndexes: number[] = []
+) => {
+  const isSuitable = (index: number) =>
+    index >= 0 &&
+    index < sectionsLength &&
+    Math.abs(index - newsletterIndex) > 1 &&
+    usedIndexes.every((usedIndex) => Math.abs(index - usedIndex) >= 5);
+
+  for (let offset = 0; offset < sectionsLength; offset += 1) {
+    const afterTarget = targetIndex + offset;
+    if (isSuitable(afterTarget)) return afterTarget;
+
+    const beforeTarget = targetIndex - offset;
+    if (offset > 0 && isSuitable(beforeTarget)) return beforeTarget;
+  }
+
+  return Math.min(Math.max(targetIndex, 0), sectionsLength - 1);
+};
+
+const getDomagoInsertIndexes = (
+  sectionsLength: number,
+  newsletterIndex: number
+) => {
+  if (sectionsLength <= 0) return [];
+  if (sectionsLength <= 6) return [sectionsLength - 1];
+
+  if (sectionsLength <= 13) {
+    return [
+      findDomagoInsertIndex(
+        Math.floor(sectionsLength * 0.3),
+        sectionsLength,
+        newsletterIndex
+      ),
+    ];
+  }
+
+  const firstIndex = findDomagoInsertIndex(
+    Math.floor(sectionsLength * 0.35),
+    sectionsLength,
+    newsletterIndex
+  );
+  const secondIndex = findDomagoInsertIndex(
+    Math.floor(sectionsLength * 0.75),
+    sectionsLength,
+    newsletterIndex,
+    [firstIndex]
+  );
+
+  return [firstIndex, secondIndex];
+};
+
 const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
   const router = useRouter();
   const articleContent = initialArticle;
   const countryPlaces = initialCountryPlaces;
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [domagoConfig, setDomagoConfig] = useState(null);
+  const usesDomagoPartner = parseBooleanValue(articleContent?.domagoPartnerEnabled);
+
+  useEffect(() => {
+    if (usesDomagoPartner) getDomagoPartnerBanner().then(setDomagoConfig).catch(console.error);
+  }, [usesDomagoPartner]);
+
+  const renderSupportBanner = () =>
+    usesDomagoPartner
+      ? domagoConfig && <DomagoPartnerBanner config={domagoConfig} />
+      : <ArticleSupportCallToAction />;
 
   const sectionsLength = articleContent?.sections?.length || 0;
 
   const handleCountryClick = () => {
-    router.push(`/destinacija/${articleContent.country.name.toLowerCase()}`);
+    router.push(`/destinacija/${toUrlSlug(articleContent.country.name)}`);
   };
 
   const handlePlaceClick = () => {
     router.push(
-      `/destinacija/${articleContent.country.name.toLowerCase()}/${articleContent.place.name.toLowerCase()}`
+      `/destinacija/${toUrlSlug(articleContent.country.name)}/${toUrlSlug(
+        articleContent.place.name
+      )}`
     );
   };
 
@@ -71,9 +142,18 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
     return getSupportInsertIndex(sectionsLength);
   }, [sectionsLength]);
 
+  const domagoInsertIndexes = useMemo(
+    () => getDomagoInsertIndexes(sectionsLength, newsletterInsertIndex),
+    [sectionsLength, newsletterInsertIndex]
+  );
+
   const shouldShowBottomNewsletter = sectionsLength >= 10;
-  const shouldShowInlineSupport = supportInsertIndex !== -1;
-  const shouldShowBottomSupport = sectionsLength >= 3;
+  const shouldShowInlineSupport = usesDomagoPartner
+    ? domagoInsertIndexes.length > 0
+    : supportInsertIndex !== -1;
+  const shouldShowBottomSupport = usesDomagoPartner
+    ? sectionsLength === 0
+    : sectionsLength >= 3;
 
   const shouldShowSectionVisaInfo = (section: any) => {
     const hasEnabledVisaInfo =
@@ -177,15 +257,16 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
               <ArticleNewsletterCallToAction />
             )}
 
-            {shouldShowInlineSupport && index === supportInsertIndex && (
-              <ArticleSupportCallToAction />
-            )}
+            {shouldShowInlineSupport &&
+              (usesDomagoPartner
+                ? domagoInsertIndexes.includes(index)
+                : index === supportInsertIndex) && renderSupportBanner()}
           </React.Fragment>
         ))}
 
         {shouldShowBottomNewsletter && <ArticleNewsletterCallToAction />}
 
-        {shouldShowBottomSupport && <ArticleSupportCallToAction />}
+        {shouldShowBottomSupport && renderSupportBanner()}
 
         <ArticleFragment article={articleContent} />
       </div>
@@ -235,7 +316,6 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
                   alt={image.alt || "Gallery image"}
                   width={image.width || 600}
                   height={image.height || 400}
-                  quality={90}
                   sizes="(max-width: 768px) 50vw, 33vw"
                   style={{
                     width: "100%",

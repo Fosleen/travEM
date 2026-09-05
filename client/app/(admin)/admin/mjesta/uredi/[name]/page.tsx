@@ -7,6 +7,9 @@ import { PlacesData } from "@/common/types";
 import Button from "@/components/atoms/Button";
 import "./EditPlace.scss";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
+import UnsavedChangesGuard, {
+  confirmDiscardChanges,
+} from "@/components/admin/atoms/UnsavedChangesGuard";
 import Textarea from "@/components/admin/atoms/Textarea";
 import AdvancedDropdown from "@/components/admin/atoms/AdvancedDropdown";
 import Input from "@/components/atoms/Input";
@@ -234,8 +237,9 @@ const EditPlace = () => {
             onSubmit={handleSave}
             enableReinitialize={true}
           >
-            {({ values, setFieldValue }) => (
+            {({ values, setFieldValue, isSubmitting }) => (
               <Form className="edit-place-form">
+                <UnsavedChangesGuard active={!isSubmitting} />
                 <div className="edit-place-inputs">
                   <div className="edit-place-input">
                     <Field
@@ -645,7 +649,9 @@ const EditPlace = () => {
                   <Button
                     type="button"
                     white
-                    onClick={() => navigateToPlaces(router)}
+                    onClick={async () => {
+                      if (await confirmDiscardChanges()) navigateToPlaces(router);
+                    }}
                   >
                     Odustani
                   </Button>

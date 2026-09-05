@@ -9,6 +9,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { convertFromSlug } from "@/utils/global";
 import TipsAndTricks from "@/components/user/pages/tipsAndTricks/TipsAndTricks";
+import { SITE_URL } from "@/utils/site";
 
 type Props = {
   params: Promise<{ tip: string }>;
@@ -31,6 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const title = `${convertFromSlug(selectedType.name)} - putujEM s travEM`;
     const description =
       selectedType.description || "Savjeti i trikovi za putovanja";
+    const canonicalUrl = `${SITE_URL}/savjeti/${encodeURIComponent(tip)}`;
 
     return {
       title: title,
@@ -38,15 +40,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       keywords: `${convertFromSlug(
         selectedType.name
       )}, savjeti za putovanja, putovanje, travem, tips, tricks`,
+      alternates: { canonical: canonicalUrl },
       openGraph: {
         title: title,
         description: description,
         type: "website",
-        url: `https://putujemstravem.com/savjeti/${tip}`,
+        url: canonicalUrl,
         siteName: "putujEM s travEM",
         images: [
           {
-            url: "https://putujemstravem.com/default-og-image.jpg",
+            url: `${SITE_URL}/default-og-image.jpg`,
             width: 1200,
             height: 630,
             alt: `${convertFromSlug(selectedType.name)} - putujEM s travEM`,

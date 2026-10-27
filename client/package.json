@@ -13,6 +13,7 @@
     "@mapbox/mapbox-gl-style-spec": "^14.16.1",
     "@phosphor-icons/react": "^2.1.10",
     "@tanstack/react-table": "^8.21.3",
+    "@vercel/global-config": "^1.5.1",
     "dompurify": "^3.3.0",
     "formik": "^2.4.9",
     "gl-matrix": "^3.4.4",

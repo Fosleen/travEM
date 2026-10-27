@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getSiteMode } from "@/utils/siteMode";
 
 function isTokenExpired(token: string): boolean {
   try {
@@ -11,13 +12,34 @@ function isTokenExpired(token: string): boolean {
   }
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (request.nextUrl.hostname === "putujemstravem.com") {
     const canonicalUrl = request.nextUrl.clone();
     canonicalUrl.hostname = "www.putujemstravem.com";
     return NextResponse.redirect(canonicalUrl, 308);
+  }
+
+  // The status endpoint must remain reachable while the backend is offline.
+  if (pathname === "/api/site-mode") return NextResponse.next();
+
+  const mode = await getSiteMode();
+  if (mode === "maintenance") {
+    const maintenanceUrl = request.nextUrl.clone();
+    maintenanceUrl.pathname = "/maintenance";
+    maintenanceUrl.search = "";
+    return NextResponse.rewrite(maintenanceUrl, {
+      status: 503,
+      headers: {
+        "Cache-Control": "no-store",
+        "Retry-After": "300",
+      },
+    });
+  }
+
+  if (pathname === "/maintenance") {
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   if (pathname === "/login") {

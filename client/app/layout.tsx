@@ -14,6 +14,7 @@ import GoogleAdSense from "@/components/atoms/GoogleAdSense/GoogleAdSense";
 import UXTweak from "@/components/atoms/UXTweak/UXTweak";
 import type { Metadata } from "next";
 import { SITE_URL } from "@/utils/site";
+import SiteModeWatcher from "@/components/atoms/SiteModeWatcher";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -42,6 +43,10 @@ export default function RootLayout({
         <GoogleAnalytics />
         <GoogleAdSense />
         <UXTweak />
+        {(process.env.GLOBAL_CONFIG || process.env.EDGE_CONFIG ||
+          (process.env.NODE_ENV === "development" && process.env.SITE_MODE)) && (
+          <SiteModeWatcher />
+        )}
         {children}
       </body>
     </html>

@@ -16,6 +16,7 @@ const getArticleScheduleInclude = () => ({
 
 const getPublicArticleWhere = (additionalWhere = {}) => ({
   ...additionalWhere,
+  is_deal_draft: false,
   [Op.and]: [
     ...(additionalWhere[Op.and] || []),
     {

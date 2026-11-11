@@ -17,6 +17,7 @@ import "./AirportAdmin.scss";
 type Draft = Omit<AirportCityData, "id">;
 const emptyDraft: Draft = {
   name: "",
+  iata_codes: [],
   flag_url: "",
   banner_image_url: "",
   is_in_croatia: true,
@@ -53,6 +54,7 @@ export default function AirportAdminPage() {
     setEditingId(airport.id);
     setDraft({
       name: airport.name,
+      iata_codes: airport.iata_codes || [],
       flag_url: airport.flag_url || "",
       banner_image_url: airport.banner_image_url || "",
       is_in_croatia: airport.is_in_croatia,
@@ -114,6 +116,7 @@ export default function AirportAdminPage() {
             <div className="airport-form__title"><div><span><AirplaneTilt size={22} /></span><h2 id="airport-form-title">{isAdding ? "Novi aerodrom" : `Uredi ${draft.name}`}</h2></div><button type="button" onClick={reset} disabled={saving} aria-label="Zatvori"><X size={22} /></button></div>
             <div className="airport-form__fields">
               <label>Naziv<input autoFocus required value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} /></label>
+              <label>IATA kodovi<input placeholder="ZAG ili VCE, TSF" value={(draft.iata_codes || []).join(',')} onChange={(e) => setDraft({ ...draft, iata_codes: e.target.value.toUpperCase().split(',') })} /><small>Više aerodroma odvoji zarezom. Na blogu ostaju pod istim polazištem.</small></label>
               <label>Redoslijed<input type="number" value={draft.display_order ?? 10} onChange={(e) => setDraft({ ...draft, display_order: Number(e.target.value) })} /></label>
               <label className="wide">URL zastave<input required type="url" placeholder="https://..." value={draft.flag_url} onChange={(e) => setDraft({ ...draft, flag_url: e.target.value })} /></label>
               <label className="wide">URL banner fotografije<input required={isAdding} type="url" placeholder="https://..." value={draft.banner_image_url || ""} onChange={(e) => setDraft({ ...draft, banner_image_url: e.target.value })} /></label>
@@ -129,7 +132,7 @@ export default function AirportAdminPage() {
       <div className="airport-list">{visible.map((airport) => (
         <article key={airport.id} className={airport.is_active ? "" : "is-inactive"}>
           <div className="airport-row__visual"><Image className="banner" src={getAirportBannerImage(airport.banner_image_url)} alt={`Banner za ${airport.name}`} width={240} height={110} unoptimized /><Image className="flag" src={airport.flag_url.trim()} alt={`Zastava za ${airport.name}`} width={32} height={32} unoptimized /></div>
-          <div className="airport-row__details"><strong>{airport.name}</strong><div><span className={airport.is_in_croatia ? "group croatia" : "group"}>{airport.is_in_croatia ? "Iz Hrvatske" : "Ostali"}</span><span className="order">Redoslijed: {airport.display_order ?? "—"}</span></div></div>
+          <div className="airport-row__details"><strong>{airport.name}{airport.iata_codes?.length ? ` · ${airport.iata_codes.join(', ')}` : ''}</strong><div><span className={airport.is_in_croatia ? "group croatia" : "group"}>{airport.is_in_croatia ? "Iz Hrvatske" : "Ostali"}</span><span className="order">Redoslijed: {airport.display_order ?? "—"}</span></div></div>
           <label className="airport-row__visibility"><input type="checkbox" checked={airport.is_active} onChange={() => toggle(airport)} /><span>{airport.is_active ? "Prikazan" : "Skriven"}</span></label>
           <button className="airport-row__edit" type="button" onClick={() => edit(airport)} aria-label={`Uredi ${airport.name}`}><PencilSimpleLine size={20} /></button>
         </article>

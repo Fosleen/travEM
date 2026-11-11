@@ -3,6 +3,7 @@ import { Sequelize } from "sequelize";
 import User from "./user.js";
 import ArticleType from "./articleType.js";
 import Article from "./article.js";
+import DealFinder from "./dealFinder.js";
 import ArticleSchedule from "./articleSchedule.js";
 import SectionImage from "./sectionImage.js";
 import Section from "./section.js";
@@ -54,6 +55,7 @@ db.models = {};
 db.models.User = User(sequelizeConnection, Sequelize.DataTypes);
 db.models.ArticleType = ArticleType(sequelizeConnection, Sequelize.DataTypes);
 db.models.Article = Article(sequelizeConnection, Sequelize.DataTypes);
+db.dealFinder = DealFinder(sequelizeConnection, Sequelize.DataTypes);
 db.models.ArticleSchedule = ArticleSchedule(
   sequelizeConnection,
   Sequelize.DataTypes

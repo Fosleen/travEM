@@ -1,0 +1,155 @@
+@use "@/utils/theme.scss" as *;
+
+.deal-finder .df-dialog {
+  width: min(1080px,calc(100vw - 48px));
+  .detail { padding: 0; }
+  .df-detail-header { position: sticky; top: 0; z-index: 3; margin: 0; padding: 22px 28px; background: white; }
+  .df-detail-header h2 { font-size: 24px; }
+  .detail > .df-alert, .detail > .df-detail-warning { margin: 16px 28px; }
+  .df-detail-steps { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; padding: 20px 28px; background: $bg; border-bottom: 1px solid $greyMiddle; }
+  .df-detail-steps button { display: grid; grid-template-columns: 32px 1fr; gap: 3px 10px; padding: 13px 15px; text-align: left; font: inherit; border: 1px solid $greyMiddle; border-radius: 10px; background: white; color: $textPrimary; cursor: pointer; }
+  .df-detail-steps button > span { grid-row: span 2; display: grid; place-items: center; height: 32px; border-radius: 50%; background: $greyLight; font-size: 13px; font-weight: 700; }
+  .df-detail-steps strong { align-self: end; font-size: 13px; }
+  .df-detail-steps small { font-size: 11px; font-weight: 400; }
+  .df-detail-steps button:hover, .df-detail-steps .is-active { border-color: $green; color: $greenHover; }
+  .df-detail-steps .is-active { background: $limeLight; }
+  .df-detail-steps .is-active > span { color: white; background: $greenHover; }
+  .df-detail-step { padding: 24px 28px 30px; }
+  .df-detail-step[hidden] { display: none; }
+  .df-detail-step > h3 { display: flex; align-items: center; gap: 10px; padding: 0; border: 0; margin: 0 0 18px; font-size: 19px; }
+  .df-detail-step > h3 > span { display: none; }
+  .df-detail-step > p { font-size: 13px; line-height: 1.6; margin: 12px 0; }
+  .df-detail-step > .button { display: inline-flex; margin: 6px 10px 6px 0; }
+  .df-detail-step > label, .df-detail-step .grid > label { margin: 12px 0; }
+  .df-detail-step > details { margin: 20px 0; background: $bg; }
+  .df-detail-step > details textarea { font-family: inherit; font-size: 13px; }
+  .df-detail-step details > fieldset { margin-top: 18px; background: white; }
+  .df-detail-step iframe { margin: 16px 0; border-radius: 10px; }
+  .df-flight-toolbar { justify-content: space-between; margin: 16px 0 10px; }
+  .df-flight-toolbar label { flex-direction: row; align-items: center; gap: 12px; margin: 0; }
+  .df-flight-toolbar select { width: 220px; }
+  .flight-list { max-height: 430px; background: white; }
+  .df-flight-item { border-bottom: 1px solid $greyMiddle; }
+  .df-flight-item:last-child { border-bottom: 0; }
+  .flight-list .df-flight-item > label { border: 0; align-items: flex-start; padding: 18px 18px 8px; }
+  .df-flight-item > label > input { margin-top: 2px; }
+  .df-flight-item > label > strong { color: $greenHover; font-size: 18px; white-space: nowrap; }
+  .df-flight-row-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 18px 12px 48px; }
+  .df-flight-row-actions .df-text-button { font-size: 12px; }
+  .df-saved-flight-editor { margin: 14px 0 24px; border: 1px solid rgba($green,.35); border-radius: 10px; padding: 16px; background: $limeLight; }
+  .df-saved-flight-editor > p { font-size: 12px; margin: 0 0 12px; }
+  .df-detail-footer { position: sticky; bottom: 0; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 28px; border-top: 1px solid $greyMiddle; background: white; box-shadow: 0 -8px 24px rgba($grey,.04); }
+  .df-detail-footer > div { display: flex; gap: 10px; }
+  .df-reject-offer { color: $delete; font-size: 12px; }
+  .df-detail-footer .button { margin: 0; }
+  .df-detail-step > label.df-option-check { padding: 14px; background: $bg; border: 1px solid $greyMiddle; border-radius: 8px; }
+  .df-build-controls { padding: 16px; border: 1px solid $greyMiddle; border-radius: 10px; background: $bg; }
+  .df-build-controls label { flex: 1; margin: 0; }
+  .df-build-controls > .button { margin: 0; }
+  .df-hotel-toolbar { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; margin: 22px 0 12px; }
+  .df-hotel-toolbar > div { display: flex; flex-direction: column; gap: 5px; }
+  .df-hotel-toolbar > div strong { font-size: 14px; }
+  .df-hotel-toolbar small { font-size: 12px; color: $textPrimary; line-height: 1.5; }
+  .df-hotel-toolbar label { margin: 0; min-width: 200px; }
+  .df-hotel-toolbar { flex-wrap: wrap; }
+  .df-hotel-toolbar > div:first-child { flex: 1 0 100%; }
+  .df-hotel-toolbar .df-hotel-type-filters { display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; align-self: center; gap: 10px 16px; flex: 1 1 260px; margin: 0; padding: 0; border: 0; }
+  .df-hotel-type-filters > span { font-size: 13px; font-weight: 600; }
+  .df-hotel-toolbar .df-hotel-type-filters label { display: inline-flex; align-items: center; gap: 6px; min-width: 0; font-size: 13px; cursor: pointer; }
+  .df-hotel-type-filters input[type='checkbox'] { width: 16px; height: 16px; margin: 0; flex: 0 0 16px; accent-color: #2bac82; }
+  .df-hotel-badges { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0 3px; }
+  .df-badge-recommended { color: $greenHover; background: $limeLight; border: 1px solid rgba($green,.35); font-weight: 700; }
+  .df-hotel-selection td:last-child > .df-text-button { margin-top: 8px; font-size: 12px; padding: 7px 8px; white-space: nowrap; }
+  .df-hotel-selection td:first-child { width: 76px; min-width: 76px; text-align: center; }
+  .df-hotel-selection td:first-child input[type='checkbox'] { appearance: auto; width: 26px; height: 26px; margin: 8px; vertical-align: middle; accent-color: $greenHover; cursor: pointer; outline-offset: 4px; }
+  .df-hotel-selection tbody tr { cursor: pointer; transition: background-color .15s; }
+  .df-hotel-selection tbody tr:hover { background: rgba($green,.08); }
+  .df-hotel-selection tbody tr.is-selected { background: $limeLight; box-shadow: inset 4px 0 $greenHover; }
+  .df-hotel-price-editor .df-candidate-fields { grid-template-columns: minmax(160px,1fr) auto; }
+  .df-hotel-price-editor .df-candidate-fields > .button { grid-column: auto; }
+  .df-hotel-parking-options { display: flex; gap: 22px; flex-wrap: wrap; grid-column: 1 / -1; }
+  .df-hotel-parking-options > label.df-option-check { margin: 0; }
+  .df-hostel-features { display: flex; flex-wrap: wrap; gap: 12px 22px; margin: 12px 0; }
+  .df-hostel-features > label.df-option-check { display: inline-flex; align-items: center; gap: 8px; margin: 0; }
+  .df-hostel-features input[type='checkbox'] { width: 16px; height: 16px; margin: 0; flex: 0 0 16px; accent-color: #2bac82; }
+}
+
+@media(max-width:768px) {
+  .deal-finder .df-dialog {
+    width: calc(100vw - 20px); max-height: calc(100dvh - 20px);
+    .df-detail-header { padding: 16px; }
+    .df-detail-header h2 { font-size: 19px; gap: 8px; }
+    .df-detail-steps { padding: 12px 16px; gap: 6px; }
+    .df-detail-steps button { grid-template-columns: 1fr; text-align: center; padding: 10px 5px; }
+    .df-detail-steps button > span { display: none; }
+    .df-detail-steps strong { font-size: 12px; }
+    .df-detail-steps small { font-size: 10px; }
+    .df-detail-step { padding: 20px 16px; }
+    .df-flight-toolbar label { width: 100%; flex-direction: column; align-items: stretch; }
+    .df-flight-toolbar select { width: 100%; }
+    .df-hotel-toolbar { align-items: stretch; flex-direction: column; }
+    .df-hotel-price-editor .df-candidate-fields { grid-template-columns: 1fr; }
+    .df-flight-row-actions { padding-left: 18px; flex-wrap: wrap; }
+    .df-detail-footer { padding: 12px 16px; flex-wrap: wrap; }
+    .df-detail-footer > div { margin-left: auto; }
+    .df-detail-footer .button { padding: 11px 13px; font-size: 11px; }
+    .detail > .df-alert, .detail > .df-detail-warning { margin: 12px 16px; }
+  }
+}
+
+.deal-finder .df-dialog {
+  .df-editorial-choice, .df-editorial-section {
+    display: grid; grid-template-columns: minmax(0,1fr); justify-items: stretch;
+    gap: 10px; width: 100%; min-width: 0; max-width: none;
+    margin: 16px 0; box-sizing: border-box; text-align: left;
+  }
+  .df-editorial-section { padding: 18px; border: 1px solid $greyMiddle; border-radius: 12px; background: $bg; }
+  .df-editorial-choice > label, .df-editorial-section > label {
+    display: flex; flex-direction: column; align-items: stretch;
+    width: 100%; min-width: 0; margin: 0; gap: 7px;
+    font-size: 13px; line-height: 1.5; text-align: left;
+  }
+  .df-editorial-choice select, .df-editorial-section select {
+    display: block; position: static; width: 100%; max-width: none;
+    min-width: 0; height: 52px; padding: 11px 13px;
+    margin: 0; transform: none; text-align: left; text-align-last: left;
+    font-family: inherit; font-size: 14px; line-height: 1.5; box-sizing: border-box;
+  }
+  .df-editorial-choice input, .df-editorial-choice textarea { display: block; width: 100%; margin: 0; text-align: left; }
+  .df-editorial-icon { display: flex; align-items: center; gap: 12px; width: 100%; min-width: 0; }
+  .df-editorial-icon img { width: 28px; height: 28px; object-fit: contain; flex: 0 0 28px; }
+  .df-editorial-icon select { flex: 1; min-width: 0; }
+  .df-flight-only { display: flex !important; align-items: center; gap: 14px; padding: 16px 18px; border: 1px solid $green; border-radius: 10px; background: $limeLight; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .df-flight-only input { appearance: auto; width: 26px !important; height: 26px; flex: 0 0 26px; margin: 0; accent-color: $greenHover; outline-offset: 4px; cursor: pointer; }
+}
+
+.deal-finder .df-dialog {
+  .df-section-top, .df-section-links { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr); gap: 16px; align-items: start; }
+  .df-section-top > label, .df-section-links > label, .df-section-icon-picker .dropdown-label { margin: 0; text-align: left; font-size: 13px; }
+  .df-section-icon-picker, .df-section-icon-picker .dropdown-wrapper, .df-section-icon-picker .dropdown-filter-wrapper { width: 100%; min-width: 0; }
+  .df-section-icon-picker .dropdown-filter-wrapper { display: block; }
+  .df-section-icon-picker .dropdown { display: flex; position: relative; align-items: center; min-height: 46px; width: 100%; box-sizing: border-box; }
+  .df-section-icon-picker .p-dropdown-label { flex: 1; padding: 0; }
+  .df-section-icon-picker .option-item { margin: 0; background: transparent; }
+  .df-section-icon-picker .icon { width: 30px; height: 30px; object-fit: contain; }
+  .df-section-icon-options .p-dropdown-panel { position: static !important; transform: none !important; width: 100% !important; min-width: 0 !important; }
+  .df-section-icon-options .p-dropdown-items { display: grid; grid-template-columns: repeat(auto-fill,minmax(48px,1fr)); list-style: none; gap: 4px; padding: 8px; }
+  .df-section-icon-options .p-dropdown-item { padding: 5px; }
+  .df-section-icon-options .p-dropdown-item:has(.option-item--empty) { grid-column: 1 / -1; }
+  .df-section-icon-options .option-item { justify-content: center; padding: 3px; }
+  .df-editorial-section .editor-wrapper, .df-editorial-section .editor-inner-wrapper { width: 100%; min-width: 0; }
+  .df-editorial-section .ql-container { min-height: 170px; background: white; }
+  .df-editorial-section .ql-editor { min-height: 170px; text-align: left; font-family: inherit; font-size: 14px; line-height: 1.7; }
+  .df-editorial-section .editor-label { margin: 0 0 7px; }
+  @media(max-width:700px){.df-section-top, .df-section-links { grid-template-columns: minmax(0,1fr); }}
+}
+.deal-finder .df-dialog {
+  .df-section-photo-grid { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; }
+  .df-section-photo-grid .df-section-photo { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 10px; border: 1px solid $greyMiddle; border-radius: 8px; background: white; font-weight: 400; }
+  .df-section-photo img { width: 160px; height: 110px; object-fit: cover; border-radius: 5px; }
+  .df-section-photo span { display: flex; align-items: center; gap: 8px; }
+  .df-section-photo a { font-size: 12px; }
+}
+.deal-finder .df-dialog .df-section-photo { width: 230px; min-width: 0; box-sizing: border-box; }
+.deal-finder .df-dialog .df-section-photo label.df-photo-toggle { display: flex; flex-direction: row; align-items: center; gap: 8px; margin: 0; }
+.deal-finder .df-dialog .df-section-photo input[type=text] { width: 100%; min-width: 0; font-size: 12px; }

@@ -30,7 +30,7 @@ export const loginUser = async (
         });
       }
       notifySuccess("Uspješna prijava!");
-      router.push("/admin/sadrzaj");
+      router.replace("/admin/deal-finder");
     } else {
       notifyFailure("Neispravni podaci.");
     }

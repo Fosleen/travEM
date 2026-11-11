@@ -10,7 +10,9 @@
     "migrate:country-hit": "node scripts/addCountryHit.js",
     "slugs:preview": "node scripts/backfillArticleSlugs.js",
     "slugs:apply": "node scripts/backfillArticleSlugs.js --apply",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node --test test/*.test.js",
+    "migrate:deal-finder": "node scripts/migrateDealFinder.js",
+    "migrate:long-section-urls": "node scripts/migrateLongSectionUrls.js"
   },
   "type": "module",
   "author": "",

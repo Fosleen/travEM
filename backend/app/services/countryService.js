@@ -18,6 +18,7 @@ const getArticleScheduleInclude = () => ({
 
 const getPublicArticleWhere = (additionalWhere = {}) => ({
   ...additionalWhere,
+  is_deal_draft: false,
   [Op.and]: [
     ...(additionalWhere[Op.and] || []),
     {
@@ -153,6 +154,7 @@ class CountriesService {
             separate: true,
             include: [getArticleScheduleInclude()],
             where: {
+              is_deal_draft: false,
               [Op.or]: [
                 { "$article_schedule.id$": null },
                 { "$article_schedule.publish_at$": null },

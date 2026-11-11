@@ -6,8 +6,9 @@ import {
 import articleService from "../services/articleService.js";
 import videoService from "../services/videoService.js";
 import jwt from "jsonwebtoken";
+import db from '../models/index.js';
 
-const canIncludeScheduledArticles = (req) => {
+const canIncludeScheduledArticles = async (req) => {
   if (req.query.includeScheduled !== "true") {
     return false;
   }
@@ -19,8 +20,9 @@ const canIncludeScheduledArticles = (req) => {
   }
 
   try {
-    jwt.verify(authHeader.split(" ")[1], process.env.JWT_SECRET_KEY);
-    return true;
+    const decoded = jwt.verify(authHeader.split(" ")[1], process.env.JWT_SECRET_KEY);
+    const user = await db.models.User.findByPk(decoded.id);
+    return Number(user?.is_admin) === 1;
   } catch (error) {
     return false;
   }
@@ -32,7 +34,7 @@ class ArticleController {
       const page = parseInt(req.query.page) || 1;
       const pageSize = parseInt(req.query.pageSize) || 12;
       const articleType = parseInt(req.query.articleType) || null;
-      const includeScheduled = canIncludeScheduledArticles(req);
+      const includeScheduled = await canIncludeScheduledArticles(req);
 
       const response = await articleService.getArticles(
         page,
@@ -74,7 +76,7 @@ class ArticleController {
       const { name } = req.params;
       const page = parseInt(req.query.page) || 1;
       const pageSize = parseInt(req.query.pageSize) || 200;
-      const includeScheduled = canIncludeScheduledArticles(req);
+      const includeScheduled = await canIncludeScheduledArticles(req);
 
       const response = await articleService.getArticleBySearchTerm(
         name,
@@ -97,7 +99,7 @@ class ArticleController {
     try {
       const useCache = req.query.noCache !== "true";
       const { id } = req.params;
-      const includeScheduled = canIncludeScheduledArticles(req);
+      const includeScheduled = await canIncludeScheduledArticles(req);
       const cacheKey = includeScheduled ? `article:${id}:admin` : `article:${id}`;
 
       const response = await getOrSetCache(
@@ -124,7 +126,7 @@ class ArticleController {
     try {
       const useCache = req.query.noCache !== "true";
       const { slug } = req.params;
-      const includeScheduled = canIncludeScheduledArticles(req);
+      const includeScheduled = await canIncludeScheduledArticles(req);
       const cacheKey = includeScheduled
         ? `article-slug:${slug}:admin`
         : `article-slug:${slug}`;
@@ -199,7 +201,7 @@ class ArticleController {
 
   async getHomepageArticles(req, res) {
     const useCache = req.query.noCache !== "true";
-    const includeScheduled = canIncludeScheduledArticles(req);
+    const includeScheduled = await canIncludeScheduledArticles(req);
     const cacheKey = includeScheduled
       ? `homepage-articles:admin`
       : `homepage-articles`;

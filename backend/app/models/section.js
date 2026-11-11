@@ -6,7 +6,7 @@ export default (sequelize, DataTypes) => {
       order: { type: DataTypes.INTEGER, allowNull: false },
       subtitle: { type: DataTypes.STRING(100) },
       link_title: { type: DataTypes.STRING(100) },
-      link_url: { type: DataTypes.STRING },
+      link_url: { type: DataTypes.STRING(512), validate: { len: [0, 512] } },
       show_visa_info: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

@@ -5,6 +5,10 @@
   flex-direction: column;
   gap: 16px;
   padding-right: 12px;
+  .deal-finder-import-summary { max-width: 1024px; padding: 16px 20px; border: 1px solid $green; background: $limeLight; border-radius: 10px; font-size: 13px; line-height: 1.6; }
+  .deal-finder-import-summary strong { font-size: 15px; }
+  .deal-finder-import-summary ul { margin: 8px 0; padding-left: 20px; }
+  .deal-finder-import-summary p { margin: 8px 0 0; }
 
   h6 {
     font-weight: 700;

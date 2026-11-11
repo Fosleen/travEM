@@ -45,6 +45,7 @@ const processSchedule = async (schedule) => {
     });
     return;
   }
+  if (article.is_deal_draft) return;
 
   await clearPublishedArticleCaches(article);
 
@@ -115,6 +116,7 @@ export const processDueArticleSchedules = async () => {
 };
 
 export const startArticleScheduleJob = () => {
+  if (process.env.ARTICLE_SCHEDULE_JOB_ENABLED === 'false') return;
   const intervalMs = Number(
     process.env.ARTICLE_SCHEDULE_JOB_INTERVAL_MS || DEFAULT_INTERVAL_MS
   );

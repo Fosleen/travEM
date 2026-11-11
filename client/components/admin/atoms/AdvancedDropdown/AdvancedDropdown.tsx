@@ -18,6 +18,9 @@ const AdvancedDropdown: FC<DropdownProps> = ({
   defaultValue = null,
   filterAttribute = "name",
   imageAttribute = "url",
+  appendTo,
+  filterInputAutoFocus = false,
+  isDisabled = false,
 }) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
@@ -160,6 +163,9 @@ const AdvancedDropdown: FC<DropdownProps> = ({
 
       <div className="dropdown-filter-wrapper">
         <Dropdown
+          appendTo={appendTo}
+          filterInputAutoFocus={filterInputAutoFocus}
+          disabled={isDisabled}
           value={selectedOption}
           onChange={(e) => handleSelect(e.value)}
           options={optionsWithEmpty}

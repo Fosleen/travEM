@@ -56,6 +56,9 @@ export interface SearchProps {
 }
 
 export interface DropdownProps {
+  selectedValue?: string | number | null;
+  appendTo?: 'self' | HTMLElement;
+  filterInputAutoFocus?: boolean;
   success?: boolean;
   error?: boolean;
   label?: string;
@@ -318,6 +321,7 @@ export interface HorizontalPostItemBigProps {
 
 export interface AirportCityData {
   id: number;
+  iata_codes?: string[] | null;
   name: string;
   flag_url: string;
   is_in_croatia: boolean;
@@ -354,6 +358,7 @@ export interface PaginationProps {
 
 export interface SidebarMenuItemProps {
   text: string;
+  href?: string;
 }
 
 export interface ItemsPerPageSelectorProps {

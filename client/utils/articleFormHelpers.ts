@@ -78,6 +78,7 @@ export const articleValidationSchema = Yup.object().shape({
         100,
         "Naslov linka smije imati max 100 znakova!"
       ),
+      section_url_link: Yup.string().max(512, "Poveznica smije imati najviše 512 znaka."),
     })
   ),
 });

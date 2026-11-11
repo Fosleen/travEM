@@ -4,6 +4,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import DealDraftActions from '@/components/admin/organisms/DealDraftActions';
 import "./EditArticle.scss";
 import { Fragment, useEffect, useRef, useState } from "react";
 import {
@@ -173,7 +174,9 @@ const EditArticle = () => {
 
     const result = await Swal.fire({
       title: "Jeste li sigurni?",
-      text: isScheduleChecked
+      text: article.is_deal_draft
+        ? "Spremit ćete izmjene nacrta. Članak ostaje skriven javnosti."
+        : isScheduleChecked
         ? "Spremit ćete izmjene i zakazati objavu članka"
         : "Objavit ćete ovaj uređeni članak",
       icon: "warning",
@@ -181,7 +184,7 @@ const EditArticle = () => {
       confirmButtonColor: "#2BAC82",
       cancelButtonColor: "#AC2B2B",
       cancelButtonText: "Odustani",
-      confirmButtonText: "Da, objavi!",
+      confirmButtonText: article.is_deal_draft ? "Spremi nacrt" : "Da, objavi!",
     });
 
     console.log("Swal result:", result);
@@ -482,6 +485,7 @@ const flatRemovedImages = removedSectionImages;
   };
 
   const resendNewsletter = async () => {
+    if (article.is_deal_draft) { notifyFailure('Deal Finder nacrt još nije odobren za objavu.'); return; }
     const result = await Swal.fire({
       title: "Jeste li sigurni?",
       text: "Poslat ćete newsletter svim pretplatnicima.",
@@ -693,6 +697,7 @@ const flatRemovedImages = removedSectionImages;
     <div>
       <>
         <div className="edit-article-container">
+          {article && <DealDraftActions articleId={article.id} />}
           <div className="edit-article-header">
             <h2>Uredi članak</h2>
 
@@ -1809,7 +1814,7 @@ const flatRemovedImages = removedSectionImages;
 
                   <div className="edit-article-buttons">
                     <Button type="submit" adminPrimary>
-                      uredi članak
+                      {article.is_deal_draft ? "spremi nacrt" : "uredi članak"}
                     </Button>
 
                     <Button type="button" white onClick={handleCancel}>

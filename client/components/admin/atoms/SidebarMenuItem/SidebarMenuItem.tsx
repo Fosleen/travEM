@@ -6,6 +6,7 @@ import {
   Buildings,
   Info,
   ChatCenteredText,
+  AirplaneTilt,
 } from "@phosphor-icons/react/dist/ssr";
 import { FC } from "react";
 import { SidebarMenuItemProps } from "../../../../common/types";
@@ -28,10 +29,10 @@ const WeddingRingsIcon = () => (
   </svg>
 );
 
-const SidebarMenuItem: FC<SidebarMenuItemProps> = ({ text }) => {
+const SidebarMenuItem: FC<SidebarMenuItemProps> = ({ text, href }) => {
   return (
     <Link
-      href={`/admin/${normalize(text)}`}
+      href={href || `/admin/${normalize(text)}`}
       className="sidebar-menu-item-container"
     >
       {text == "Članci" && <Article size={32} />}
@@ -41,6 +42,7 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = ({ text }) => {
       {text == "Newsletter" && <Users size={32} />}
       {text == "Komentari" && <ChatCenteredText size={32} />}
       {text == "BookMe" && <WeddingRingsIcon />}
+      {text == "Deal Finder" && <AirplaneTilt size={32} />}
 
       {text}
     </Link>

@@ -3,7 +3,7 @@
 import "./ArticleFragment.scss";
 import { FC, useMemo, useState } from "react";
 import { ArticleProps } from "../../../../common/types";
-import DOMPurify from "isomorphic-dompurify";
+import {sanitizeArticleHtml} from "@/utils/articleHtml.mjs";
 import Image from "next/image";
 import Lightbox from "yet-another-react-lightbox";
 import VisaInfo from "@/components/user/molecules/VisaInfo/VisaInfo";
@@ -52,6 +52,11 @@ const ArticleFragment: FC<ArticleProps> = ({
   const hasHtmlContent =
     typeof section?.text === "string" &&
     section.text.replace(/<[^>]*>/g, "").trim().length > 0;
+  const sectionText = section?.text;
+  const sanitizedHtml = useMemo(
+    () => hasHtmlContent ? sanitizeArticleHtml(sectionText) : "",
+    [hasHtmlContent, sectionText]
+  );
 
   const hasVideo = Boolean(article?.video?.url?.trim());
   const hasAffiliateLinks = Boolean(
@@ -148,7 +153,7 @@ const ArticleFragment: FC<ArticleProps> = ({
       {hasHtmlContent && (
         <div
           className="article-html-content"
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(section?.text) }}
+          dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
         />
       )}
 

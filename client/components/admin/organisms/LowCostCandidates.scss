@@ -1,0 +1,65 @@
+@use "@/utils/theme.scss" as *;
+.deal-finder .df-dialog {
+  .df-budget-candidates { margin-top: 28px; border-top: 1px solid $greyMiddle; padding-top: 24px; }
+  .df-candidates-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 18px; }
+  .df-candidates-heading h4 { display: flex; align-items: center; gap: 8px; font-size: 16px; margin: 0; }
+  .df-candidates-heading h4 span { font-size: 11px; padding: 4px 8px; background: $limeLight; color: $greenHover; border-radius: 16px; }
+  .df-candidates-heading p { font-size: 12px; line-height: 1.6; margin: 6px 0 0; max-width: 520px; }
+  .df-candidates-heading label { margin: 0; min-width: 165px; }
+  .df-candidates-table { min-width: 650px; table-layout: auto; }
+  .df-candidates-table th:first-child, .df-candidates-table td:first-child { width: auto; text-align: left; }
+  .df-candidates-table th:nth-child(2), .df-candidates-table td:nth-child(2) { width: 140px; }
+  .df-candidates-table th:last-child, .df-candidates-table td:last-child { width: 185px; }
+  .df-candidates-table tbody tr { cursor: default; }
+  .df-candidates-table td { vertical-align: middle; }
+  .df-candidates-table td > strong { color: $greenHover; font-size: 16px; white-space: nowrap; }
+  .df-candidate-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+  .df-candidate-actions a { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; white-space: nowrap; }
+  .df-candidate-actions button { display: inline-flex; align-items: center; flex: 0 0 auto; width: max-content; white-space: nowrap; overflow-wrap: normal; word-break: normal; background: $limeLight; font-weight: 600; }
+  .df-candidate-actions button svg { flex-shrink: 0; }
+  .df-candidate-actions button:hover { background: rgba($green,.15); }
+  .df-candidate-actions button:hover svg { transform: none; }
+  .df-candidates-table .df-candidate-editor-row > td { text-align: left; padding: 18px; background: $bg; }
+  .df-candidate-editor-heading { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 14px; }
+  .df-candidate-editor-heading strong { font-size: 14px; }
+  .df-candidate-editor-heading small { display: block; font-size: 12px; margin-top: 4px; color: $textPrimary; }
+  fieldset.df-candidate-fields { display: grid; grid-template-columns: minmax(140px,1fr) minmax(200px,1.4fr) auto; align-items: end; gap: 14px; padding: 0; margin: 0; border: 0; }
+  .df-candidate-fields > label { margin: 0; }
+  .df-candidate-fields .dropdown-wrapper { min-width: 0; }
+  .df-candidate-fields .dropdown-label { margin: 0 0 7px; }
+  .df-candidate-fields .dropdown-filter-wrapper .dropdown { min-height: 44px; height: 44px; line-height: 1.5; background: white; }
+  .df-candidate-fields .dropdown-filter-wrapper { position: relative; }
+  .df-candidate-fields .dropdown-placeholder { font-size: 12px; }
+  .df-candidate-fields .p-dropdown-label { padding: 0; margin: 0; display: flex; align-items: center; }
+  .df-candidate-fields .p-dropdown-label .selected { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  // Keep the complete search panel in this field's layout, including inside a scrolling table.
+  .df-candidate-fields .dropdown:has(> .p-dropdown-panel) { display: grid; grid-template-columns: minmax(0,1fr) auto; height: auto; }
+  .df-candidate-fields .dropdown > .p-dropdown-panel { position: static !important; grid-column: 1 / -1; width: 100% !important; min-width: 0 !important; transform: none !important; margin-top: 8px; }
+  .df-candidate-fields:has(.p-dropdown-panel) { align-items: start; }
+  .df-candidate-fields:has(.p-dropdown-panel) > .button { margin-top: 24px; }
+  .df-candidate-fields .button { height: 44px; margin: 0; padding: 12px 15px; white-space: nowrap; }
+  .df-price-input { display: flex; align-items: center; border: 1px solid $greyMiddle; background: white; border-radius: 8px; height: 44px; }
+  .df-price-input:focus-within { border-color: $green; box-shadow: 0 0 0 3px rgba($green,.12); }
+  .df-price-input input:not([type=checkbox]) { flex: 1; width: 0; border: 0; box-shadow: none; background: transparent; min-width: 0; height: 42px; }
+  .df-price-input > span { flex: 0 0 auto; white-space: nowrap; font-size: 16px; color: $textPrimary; padding-right: 12px; }
+  .df-candidate-pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .df-candidate-pagination > span { color: $textPrimary; font-size: 12px; }
+}
+@media(max-width:900px) {
+  .deal-finder .df-dialog fieldset.df-candidate-fields { grid-template-columns: 1fr 1fr; }
+  .deal-finder .df-dialog .df-candidate-fields > .button { grid-column: span 2; justify-self: end; }
+  .deal-finder .df-dialog .df-candidate-fields:has(.p-dropdown-panel) > .button { margin-top: 0; }
+}
+@media(max-width:600px) {
+  .deal-finder .df-dialog .df-candidates-heading { align-items: stretch; flex-direction: column; }
+  .deal-finder .df-dialog fieldset.df-candidate-fields { grid-template-columns: 1fr; }
+  .deal-finder .df-dialog .df-candidate-fields > .button { grid-column: auto; justify-self: stretch; }
+  .deal-finder .df-dialog .df-candidates-table { min-width: 0; display: block; }
+  .deal-finder .df-dialog .df-candidates-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .deal-finder .df-dialog .df-candidates-table tbody { display: block; }
+  .deal-finder .df-dialog .df-candidates-table tr { display: grid; grid-template-columns: minmax(0,1fr) auto; padding: 10px 0; border-top: 1px solid $greyMiddle; }
+  .deal-finder .df-dialog .df-candidates-table td { width: auto; border: 0; padding: 8px 12px; }
+  .deal-finder .df-dialog .df-candidates-table td:first-child { grid-column: span 2; }
+  .deal-finder .df-dialog .df-candidates-table .df-candidate-editor-row { display: block; }
+  .deal-finder .df-dialog .df-candidates-table .df-candidate-editor-row td { display: block; }
+}

@@ -59,6 +59,7 @@ const SidebarMenu = () => {
           />
         </Link>
         <div className="sidebar-menu-items">
+          <SidebarMenuItem text="Deal Finder" href="/admin/deal-finder" />
           <SidebarMenuItem text={"Članci"} />
           <SidebarMenuItem text={"Države"} />
           <SidebarMenuItem text={"Mjesta"} />

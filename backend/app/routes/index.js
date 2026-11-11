@@ -1,4 +1,5 @@
 import { Router } from "express";
+import dealFinder from './dealFinderRoute.js';
 import homepage from "./homepageRoute.js";
 import footer from "./footerRoute.js";
 import articleType from "./articleTypeRoute.js";
@@ -34,6 +35,7 @@ import domagoPartnerBanner from "./domagoPartnerBannerRoute.js";
 import honeymoon from "./honeymoonRoute.js";
 
 const router = new Router();
+router.use('/admin/deal-finder', dealFinder);
 
 router.use("/homepage", homepage);
 router.use("/footer", footer);

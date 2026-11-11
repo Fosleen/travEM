@@ -1,0 +1,36 @@
+.deal-finder .df-airline-badge {
+  --airline-ink: #475569;
+  --airline-bg: #f1f5f9;
+  --airline-border: #dce3eb;
+  --airline-accent: var(--airline-ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 9px;
+  border: 1px solid var(--airline-border);
+  border-radius: 6px;
+  background: var(--airline-bg);
+  color: var(--airline-ink);
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.25;
+  letter-spacing: .1px;
+  text-align: left;
+  box-sizing: border-box;
+  max-width: 100%;
+  > svg { flex: 0 0 12px; color: var(--airline-accent); margin: 0; padding: 0; }
+  > span { display: block; min-width: 0; }
+  &.df-airline-ryanair { --airline-ink: #142b55; --airline-bg: #f0f3fa; --airline-border: #d4ddec; --airline-accent: #b78600; }
+  &.df-airline-wizz { --airline-ink: #9e0866; --airline-bg: #fff0f9; --airline-border: #f3cde5; --airline-accent: #ca087f; }
+  &.df-airline-turkish, &.df-airline-austrian { --airline-ink: #a71c27; --airline-bg: #fff1f2; --airline-border: #f2d0d4; --airline-accent: #cf2430; }
+  &.df-airline-easyjet { --airline-ink: #a34305; --airline-bg: #fff3e9; --airline-border: #f5d6bc; --airline-accent: #db5c06; }
+  &.df-airline-lufthansa { --airline-ink: #102953; --airline-bg: #f2f4f9; --airline-border: #d6deec; --airline-accent: #a78100; }
+  &.df-airline-croatia { --airline-ink: #165392; --airline-bg: #eef6ff; --airline-border: #cee1f5; --airline-accent: #da3545; }
+  &.df-airline-eurowings, &.df-airline-qatar { --airline-ink: #7e244f; --airline-bg: #faf0f6; --airline-border: #e9cddd; }
+  &.df-airline-air-serbia { --airline-ink: #193d78; --airline-bg: #f1f4fa; --airline-border: #d5dfed; --airline-accent: #b42c43; }
+  &.df-airline-pegasus { --airline-ink: #775300; --airline-bg: #fff9dd; --airline-border: #ebde9c; }
+  &.df-airline-air-france, &.df-airline-british { --airline-ink: #1d3663; --airline-bg: #f0f4fb; --airline-border: #d4deee; --airline-accent: #c52c42; }
+  &.df-airline-klm { --airline-ink: #00648e; --airline-bg: #eaf8ff; --airline-border: #c5e5f4; --airline-accent: #0084b9; }
+  &.df-airline-emirates { --airline-ink: #a02a2f; --airline-bg: #fff2ee; --airline-border: #efd5ca; --airline-accent: #967126; }
+  &.df-airline-unknown { --airline-ink: #64748b; --airline-bg: #f8fafc; --airline-border: #e2e8f0; font-weight: 400; }
+}

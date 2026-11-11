@@ -7,6 +7,7 @@ const getArticleScheduleInclude = () => ({
 });
 
 const getPublicArticleWhere = () => ({
+  is_deal_draft: false,
   [Op.or]: [
     { "$article_schedule.id$": null },
     { "$article_schedule.publish_at$": null },

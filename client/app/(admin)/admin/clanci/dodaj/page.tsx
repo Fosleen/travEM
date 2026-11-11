@@ -1,9 +1,12 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 "use client";
 
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import "./AddArticle.scss";
 import { useRouter } from "next/navigation";
+import {readDealArticlePrefill,clearDealArticlePrefill} from '@/utils/dealArticlePrefill.mjs';
+import {dealFinderApi} from '@/utils/dealFinder';
 import Input from "@/components/atoms/Input";
 import Button from "@/components/atoms/Button";
 import { Fragment, useEffect, useRef, useState } from "react";
@@ -89,6 +92,9 @@ import {
 
 const AddArticlePage = () => {
   const router = useRouter();
+  const [dealPrefill,setDealPrefill]=useState(null);
+  const [prefillReady,setPrefillReady]=useState(false);
+  const prefillToken=useRef<string|null>(null);
   const [articleTypes, setArticleTypes] = useState<ArticleType | string>("");
   const [countries, setCountries] = useState<CountriesData | string>("");
   const [places, setPlaces] = useState<PlacesData | string>("");
@@ -287,6 +293,13 @@ const AddArticlePage = () => {
               );
             }
 
+            if(dealPrefill){
+              clearDealArticlePrefill(sessionStorage,prefillToken.current);
+              if(!isScheduleChecked){
+                try{await dealFinderApi(`/offers/${dealPrefill.offerId}/dismiss`,{});}
+                catch(error){console.warn('Članak je spremljen, ali ponuda nije uklonjena.',error);}
+              }
+            }
             router.push("/admin/clanci");
           } catch (error) {
             console.error("Error publishing article:", error);
@@ -350,7 +363,7 @@ const AddArticlePage = () => {
     });
   };
 
-  const fetchData = async () => {
+  const fetchData = async (prepared = null) => {
     try {
       const {
         articleTypesData,
@@ -365,7 +378,7 @@ const AddArticlePage = () => {
       setAirportCities(airportsData);
       try {
         const partners = await getAffiliatePartners();
-        setAffiliateLinks(mergeArticleAffiliateLinks(partners));
+        setAffiliateLinks(mergeArticleAffiliateLinks(partners,prepared?.affiliateLinks||[]));
       } catch (error) {
         console.warn("Affiliate tables are not installed yet.", error);
         setAffiliateLinks([]);
@@ -375,24 +388,37 @@ const AddArticlePage = () => {
     }
   };
 
-  const fetchPlacesData = async () => {
-    const placesData = await fetchArticlePlaces(selectedCountryId);
-    setPlaces(placesData);
-  };
-
   useEffect(() => {
-    fetchData();
+    let cancelled=false;
+    void Promise.resolve().then(()=>{
+    if(cancelled)return;
+    const token=new URLSearchParams(window.location.search).get('dealFinder');
+    const prepared=readDealArticlePrefill(sessionStorage,token);
+    if(prepared){
+      prefillToken.current=token;setDealPrefill(prepared);
+      setSectionImages(prepared.values.sections.map(section=>(section.section_images||[]).map(image=>({url:image.url}))));
+      setIsFarDestinationChecked(prepared.outsideEurope===true);
+      setIsNotifySubscribersChecked(false);
+    }
+    setPrefillReady(true);
+    fetchData(prepared);
+    });
+    return()=>{cancelled=true;};
   }, []);
 
   useEffect(() => {
-    selectedCountryId && fetchPlacesData();
+    if(!selectedCountryId)return;
+    let cancelled=false;
+    void fetchArticlePlaces(selectedCountryId).then(data=>{if(!cancelled)setPlaces(data);});
+    return()=>{cancelled=true;};
   }, [selectedCountryId]);
 
   return (
     <>
       <div className="add-article-container">
         <h2>Unesi novi članak</h2>
-        {articleTypes && countries ? (
+        {dealPrefill?.automation&&<aside className="deal-finder-import-summary" role="status"><strong>Popunjeno iz Deal Findera</strong><ul><li>{dealPrefill.automation.video?`Video iz postojećeg sadržaja: ${dealPrefill.automation.video.sourceTitle}`:'Za destinaciju nije pronađen spremljeni video. Možeš ga dodati ručno.'}</li>{dealPrefill.automation.affiliateUpdates.map((item)=><li key={item.partnerName}>{item.partnerName}: {item.source}.</li>)}{dealPrefill.automation.warnings.map((message,index)=><li key={`warning-${index}`}>{message}</li>)}</ul><p>Ostale poveznice zadržavaju postojeće vrijednosti. Sve možeš urediti prije objave; globalni affiliate URL-ovi ostaju sačuvani.</p></aside>}
+        {articleTypes && countries && prefillReady ? (
           <Formik
             initialValues={{
               article_title: "",
@@ -407,6 +433,7 @@ const AddArticlePage = () => {
               sections: [
                 createEmptyArticleSection(),
               ],
+              ...(dealPrefill?.values||{}),
             }}
             validationSchema={articleValidationSchema}
             onSubmit={handleSave}

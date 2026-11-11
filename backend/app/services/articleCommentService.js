@@ -226,7 +226,7 @@ class ArticleCommentService {
 
     const article = await db.models.Article.findByPk(articleId);
 
-    if (!article) {
+    if (!article || article.is_deal_draft) {
       return { error: "Članak nije pronađen", statusCode: 404 };
     }
 

@@ -61,6 +61,34 @@
   }
 }
 
+// Only the description wraps around the mobile photo; titles and metadata
+// remain flex items. The offsets are measured relative to the paragraph.
+@media screen and (max-width: 767px) {
+  .article-hero-container {
+    .article-hero-left > p {
+      display: flow-root;
+      overflow-wrap: normal;
+      word-break: normal;
+      hyphens: none;
+
+      &::before {
+        content: "";
+        float: right;
+        width: var(--photo-exclusion-width, 252px);
+        height: max(0px, calc(var(--photo-offset-top, 0px) + 272px));
+        // A steady text edge is easier to read than a narrow, uneven contour.
+        // Allow 25–30% of the photo width; use the full width below it.
+        shape-outside: polygon(
+          0 max(0px, calc(var(--photo-offset-top, 0px) - 12px)),
+          100% max(0px, calc(var(--photo-offset-top, 0px) - 12px)),
+          100% calc(var(--photo-offset-top, 0px) + 272px),
+          0 calc(var(--photo-offset-top, 0px) + 272px)
+        );
+      }
+    }
+  }
+}
+
 @media screen and ($tabletMedium) {
   .article-hero-container {
     .article-hero-left {

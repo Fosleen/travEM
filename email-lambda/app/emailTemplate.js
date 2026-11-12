@@ -10,8 +10,8 @@ const createEmailTemplate = (article, userEmail) => {
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light only" />
-    <meta name="supported-color-schemes" content="light" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
     <title>${article.article_title}</title>
     <style type="text/css">
       /* Reset styles */
@@ -127,31 +127,20 @@ const createEmailTemplate = (article, userEmail) => {
           height: 28px !important;
         }
 
-      /* Force light mode appearance in dark mode */
+      :root { color-scheme: light dark; supported-color-schemes: light dark; }
+
+      /* Inline styles preserve the light palette in clients without theme support. */
       @media (prefers-color-scheme: dark) {
-        /* Prevent email clients from inverting colors */
-        body,
-        table,
-        td,
-        div,
-        p,
-        span,
-        a,
-        h1,
-        h2,
-        h3 {
-          color-scheme: light !important;
-        }
-        
-        /* Force light backgrounds */
+        /* Dark canvas and content surfaces. */
         body,
         .backgroundTable {
-          background-color: #f5f5f5 !important;
+          background-color: #17141c !important;
         }
         
-        /* Keep white container */
-        .main-container {
-          background-color: #ffffff !important;
+        .main-container,
+        .content-bg,
+        .social-bg {
+          background-color: #24202b !important;
         }
         
         /* Force specific colors that shouldn't change */
@@ -168,7 +157,7 @@ const createEmailTemplate = (article, userEmail) => {
         }
         
         .about-bg {
-          background-color: #fafafa !important;
+          background-color: #2b2633 !important;
         }
         
         /* Preserve button colors */
@@ -188,7 +177,7 @@ const createEmailTemplate = (article, userEmail) => {
         
         /* Preserve text colors */
         .text-dark {
-          color: #2f2936 !important;
+          color: #f4f0f7 !important;
         }
 
         /* Force announcement text to stay dark */
@@ -203,7 +192,7 @@ const createEmailTemplate = (article, userEmail) => {
         }
         
         .text-gray {
-          color: #515151 !important;
+          color: #d2cbd9 !important;
         }
         
         .text-white {
@@ -211,21 +200,21 @@ const createEmailTemplate = (article, userEmail) => {
         }
         
         .text-light-gray {
-          color: #b3b3b3 !important;
+          color: #cec5d6 !important;
         }
         
         .text-medium-gray {
-          color: #888888 !important;
+          color: #b8afc1 !important;
         }
         
         .text-footer {
-          color: #cccccc !important;
+          color: #cec5d6 !important;
         }
         
         /* Preserve badge colors */
         .badge {
-          background-color: #dfdfdf !important;
-          color: #515151 !important;
+          background-color: #403748 !important;
+          color: #e4dcea !important;
         }
         
         /* Prevent image inversion */
@@ -236,18 +225,39 @@ const createEmailTemplate = (article, userEmail) => {
         
         /* Preserve divider color */
         .divider {
-          border-color: #f0f0f0 !important;
+          border-color: #48404f !important;
         }
         
         /* Preserve border colors */
         .unsubscribe-button {
-          border-color: #666666 !important;
+          border-color: #95869f !important;
         }
         
         .footer-divider {
-          border-color: #444444 !important;
+          border-color: #54495f !important;
         }
+        .contact-link { color: #9bc9ff !important; }
       }
+
+      /* Outlook variants that expose dark mode through data-ogsc. */
+      [data-ogsc] .backgroundTable { background-color: #17141c !important; }
+      [data-ogsc] .main-container, [data-ogsc] .content-bg, [data-ogsc] .social-bg { background-color: #24202b !important; }
+      [data-ogsc] .header-bg, [data-ogsc] .footer-bg { background-color: #2f2936 !important; }
+      [data-ogsc] .about-bg { background-color: #2b2633 !important; }
+      [data-ogsc] .text-dark { color: #f4f0f7 !important; }
+      [data-ogsc] .text-gray { color: #d2cbd9 !important; }
+      [data-ogsc] .text-white { color: #ffffff !important; }
+      [data-ogsc] .text-light-gray, [data-ogsc] .text-footer { color: #cec5d6 !important; }
+      [data-ogsc] .text-medium-gray { color: #b8afc1 !important; }
+      [data-ogsc] .contact-link { color: #9bc9ff !important; }
+      [data-ogsc] .badge { background-color: #403748 !important; color: #e4dcea !important; }
+      [data-ogsc] .divider { border-color: #48404f !important; }
+      [data-ogsc] .footer-divider { border-color: #54495f !important; }
+      [data-ogsc] .unsubscribe-button { border-color: #95869f !important; }
+      [data-ogsc] .announcement-bg, [data-ogsc] .social-youtube { background-color: #b3c952 !important; }
+      [data-ogsc] .announcement-text { color: #2f2936 !important; }
+      [data-ogsc] .cta-button { background-color: #2bac82 !important; }
+      [data-ogsc] .social-blue { background-color: #78a4d7 !important; }
     </style>
   </head>
 
@@ -323,7 +333,7 @@ const createEmailTemplate = (article, userEmail) => {
                           line-height: 1.5;
                         "
                       >
-                        Otkrijte nove informacije o putovanjima iz prve ruke
+                        Vodiči, savjeti i povoljne aviokarte - među prvima u tvom inboxu.
                       </p>
                     </td>
                   </tr>
@@ -358,7 +368,7 @@ const createEmailTemplate = (article, userEmail) => {
 
             <!-- Main content -->
             <tr>
-              <td style="padding: 50px 40px" class="mobile-padding">
+              <td style="padding: 50px 40px; background-color: #ffffff" class="content-bg mobile-padding">
                 <table border="0" cellpadding="0" cellspacing="0" width="100%">
                   <!-- Featured image -->
                   <tr>
@@ -542,7 +552,7 @@ const createEmailTemplate = (article, userEmail) => {
                   text-align: center;
                   background-color: #ffffff;
                 "
-                class="mobile-padding"
+                class="social-bg mobile-padding"
               >
                 <table border="0" cellpadding="0" cellspacing="0" width="100%">
                   <tr>
@@ -630,10 +640,10 @@ const createEmailTemplate = (article, userEmail) => {
                             </a>
                           </td>
 
-                          <!-- Instagram 1 - Blue -->
+                          <!-- Instagram - Blue -->
                           <td align="center" style="padding: 0 6px">
                             <a
-                              href="https://www.instagram.com/putujuci_paradoks/"
+                              href="https://www.instagram.com/putujem_s_travem/"
                               target="_blank"
                               class="social-icon social-blue"
                               style="
@@ -660,65 +670,6 @@ const createEmailTemplate = (article, userEmail) => {
                             </a>
                           </td>
 
-                          <!-- Instagram 2 - Blue -->
-                          <td align="center" style="padding: 0 6px">
-                            <a
-                              href="https://www.instagram.com/ema_only_/"
-                              target="_blank"
-                              class="social-icon social-blue"
-                              style="
-                                display: inline-block;
-                                width: 48px;
-                                height: 48px;
-                                background-color: #78a4d7;
-                                border-radius: 50%;
-                                text-decoration: none;
-                              "
-                            >
-                              <img
-                                src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png"
-                                alt="Instagram"
-                                width="24"
-                                height="24"
-                                style="
-                                  width: 24px;
-                                  height: 24px;
-                                  display: block;
-                                  margin: 6px auto;
-                                "
-                              />
-                            </a>
-                          </td>
-
-                          <!-- TikTok - Blue -->
-                          <td align="center" style="padding: 0 6px">
-                            <a
-                              href="https://www.tiktok.com/@ema_only_"
-                              target="_blank"
-                              class="social-icon social-blue"
-                              style="
-                                display: inline-block;
-                                width: 48px;
-                                height: 48px;
-                                background-color: #78a4d7;
-                                border-radius: 50%;
-                                text-decoration: none;
-                              "
-                            >
-                              <img
-                                src="https://img.icons8.com/ios-filled/50/ffffff/tiktok.png"
-                                alt="TikTok"
-                                width="24"
-                                height="24"
-                                style="
-                                  width: 24px;
-                                  height: 24px;
-                                  display: block;
-                                  margin: 6px auto;
-                                "
-                              />
-                            </a>
-                          </td>
                         </tr>
                       </table>
                     </td>
@@ -820,6 +771,7 @@ const createEmailTemplate = (article, userEmail) => {
                           Kontakt:
                           <a
                             href="mailto:hello@putujemstravem.com"
+                            class="contact-link"
                             style="color: #78a4d7; text-decoration: none"
                             >hello@putujemstravem.com</a
                           >

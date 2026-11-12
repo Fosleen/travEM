@@ -10,7 +10,7 @@ const getArticleTypeBadge = (articleTypeId) => {
     2: { icon: "✈️", text: " AVIOKARTE" },
     3: { icon: "🎒", text: " PAKIRANJE" },
     4: { icon: "✈️", text: " LET AVIONOM" },
-    5: { icon: "📋", text: " ORGANIZACIJA PUTA" },
+    5: { icon: "📋", text: " NOVOSTI I ORGANIZACIJA PUTA" },
     6: { icon: "📱", text: " APLIKACIJE" },
     7: { icon: "🏨", text: " SMJEŠTAJ" },
     8: { icon: "💳", text: " REVOLUT" },

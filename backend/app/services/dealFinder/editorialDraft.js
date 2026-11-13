@@ -2,6 +2,7 @@ import {assert,escapeHtml,renderSelection,renderHostel,skyscanner,hotelBookingLi
 import {editorialFacts} from './editorialFacts.js';
 import {renderFlightNotes} from './baggage.js';
 import {hotelPhotos} from './hotels.js';
+import {airportByCode} from './airports.js';
 
 export const sectionKinds=['flights','hotel','alternatives','hostel','closing'];
 export const sectionDefaults={flights:'Povratne aviokarte',hotel:'Primjer smještaja',alternatives:'Alternativni smještaji',hostel:'Hostelska opcija',closing:'Prije rezervacije'};
@@ -9,9 +10,9 @@ export const sectionDefaults={flights:'Povratne aviokarte',hotel:'Primjer smješ
 const iconImages={flights:'53666460054',hotel:'53629517350',alternatives:'53629517350',hostel:'53629517350',closing:'54182086503'};
 export function defaultSectionIcon(kind,icons){return icons.find(icon=>!icon.feature_key&&icon.url.includes(iconImages[kind]))?.id??null;}
 export function validateSections(sections){
- assert(Array.isArray(sections)&&sections.length<=8,'Neispravni odlomci članka');
+ assert(Array.isArray(sections)&&sections.length<=100,'Neispravni odlomci članka');
  const seen=new Set();return sections.map(section=>{
-  assert(section&&sectionKinds.includes(section.kind)&&!seen.has(section.kind),'Nepoznat ili ponovljen odlomak');seen.add(section.kind);
+  assert(section&&(sectionKinds.includes(section.kind)||/^destination_[A-Z]{3}$/.test(section.kind))&&!seen.has(section.kind),'Nepoznat ili ponovljen odlomak');seen.add(section.kind);
   assert(typeof section.subtitle==='string'&&section.subtitle.length<=100,'Naslov odlomka smije imati najviše 100 znakova');
   assert(typeof section.text==='string'&&section.text.length<=10000,'Odlomak smije imati najviše 10000 znakova');
   assert(section.sectionIconId==null||Number.isInteger(section.sectionIconId)&&section.sectionIconId>0,'Neispravna ikonica odlomka');
@@ -36,7 +37,20 @@ export function articleSections(offer,flights,hotel,settings,fields={},suggestio
   const sectionIconId=section?section.sectionIconId:defaultSectionIcon(kind,icons);
   let text=paragraphs(section?.text??'');
   let link_title='',link_url='';
-  if(kind==='flights')text+=(text?'':'<p>Izdvojili smo povoljne termine povratnih letova. Klikom na datum možeš provjeriti ponudu.</p>')+flightExamples(flights,settings)+renderFlightNotes(flights);
+  if(kind==='flights'){
+   text+=text?'':'<p>Izdvojili smo povoljne termine povratnih letova. Klikom na datum možeš provjeriti ponudu.</p>';
+   if(offer.selection.template==='roundup'){
+    result.push({kind,subtitle,text,sectionIconId,link_title,link_url,images:[]});
+    const destinations=[...new Set(flights.map(f=>f.destination))];
+    destinations.forEach((code,index)=>{
+     const routeKind=`destination_${code}`,routeSection=edited.find(s=>s.kind===routeKind);
+     const routeFlights=flights.filter(f=>f.destination===code);
+     result.push({kind:routeKind,subtitle:routeSection?.subtitle??`${airportByCode(code)?.city||code} (${code})`,text:paragraphs(routeSection?.text||'')+flightExamples(routeFlights,settings)+(index===destinations.length-1?renderFlightNotes(flights):''),sectionIconId:routeSection?.sectionIconId??sectionIconId,link_title:'',link_url:'',images:[]});
+    });
+    continue;
+   }
+   text+=flightExamples(flights,settings)+renderFlightNotes(flights);
+  }
   if(kind==='hotel'){
    text+=hotelText(offer,hotel,settings);link_title='Pogledaj smještaj';link_url=hotelBookingLink(hotel,settings);
    const packagePrice=getFacts().tokens.package_price;

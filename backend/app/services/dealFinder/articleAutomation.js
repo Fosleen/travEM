@@ -27,7 +27,7 @@ function partnerKind(partner){
 // These landing pages are confirmed editorial inputs, never guessed city slugs.
 const carDestinations={PRG:'/czech-republic/prague'};
 export function articleAffiliateOverrides(offer,partners,settings,previousLinks=[]){
-  if(offer.selection?.template==='monthly')return [];
+  if(['monthly','roundup'].includes(offer.selection?.template))return [];
   const selection=offer.selection||{},hotel=selection.flightsOnly?null:offer.data?.hotels?.[selection.hotelIndex];
   const flights=(selection.flightIndices||[]).map(i=>offer.data?.flights?.[i]).filter(Boolean);
   const flight=flightForStay(offer,hotel)?.flight||flights[selection.exampleIndex||0]||flights[0];
@@ -57,7 +57,7 @@ export function articleAffiliateOverrides(offer,partners,settings,previousLinks=
 export async function articleAutomation(offer,settings,models){
   const automation={video:null,affiliateUpdates:[],warnings:[]};
   const result={affiliateLinks:[],automation};
-  if(offer.selection?.template==='monthly')return result;
+  if(['monthly','roundup'].includes(offer.selection?.template))return result;
   const airport=airportByCode(offer.destination);
   const names=new Set([airport?.city,...(airport?.aliases||[])].filter(Boolean).map(normalize));
   // Use only the catalog's destination names, not model-generated free text.

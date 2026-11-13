@@ -34,6 +34,15 @@
   .flight-list .df-flight-item > label { border: 0; align-items: flex-start; padding: 18px 18px 8px; }
   .df-flight-item > label > input { margin-top: 2px; }
   .df-flight-item > label > strong { color: $greenHover; font-size: 18px; white-space: nowrap; }
+  .df-roundup-destination { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; font-size: 14px; color: $greenHover; }
+  .df-batch-selection-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .df-batch-destination-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,240px),1fr)); gap: 10px; }
+  .df-batch-destination-grid > label { display: flex; flex-direction: row; align-items: center; gap: 9px; margin: 0; padding: 12px; background: white; border: 1px solid $greyMiddle; border-radius: 8px; cursor: pointer; }
+  .df-batch-destination-grid > label.is-selected { border-color: $green; background: $limeLight; }
+  .df-batch-destination-grid input[type='checkbox'] { width: 22px; height: 22px; flex: 0 0 22px; margin: 0; accent-color: $greenHover; }
+  .df-batch-destination-grid label > span { flex: 1; }
+  .df-batch-destination-grid small { white-space: nowrap; }
+  .df-batch-total { color: $greenHover; }
   .df-flight-row-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 18px 12px 48px; }
   .df-flight-row-actions .df-text-button { font-size: 12px; }
   .df-saved-flight-editor { margin: 14px 0 24px; border: 1px solid rgba($green,.35); border-radius: 10px; padding: 16px; background: $limeLight; }

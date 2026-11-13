@@ -3,6 +3,7 @@ import db from '../models/index.js';
 import { verifyToken } from '../middleware/jwt_verify.js';
 import * as service from '../services/dealFinder/service.js';
 import {orderedRows} from '../services/dealFinder/orderedRows.js';
+import {templateEditorial} from '../services/dealFinder/textGeneration.js';
 import { editorial, assert, evaluateStay, renderSelection, renderHostel, effectiveSettings,renderAlternativeHotels } from '../services/dealFinder/domain.js';
 import { clearCache, clearCacheByPattern } from '../middleware/redis.js';
 import {searchAirports,offerAirportNames,discoveryDestinationAllowed} from '../services/dealFinder/airports.js';
@@ -57,7 +58,7 @@ router.get('/offers/:id/preview',wrap(async req=>{
   return {html:renderSelection(o,await service.selectedFlights(o),o.selection.template==='monthly'?null:o.data.hotels[o.selection.hotelIndex],s)+renderAlternativeHotels(o,(o.selection.extraHotelIndices||[]).map(i=>o.data.hotels[i]),s)+renderHostel(o.selection.hostel,s)};
 }));
 router.post('/offers/:id/regenerate-field',wrap(async req=>{
-  const o=await service.detail(req.params.id), fields=editorial(o);
+  const o=await service.detail(req.params.id), fields=o.selection?.template==='roundup'?templateEditorial(o):editorial(o);
   assert(['intro','titles','descriptions','subtitle','subtitles','tags'].includes(req.body.field),'Nepoznato polje');
   return {field:req.body.field,value:fields[req.body.field]};
 }));

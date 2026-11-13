@@ -54,4 +54,4 @@ export class GroqTextGenerator {
     return {...recoverEditorial(parsed,facts,resolveEditorialText),provider:'groq',model,styleVersion:editorialStyleVersion,usage:data.usage||null,reviewRequired:true};
   }
 }
-export function templateEditorial(offer){return {...editorial(offer),provider:'template',reviewRequired:true};}
+export function templateEditorial(offer){return {...(offer.selection?.template==='roundup'?recoverEditorial({},editorialFacts(offer),resolveEditorialText):editorial(offer)),provider:'template',reviewRequired:true};}

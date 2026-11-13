@@ -5,9 +5,9 @@ import Button from '@/components/atoms/Button';
 import {dealFinderApi as api,type DealJson} from '@/utils/dealFinder';
 import {searchWindowDays,nextSearchDate} from '@/utils/dealFinderSearch.mjs';
 import {offerSummary} from '@/utils/dealFinderOffers.mjs';
-type Props={offer:DealJson,busy:boolean,action:(fn:()=>Promise<void>)=>Promise<void>,onComplete:()=>Promise<void>};
+type Props={offer:DealJson,busy:boolean,action:(fn:()=>Promise<void>)=>Promise<void>,onComplete:()=>Promise<void>,onRunningChange?:(running:boolean)=>void};
 
-export default function DealRouteSearch({offer,busy,action,onComplete}:Props) {
+export default function DealRouteSearch({offer,busy,action,onComplete,onRunningChange}:Props) {
   const completion=useRef(onComplete);
   useEffect(()=>{completion.current=onComplete;},[onComplete]);
   const source=offer.flightSearch?.window,minimum=source?.minimumDays||1;
@@ -28,12 +28,12 @@ export default function DealRouteSearch({offer,busy,action,onComplete}:Props) {
     const timer=setInterval(async()=>{
       try {
         const run=await api(`/runs/${runId}`);if(cancelled)return;
-        if(run.status==='completed'){clearInterval(timer);setRunId(null);setMessage('Pretraga je završena. Rezultati su spremljeni u ovoj ponudi.');await completion.current();}
-        else if(run.status==='failed'){clearInterval(timer);setRunId(null);setMessage(run.error||'Dodatna pretraga nije uspjela.');await completion.current();}
+        if(run.status==='completed'){clearInterval(timer);setRunId(null);onRunningChange?.(false);setMessage('Pretraga je završena. Rezultati su spremljeni u ovoj ponudi.');await completion.current();}
+        else if(run.status==='failed'){clearInterval(timer);setRunId(null);onRunningChange?.(false);setMessage(run.error||'Dodatna pretraga nije uspjela.');await completion.current();}
       }catch{if(!cancelled)setMessage('Status pretrage trenutačno nije dostupan. Provjera statusa nastavlja se bez novih plaćenih upita.');}
     },3000);
     return()=>{cancelled=true;clearInterval(timer);};
-  },[runId]);
+  },[runId,onRunningChange]);
 
   return <details className="df-advanced df-route-search"><summary>Pronađi još termina na ovoj ruti</summary>
     <p><strong>{offer.originName||offer.origin} ({offer.origin}) → {offer.destinationName||offer.destination} ({offer.destination})</strong></p>
@@ -49,7 +49,7 @@ export default function DealRouteSearch({offer,busy,action,onComplete}:Props) {
     {!valid&&<p className="error">Provjeri datume i trajanje putovanja.</p>}
     {valid&&(queries>limit||queries>remaining)&&<p className="error">Plan od {queries} upita prelazi limit po pretrazi ({limit}) ili preostalu kvotu ({remaining}). Skrati raspon ili odaberi kalendar jednog trajanja.</p>}
     {!offer.flightSearch?.enabled&&<p>Live pretrage nisu omogućene na serveru ili u Postavkama.</p>}
-    <Button white disabled={busy||runId!==null||!allowed} onClick={()=>action(async()=>{const run=await api(`/offers/${offer.id}/search-flights`,{mode,start,end,days,minimumDays,confirmedQueries:queries});setRunId(run.id);setMessage(`Pretraga je pokrenuta · ${queries} API upita. Smještaj se ne pretražuje.`);})}><MagnifyingGlass size={18}/>{runId!==null?'Tražimo dodatne termine…':`Pronađi još termina · ${queries} API upita`}</Button>
+    <Button white disabled={busy||runId!==null||!allowed} onClick={()=>action(async()=>{const run=await api(`/offers/${offer.id}/search-flights`,{mode,start,end,days,minimumDays,destination:offer.destination,confirmedQueries:queries});setRunId(run.id);onRunningChange?.(true);setMessage(`Pretraga je pokrenuta · ${queries} API upita. Smještaj se ne pretražuje.`);})}><MagnifyingGlass size={18}/>{runId!==null?'Tražimo dodatne termine…':`Pronađi još termina · ${queries} API upita`}</Button>
     {message&&<p role="status">{message}</p>}
     {offer.provenance?.lastFlightSearch&&<p>Posljednja dopuna: {offer.provenance.lastFlightSearch.added} novih termina, {offer.provenance.lastFlightSearch.updated} ažuriranih.</p>}
     {mode==='budget_dates'&&offer.provenance?.lastPairSearch&&<p>Posljednji pregled: {offer.provenance.lastPairSearch.totalCombinations} procijenjenih kombinacija · {offer.provenance.lastPairSearch.start} – {offer.provenance.lastPairSearch.end}.</p>}

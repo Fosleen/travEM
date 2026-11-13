@@ -1,6 +1,7 @@
 import {assert} from './domain.js';
 import {dateSpan} from './searchRules.js';
 import {budgetCarrierCodes,budgetDatesEnabled} from './budgetDates.js';
+import {flightKey,isRoundupOffer,routeOffer} from './roundup.js';
 
 export function sourceSearchWindow(offer,parentInput={}) {
   for(const candidate of [offer.provenance?.discoveryWindow,offer.provenance?.searchWindow,parentInput]) {
@@ -28,14 +29,26 @@ export function offerFlightSearchInput(offer,options,window) {
   return {mode,origins:[offer.origin],destination:offer.destination,offerId:offer.id,supplemental:true,start,end,minimumDays,...(mode==='calendar'?{days}:{}),...budget,adults:1,overrides:offer.provenance?.overrides||{}};
 }
 
+export function offerBatchSearchInput(offer,options,window){
+  assert(isRoundupOffer(offer),'Grupna dopuna zahtijeva objedinjenu ponudu');
+  assert(Array.isArray(options.destinations)&&options.destinations.length>0&&options.destinations.length<=90&&new Set(options.destinations).size===options.destinations.length,'Odaberi različita odredišta za dopunu');
+  const legacyMode=options.legacyMode||'calendar';
+  assert(['calendar','route'].includes(legacyMode),'Odaberi način dopune ostalih ruta');
+  const routes=options.destinations.map(destination=>{
+    const route=routeOffer(offer,destination);
+    return offerFlightSearchInput(route,{start:options.start,end:options.end,minimumDays:options.minimumDays,days:options.days,mode:budgetCarrierCodes(route).length?'budget_dates':legacyMode},window);
+  });
+  return {mode:'batch_routes',offerId:offer.id,supplemental:true,origins:[offer.origin],destinations:[...options.destinations],legacyMode,start:routes[0].start,end:routes[0].end,minimumDays:routes[0].minimumDays,...(routes.some(r=>r.mode==='calendar')?{days:routes.find(r=>r.mode==='calendar').days}:{}),routes,adults:1};
+}
+
 export function mergeOfferFlights(offer,incoming,run) {
-  const merged=new Map((offer.data.flights||[]).map(f=>[`${f.departureDate}:${f.returnDate}`,f]));
+  const merged=new Map((offer.data.flights||[]).map(f=>[flightKey(f),f]));
   let added=0,updated=0;
   for(const flight of incoming) {
-    const key=`${flight.departureDate}:${flight.returnDate}`,previous=merged.get(key);
+    const key=flightKey(flight),previous=merged.get(key);
     if(previous)updated++;else added++;
     merged.set(key,{...flight,priceHistory:[...(previous?.priceHistory||[]),{priceCents:flight.priceCents,at:new Date().toISOString()}].slice(-20)});
   }
-  return {data:{...offer.data,flights:[...merged.values()],flightArchive:(offer.data.flightArchive||[]).filter(f=>!merged.has(`${f.departureDate}:${f.returnDate}`))},
+  return {data:{...offer.data,flights:[...merged.values()],flightArchive:(offer.data.flightArchive||[]).filter(f=>!merged.has(flightKey(f)))},
     provenance:{...offer.provenance,lastFlightSearch:{runId:run.id,mode:run.input.mode,start:run.input.start,end:run.input.end,days:run.input.days,minimumDays:run.input.minimumDays,added,updated,returned:incoming.length,at:new Date().toISOString()}}};
 }

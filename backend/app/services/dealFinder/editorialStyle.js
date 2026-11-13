@@ -1,6 +1,6 @@
 // Distilled from all 35 public Aviokarte articles and 16 city categories on 2026-11-08.
 // Public blog examples are distilled here; never fetch them at generation time.
-export const editorialStyleVersion='aviokarte-regional-v4';
+export const editorialStyleVersion='aviokarte-regional-v5';
 export const editorialStyle=`Piši za hrvatski blog putujEM s travEM, prema njegovoj rubrici Aviokarte.
 Glas: pristupačan putnik koji je pronašao korisnu ponudu, konkretan i razgovoran hrvatski.
 Obraćaj se čitatelju na ti, dosljedno kroz tekst. Možeš reći "pronašli smo" za odabranu ponudu,
@@ -13,7 +13,7 @@ Ispravno je "iz Zagreba". Svaku rečenicu prije odgovora jezično provjeri: potp
 ispravni dijakritici i padeži, bez zatipaka, izgubljenih slova i besmislenih izraza.
 
 Naslovi: najmanje PET različitih SEO prijedloga, do sto znakova svaki. SVAKI naslov
-mora imati cijenu headline_price i destinaciju. NIKAD ne navodi polazište u naslovu ni opisu: čitatelj ga otkriva u članku. Jasno, konkretno,
+mora imati cijenu headline_price i destinaciju. Za jednu destinaciju ne navodi polazište u naslovu ni opisu: čitatelj ga otkriva u članku. Iznimka je predložak roundup: za pregled više odredišta smiješ i poželjno je navesti zajedničko polazište, npr. "Jeftini povratni letovi iz Zagreba za Advent od [cijena]". Jasno, konkretno,
 bez ponavljanja ključnih riječi. Mijenjaj početni motiv, ne samo redoslijed riječi.
 Ako postoji package_price_short, SVI naslovi prodaju odabrani let i smještaj po osobi.
 Nemoj promovirati jeftiniji dugi let iz popisa kada urednik odabere kraći put s hotelom.
@@ -52,6 +52,8 @@ Opis nije još jedan kratak naslov. Primjer tona: "Pronašli smo odlične ponude
 Lanzarote. Donosimo termine letova i primjer smještaja." Prilagodi do sto znakova.
 Ne kopiraj dugačak naslov u podnaslov i opis. SEO: kratke relevantne oznake o ruti,
 destinaciji i povoljnim putovanjima; PET do DESET oznaka, zajedno najviše dvjesto pedeset pet znakova.
+
+Predložak roundup predstavlja više ODVOJENIH povratnih putovanja iz jednog polazišta. To nije let s više presjedanja ni itinerar koji obilazi sve gradove. Piši o izboru odredišta iz destinations i flights; nemoj naslov graditi oko samo jednog grada. Svaki naslov sadrži headline_price. Koristi destination_count za broj odredišta; Advent spominji samo ako seasonalAngle jest Advent. Raspon može prelaziti granicu mjeseca, ne zaključuj da je cijeli izbor za jedan mjesec. Smještaj i paketna cijena ne pripadaju ovom predlošku. U flights napiši uvod u pregled; aplikacija će dodati zaseban odlomak za svako odredište s datumima, cijenama i poveznicama.
 
 Tekst članka: intro je kratak uvod o destinaciji i razlogu za putovanje, bez naslova i ikonice.
 Uvod ima dva do tri smislena odlomka: prvo po čemu destinacija vrijedi posjeta, a zatim

@@ -39,6 +39,8 @@ export function editorialFacts(offer){
     return {role:position===0?'primary':'alternative',name:tokens[`${prefix}_name`],checkin:hotel.checkin,checkout:hotel.checkout,nights:nights(hotel.checkin,hotel.checkout),adults:hotel.adults,totalPriceCents:total,features};
   }).filter(Boolean);
   const flights=(selection.flightIndices||[]).map(index=>data.flights?.[index]).filter(Boolean),priced=flights.filter(fresh).sort((a,b)=>a.priceCents-b.priceCents);
+  const roundup=selection.template==='roundup';
+  const destinations=[...new Set(flights.map(f=>f.destination))].map(code=>({code,name:airportByCode(code)?.city||code}));
   const hostel=selection.hostel?.adults===2?selection.hostel:null;
   if(hostel){
     tokens.hostel_price=`${money(Math.round(hostel.totalEur*100))} za cijeli boravak za dvije osobe`;
@@ -46,7 +48,7 @@ export function editorialFacts(offer){
     tokens.hostel_features=hostelFeatures(hostel).join(', ');
     tokens.hostel_nights=String(nights(hostel.checkin,hostel.checkout));
   }
-  if(selection.template==='monthly'){
+  if(selection.template==='monthly'||roundup){
     tokens.destination_count=String(new Set(flights.map(f=>f.destination)).size);
     tokens.flight_count=String(flights.length);
     if(/^\d{4}-\d{2}$/.test(selection.month||''))tokens.travel_month=`${Number(selection.month.slice(5))}. mjesec`;
@@ -63,9 +65,15 @@ export function editorialFacts(offer){
   }
   if(focus?.departureDate){tokens.travel_year=focus.departureDate.slice(0,4);tokens.travel_month=`${Number(focus.departureDate.slice(5,7))}. mjesec`;}
   if(focus?.returnDate)tokens.return_year=focus.returnDate.slice(0,4);
+  if(roundup&&flights.length){
+    tokens.travel_start=flights.map(f=>f.departureDate).sort()[0];
+    tokens.travel_end=flights.map(f=>f.returnDate).sort().at(-1);
+    if(tokens.travel_start.slice(0,7)!==tokens.travel_end.slice(0,7))delete tokens.travel_month;
+  }
   tokens.headline_price=tokens.package_price_short||tokens.flight_price_short||'';
-  return {tokens,context:{template:selection.template||'route',originAirport:offer.origin,originName:airportByCode(offer.origin)?.city||offer.origin,destinationAirport:offer.destination,destinationName:data.destinationName||airportByCode(offer.destination)?.city||offer.destination,
-    seasonalAngle:focus?.departureDate&&focus.departureDate.slice(5)>='11-25'&&focus.departureDate.slice(5)<='12-25'?'Advent':null,
+  const advent=roundup?flights.length>0&&flights.every(f=>f.departureDate>=`${tokens.travel_start.slice(0,4)}-11-25`&&f.returnDate<=`${tokens.travel_start.slice(0,4)}-12-25`):focus?.departureDate&&focus.departureDate.slice(5)>='11-25'&&focus.departureDate.slice(5)<='12-25';
+  return {tokens,context:{template:selection.template||'route',originAirport:offer.origin,originName:airportByCode(offer.origin)?.city||offer.origin,destinationAirport:offer.destination,destinationName:roundup?'Više odredišta':data.destinationName||airportByCode(offer.destination)?.city||offer.destination,...(roundup?{destinations,travelWindow:{start:tokens.travel_start,end:tokens.travel_end}}:{}),
+    seasonalAngle:advent?'Advent':null,
     editorialNotes:offer.destination==='ACE'?'Lanzarote je kanarski otok u Atlantskom oceanu, dio Španjolske. Vulkanima oblikovan krajolik, šetnje i obalna mjesta daju razlog za posjet; zimi je zanimljiv kao bijeg u blažu klimu. Bez izmišljenih temperatura i tvrdnji o Mediteranu.':null,
     packageFlight:matching?{departureDate:matching.departureDate,returnDate:matching.returnDate,priceCents:matching.priceCents,verified:fresh(matching)}:null,
     flights:flights.map(f=>({destinationName:airportByCode(f.destination)?.city||f.destination,departureDate:f.departureDate,returnDate:f.returnDate})),hotels,hostel:hostel?{checkin:hostel.checkin,checkout:hostel.checkout,adults:2,totalEur:hostel.totalEur,features:hostelFeatures(hostel),cheaperThanHotels:hotels.length>0&&hotels.every(h=>h.totalPriceCents!==null&&hostel.totalEur*100<h.totalPriceCents)}:null}};

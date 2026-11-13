@@ -29,6 +29,13 @@ export function searchAirports(query){
 }
 export function offerAirportNames(offer,origins=[]){
   const o=offer.toJSON?offer.toJSON():offer,origin=airportByCode(o.origin),destination=airportByCode(o.destination);
+  if(o.data?.type==='roundup'){
+    const destinations=[...new Set((o.data.flights||[]).map(f=>f.destination))].map(code=>{
+      const airport=airportByCode(code),outsideEurope=airport?.continent?!['CY','GR','ES','PT'].includes(airport.country)&&airport.continent!=='EU':null;
+      return {code,name:airport?.city||code,country:airport?.country,outsideEurope};
+    });
+    return {...o,originName:origins.find(a=>a.code===o.origin)?.name||origin?.city||o.origin,originCountry:origin?.country,originAirportName:origin?.name,destinationName:`${destinations.length} odredišta`,destinationAirportName:destinations.map(d=>`${d.name} (${d.code})`).join(', '),destinations,outsideEurope:destinations.some(d=>d.outsideEurope===true)};
+  }
   const continent=destination?.continent||null;
   const european=destination&&(continent==='EU'||['CY','GR','ES','PT'].includes(destination.country));
   return {...o,originName:origins.find(a=>a.code===o.origin)?.name||origin?.city||o.origin,destinationName:destination?.city||o.data?.destinationName||o.destination,originCountry:origin?.country,destinationCountry:destination?.country,originAirportName:origin?.name,destinationAirportName:destination?.name,destinationContinent:continent,outsideEurope:continent?!european:null};

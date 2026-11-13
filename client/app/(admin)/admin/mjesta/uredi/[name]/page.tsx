@@ -5,6 +5,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { PlacesData } from "@/common/types";
 import Button from "@/components/atoms/Button";
+import ClimateImport from "@/components/admin/organisms/ClimateImport";
 import "./EditPlace.scss";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import UnsavedChangesGuard, {
@@ -497,6 +498,7 @@ const EditPlace = () => {
                   </div>
 
                   <div className="edit-place-best-time-table">
+                    <ClimateImport />
                     <div className="edit-place-best-time-row edit-place-best-time-row-head">
                       <div>Mjesec</div>
                       <div>Prosj. temp. °C</div>

@@ -9,6 +9,8 @@ import {
   useState,
 } from "react";
 import { apiUrl } from "@/utils/api";
+import { splitClimateNote } from "@/utils/climate";
+import ClimateSource from "@/components/user/atoms/ClimateSource";
 import {
   ICON,
   MONTH_LABEL,
@@ -131,7 +133,8 @@ export default function BestTimeToVisitPlace({
     placeClimate.place?.name ||
     "";
 
-  const noteParts = placeClimate.note ? splitNote(placeClimate.note) : null;
+  const climateNote = splitClimateNote(placeClimate.note);
+  const noteParts = climateNote.note ? splitNote(climateNote.note) : null;
 
   const handleMonthKeyDown = (
     event: KeyboardEvent<HTMLDivElement>,
@@ -224,6 +227,7 @@ export default function BestTimeToVisitPlace({
           </div>
         ))}
       </div>
+      <ClimateSource />
     </section>
   );
 }

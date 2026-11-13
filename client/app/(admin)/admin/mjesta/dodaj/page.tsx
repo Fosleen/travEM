@@ -3,6 +3,7 @@
 "use client";
 
 import Button from "@/components/atoms/Button";
+import ClimateImport from "@/components/admin/organisms/ClimateImport";
 import "./AddPlace.scss";
 import { CountriesData } from "@/common/types";
 import { Fragment, useEffect, useRef, useState } from "react";
@@ -362,6 +363,7 @@ const AddPlace = () => {
                   </div>
 
                   <div className="add-place-best-time-table">
+                    <ClimateImport />
                     <div className="add-place-best-time-row add-place-best-time-row-head">
                       <div>Mjesec</div>
                       <div>Prosj. temp. °C</div>

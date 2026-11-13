@@ -1,4 +1,5 @@
 import { Router } from "express";
+import climate from './climateRoute.js';
 import dealFinder from './dealFinderRoute.js';
 import homepage from "./homepageRoute.js";
 import footer from "./footerRoute.js";
@@ -43,6 +44,7 @@ router.get("/me", verifyToken, (req, res) => res.json({ id: req.user.id, usernam
 router.get("/users", verifyToken, requireAdmin, listUsers);
 router.post("/users", verifyToken, requireAdmin, addUser);
 router.use('/admin/deal-finder', dealFinder);
+router.use('/admin/climate', climate);
 
 router.use("/homepage", homepage);
 router.use("/footer", footer);

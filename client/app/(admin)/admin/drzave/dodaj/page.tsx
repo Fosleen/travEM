@@ -9,6 +9,7 @@ import { notifySuccess } from "@/components/atoms/Toast/Toast";
 import Swal from "sweetalert2";
 import Modal from "@/components/atoms/Modal";
 import Button from "@/components/atoms/Button";
+import ClimateImport from "@/components/admin/organisms/ClimateImport";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import UnsavedChangesGuard, {
   confirmDiscardChanges,
@@ -602,6 +603,7 @@ const AddCountry = () => {
                               </div>
 
                               <div className="add-country-best-time-table">
+                                <ClimateImport regionIndex={regionIndex} />
                                 <div className="add-country-best-time-row add-country-best-time-row-head">
                                   <div>Mjesec</div>
                                   <div>Prosj. temp. °C</div>

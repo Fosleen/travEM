@@ -3,6 +3,8 @@
 
 import { CSSProperties, KeyboardEvent, useEffect, useMemo, useState } from "react";
 import { apiUrl } from "@/utils/api";
+import { splitClimateNote } from "@/utils/climate";
+import ClimateSource from "@/components/user/atoms/ClimateSource";
 import { getCountryAccusative } from "@/utils/countryGrammar";
 import {
   ICON,
@@ -155,7 +157,8 @@ export default function BestTimeToVisit({ countrySlug, countryId }: Props) {
     (a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0)
   );
 
-  const noteParts = region.note ? splitNote(region.note) : null;
+  const climateNote = splitClimateNote(region.note);
+  const noteParts = climateNote.note ? splitNote(climateNote.note) : null;
 
   const handleMonthKeyDown = (
     event: KeyboardEvent<HTMLDivElement>,
@@ -263,6 +266,7 @@ export default function BestTimeToVisit({ countrySlug, countryId }: Props) {
           </div>
         ))}
       </div>
+      <ClimateSource />
     </section>
   );
 }

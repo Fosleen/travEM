@@ -3,3 +3,6 @@ backend/app/sequelize.js
 # Local agent instructions and token notes
 AGENTS.md
 TOKENS.md
+
+# Persistent Meteostat cache and quota reservations (contains no API key)
+backend/.runtime/

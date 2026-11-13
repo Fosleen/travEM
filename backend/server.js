@@ -12,6 +12,7 @@ import helmet from "helmet";
 import swaggerDocs from "./app/utils/swagger.js";
 import { initRedis } from "./app/middleware/redis.js";
 import { startArticleScheduleJob } from "./app/jobs/articleScheduleJob.js";
+import { startDealFinderJob } from './app/jobs/dealFinderJob.js';
 
 const app = express();
 
@@ -35,6 +36,7 @@ const corsOptions = {
 (async () => {
   await initRedis();
   startArticleScheduleJob();
+  startDealFinderJob();
 })();
 
 app.use(cors(corsOptions));

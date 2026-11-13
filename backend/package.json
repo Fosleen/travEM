@@ -4,15 +4,7 @@
   "description": "travem backend",
   "main": "index.js",
   "scripts": {
-    "migrate:article-review": "node scripts/createArticleReviewTable.js",
-    "start": "nodemon server.js",
-    "migrate:footer-partner-showcase": "node scripts/addFooterPartnerShowcaseImage.js",
-    "migrate:honeymoon": "node scripts/createHoneymoonTables.js",
-    "migrate:country-hit": "node scripts/addCountryHit.js",
-    "slugs:preview": "node scripts/backfillArticleSlugs.js",
-    "slugs:apply": "node scripts/backfillArticleSlugs.js --apply",
-    "migrate:deal-finder": "node scripts/migrateDealFinder.js",
-    "migrate:long-section-urls": "node scripts/migrateLongSectionUrls.js"
+    "start": "nodemon server.js"
   },
   "type": "module",
   "author": "",

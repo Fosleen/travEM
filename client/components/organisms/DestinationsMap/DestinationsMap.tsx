@@ -14,6 +14,7 @@ import { FC } from "react";
 import { getVisitedCountries, getVisitedPlaces } from "../../../utils/map";
 import { DestinationsMapProps, PlacesData } from "../../../common/types.ts";
 import { getPlaces } from "../../../utils/places";
+import { toUrlSlug } from "@/utils/url";
 import Map, {
   Marker,
   NavigationControl,
@@ -88,7 +89,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
           (country) => country.eng_name === clickedCountryName
         );
         if (isCountryInList) {
-          router.push(`/destinacija/${isCountryInList.cro_name}`); // FIXED: Added parentheses
+          router.push(`/destinacija/${toUrlSlug(isCountryInList.cro_name)}`);
         } else {
           router.push("/nema-drzave");
         }
@@ -141,7 +142,7 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
           pitch: 0,
         }}
         mapStyle="mapbox://styles/mapbox/navigation-day-v1"
-        mapboxAccessToken="pk.eyJ1IjoidHJhdmVtIiwiYSI6ImNsdDc4dGR1dzBnbWYyam05cDlmbjNpMTAifQ.EkCtJKiZzE-Yux0ZmCpMhg"
+        mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
         scrollZoom={false}
         onClick={onClick}
         onMouseMove={onHover}
@@ -195,14 +196,14 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
           >
             <div>
               <Link
-                href={`/destinacija/${popupInfo.country.name}/${popupInfo.name}`} // FIXED: Added curly braces
+                href={`/destinacija/${toUrlSlug(popupInfo.country.name)}/${toUrlSlug(popupInfo.name)}`}
                 target="_blank"
               >
                 {popupInfo["name"]}
               </Link>
             </div>
             <Link
-              href={`/destinacija/${popupInfo.country.name}/${popupInfo.name}`} // FIXED: Added curly braces
+              href={`/destinacija/${toUrlSlug(popupInfo.country.name)}/${toUrlSlug(popupInfo.name)}`}
             >
               <img
                 width="100%"

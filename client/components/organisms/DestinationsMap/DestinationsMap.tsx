@@ -78,9 +78,11 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
   }, []);
 
   const onClick = useCallback(
-    async (event) => {
-      const map = mapRef.current.getMap();
-      const features = await map.queryRenderedFeatures(event.point, {
+    (event) => {
+      const map = mapRef.current?.getMap();
+      if (!map?.getLayer(layerId)) return;
+
+      const features = map.queryRenderedFeatures(event.point, {
         layers: [layerId],
       });
       if (features.length > 0) {
@@ -98,15 +100,24 @@ const DestinationsMap: FC<DestinationsMapProps> = ({
     [matchingCountries, router] // FIXED: Added router to dependencies
   );
 
-  const onHover = useCallback(async (event) => {
-    const map = mapRef.current.getMap();
-    const features = await map.queryRenderedFeatures(event.point, {
+  const onHover = useCallback((event) => {
+    const map = mapRef.current?.getMap();
+    if (!map?.getLayer(layerId)) {
+      setHoveredCountry(null);
+      setCursor("auto");
+      return;
+    }
+
+    const features = map.queryRenderedFeatures(event.point, {
       layers: [layerId],
     });
     if (features.length > 0) {
       const hovered = features[0].properties.name;
       setHoveredCountry(hovered);
       setCursor("pointer");
+    } else {
+      setHoveredCountry(null);
+      setCursor("auto");
     }
   }, []);
 

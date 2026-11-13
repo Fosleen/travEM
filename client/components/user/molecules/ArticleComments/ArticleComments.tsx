@@ -10,6 +10,7 @@ import {
   ArticleComment,
   deleteComment,
   getArticleComments,
+  getCommentFormToken,
   likeComment,
   unlikeComment,
   unsubscribeCommentNotifications,
@@ -22,6 +23,7 @@ interface ArticleCommentsProps {
 }
 
 interface CommentFormState {
+  website: string;
   username: string;
   email: string;
   body: string;
@@ -29,6 +31,7 @@ interface CommentFormState {
 }
 
 const emptyForm = {
+  website: "",
   username: "",
   email: "",
   body: "",
@@ -96,6 +99,12 @@ const CommentForm = ({
   onCancel,
 }) => (
   <form className="article-comments-form" onSubmit={onSubmit} noValidate>
+    {!isAdminForm && (
+      <label className="article-comments-honeypot" aria-hidden="true" htmlFor={`${id}-website`}>
+        Web stranica
+        <input id={`${id}-website`} name="website" value={form.website} onChange={onChange} tabIndex={-1} autoComplete="off" maxLength={200} />
+      </label>
+    )}
     {!isAdminForm && (
       <div className="article-comments-form-grid">
         <label htmlFor={`${id}-username`}>
@@ -170,6 +179,7 @@ const CommentForm = ({
 );
 
 const ArticleComments = ({ articleId }: ArticleCommentsProps) => {
+  const [formToken, setFormToken] = useState("");
   const [comments, setComments] = useState<ArticleComment[]>([]);
   const [mainForm, setMainForm] = useState<CommentFormState>(emptyForm);
   const [replyForms, setReplyForms] = useState<Record<number, CommentFormState>>({});
@@ -194,6 +204,17 @@ const ArticleComments = ({ articleId }: ArticleCommentsProps) => {
   const loadComments = useCallback(async () => {
     const data = await getArticleComments(articleId);
     setComments(data);
+  }, [articleId]);
+
+  useEffect(() => {
+    let active = true;
+    setFormToken("");
+    const refresh = () => getCommentFormToken(articleId)
+      .then(token => { if (active) setFormToken(token); })
+      .catch(() => {});
+    refresh();
+    const timer = window.setInterval(refresh, 60 * 60 * 1000);
+    return () => { active = false; window.clearInterval(timer); };
   }, [articleId]);
 
   useEffect(() => {
@@ -259,7 +280,10 @@ const ArticleComments = ({ articleId }: ArticleCommentsProps) => {
     setError("");
 
     try {
-      const result = await addArticleComment(articleId, mainForm);
+      const result = await addArticleComment(articleId, {
+        ...mainForm,
+        formToken: formToken || await getCommentFormToken(articleId),
+      });
       const username = rememberUsername(mainForm.username);
       setMainForm({ ...emptyForm, username });
 
@@ -290,7 +314,7 @@ const ArticleComments = ({ articleId }: ArticleCommentsProps) => {
       const result = await addArticleCommentReply(
         articleId,
         commentId,
-        submittedForm
+        { ...submittedForm, formToken: formToken || await getCommentFormToken(articleId) }
       );
       const username = rememberUsername(submittedForm.username);
       setReplyForms((current) => ({

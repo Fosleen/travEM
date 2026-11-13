@@ -2,7 +2,8 @@ import crypto from "crypto";
 import axios from "axios";
 import { Op } from "sequelize";
 import db from "../models/index.js";
-import { moderateComment } from "../utils/commentModeration.js";
+import { isObviousCommentSpam, moderateComment } from "../utils/commentModeration.js";
+import { verifyCommentSubmission } from "../utils/commentFormToken.js";
 import articleService from "./articleService.js";
 
 const COMMENT_STATUS = {
@@ -216,6 +217,10 @@ class ArticleCommentService {
   }
 
   async addPublicComment(articleId, data, parentCommentId = null) {
+    const proof = verifyCommentSubmission(data, articleId);
+    if (!proof) {
+      return { error: "Provjera obrasca nije uspjela. Osvježite stranicu i pokušajte ponovno.", statusCode: 400 };
+    }
     const notifyOnReply = Boolean(data.notify_on_reply || data.notifyOnReply);
     const validation = this.validatePublicPayload({
       ...data,
@@ -225,6 +230,21 @@ class ArticleCommentService {
     if (validation.error) {
       return { error: validation.error, statusCode: 400 };
     }
+
+    if (isObviousCommentSpam(validation.payload)) {
+      return { error: "Komentar nije prihvaćen zbog zaštite od neželjenog sadržaja.", statusCode: 400 };
+    }
+    const duplicate = await db.models.ArticleComment.findOne({
+      where: {
+        body: validation.payload.body,
+        articleId,
+        username: validation.payload.username,
+        is_admin_reply: false,
+        created_at: { [Op.gte]: new Date(Date.now() - 600000) },
+      },
+      attributes: ["id"],
+    });
+    if (duplicate) return { error: "Ovaj komentar je već poslan. Pričekajte prije ponovnog slanja.", statusCode: 429 };
 
     const article = await articleService.getArticleById(articleId);
 
@@ -250,6 +270,10 @@ class ArticleCommentService {
     }
 
     const moderation = moderateComment(validation.payload);
+    if (proof.tooFast && moderation.status === COMMENT_STATUS.PUBLISHED) {
+      moderation.status = COMMENT_STATUS.PENDING;
+      moderation.reason = "Komentar poslan neposredno nakon otvaranja obrasca";
+    }
     const comment = await db.models.ArticleComment.create({
       ...validation.payload,
       articleId,

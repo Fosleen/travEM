@@ -382,3 +382,11 @@
     padding-left: 24px;
   }
 }
+
+.article-comments-honeypot {
+  position: absolute !important;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}

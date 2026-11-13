@@ -73,7 +73,7 @@ const looksGenerated = (value, minimumLength = 14) => {
 };
 
 const hasSuspiciousEmail = (email = "") => {
-  const [localPart = "", domain = ""] = email.toLowerCase().split("@");
+  const [localPart = "", domain = ""] = (email || "").toLowerCase().split("@");
   const normalizedDomain = normalizeText(domain).replace(/\s/g, "");
   const abusiveDomain = /(jeb|fuck|spam|trash|fake)/i.test(normalizedDomain);
   const randomLocalPart =
@@ -95,6 +95,18 @@ export const isReservedUsername = (username) => {
     );
   });
 };
+
+const hasRandomCase = (value = "") => {
+  const text = value.trim();
+  if (!/^[a-zA-Z]{14,}$/.test(text)) return false;
+  const transitions = [...text.slice(1)].filter((letter, index) =>
+    (letter === letter.toUpperCase()) !== (text[index] === text[index].toUpperCase())
+  ).length;
+  return transitions >= 6;
+};
+
+export const isObviousCommentSpam = ({ username = "", body = "" }) =>
+  hasRandomCase(username) && (hasRandomCase(body) || looksGenerated(body));
 
 export const moderateComment = ({ username, email, body }) => {
   const normalizedBody = normalizeText(body);
@@ -168,7 +180,7 @@ export const moderateComment = ({ username, email, body }) => {
     };
   }
 
-  if (looksGenerated(body)) {
+  if (looksGenerated(body) || hasRandomCase(body) || hasRandomCase(username)) {
     return {
       status: "pending",
       reason: "Mogući nasumično generiran sadržaj",

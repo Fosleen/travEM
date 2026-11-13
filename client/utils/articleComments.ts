@@ -14,6 +14,8 @@ export interface ArticleComment {
 }
 
 export interface CommentPayload {
+  formToken: string;
+  website: string;
   username: string;
   email: string;
   body: string;
@@ -36,6 +38,13 @@ const getToken = () => {
 
   return localStorage.getItem("jwt");
 };
+
+export async function getCommentFormToken(articleId: number) {
+  const response = await fetch(`${apiUrl}/articles/${articleId}/comments/form-token`, { cache: "no-store" });
+  if (!response.ok) throw new Error("Provjera obrasca nije dostupna. Pokušajte ponovno.");
+  const data = await response.json();
+  return data.token as string;
+}
 
 export async function getArticleComments(articleId: number) {
   const response = await fetch(`${apiUrl}/articles/${articleId}/comments`, {

@@ -5,6 +5,7 @@ import { verifyToken } from "../middleware/jwt_verify.js";
 import { requireArticleAccess, authorArticleFields, requireAdmin, articleMutation } from "../middleware/articleAccess.js";
 import reviewController from "../controllers/articleReviewController.js";
 import { commentRateLimit } from "../middleware/commentRateLimit.js";
+import { getCommentFormToken } from "../utils/commentFormToken.js";
 
 const router = new Router();
 router.get("/manage", verifyToken, reviewController.list);
@@ -60,6 +61,7 @@ router.get("/manage/:id", verifyToken, reviewController.detail);
  */
 router.get("/", controller.getArticles);
 
+router.get("/:articleId/comments/form-token", getCommentFormToken);
 router.get("/:articleId/comments", commentController.getArticleComments);
 router.post("/:articleId/comments", commentRateLimit, commentController.addComment);
 router.post(

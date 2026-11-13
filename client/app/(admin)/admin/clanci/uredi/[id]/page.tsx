@@ -1,7 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-
 "use client";
+import { getArticleScheduleHoursError } from "@/utils/articleSchedule";
+import ArticleSchedulePicker from "@/components/admin/organisms/ArticleSchedulePicker";
 
 import { useParams, useRouter } from "next/navigation";
 import DealDraftActions from '@/components/admin/organisms/DealDraftActions';
@@ -174,6 +175,12 @@ const EditArticle = () => {
 
     if (publishAt && new Date(publishAt).getTime() <= Date.now()) {
       notifyFailure("Zakazana objava mora biti u budućnosti.");
+      return;
+    }
+
+    const scheduleError = canEditSchedule && isScheduleChecked ? getArticleScheduleHoursError(scheduleDateTime, scheduleTimezone) : "";
+    if (scheduleError) {
+      notifyFailure(scheduleError);
       return;
     }
 
@@ -1744,22 +1751,7 @@ const flatRemovedImages = removedSectionImages;
                       {isScheduleChecked && (
                         <div className="edit-article-schedule-panel">
                           <div className="edit-article-schedule-grid">
-                            <label>
-                              Datum i vrijeme
-                              <input
-                                type="datetime-local"
-                                lang="hr-HR"
-                                step="60"
-                                min={formatDateTimeLocalInput(
-                                  new Date(),
-                                  scheduleTimezone
-                                )}
-                                value={scheduleDateTime}
-                                onChange={(event) =>
-                                  setScheduleDateTime(event.target.value)
-                                }
-                              />
-                            </label>
+                            <ArticleSchedulePicker value={scheduleDateTime} timeZone={scheduleTimezone} onChange={setScheduleDateTime} />
 
                             <label>
                               Vremenska zona

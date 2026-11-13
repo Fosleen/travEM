@@ -1,3 +1,4 @@
+import { isArticlePublicationTime, publicationHoursError } from "../utils/articlePublicationHours.js";
 import {
   clearCache,
   clearCacheByPattern,
@@ -156,6 +157,7 @@ class ArticleController {
   }
 
   async addArticle(req, res) {
+    if (req.body.publish_at && !isArticlePublicationTime(req.body.publish_at)) return res.status(400).json({ error: publicationHoursError });
     try {
       const response = await articleService.addArticle(
         req.body.title,
@@ -370,6 +372,7 @@ class ArticleController {
   }
 
   async patchArticle(req, res) {
+    if (req.body.publish_at && !isArticlePublicationTime(req.body.publish_at)) return res.status(400).json({ error: publicationHoursError });
     try {
       const response = await articleService.patchArticle(
         req.params.id,

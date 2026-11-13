@@ -354,21 +354,24 @@
 
     .add-article-schedule-grid {
       display: grid;
+      align-items: start;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
 
-      label {
+      > label {
         display: flex;
         flex-direction: column;
         gap: 8px;
         font-size: 14px;
         font-weight: 700;
         color: $grey;
+        line-height: 20px;
       }
 
       input,
       select {
         min-height: 44px;
+        box-sizing: border-box;
         border: 2px solid $greyMiddle;
         border-radius: 8px;
         padding: 0 12px;

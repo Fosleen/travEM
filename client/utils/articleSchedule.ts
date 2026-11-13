@@ -110,6 +110,8 @@ export const zonedDateTimeLocalToUtcIso = (
 ) => {
   if (!localDateTime) return null;
 
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?$/.test(localDateTime)) return null;
+
   const [datePart, timePart] = localDateTime.split("T");
   const [year, month, day] = datePart.split("-").map(Number);
   const [hour, minute] = timePart.split(":").map(Number);
@@ -125,11 +127,32 @@ export const zonedDateTimeLocalToUtcIso = (
     timeZoneParts.minute
   );
 
-  return new Date(utcGuess.getTime() + desiredUtcMs - actualUtcMs).toISOString();
+  let candidate = new Date(utcGuess.getTime() + desiredUtcMs - actualUtcMs);
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const parts = getTimeZoneParts(candidate, timeZone);
+    const actual = Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute);
+    if (actual === desiredUtcMs) return candidate.toISOString();
+    candidate = new Date(candidate.getTime() + desiredUtcMs - actual);
+  }
+  return null; // Nonexistent local time during a daylight saving transition.
+};
+
+export const isArticlePublicationTime = (value: string | Date) => {
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return false;
+  const { hour } = getTimeZoneParts(date, ZAGREB_TIME_ZONE);
+  return hour >= 6 && hour < 22;
 };
 
 export const getBrowserTimeZone = () => {
   return Intl.DateTimeFormat().resolvedOptions().timeZone || ZAGREB_TIME_ZONE;
+};
+
+export const getArticleScheduleHoursError = (localDateTime: string, timeZone: string) => {
+  if (!localDateTime) return "";
+  const utc = zonedDateTimeLocalToUtcIso(localDateTime, timeZone);
+  if (!utc) return "Odabrano lokalno vrijeme ne postoji zbog promjene sata. Odaberite drugi termin.";
+  return isArticlePublicationTime(utc) ? "" : "Zakazivanje je dopušteno od 06:00 do 21:59 po Zagrebu.";
 };
 
 export const getArticleScheduleTimeZoneOptions = (selectedTimeZone: string) => {

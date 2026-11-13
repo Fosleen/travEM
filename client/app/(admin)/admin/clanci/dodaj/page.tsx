@@ -1,7 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 "use client";
-
+import { getArticleScheduleHoursError } from "@/utils/articleSchedule";
+import ArticleSchedulePicker from "@/components/admin/organisms/ArticleSchedulePicker";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import "./AddArticle.scss";
 import { useRouter } from "next/navigation";
@@ -73,7 +74,6 @@ import {
 } from "@/utils/sectionSpecialFeatures";
 import {
   formatDateTimeInTimeZone,
-  formatDateTimeLocalInput,
   getArticleScheduleTimeZoneOptions,
   getBrowserTimeZone,
   ZAGREB_TIME_ZONE,
@@ -161,6 +161,12 @@ const AddArticlePage = () => {
 
       if (publishAt && new Date(publishAt).getTime() <= Date.now()) {
         notifyFailure("Zakazana objava mora biti u budućnosti.");
+        return;
+      }
+
+      const scheduleError = isScheduleChecked ? getArticleScheduleHoursError(scheduleDateTime, scheduleTimezone) : "";
+      if (scheduleError) {
+        notifyFailure(scheduleError);
         return;
       }
 
@@ -1340,35 +1346,21 @@ const AddArticlePage = () => {
                       }
                     />
                   </div>
+                  <div className="add-article-toggle-item">
+                    <ToggleSwitch
+                      name={"schedule-article"}
+                      description={"Zakaži objavu članka"}
+                      value={isScheduleChecked}
+                      setter={() => setIsScheduleChecked(!isScheduleChecked)}
+                    />
+                  </div>
                 </div>
 
                 <div className="add-article-schedule-container">
-                  <ToggleSwitch
-                    name={"schedule-article"}
-                    description={"Zakaži objavu članka"}
-                    value={isScheduleChecked}
-                    setter={() => setIsScheduleChecked(!isScheduleChecked)}
-                  />
-
                   {isScheduleChecked && (
                     <div className="add-article-schedule-panel">
                       <div className="add-article-schedule-grid">
-                        <label>
-                          Datum i vrijeme
-                          <input
-                            type="datetime-local"
-                            lang="hr-HR"
-                            step="60"
-                            min={formatDateTimeLocalInput(
-                              new Date(),
-                              scheduleTimezone
-                            )}
-                            value={scheduleDateTime}
-                            onChange={(event) =>
-                              setScheduleDateTime(event.target.value)
-                            }
-                          />
-                        </label>
+                        <ArticleSchedulePicker value={scheduleDateTime} timeZone={scheduleTimezone} onChange={setScheduleDateTime} />
 
                         <label>
                           Vremenska zona

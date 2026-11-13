@@ -1,3 +1,4 @@
+import { isArticlePublicationTime, publicationHoursError } from "../utils/articlePublicationHours.js";
 import db from "../models/index.js";
 import articleService from "../services/articleService.js";
 import { clearCacheByPattern } from "../middleware/redis.js";
@@ -70,6 +71,7 @@ export default {
           if (chosenDate && (!Number.isFinite(new Date(chosenDate).getTime()) || new Date(chosenDate).getTime() <= Date.now())) {
             const error = new Error("Termin je prošao. Odaberite objavu odmah ili novi budući termin."); error.status = 400; throw error;
           }
+          if (chosenDate && !isArticlePublicationTime(chosenDate)) { const error = new Error(publicationHoursError); error.status = 400; throw error; }
           if (article.article_schedule) {
             await article.article_schedule.update({
               publish_at: chosenDate || new Date(),

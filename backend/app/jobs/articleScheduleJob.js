@@ -1,4 +1,5 @@
 import db from "../models/index.js";
+import { isArticlePublicationTime } from "../utils/articlePublicationHours.js";
 import { Op } from "sequelize";
 import {
   clearCache,
@@ -88,6 +89,7 @@ const processSchedule = async (schedule) => {
 };
 
 export const processDueArticleSchedules = async () => {
+  if (!isArticlePublicationTime()) return;
   const dueSchedules = await db.models.ArticleSchedule.findAll({
     where: {
       publish_at: {
@@ -123,13 +125,20 @@ export const startArticleScheduleJob = () => {
     process.env.ARTICLE_SCHEDULE_JOB_INTERVAL_MS || DEFAULT_INTERVAL_MS
   );
 
-  setInterval(() => {
-    processDueArticleSchedules().catch((error) => {
+  const tick = async () => {
+    try {
+      await processDueArticleSchedules();
+    } catch (error) {
       console.error("Article schedule job failed:", error);
-    });
-  }, intervalMs);
-
-  processDueArticleSchedules().catch((error) => {
-    console.error("Initial article schedule job failed:", error);
-  });
+    } finally {
+      let next = new Date(Date.now() + intervalMs);
+      // Advance using real instants so DST changes follow Europe/Zagreb.
+      while (!isArticlePublicationTime(next)) {
+        next = new Date(next.getTime() + 60 * 1000);
+        next.setUTCSeconds(0, 0);
+      }
+      setTimeout(tick, next.getTime() - Date.now());
+    }
+  };
+  void tick();
 };

@@ -1,4 +1,6 @@
 "use client";
+import ArticleSchedulePicker from "./ArticleSchedulePicker";
+import { isArticlePublicationTime } from "@/utils/articleSchedule";
 import { useState } from "react";
 import { useFormikContext } from "formik";
 import Button from "@/components/atoms/Button";
@@ -25,6 +27,7 @@ export default function ArticleReviewPanel({ article, onSave }: { article: any; 
     if (action === "approve" && (!timing || (timing === "later" && (!publishAt || new Date(publishAt).getTime() <= Date.now())))) {
       notifyFailure("Odaberite objavu odmah ili budući termin."); return;
     }
+    if (action === "approve" && publishAt && !isArticlePublicationTime(publishAt)) { notifyFailure("Objava je dopuštena od 06:00 do 21:59 u Zagrebu."); return; }
     const errors = await validateForm();
     if (Object.keys(errors).length) {
       await setTouched(Object.fromEntries(Object.keys(errors).map((key) => [key, true])));
@@ -47,7 +50,7 @@ export default function ArticleReviewPanel({ article, onSave }: { article: any; 
       <label>Objava nakon odobrenja <select value={timing} onChange={(event) => setTiming(event.target.value)}>
         <option value="">Odaberite termin</option><option value="now">Objavi odmah</option><option value="later">Zakaži objavu</option>
       </select></label>
-      {timing === "later" && <label>Datum i vrijeme ({getBrowserTimeZone()}) <input type="datetime-local" value={date} onChange={(event) => setDate(event.target.value)} /></label>}
+      {timing === "later" && <ArticleSchedulePicker value={date} timeZone={getBrowserTimeZone()} onChange={setDate} />}
       <fieldset className="article-review-newsletter" disabled={busy}>
         <ToggleSwitch
           name="review-notify-subscribers"

@@ -14,6 +14,7 @@ const Input: FC<InputProps> = ({
   disabled = false,
   onBlur,
   onChange,
+  maxLength,
 }) => {
   let inputClasses = `input `;
   let labelClasses = ``;
@@ -46,6 +47,7 @@ const Input: FC<InputProps> = ({
           onChange={onChange}
           disabled={disabled}
           onBlur={onBlur}
+          maxLength={maxLength}
         />
       </div>
 

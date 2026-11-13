@@ -1,4 +1,5 @@
 import {Op} from 'sequelize';
+import {approvedArticleWhere} from '../../utils/articleReviewVisibility.js';
 import {airportByCode} from './airports.js';
 import {skyscanner,hotelBookingLink} from './domain.js';
 import {flightForStay} from './editorialFacts.js';
@@ -80,7 +81,7 @@ export async function articleAutomation(offer,settings,models){
   let previousLinks=[];
   if(places.length===1){
     try{
-      const articles=await models.Article.findAll({attributes:['id','title'],where:{placeId:places[0].id,is_deal_draft:false,[Op.or]:[{'$article_schedule.id$':null},{'$article_schedule.publish_at$':null},{'$article_schedule.publish_at$':{[Op.lte]:new Date()}}]},include:[{model:models.ArticleSchedule,attributes:[],required:false}],order:[['id','DESC']],raw:true});
+      const articles=await models.Article.findAll({attributes:['id','title'],where:{placeId:places[0].id,is_deal_draft:false,[Op.and]:[approvedArticleWhere()],[Op.or]:[{'$article_schedule.id$':null},{'$article_schedule.publish_at$':null},{'$article_schedule.publish_at$':{[Op.lte]:new Date()}}]},include:[{model:models.ArticleSchedule,attributes:[],required:false}],order:[['id','DESC']],raw:true});
       const articleIds=articles.map(a=>a.id);
       const videos=await models.Video.findAll({attributes:['id','url','articleId','placeId'],where:{[Op.or]:[{placeId:places[0].id},...(articleIds.length?[{articleId:{[Op.in]:articleIds}}]:[])]},order:[['id','DESC']],raw:true});
       const video=videos.find(v=>(v.articleId==null||articleIds.includes(v.articleId))&&youtubeEmbedUrl(v.url));

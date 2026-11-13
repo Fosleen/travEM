@@ -10,7 +10,7 @@ const ArticleTableOfContents = ({ article }) => {
   }
 
   const checkIfAtLeastOneSectionHasSubitle = () => {
-    return article.sections.some((section) => section.subtitle);
+    return article.sections.some((section) => section.subtitle && section.section_icon?.url?.trim());
   };
 
   if (!checkIfAtLeastOneSectionHasSubitle()) {
@@ -25,7 +25,7 @@ const ArticleTableOfContents = ({ article }) => {
           {article.sections.map((section, index) => {
             const sectionId = `odlomak-${index}`;
             return (
-              section.section_icon?.url && (
+              section.subtitle && section.section_icon?.url?.trim() && (
                 <TableOfContentsItem
                   key={index}
                   icon={section.section_icon.url.trim()}

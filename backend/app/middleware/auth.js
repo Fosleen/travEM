@@ -4,6 +4,7 @@ import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import db from "../models/index.js";
 import bcrypt from "bcrypt";
 import ms from "ms";
+import { createUserAccount } from "../services/userService.js";
 
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -45,6 +46,7 @@ const generateJwtToken = (user) => {
     username: user.username,
     first_name: user.first_name,
     last_name: user.last_name,
+    is_admin: Number(user.is_admin),
   };
 
   const expiresIn = "12h";
@@ -96,28 +98,7 @@ export const login = async (req, res, next) => {
 
 export const register = async (req, res, next) => {
   try {
-    const { username, password, first_name, last_name, is_admin } = req.body;
-
-    // Check if the username is already taken
-    const existingUser = await db.models.User.findOne({ where: { username } });
-
-    if (existingUser) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Username already taken." });
-    }
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10); // 10 is the number of salt rounds
-
-    // Create a new user with the hashed password
-    const newUser = await db.models.User.create({
-      username,
-      password: hashedPassword,
-      first_name,
-      last_name,
-      is_admin,
-    });
+    const newUser = await createUserAccount(req.body, { allowAdmin: true });
 
     // Generate a new JWT token for the registered user
     const { token, expirationTime } = generateJwtToken(newUser);
@@ -130,6 +111,7 @@ export const register = async (req, res, next) => {
       expirationTime,
     });
   } catch (error) {
+    if (error.status) return res.status(error.status).json({ success: false, message: error.message, error: error.message });
     return next(error);
   }
 };

@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import service from "../services/subscriberService.js";
+import articleService from "../services/articleService.js";
 
 class SubscriberController {
   async getSubscribers(req, res) {
@@ -56,6 +57,9 @@ class SubscriberController {
   async sendNewsletter(req, res) {
     try {
       const { subscribers, article } = req.body;
+      if (!article?.id || !await articleService.getArticleById(article.id)) {
+        return res.status(400).json({ error: "Newsletter se može poslati samo za odobreni i objavljeni članak." });
+      }
       const result = await service.sendNewsletter(subscribers, article);
       res.status(200).json({
         message: "Newsletter sent successfully",

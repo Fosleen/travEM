@@ -24,6 +24,7 @@ export interface ButtonProps {
 }
 
 export interface InputProps {
+  maxLength?: number;
   type?: HTMLInputTypeAttribute;
   label?: string;
   value?: string | number;
@@ -38,6 +39,7 @@ export interface InputProps {
 }
 
 export interface TextareaProps {
+  maxLength?: number;
   label?: string;
   name: string;
   placeholder: string;

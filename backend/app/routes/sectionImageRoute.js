@@ -1,6 +1,7 @@
 import { Router } from "express";
 import controller from "../controllers/sectionImageController.js";
 import { verifyToken } from "../middleware/jwt_verify.js";
+import { requireArticleAccess, articleMutation } from "../middleware/articleAccess.js";
 
 const router = new Router();
 
@@ -37,7 +38,7 @@ const router = new Router();
  *                      schema:
  *                          $ref: '#/components/schemas/ServerErrorResponse'
  */
-router.post("/", verifyToken, controller.addSectionImage);
+router.post("/", verifyToken, requireArticleAccess, articleMutation(controller.addSectionImage));
 
 // PATCH /api/v1/section-images/3
 
@@ -91,7 +92,7 @@ router.post("/", verifyToken, controller.addSectionImage);
  *                      schema:
  *                          $ref: '#/components/schemas/ServerErrorResponse'
  */
-router.patch("/:id", verifyToken, controller.patchSectionImage);
+router.patch("/:id", verifyToken, requireArticleAccess, articleMutation(controller.patchSectionImage));
 
 // DELETE /api/v1/section-images/4
 
@@ -131,6 +132,6 @@ router.patch("/:id", verifyToken, controller.patchSectionImage);
  *                          $ref: '#/components/schemas/ServerErrorResponse'
  *
  */
-router.delete("/:id", verifyToken, controller.deleteSectionImage);
+router.delete("/:id", verifyToken, requireArticleAccess, articleMutation(controller.deleteSectionImage));
 
 export default router;

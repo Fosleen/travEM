@@ -1,0 +1,21 @@
+@use "@/utils/theme.scss" as *;
+
+.users-page {
+  max-width: 1000px;
+  h2 { margin-bottom: 24px; }
+  .users-panel { background: #f9f9f9; border: 1px solid #e1e6e3; border-radius: 16px; padding: 24px; margin-bottom: 24px; }
+  h3 { margin-bottom: 12px; }
+  p { margin: 12px 0 20px; line-height: 1.5; }
+  .users-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; border: 0; padding: 0; margin: 24px 0; min-width: 0; }
+  label { display: flex; flex-direction: column; gap: 8px; font-size: 15px; }
+  input:not([type="checkbox"]) { width: 100%; box-sizing: border-box; border: 1px solid #adbab3; border-radius: 8px; background: white; padding: 12px; font: inherit; }
+  input:focus-visible { outline: 2px solid $green; outline-offset: 2px; }
+  small { color: #56605b; }
+  .users-show-password { flex-direction: row; align-items: center; align-self: center; }
+  .users-error { color: #9a2626; }
+  .users-table-wrapper { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; text-align: left; }
+  th, td { padding: 14px 12px; border-bottom: 1px solid #dce3df; overflow-wrap: anywhere; }
+  th { color: #4a554f; font-size: 14px; }
+  @media (max-width: 700px) { .users-fields { grid-template-columns: 1fr; } .users-panel { padding: 16px; } }
+}

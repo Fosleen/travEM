@@ -1,4 +1,5 @@
 import { apiUrl } from "./api";
+import { articleResponse } from "./articleResponse";
 
 export async function addGalleryImage(
   url: string,
@@ -23,7 +24,7 @@ export async function addGalleryImage(
     }),
   });
 
-  const data = await response.json();
+  const data = await articleResponse(response);
 
   if (!response.ok) {
     console.log(data.error);
@@ -44,7 +45,7 @@ export async function deleteGalleryImage(id: number) {
     method: "DELETE",
   });
 
-  const data = await response.json();
+  const data = await articleResponse(response);
 
   if (!response.ok) {
     console.log(data.error);

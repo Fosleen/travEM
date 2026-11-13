@@ -1,6 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { apiUrl } from "./api";
+import { articleResponse } from "./articleResponse";
 
 // Helper function to get token (only on client side)
 const getToken = () => {
@@ -25,7 +26,7 @@ export async function getArticleById(
       : "";
 
     const response = await fetch(
-      `${apiUrl}/articles/${id}?noCache=${noCache}${includeScheduledQuery}`,
+      `${apiUrl}/articles/${includeScheduled && token ? "manage/" : ""}${id}?noCache=${noCache}${includeScheduledQuery}`,
       {
         cache: "no-store",
         headers: {
@@ -44,7 +45,7 @@ export async function getArticleById(
       return { error: true, message: errorText };
     }
 
-    const data = await response.json();
+    const data = await articleResponse(response);
    // console.log("Article fetched successfully:", data.title);
     return data;
   } catch (error) {
@@ -111,7 +112,7 @@ export async function getArticlesByName(
     const token = getToken();
 
     const response = await fetch(
-      `${apiUrl}/articles/search/${name}?page=${page}&pageSize=${pageSize}${
+      `${apiUrl}/articles/${includeScheduled ? "manage" : `search/${encodeURIComponent(name)}`}?search=${encodeURIComponent(name)}&page=${page}&pageSize=${pageSize}${
         includeScheduled ? "&includeScheduled=true" : ""
       }`,
       {
@@ -147,7 +148,7 @@ export async function getArticles(
     const token = getToken();
 
     const response = await fetch(
-      `${apiUrl}/articles?page=${page}&pageSize=${pageSize}&articleType=${articleType}${
+      `${apiUrl}/articles${includeScheduled ? "/manage" : ""}?page=${page}&pageSize=${pageSize}&articleType=${articleType}${
         includeScheduled ? "&includeScheduled=true" : ""
       }`,
       {
@@ -309,7 +310,7 @@ export async function addArticle(
     body: JSON.stringify(requestBody),
   });
 
-  const data = await response.json();
+  const data = await articleResponse(response);
 
   if (!response.ok) {
     console.log(data.error);
@@ -337,7 +338,7 @@ export async function updateOrCreateTopHomepageArticles(
     }),
   });
 
-  const data = await response.json();
+  const data = await articleResponse(response);
 
   if (!response.ok) {
     console.log(data.error);
@@ -401,7 +402,7 @@ export async function updateArticle(
     body: JSON.stringify(requestBody),
   });
 
-  const data = await response.json();
+  const data = await articleResponse(response);
 
   if (!response.ok) {
     console.log(data.error);
@@ -423,7 +424,7 @@ export async function deleteArticleById(id: number) {
     method: "DELETE",
   });
 
-  const data = await response.json();
+  const data = await articleResponse(response);
 
   if (!response.ok) {
     console.log(data.error);
@@ -448,7 +449,7 @@ export async function createTopCountryArticle(articleId: number) {
     }),
   });
 
-  const data = await response.json();
+  const data = await articleResponse(response);
 
   if (!response.ok) {
     console.log(data.error);
@@ -470,7 +471,7 @@ export async function removeTopCountryArticle(articleId: number) {
     method: "DELETE",
   });
 
-  const data = await response.json();
+  const data = await articleResponse(response);
 
   if (!response.ok) {
     console.log(data.error);
@@ -491,7 +492,7 @@ export async function createTopPlaceArticle(articleId: number) {
     method: "PUT",
     body: JSON.stringify({ article_id: articleId }),
   });
-  const data = await response.json();
+  const data = await articleResponse(response);
 
   if (!response.ok) throw new Error(data.error || "Istaknuti članak nije spremljen.");
   return data;
@@ -510,7 +511,7 @@ export async function removeTopPlaceArticle(articleId: number) {
 
   if (response.status === 404) return {};
 
-  const data = await response.json();
+  const data = await articleResponse(response);
   if (!response.ok) throw new Error(data.error || "Istaknuti članak nije uklonjen.");
   return data;
 }

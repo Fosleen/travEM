@@ -2,9 +2,13 @@ import { Router } from "express";
 import controller from "../controllers/articleController.js";
 import commentController from "../controllers/articleCommentController.js";
 import { verifyToken } from "../middleware/jwt_verify.js";
+import { requireArticleAccess, authorArticleFields, requireAdmin, articleMutation } from "../middleware/articleAccess.js";
+import reviewController from "../controllers/articleReviewController.js";
 import { commentRateLimit } from "../middleware/commentRateLimit.js";
 
 const router = new Router();
+router.get("/manage", verifyToken, reviewController.list);
+router.get("/manage/:id", verifyToken, reviewController.detail);
 
 // GET /api/v1/articles?page=1&pageSize=12&articleType=1
 /**
@@ -361,7 +365,9 @@ router.get("/:id", controller.getArticleById);
  *                          $ref: '#/components/schemas/ServerErrorResponse'
  *
  */
-router.post("/", verifyToken, controller.addArticle);
+router.post("/", verifyToken, authorArticleFields, controller.addArticle);
+router.post("/:id/submit-review", verifyToken, requireArticleAccess, articleMutation(reviewController.submit));
+router.post("/:id/review", verifyToken, requireAdmin, reviewController.review);
 
 // PATCH /api/v1/articles/4
 /**
@@ -411,7 +417,7 @@ router.post("/", verifyToken, controller.addArticle);
  *                      schema:
  *                          $ref: '#/components/schemas/ServerErrorResponse'
  */
-router.patch("/:id", verifyToken, controller.patchArticle);
+router.patch("/:id", verifyToken, requireArticleAccess, authorArticleFields, articleMutation(controller.patchArticle));
 
 // PUT /api/v1/articles/country/top
 /**
@@ -512,7 +518,7 @@ router.put(
  *                          $ref: '#/components/schemas/ServerErrorResponse'
  *
  */
-router.delete("/:id", verifyToken, controller.deleteArticle);
+router.delete("/:id", verifyToken, requireArticleAccess, articleMutation(controller.deleteArticle));
 
 // DELETE /api/v1/articles/country/top
 /**

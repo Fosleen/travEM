@@ -92,6 +92,8 @@ class SubscriberService {
   async sendNewsletter(subscribers, article) {
     const stored = await db.models.Article.findByPk(article.id || article.article_id);
     if (stored?.is_deal_draft) throw new Error('Newsletter nije dopušten za neodobren Deal Finder nacrt');
+    const review = stored && await db.models.ArticleReview.findByPk(stored.id);
+    if (review && review.status !== "approved") throw new Error("Članak još nije odobren za newsletter.");
     try {
       const body = {
         subscribers,

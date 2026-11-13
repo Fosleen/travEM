@@ -12,7 +12,8 @@ class SectionController {
       req.body.article_id,
       req.body.show_visa_info,
       req.body.show_best_time_to_visit,
-      req.body.show_country_language
+      req.body.show_country_language,
+      req.articleTransaction
     );
 
     if (response.length == 0) {
@@ -34,7 +35,8 @@ class SectionController {
       req.body.article_id,
       req.body.show_visa_info,
       req.body.show_best_time_to_visit,
-      req.body.show_country_language
+      req.body.show_country_language,
+      req.articleTransaction
     );
 
     if (!response || response.length == 0) {
@@ -46,7 +48,9 @@ class SectionController {
 
   async deleteSection(req, res) {
     const { id } = req.params;
-    const response = await service.deleteSection(id);
+    const response = await service.deleteSection(id,
+      req.articleTransaction
+    );
 
     if (response) {
       res.status(200).json({});

@@ -11,7 +11,8 @@ class SectionService {
     article_id,
     show_visa_info = false,
     show_best_time_to_visit = false,
-    show_country_language = false
+    show_country_language = false,
+    transaction
   ) {
     try {
       const section = await db.models.Section.create({
@@ -25,7 +26,7 @@ class SectionService {
         show_visa_info: Boolean(show_visa_info),
         show_best_time_to_visit: Boolean(show_best_time_to_visit),
         show_country_language: Boolean(show_country_language),
-      });
+      }, { transaction });
 
       return section;
     } catch (error) {
@@ -45,7 +46,8 @@ class SectionService {
     article_id,
     show_visa_info = false,
     show_best_time_to_visit = false,
-    show_country_language = false
+    show_country_language = false,
+    transaction
   ) {
     console.log(id);
 
@@ -65,10 +67,11 @@ class SectionService {
         },
         {
           where: { id: id },
+          transaction,
         }
       );
 
-      const updatedSection = await db.models.Section.findByPk(id);
+      const updatedSection = await db.models.Section.findByPk(id, { transaction });
       return updatedSection;
     } catch (error) {
       console.log(error);
@@ -76,10 +79,11 @@ class SectionService {
     }
   }
 
-  async deleteSection(id) {
+  async deleteSection(id, transaction) {
     try {
       await db.models.Section.destroy({
         where: { id: id },
+          transaction,
       });
 
       return [];

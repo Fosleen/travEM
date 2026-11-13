@@ -68,7 +68,7 @@ const ArticleTableOfContentsDropUp = ({ article }: Props) => {
   const hasSections = useMemo(() => {
     const sections = article?.sections ?? [];
     if (!sections || sections.length === 0) return false;
-    return sections.some((s) => Boolean(s?.subtitle));
+    return sections.some((s) => Boolean(s?.subtitle && s.section_icon?.url?.trim()));
   }, [article]);
 
   // 1) Show/Hide logika

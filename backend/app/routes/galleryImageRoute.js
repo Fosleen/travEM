@@ -1,6 +1,7 @@
 import { Router } from "express";
 import controller from "../controllers/galleryImageController.js";
 import { verifyToken } from "../middleware/jwt_verify.js";
+import { requireArticleAccess, articleMutation } from "../middleware/articleAccess.js";
 
 const router = new Router();
 
@@ -41,7 +42,7 @@ const router = new Router();
  *                          $ref: '#/components/schemas/NotAuthorisedResponse'
  *
  */
-router.post("/", verifyToken, controller.addGalleryImage);
+router.post("/", verifyToken, requireArticleAccess, articleMutation(controller.addGalleryImage));
 
 // DELETE /api/v1/gallery-images/4
 /**
@@ -80,6 +81,6 @@ router.post("/", verifyToken, controller.addGalleryImage);
  *                          $ref: '#/components/schemas/ServerErrorResponse'
  *
  */
-router.delete("/:id", verifyToken, controller.deleteGalleryImage);
+router.delete("/:id", verifyToken, requireArticleAccess, articleMutation(controller.deleteGalleryImage));
 
 export default router;

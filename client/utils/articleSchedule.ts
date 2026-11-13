@@ -156,6 +156,13 @@ export const getArticleScheduleTimeZoneOptions = (selectedTimeZone: string) => {
 };
 
 export const getScheduleStatus = (article: any) => {
+  if (article?.review && article.review.status !== "approved") {
+    return {
+      label: article.review.status === "changes_requested" ? "Vraćeno na doradu" : article.review.submitted_at ? "Na pregledu" : "Predaja nije dovršena",
+      className: article.review.status === "changes_requested" ? "changes-requested" : "pending-review",
+      date: article?.article_schedule?.publish_at || null,
+    };
+  }
   const schedule = article?.article_schedule;
 
   if (!schedule?.publish_at) {

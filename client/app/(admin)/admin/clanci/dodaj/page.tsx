@@ -79,6 +79,9 @@ import {
   ZAGREB_TIME_ZONE,
   zonedDateTimeLocalToUtcIso,
 } from "@/utils/articleSchedule";
+import { useDashboardUser } from "@/context/DashboardUserContext";
+import ArticleAuthorHelp from "@/components/admin/organisms/ArticleAuthorHelp";
+import { articleReviewAction } from "@/utils/articleReview";
 import AffiliateLinksEditor from "@/components/admin/organisms/AffiliateLinksEditor/AffiliateLinksEditor";
 import UnsavedChangesGuard, {
   confirmDiscardChanges,
@@ -92,6 +95,7 @@ import {
 
 const AddArticlePage = () => {
   const router = useRouter();
+  const { isAdmin } = useDashboardUser();
   const [dealPrefill,setDealPrefill]=useState(null);
   const [prefillReady,setPrefillReady]=useState(false);
   const prefillToken=useRef<string|null>(null);
@@ -162,7 +166,7 @@ const AddArticlePage = () => {
 
       Swal.fire({
         title: "Jeste li sigurni?",
-        text: isScheduleChecked
+        text: !isAdmin ? "Poslat ćete članak administratoru na pregled. Objavit će se tek nakon odobrenja." : isScheduleChecked
           ? "Zakazat ćete objavu ovog članka"
           : "Objavit ćete ovaj članak",
         icon: "warning",
@@ -170,7 +174,7 @@ const AddArticlePage = () => {
         confirmButtonColor: "#2BAC82",
         cancelButtonColor: "#AC2B2B",
         cancelButtonText: "Odustani",
-        confirmButtonText: "Da, objavi!",
+        confirmButtonText: isAdmin ? "Da, objavi!" : "Pošalji na pregled",
       }).then(async (result) => {
         if (result.isConfirmed) {
           try {
@@ -203,12 +207,12 @@ const AddArticlePage = () => {
               isFarDestinationChecked,
               isTipsArticleType(values.article_type) && isTipsFeaturedChecked,
               isDomagoPartnerChecked,
-              isScheduleChecked ? publishAt : undefined,
-              isScheduleChecked ? scheduleTimezone : undefined,
-              isScheduleChecked ? isNotifySubscribersChecked : undefined
+              isScheduleChecked ? publishAt : isAdmin ? undefined : null,
+              isScheduleChecked || !isAdmin ? scheduleTimezone : undefined,
+              isScheduleChecked || !isAdmin ? isNotifySubscribersChecked : undefined
             );
 
-            if (affiliateLinks.length > 0) {
+            if (isAdmin && affiliateLinks.length > 0) {
               const persistedAffiliateLinks = await persistAffiliatePartners(
                 affiliateLinks
               );
@@ -227,11 +231,11 @@ const AddArticlePage = () => {
             console.log("Gallery images saved:", galleryResults);
 
             await Promise.all([
-              isMainCountryPostChecked
+              isAdmin && isMainCountryPostChecked
                 ? createTopCountryArticle(articleResponse.id)
                 : Promise.resolve(),
 
-              isMainPlacePostChecked && values.article_place
+              isAdmin && isMainPlacePostChecked && values.article_place
                 ? createTopPlaceArticle(articleResponse.id)
                 : Promise.resolve(),
 
@@ -259,7 +263,10 @@ const AddArticlePage = () => {
               ),
             ]);
 
-            if (!isScheduleChecked && isNotifySubscribersChecked) {
+            if (!isAdmin) {
+              await articleReviewAction(articleResponse.id, "submit-review");
+              notifySuccess(isScheduleChecked ? "Članak je zakazan i poslan na pregled. Objavit će se nakon odobrenja." : "Članak je poslan na pregled.");
+            } else if (!isScheduleChecked && isNotifySubscribersChecked) {
               try {
                 const subscribers = await getSubscribersWithoutPagination();
 
@@ -377,7 +384,7 @@ const AddArticlePage = () => {
       setSectionIcons(sectionIconsData);
       setAirportCities(airportsData);
       try {
-        const partners = await getAffiliatePartners();
+        const partners = isAdmin ? await getAffiliatePartners() : [];
         setAffiliateLinks(mergeArticleAffiliateLinks(partners,prepared?.affiliateLinks||[]));
       } catch (error) {
         console.warn("Affiliate tables are not installed yet.", error);
@@ -448,8 +455,10 @@ const AddArticlePage = () => {
                       type="text"
                       as={Input}
                       label="Naslov članka *"
-                      placeholder="Unesi naslov..."
+                      placeholder={isAdmin ? "Unesi naslov..." : "Unesite naslov - najviše 100 znakova"}
+                      maxLength={100}
                     />
+                      {!isAdmin && <ArticleAuthorHelp field="title" />}
                     <ErrorMessage
                       name="article_title"
                       component="div"
@@ -462,8 +471,9 @@ const AddArticlePage = () => {
                       name="article_subtitle"
                       as={Input}
                       label="Podnaslov članka *"
-                      placeholder="Opis članka u par riječi..."
+                      placeholder={isAdmin ? "Opis članka u par riječi..." : "1 do max 3 pojma - kratki CTA"}
                     />
+                      {!isAdmin && <ArticleAuthorHelp field="subtitle" />}
                     <ErrorMessage
                       name="article_subtitle"
                       component="div"
@@ -478,8 +488,10 @@ const AddArticlePage = () => {
                       as={Textarea}
                       rows={4}
                       label="Opis članka *"
-                      placeholder="Opis članka u nekoliko rečenica..."
+                      placeholder={isAdmin ? "Opis članka u nekoliko rečenica..." : "Kratak uvod i poziv na čitanje - najviše 100 znakova"}
+                      maxLength={100}
                     />
+                      {!isAdmin && <ArticleAuthorHelp field="description" />}
                     <ErrorMessage
                       name="article_description"
                       component="div"
@@ -544,6 +556,7 @@ const AddArticlePage = () => {
                       label="Videozapis (opcionalno) "
                       placeholder={"Unesi link videa"}
                     />
+                      {!isAdmin && <ArticleAuthorHelp field="video" />}
 
                     {values.article_type == ARTICLE_TYPE_DESTINATION_ID && (
                       <>
@@ -670,11 +683,12 @@ const AddArticlePage = () => {
                     <p className="error-message">Obavezno polje!</p>
                   )}
 
-                <p>* preporuča se slika u omjeru 16:9</p>
+                <p>* naslovna slika mora biti horizontalne orijentacije</p>
 
                 <div>
                   <h6>Odlomci</h6>
-                  <FieldArray
+                  {!isAdmin && <ArticleAuthorHelp field="sections" />}
+                    <FieldArray
                     name="sections"
                     render={(arrayHelpers) => {
                       const sections = values.sections;
@@ -1134,8 +1148,7 @@ const AddArticlePage = () => {
                                     </div>
 
                                     <p>
-                                      * preporuča se 1 slika u omjeru 16:9 ili
-                                      max. 2 u omjeru 9:16
+                                      * Ako uz odlomak dodajete jednu sliku, ona mora biti horizontalne orijentacije. Ako dodajete dvije slike, obje moraju biti vertikalne orijentacije.
                                     </p>
                                   </fieldset>
                                 );
@@ -1189,10 +1202,10 @@ const AddArticlePage = () => {
                   </div>
                 </div>
 
-                <AffiliateLinksEditor
+                {isAdmin && <AffiliateLinksEditor
                   value={affiliateLinks}
                   onChange={setAffiliateLinks}
-                />
+                />}
 
                 <div className="add-metatags-wrapper">
                   <div className="add-metatag-outer-container">
@@ -1204,7 +1217,7 @@ const AddArticlePage = () => {
                         return (
                           <div className="add-metatags-container">
                             <div className="add-metatag-header">
-                              <h6>Meta oznake</h6>
+                              <h6>Meta oznake</h6><p>SEO meta oznake pišu se odvojene zarezom.</p>
 
                               <Button
                                 type="button"
@@ -1257,7 +1270,7 @@ const AddArticlePage = () => {
                 </div>
 
                 <div className="add-article-toggle-container">
-                  {selectedCountryId &&
+                  {isAdmin && selectedCountryId &&
                     values.article_type == ARTICLE_TYPE_DESTINATION_ID && (
                       <div className="add-article-toggle-item">
                         <ToggleSwitch
@@ -1269,7 +1282,7 @@ const AddArticlePage = () => {
                       </div>
                     )}
 
-                  {values.article_place &&
+                  {isAdmin && values.article_place &&
                     values.article_type == ARTICLE_TYPE_DESTINATION_ID && (
                       <div className="add-article-toggle-item">
                         <ToggleSwitch
@@ -1281,7 +1294,7 @@ const AddArticlePage = () => {
                       </div>
                     )}
 
-                  {isTipsArticleType(values.article_type) && (
+                  {isAdmin && isTipsArticleType(values.article_type) && (
                     <div className="add-article-toggle-item add-article-toggle-item-highlight">
                       <ToggleSwitch
                         name={"tips-featured"}
@@ -1302,14 +1315,14 @@ const AddArticlePage = () => {
                     </div>
                   )}
 
-                  <div className="add-article-toggle-item">
+                  {isAdmin && <div className="add-article-toggle-item">
                     <ToggleSwitch
                       name={"domago-partner"}
                       description={"Partner banner"}
                       value={isDomagoPartnerChecked}
                       setter={setIsDomagoPartnerChecked}
                     />
-                  </div>
+                  </div>}
 
                   <div className="add-article-toggle-item">
                     <ToggleSwitch
@@ -1409,7 +1422,7 @@ const AddArticlePage = () => {
 
                 <div className="add-article-buttons">
                   <Button type="submit" adminPrimary>
-                    {isScheduleChecked ? "zakaži članak" : "objavi članak"}
+                    {isAdmin ? (isScheduleChecked ? "Zakaži članak" : "Objavi članak") : (isScheduleChecked ? "Zakaži članak i pošalji na pregled" : "Pošalji na pregled")}
                   </Button>
 
                   <Button type="button" white onClick={handleCancel}>

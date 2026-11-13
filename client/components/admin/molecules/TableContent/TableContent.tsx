@@ -121,7 +121,7 @@ const TableContent = ({ data, type }) => {
       }),
       columnHelper.display({
         id: "schedule",
-        header: () => "Objava",
+        header: () => "Status",
         cell: (row) => {
           const status = getScheduleStatus(row.row.original);
 

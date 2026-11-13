@@ -1,6 +1,7 @@
 import db from "../models/index.js";
 import { Op, Sequelize } from "sequelize";
 import { createUniqueArticleSlug } from "../utils/articleSlug.js";
+import { approvedArticleWhere } from "../utils/articleReviewVisibility.js";
 
 let affiliateTablesAvailable = true;
 const DOMAGO_SPECIAL_TYPE = "domago_partner";
@@ -70,6 +71,7 @@ const getPublicArticleWhere = (additionalWhere = {}) => ({
   ...additionalWhere,
   is_deal_draft: false,
   [Op.and]: [
+    approvedArticleWhere(),
     ...(additionalWhere[Op.and] || []),
     {
       [Op.or]: [
@@ -143,18 +145,20 @@ class ArticleService {
     );
   }
 
-  async getArticles(page, pageSize, articleType, includeScheduled = false) {
+  async getArticles(page, pageSize, articleType, includeScheduled = false, ownerId = null) {
     const limit = pageSize;
     const offset = (page - 1) * pageSize;
     const optionalArticleTypeWhere = articleType
       ? { articleTypeId: articleType }
       : {};
+    if (ownerId) optionalArticleTypeWhere.userId = ownerId;
 
     try {
       const articles = await db.models.Article.findAndCountAll({
         limit: limit,
         offset: offset,
         include: [
+          ...(includeScheduled ? [{ model: db.models.ArticleReview, as: "review" }] : []),
           {
             model: db.models.ArticleType,
           },
@@ -256,6 +260,7 @@ class ArticleService {
     const include = [
       {
         model: db.models.User,
+        attributes: ["id", "username", "first_name", "last_name", "is_admin"],
       },
       {
         model: db.models.GalleryImage,
@@ -274,6 +279,7 @@ class ArticleService {
         model: db.models.ArticleType,
       },
       getArticleScheduleInclude(),
+      ...(includeScheduled ? [{ model: db.models.ArticleReview, as: "review" }] : []),
       {
         model: db.models.ArticleAffiliateLink,
         as: "affiliate_links",
@@ -523,7 +529,8 @@ class ArticleService {
     domago_partner_enabled,
     publish_at,
     publish_timezone,
-    notify_subscribers_on_publish
+    notify_subscribers_on_publish,
+    reviewRequired = false
   ) {
     const transaction = await db.sequelize.transaction();
 
@@ -586,6 +593,7 @@ class ArticleService {
       }
 
       await setDomagoPartnerState(article.id, domago_partner_enabled, transaction);
+      if (reviewRequired) await db.models.ArticleReview.create({ article_id: article.id, status: "pending" }, { transaction });
       await transaction.commit();
 
       return article;
@@ -689,13 +697,14 @@ class ArticleService {
     }
   }
 
-  async getArticleBySearchTerm(name, page, pageSize, includeScheduled = false) {
+  async getArticleBySearchTerm(name, page, pageSize, includeScheduled = false, ownerId = null) {
     const limit = pageSize;
     const offset = (page - 1) * pageSize;
 
     try {
       const searchTermWithoutLastLetter = `%${name.slice(0, -1)}%`;
       const searchWhere = {
+        ...(ownerId ? { userId: ownerId } : {}),
         [Op.or]: [
           {
             title: {
@@ -714,6 +723,7 @@ class ArticleService {
         limit: limit,
         offset: offset,
         include: [
+          ...(includeScheduled ? [{ model: db.models.ArticleReview, as: "review" }] : []),
           getArticleScheduleInclude(),
           {
             model: db.models.Country,
@@ -904,11 +914,12 @@ class ArticleService {
     domago_partner_enabled,
     publish_at,
     publish_timezone,
-    notify_subscribers_on_publish
+    notify_subscribers_on_publish,
+    existingTransaction
   ) {
     console.log("patchArticle");
 
-    const transaction = await db.sequelize.transaction();
+    const transaction = existingTransaction || await db.sequelize.transaction();
 
     try {
       const articleToUpdate = await db.models.Article.findByPk(id, {
@@ -916,7 +927,7 @@ class ArticleService {
       });
 
       if (!articleToUpdate) {
-        await transaction.rollback();
+        if (!existingTransaction) await transaction.rollback();
         return "Article not found";
       }
 
@@ -991,22 +1002,22 @@ class ArticleService {
         transaction,
       });
 
-      await setDomagoPartnerState(id, domago_partner_enabled, transaction);
-      await transaction.commit();
+      if (domago_partner_enabled !== undefined) await setDomagoPartnerState(id, domago_partner_enabled, transaction);
+      if (!existingTransaction) await transaction.commit();
 
       console.log("updatedArticle", updatedArticle);
 
       return updatedArticle;
     } catch (error) {
-      await transaction.rollback();
+      if (!existingTransaction) await transaction.rollback();
       console.log(error);
       return null;
     }
   }
 
-  async deleteArticle(id) {
+  async deleteArticle(id, transaction) {
     try {
-      const article = await db.models.Article.findByPk(id);
+      const article = await db.models.Article.findByPk(id, { transaction });
 
       if (!article) {
         return null;
@@ -1014,11 +1025,12 @@ class ArticleService {
 
       await db.models.Place.update(
         { featured_article_id: null },
-        { where: { featured_article_id: id } }
+        { where: { featured_article_id: id }, transaction }
       );
 
       await db.models.Article.destroy({
         where: { id: id },
+        transaction,
       });
 
       return article;

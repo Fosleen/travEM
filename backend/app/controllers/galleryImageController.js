@@ -6,7 +6,8 @@ class GalleryImagesController {
       req.body.url,
       req.body.article_id,
       null,
-      null
+      null,
+      req.articleTransaction
     );
     if (response.length == 0) {
       res.status(400).json({ error: "Error inserting gallery image" });
@@ -17,7 +18,9 @@ class GalleryImagesController {
 
   async deleteGalleryImage(req, res) {
     const { id } = req.params;
-    const response = await service.deleteGalleryImage(id);
+    const response = await service.deleteGalleryImage(id,
+      req.articleTransaction
+    );
     if (response) {
       res.status(200).json({});
     } else {

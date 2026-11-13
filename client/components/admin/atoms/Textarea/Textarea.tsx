@@ -11,6 +11,7 @@ const Textarea: FC<TextareaProps> = ({
   onChange,
   rows,
   value = "",
+  maxLength,
 }) => {
   return (
     <div className="textarea-parent-wrapper">
@@ -24,6 +25,7 @@ const Textarea: FC<TextareaProps> = ({
           disabled={disabled}
           rows={rows}
           value={value}
+          maxLength={maxLength}
         />
       </div>
       {error && <div className="error-message">{error}</div>}

@@ -7,8 +7,10 @@ import Image from "next/image";
 import { SignOut } from "@phosphor-icons/react";
 import SidebarMenuItem from "../../atoms/SidebarMenuItem";
 import "./SidebarMenu.scss";
+import { useDashboardUser } from "@/context/DashboardUserContext";
 
 const SidebarMenu = () => {
+  const { isAdmin } = useDashboardUser();
   const getExpirationTime = () => {
     if (typeof window === "undefined") {
       return "";
@@ -49,7 +51,7 @@ const SidebarMenu = () => {
   return (
     <div className="sidebar-menu-container">
       <div>
-        <Link href="/admin" className="sidebar-menu-logo">
+        <Link href={isAdmin ? "/admin" : "/admin/clanci"} className="sidebar-menu-logo">
           <Image
             src="/images/travem-logo-grey.webp"
             alt="travem-logo-grey"
@@ -59,17 +61,20 @@ const SidebarMenu = () => {
           />
         </Link>
         <div className="sidebar-menu-items">
-          <SidebarMenuItem text="Deal Finder" href="/admin/deal-finder" />
+          {isAdmin && <SidebarMenuItem text="Deal Finder" href="/admin/deal-finder" />}
           <SidebarMenuItem text={"Članci"} />
+          {isAdmin && <>
           <SidebarMenuItem text={"Države"} />
           <SidebarMenuItem text={"Mjesta"} />
           <SidebarMenuItem text={"Sadržaj"} />
           <SidebarMenuItem text={"Newsletter"} />
           <SidebarMenuItem text={"Komentari"} />
           <SidebarMenuItem text={"BookMe"} />
+          </>}
         </div>
       </div>
       <div className="sidebar-menu-items">
+        {isAdmin && <SidebarMenuItem text="Korisnici" href="/admin/korisnici" />}
         <div style={{ padding: "16px" }}>
           Token ističe u: <br /> {expirationTime}
         </div>

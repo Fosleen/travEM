@@ -1,5 +1,6 @@
 import db from "../models/index.js";
 import { Op } from "sequelize";
+import { approvedArticleWhere } from "../utils/articleReviewVisibility.js";
 import { MONTH_ORDER } from "../utils/global.js";
 
 const BEST_TIME_INCLUDE = {
@@ -60,6 +61,7 @@ const getPublicArticleWhere = (additionalWhere = {}) => ({
   ...additionalWhere,
   is_deal_draft: false,
   [Op.and]: [
+    approvedArticleWhere(),
     ...(additionalWhere[Op.and] || []),
     {
       [Op.or]: [
@@ -351,6 +353,7 @@ class PlacesService {
             include: [getArticleScheduleInclude()],
             where: {
               is_deal_draft: false,
+              [Op.and]: [approvedArticleWhere()],
               [Op.or]: [
                 { "$article_schedule.id$": null },
                 { "$article_schedule.publish_at$": null },
@@ -395,6 +398,7 @@ class PlacesService {
             include: [getArticleScheduleInclude()],
             where: {
               is_deal_draft: false,
+              [Op.and]: [approvedArticleWhere()],
               [Op.or]: [
                 { "$article_schedule.id$": null },
                 { "$article_schedule.publish_at$": null },

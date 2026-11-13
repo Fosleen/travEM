@@ -1,5 +1,6 @@
 import db from "../models/index.js";
 import { Op } from "sequelize";
+import { approvedArticleWhere } from "../utils/articleReviewVisibility.js";
 
 const getArticleScheduleInclude = () => ({
   model: db.models.ArticleSchedule,
@@ -8,6 +9,7 @@ const getArticleScheduleInclude = () => ({
 
 const getPublicArticleWhere = () => ({
   is_deal_draft: false,
+  [Op.and]: [approvedArticleWhere()],
   [Op.or]: [
     { "$article_schedule.id$": null },
     { "$article_schedule.publish_at$": null },

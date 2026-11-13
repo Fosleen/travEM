@@ -1,5 +1,6 @@
 import db from "../models/index.js";
 import { Op } from "sequelize";
+import { approvedArticleWhere } from "../utils/articleReviewVisibility.js";
 
 const DEFAULT_PROMO = {
   top_text: "Ideš na svoj prvi let?\nEvo što sve trebaš znati",
@@ -18,6 +19,7 @@ const getPublicArticleWhere = (additionalWhere = {}) => ({
   ...additionalWhere,
   is_deal_draft: false,
   [Op.and]: [
+    approvedArticleWhere(),
     ...(additionalWhere[Op.and] || []),
     {
       [Op.or]: [

@@ -23,6 +23,9 @@ import video from "./videoRoute.js";
 import affiliate from "./affiliateRoute.js";
 import airportCity from "./airportCityRoute.js";
 import { verifyToken } from "../middleware/jwt_verify.js";
+import { dashboardAccess } from "../middleware/dashboardAccess.js";
+import { requireAdmin } from "../middleware/articleAccess.js";
+import { listUsers, addUser } from "../controllers/userController.js";
 import subscriber from "./subscriberRoute.js";
 import placeBestTimeToVisit from "./placeBestTimeToVisitRoute.js";
 import countryBestTimeToVisit from "./countryBestTimeToVisitRoute.js";
@@ -35,6 +38,10 @@ import domagoPartnerBanner from "./domagoPartnerBannerRoute.js";
 import honeymoon from "./honeymoonRoute.js";
 
 const router = new Router();
+router.use(dashboardAccess);
+router.get("/me", verifyToken, (req, res) => res.json({ id: req.user.id, username: req.user.username, is_admin: Number(req.user.is_admin) }));
+router.get("/users", verifyToken, requireAdmin, listUsers);
+router.post("/users", verifyToken, requireAdmin, addUser);
 router.use('/admin/deal-finder', dealFinder);
 
 router.use("/homepage", homepage);
@@ -55,7 +62,7 @@ router.use("/characteristic-icons", characteristicIcon);
 router.use("/specificity-items", specificityItem);
 router.use("/specificity-images", specificityImage);
 
-router.use("/register", verifyToken, register);
+router.use("/register", verifyToken, requireAdmin, register);
 router.use("/login", login);
 router.use("/places", place);
 router.use("/countries", country);

@@ -40,6 +40,7 @@ const SidebarMenuItem: FC<SidebarMenuItemProps> = ({ text, href }) => {
       {text == "Mjesta" && <Buildings size={32} />}
       {text == "Sadržaj" && <Info size={32} />}
       {text == "Newsletter" && <Users size={32} />}
+      {text == "Korisnici" && <Users size={32} />}
       {text == "Komentari" && <ChatCenteredText size={32} />}
       {text == "BookMe" && <WeddingRingsIcon />}
       {text == "Deal Finder" && <AirplaneTilt size={32} />}

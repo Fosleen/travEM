@@ -6,7 +6,8 @@ class SectionImagesController {
       req.body.url,
       req.body.section_id,
       req.body.width,
-      req.body.height
+      req.body.height,
+      req.articleTransaction
     );
 
     if (response.length == 0) {
@@ -21,7 +22,8 @@ class SectionImagesController {
       req.body.url,
       req.params.id,
       req.body.width,
-      req.body.height
+      req.body.height,
+      req.articleTransaction
     );
     if (response.length == 0) {
       res.status(500).json({ error: "Error updating section image" });
@@ -32,7 +34,9 @@ class SectionImagesController {
 
   async deleteSectionImage(req, res) {
     const { id } = req.params;
-    const response = await service.deleteSectionImage(id);
+    const response = await service.deleteSectionImage(id,
+      req.articleTransaction
+    );
     if (response) {
       res.status(200).json({});
     } else {

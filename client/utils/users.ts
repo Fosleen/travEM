@@ -1,6 +1,31 @@
 import { notifyFailure, notifySuccess } from "../components/atoms/Toast/Toast";
 import { apiUrl } from "./api";
 
+export type ManagedUser = {
+  id: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+  is_admin: number;
+};
+
+export type NewAuthor = Pick<ManagedUser, "username" | "first_name" | "last_name"> & { password: string };
+
+async function usersRequest(method: "GET" | "POST", body?: NewAuthor) {
+  const response = await fetch(`${apiUrl}/users`, {
+    method,
+    cache: "no-store",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Korisnike nije moguće dohvatiti ili spremiti.");
+  return data;
+}
+
+export const getUsers = async (): Promise<ManagedUser[]> => usersRequest("GET");
+export const addAuthor = async (values: NewAuthor): Promise<ManagedUser> => (await usersRequest("POST", values)).user;
+
 export const loginUser = async (
   values: any,
   router: any,
@@ -30,7 +55,7 @@ export const loginUser = async (
         });
       }
       notifySuccess("Uspješna prijava!");
-      router.replace("/admin/deal-finder");
+      router.replace(Number(decodedPayload.is_admin) === 1 ? "/admin/deal-finder" : "/admin/clanci");
     } else {
       notifyFailure("Neispravni podaci.");
     }

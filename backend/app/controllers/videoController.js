@@ -15,7 +15,8 @@ class VideoController {
       req.body.url,
       req.body.article_id,
       req.body.place_id,
-      req.body.country_id
+      req.body.country_id,
+      req.articleTransaction
     );
 
     if (response.length == 0) {
@@ -31,7 +32,8 @@ class VideoController {
       req.body.url,
       req.body.article_id,
       req.body.place_id,
-      req.body.country_id
+      req.body.country_id,
+      req.articleTransaction
     );
     if (response.length == 0) {
       res.status(500).json({
@@ -44,7 +46,9 @@ class VideoController {
 
   async deleteVideo(req, res) {
     const { id } = req.params;
-    const response = await service.deleteVideo(id);
+    const response = await service.deleteVideo(id,
+      req.articleTransaction
+    );
     if (response) {
       res.status(200).json({});
     } else {

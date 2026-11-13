@@ -1,1 +1,5 @@
 backend/app/sequelize.js
+
+# Local agent instructions and token notes
+AGENTS.md
+TOKENS.md

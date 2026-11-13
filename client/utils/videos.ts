@@ -1,4 +1,5 @@
 import { apiUrl } from "./api";
+import { articleResponse } from "./articleResponse";
 
 const getToken = () => {
   if (typeof window !== "undefined") {
@@ -28,7 +29,7 @@ export async function addVideo(
       country_id: country_id,
     }),
   });
-  const data = await response.json();
+  const data = await articleResponse(response);
   if (!response.ok) {
     console.log(data.error);
     return data.error;
@@ -49,7 +50,7 @@ export async function updateVideo(id: number, url: string) {
       url: url,
     }),
   });
-  const data = await response.json();
+  const data = await articleResponse(response);
   if (!response.ok) {
     console.log(data.error);
     return data.error;
@@ -67,7 +68,7 @@ export async function deleteVideo(id: number) {
     },
     method: "DELETE",
   });
-  const data = await response.json();
+  const data = await articleResponse(response);
   if (!response.ok) {
     console.log(data.error);
     return data.error;

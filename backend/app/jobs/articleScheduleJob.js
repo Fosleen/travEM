@@ -46,6 +46,8 @@ const processSchedule = async (schedule) => {
     return;
   }
   if (article.is_deal_draft) return;
+  const review = await db.models.ArticleReview.findByPk(article.id);
+  if (review && review.status !== "approved") return;
 
   await clearPublishedArticleCaches(article);
 

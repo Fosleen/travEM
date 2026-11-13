@@ -74,6 +74,7 @@ const ArticleHero = ({ article }) => {
     article.user?.username === "Dox" || article.user?.username === "Ema"
       ? "putujEM s travEM - Ema i Matija"
       : `${article.user?.first_name || ""} ${article.user?.last_name || ""}`.trim();
+  const isReaderAuthor = article.user?.is_admin === 0 || article.user?.is_admin === "0";
 
   return (
     <div className="article-hero-container" ref={heroRef}>
@@ -96,6 +97,9 @@ const ArticleHero = ({ article }) => {
           <h5>
             <span>Piše:</span> {authorName}
           </h5>
+          {isReaderAuthor && (
+            <div className="article-reader-label">Iz pera naših čitatelja</div>
+          )}
         </div>
 
         <p ref={descriptionRef}>{article.description}</p>

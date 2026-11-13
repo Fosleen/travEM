@@ -1,6 +1,7 @@
 import { Router } from "express";
 import controller from "../controllers/sectionController.js";
 import { verifyToken } from "../middleware/jwt_verify.js";
+import { requireArticleAccess, articleMutation } from "../middleware/articleAccess.js";
 
 const router = new Router();
 
@@ -37,7 +38,7 @@ const router = new Router();
  *                      schema:
  *                          $ref: '#/components/schemas/ServerErrorResponse'
  */
-router.post("/", verifyToken, controller.addSection);
+router.post("/", verifyToken, requireArticleAccess, articleMutation(controller.addSection));
 
 // PATCH /api/v1/sections/4
 
@@ -88,7 +89,7 @@ router.post("/", verifyToken, controller.addSection);
  *                      schema:
  *                          $ref: '#/components/schemas/ServerErrorResponse'
  */
-router.patch("/:id", verifyToken, controller.patchSection);
+router.patch("/:id", verifyToken, requireArticleAccess, articleMutation(controller.patchSection));
 
 // DELETE /api/v1/sections/4
 
@@ -128,6 +129,6 @@ router.patch("/:id", verifyToken, controller.patchSection);
  *                          $ref: '#/components/schemas/ServerErrorResponse'
  *
  */
-router.delete("/:id", verifyToken, controller.deleteSection);
+router.delete("/:id", verifyToken, requireArticleAccess, articleMutation(controller.deleteSection));
 
 export default router;

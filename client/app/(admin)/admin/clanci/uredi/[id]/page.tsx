@@ -92,6 +92,10 @@ import {
   ZAGREB_TIME_ZONE,
   zonedDateTimeLocalToUtcIso,
 } from "@/utils/articleSchedule";
+import { useDashboardUser } from "@/context/DashboardUserContext";
+import ArticleAuthorHelp from "@/components/admin/organisms/ArticleAuthorHelp";
+import { articleReviewAction } from "@/utils/articleReview";
+import ArticleReviewPanel from "@/components/admin/organisms/ArticleReviewPanel";
 import AffiliateLinksEditor from "@/components/admin/organisms/AffiliateLinksEditor/AffiliateLinksEditor";
 import {
   getAffiliatePartners,
@@ -103,6 +107,7 @@ import {
 const EditArticle = () => {
   const params = useParams();
   const router = useRouter();
+  const { isAdmin } = useDashboardUser();
   const id = params?.id as string;
 
   const [articleTypes, setArticleTypes] = useState<ArticleType | string>("");
@@ -146,7 +151,7 @@ const EditArticle = () => {
     setNotifySubscribersOnPublish,
   ] = useState(false);
 
-  const handleSave = async (values: any) => {
+  const handleSave = async (values: any, reviewDecision?: object) => {
     console.log("=== HANDLE SAVE STARTED ===");
     setIsSubmitClicked(true);
 
@@ -156,7 +161,7 @@ const EditArticle = () => {
     }
 
     console.log("✅ Images validated");
-    const canEditSchedule = getScheduleStatus(article).className === "scheduled";
+    const canEditSchedule = !isAdmin || getScheduleStatus(article).className === "scheduled";
     const publishAt = canEditSchedule && isScheduleChecked
       ? zonedDateTimeLocalToUtcIso(scheduleDateTime, scheduleTimezone)
       : null;
@@ -174,7 +179,7 @@ const EditArticle = () => {
 
     const result = await Swal.fire({
       title: "Jeste li sigurni?",
-      text: article.is_deal_draft
+      text: !isAdmin ? "Poslat ćete izmjene članka administratoru na pregled." : article.review?.status !== "approved" && article.review ? "Spremit ćete izmjene članka za pregled." : article.is_deal_draft
         ? "Spremit ćete izmjene nacrta. Članak ostaje skriven javnosti."
         : isScheduleChecked
         ? "Spremit ćete izmjene i zakazati objavu članka"
@@ -184,7 +189,7 @@ const EditArticle = () => {
       confirmButtonColor: "#2BAC82",
       cancelButtonColor: "#AC2B2B",
       cancelButtonText: "Odustani",
-      confirmButtonText: article.is_deal_draft ? "Spremi nacrt" : "Da, objavi!",
+      confirmButtonText: !isAdmin ? "Pošalji na pregled" : reviewDecision ? "Spremi i potvrdi odluku" : "Spremi izmjene",
     });
 
     console.log("Swal result:", result);
@@ -242,13 +247,13 @@ const EditArticle = () => {
         shouldSendSchedulePayload ? publishAt : undefined,
         shouldSendSchedulePayload ? scheduleTimezone : undefined,
         shouldSendSchedulePayload
-          ? isScheduleChecked && notifySubscribersOnPublish
+          ? (!isAdmin || isScheduleChecked) && notifySubscribersOnPublish
           : undefined
       );
 
       console.log("✅ Article updated:", articleResponse);
 
-      if (affiliateLinks.length > 0) {
+      if (isAdmin && affiliateLinks.length > 0) {
         const persistedAffiliateLinks = await persistAffiliatePartners(
           affiliateLinks
         );
@@ -431,11 +436,11 @@ const flatRemovedImages = removedSectionImages;
       console.log("   isMainCountryPostChecked:", isMainCountryPostChecked);
       console.log("   isMainCountryPost:", isMainCountryPost);
 
-      if (isMainCountryPostChecked) {
+      if (isAdmin && isMainCountryPostChecked) {
         console.log("   Creating top country article...");
         const topResponse = await createTopCountryArticle(id);
         console.log("   ✅ Top country article created:", topResponse);
-      } else if (isMainCountryPost) {
+      } else if (isAdmin && isMainCountryPost) {
         console.log("   Removing top country article...");
         const removeResponse = await removeTopCountryArticle(id);
         console.log("   ✅ Top country article removed:", removeResponse);
@@ -443,9 +448,9 @@ const flatRemovedImages = removedSectionImages;
 
       console.log("✅ Top country article handled");
 
-      if (isMainPlacePostChecked && values.article_place) {
+      if (isAdmin && isMainPlacePostChecked && values.article_place) {
         await createTopPlaceArticle(id);
-      } else if (isMainPlacePost) {
+      } else if (isAdmin && isMainPlacePost) {
         await removeTopPlaceArticle(id);
       }
 
@@ -470,9 +475,11 @@ const flatRemovedImages = removedSectionImages;
         console.log("   No video changes needed");
       }
 
+      if (!isAdmin) await articleReviewAction(article.id, "submit-review");
+      if (isAdmin && reviewDecision) await articleReviewAction(article.id, "review", reviewDecision);
       console.log("=== UPDATE COMPLETE ===");
       router.push("/admin/clanci");
-      notifySuccess("Uspješno uređen članak!");
+      notifySuccess(!isAdmin ? "Izmjene su poslane na pregled." : reviewDecision ? "Odluka o članku je spremljena." : "Uspješno uređen članak!");
     } catch (error) {
       console.error("❌ ERROR in handleSave:", error);
       console.error("Error details:", {
@@ -589,7 +596,7 @@ const flatRemovedImages = removedSectionImages;
         const articleData = await getArticleById(parseInt(id), true);
         let partners = [];
         try {
-          partners = await getAffiliatePartners();
+          partners = isAdmin ? await getAffiliatePartners() : [];
         } catch (error) {
           console.warn("Affiliate tables are not installed yet.", error);
         }
@@ -606,6 +613,7 @@ const flatRemovedImages = removedSectionImages;
         setArticleTypes(articleTypesData);
         setCountries(countriesData);
         setSectionIcons(sectionIconsData);
+        if (articleData.error) throw new Error("Članak nije dostupan.");
         setArticle(articleData);
         setAffiliateLinks(
           mergeArticleAffiliateLinks(
@@ -629,8 +637,7 @@ const flatRemovedImages = removedSectionImages;
         setIsTipsFeaturedChecked(parseBooleanValue(articleData.isTipsFeatured));
         setIsDomagoPartnerChecked(parseBooleanValue(articleData.domagoPartnerEnabled));
         const schedule = articleData.article_schedule;
-        const scheduleStatus = getScheduleStatus(articleData);
-        const isScheduledArticle = scheduleStatus.className === "scheduled";
+        const isScheduledArticle = schedule?.publish_at && new Date(schedule.publish_at).getTime() > Date.now();
 
         setIsScheduleChecked(isScheduledArticle);
         setScheduleTimezone(schedule?.publish_timezone || getBrowserTimeZone());
@@ -693,11 +700,13 @@ const flatRemovedImages = removedSectionImages;
     });
   };
 
+  if (!isAdmin && article && (!article.review || article.review.status === "approved")) return <div><h2>{article.title}</h2><p>Članak je odobren. Daljnje izmjene radi administrator.</p><Button onClick={() => router.push("/admin/clanci")}>Natrag na članke</Button></div>;
+
   return (
     <div>
       <>
         <div className="edit-article-container">
-          {article && <DealDraftActions articleId={article.id} />}
+          {isAdmin && article && <DealDraftActions articleId={article.id} />}
           <div className="edit-article-header">
             <h2>Uredi članak</h2>
 
@@ -748,7 +757,7 @@ const flatRemovedImages = removedSectionImages;
                   : [],
               }}
               validationSchema={articleValidationSchema}
-              onSubmit={handleSave}
+              onSubmit={(values) => handleSave(values)}
               enableReinitialize={true}
             >
               {({ values, setFieldValue, isSubmitting }) => (
@@ -761,8 +770,10 @@ const flatRemovedImages = removedSectionImages;
                         type="text"
                         as={Input}
                         label="Naslov članka *"
-                        placeholder="Unesi naslov..."
+                        placeholder={isAdmin ? "Unesi naslov..." : "Unesite naslov - najviše 100 znakova"}
+                      maxLength={100}
                       />
+                      {!isAdmin && <ArticleAuthorHelp field="title" />}
                       <ErrorMessage
                         name="article_title"
                         component="div"
@@ -775,8 +786,9 @@ const flatRemovedImages = removedSectionImages;
                         name="article_subtitle"
                         as={Input}
                         label="Podnaslov članka *"
-                        placeholder="Opis članka u par riječi..."
+                        placeholder={isAdmin ? "Opis članka u par riječi..." : "1 do max 3 pojma - kratki CTA"}
                       />
+                      {!isAdmin && <ArticleAuthorHelp field="subtitle" />}
                       <ErrorMessage
                         name="article_subtitle"
                         component="div"
@@ -792,8 +804,10 @@ const flatRemovedImages = removedSectionImages;
                         value={values.article_description}
                         rows={4}
                         label="Opis članka *"
-                        placeholder="Opis članka u nekoliko rečenica..."
+                        placeholder={isAdmin ? "Opis članka u nekoliko rečenica..." : "Kratak uvod i poziv na čitanje - najviše 100 znakova"}
+                      maxLength={100}
                       />
+                      {!isAdmin && <ArticleAuthorHelp field="description" />}
                       <ErrorMessage
                         name="article_description"
                         component="div"
@@ -861,6 +875,7 @@ const flatRemovedImages = removedSectionImages;
                         label="Videozapis (opcionalno) "
                         placeholder={"Unesi link videa"}
                       />
+                      {!isAdmin && <ArticleAuthorHelp field="video" />}
 
                       {values.article_type == ARTICLE_TYPE_DESTINATION_ID && (
                         <>
@@ -1049,11 +1064,12 @@ const flatRemovedImages = removedSectionImages;
                       <p className="error-message">Obavezno polje!</p>
                     )}
 
-                  <p>* preporuča se slika u omjeru 16:9</p>
+                  <p>* naslovna slika mora biti horizontalne orijentacije</p>
 
                   <div>
                     <h6>Odlomci</h6>
 
+                    {!isAdmin && <ArticleAuthorHelp field="sections" />}
                     <FieldArray
                       name="sections"
                       render={(arrayHelpers) => {
@@ -1517,8 +1533,7 @@ const flatRemovedImages = removedSectionImages;
                                       </div>
 
                                       <p>
-                                        * preporuča se 1 slika u omjeru 16:9 ili
-                                        max. 2 u omjeru 9:16
+                                        * Ako uz odlomak dodajete jednu sliku, ona mora biti horizontalne orijentacije. Ako dodajete dvije slike, obje moraju biti vertikalne orijentacije.
                                       </p>
                                     </fieldset>
                                   );
@@ -1572,10 +1587,10 @@ const flatRemovedImages = removedSectionImages;
                     </div>
                   </div>
 
-                  <AffiliateLinksEditor
+                  {isAdmin && <AffiliateLinksEditor
                     value={affiliateLinks}
                     onChange={setAffiliateLinks}
-                  />
+                  />}
 
                   <div className="edit-metatags-wrapper">
                     <div className="edit-metatag-outer-container">
@@ -1587,7 +1602,7 @@ const flatRemovedImages = removedSectionImages;
                           return (
                             <div className="edit-metatags-container">
                               <div className="edit-metatag-header">
-                                <h6>Meta oznake</h6>
+                                <h6>Meta oznake</h6><p>SEO meta oznake pišu se odvojene zarezom.</p>
 
                                 <Button
                                   type="button"
@@ -1640,7 +1655,7 @@ const flatRemovedImages = removedSectionImages;
                   </div>
 
                   <div className="edit-article-toggle-container">
-                    {selectedCountryId &&
+                    {isAdmin && selectedCountryId &&
                       values.article_type == ARTICLE_TYPE_DESTINATION_ID && (
                         <div className="edit-article-toggle-item">
                           <ToggleSwitch
@@ -1652,7 +1667,7 @@ const flatRemovedImages = removedSectionImages;
                         </div>
                       )}
 
-                    {values.article_place &&
+                    {isAdmin && values.article_place &&
                       values.article_type == ARTICLE_TYPE_DESTINATION_ID && (
                         <div className="add-article-toggle-item">
                           <ToggleSwitch
@@ -1664,7 +1679,7 @@ const flatRemovedImages = removedSectionImages;
                         </div>
                       )}
 
-                    {isTipsArticleType(values.article_type) && (
+                    {isAdmin && isTipsArticleType(values.article_type) && (
                       <div className="edit-article-toggle-item edit-article-toggle-item-highlight">
                         <ToggleSwitch
                           name={"tips-featured"}
@@ -1685,14 +1700,14 @@ const flatRemovedImages = removedSectionImages;
                       </div>
                     )}
 
-                    <div className="edit-article-toggle-item">
+                    {isAdmin && <div className="edit-article-toggle-item">
                       <ToggleSwitch
                         name={"domago-partner"}
                         description={"Partner banner"}
                         value={isDomagoPartnerChecked}
                         setter={setIsDomagoPartnerChecked}
                       />
-                    </div>
+                    </div>}
 
                     <div className="edit-article-toggle-item">
                       <ToggleSwitch
@@ -1704,7 +1719,7 @@ const flatRemovedImages = removedSectionImages;
                     </div>
                   </div>
 
-                  {getScheduleStatus(article).className === "scheduled" && (
+                  {(!isAdmin || getScheduleStatus(article).className === "scheduled") && (
                     <div className="edit-article-schedule-container">
                       <ToggleSwitch
                         name={"schedule-article"}
@@ -1720,7 +1735,7 @@ const flatRemovedImages = removedSectionImages;
                         <span>
                           Zagreb:{" "}
                           {formatDateTimeInTimeZone(
-                            article.article_schedule.publish_at,
+                            article.article_schedule?.publish_at,
                             ZAGREB_TIME_ZONE
                           )}
                         </span>
@@ -1812,22 +1827,29 @@ const flatRemovedImages = removedSectionImages;
                     </div>
                   )}
 
+                  <ArticleReviewPanel article={article} onSave={handleSave} />
+                  {!isAdmin && !isScheduleChecked && <ToggleSwitch
+                    name="notify-subscribers-after-review"
+                    description="Obavijesti pretplatnike nakon odobrenja i objave članka"
+                    value={notifySubscribersOnPublish}
+                    setter={() => setNotifySubscribersOnPublish(!notifySubscribersOnPublish)}
+                  />}
                   <div className="edit-article-buttons">
                     <Button type="submit" adminPrimary>
-                      {article.is_deal_draft ? "spremi nacrt" : "uredi članak"}
+                      {!isAdmin ? (isScheduleChecked ? "Zakaži članak i pošalji na pregled" : "Pošalji na pregled") : article.is_deal_draft ? "spremi nacrt" : "Spremi izmjene"}
                     </Button>
 
                     <Button type="button" white onClick={handleCancel}>
                       Odustani
                     </Button>
 
-                    <Button
+                    {isAdmin && getScheduleStatus(article).className === "published" && <Button
                       type="button"
                       adminPrimary
                       onClick={resendNewsletter}
                     >
                       Ponovno pošalji newsletter pretplatnicima
-                    </Button>
+                    </Button>}
                   </div>
                 </Form>
               )}

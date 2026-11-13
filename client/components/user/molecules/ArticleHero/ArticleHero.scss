@@ -38,6 +38,18 @@
       span {
         font-weight: 800;
       }
+
+      .article-reader-label {
+        align-self: flex-start;
+        margin-top: 4px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background-color: rgba($green, 0.1);
+        color: $green;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.4;
+      }
     }
 
     h5,

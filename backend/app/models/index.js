@@ -5,6 +5,7 @@ import ArticleType from "./articleType.js";
 import Article from "./article.js";
 import DealFinder from "./dealFinder.js";
 import ArticleSchedule from "./articleSchedule.js";
+import ArticleReview from "./articleReview.js";
 import SectionImage from "./sectionImage.js";
 import Section from "./section.js";
 import GalleryImage from "./galleryImage.js";
@@ -55,6 +56,9 @@ db.models = {};
 db.models.User = User(sequelizeConnection, Sequelize.DataTypes);
 db.models.ArticleType = ArticleType(sequelizeConnection, Sequelize.DataTypes);
 db.models.Article = Article(sequelizeConnection, Sequelize.DataTypes);
+db.models.ArticleReview = ArticleReview(sequelizeConnection, Sequelize.DataTypes);
+db.models.Article.hasOne(db.models.ArticleReview, { foreignKey: "article_id", as: "review", onDelete: "CASCADE" });
+db.models.ArticleReview.belongsTo(db.models.Article, { foreignKey: "article_id", as: "article" });
 db.dealFinder = DealFinder(sequelizeConnection, Sequelize.DataTypes);
 db.models.ArticleSchedule = ArticleSchedule(
   sequelizeConnection,

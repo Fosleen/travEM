@@ -102,13 +102,17 @@ class ArticleController {
       const includeScheduled = await canIncludeScheduledArticles(req);
       const cacheKey = includeScheduled ? `article:${id}:admin` : `article:${id}`;
 
-      const response = await getOrSetCache(
+      let response = await getOrSetCache(
         cacheKey,
         async () => {
           return await articleService.getArticleById(id, includeScheduled);
         },
         useCache
       );
+      if (response?.user && response.user.is_admin === undefined) {
+        await clearCache(cacheKey);
+        response = await articleService.getArticleById(id, includeScheduled);
+      }
 
       if (!response || response.length == 0) {
         res
@@ -131,11 +135,15 @@ class ArticleController {
         ? `article-slug:${slug}:admin`
         : `article-slug:${slug}`;
 
-      const response = await getOrSetCache(
+      let response = await getOrSetCache(
         cacheKey,
         () => articleService.getArticleBySlug(slug, includeScheduled),
         useCache
       );
+      if (response?.user && response.user.is_admin === undefined) {
+        await clearCache(cacheKey);
+        response = await articleService.getArticleBySlug(slug, includeScheduled);
+      }
 
       if (!response) {
         return res.status(404).json({ error: "Article not found" });
@@ -167,7 +175,8 @@ class ArticleController {
         req.body.domago_partner_enabled,
         req.body.publish_at,
         req.body.publish_timezone,
-        req.body.notify_subscribers_on_publish
+        req.body.notify_subscribers_on_publish,
+        Number(req.user.is_admin) !== 1
       );
 
       if (response.length == 0) {
@@ -381,9 +390,11 @@ class ArticleController {
         req.body.domago_partner_enabled,
         req.body.publish_at,
         req.body.publish_timezone,
-        req.body.notify_subscribers_on_publish
+        req.body.notify_subscribers_on_publish,
+        req.articleTransaction
       );
 
+      if (!response) return res.status(500).json({ error: "Spremanje članka nije uspjelo." });
       if (response === "Article not found") {
         return res
           .status(404)
@@ -406,7 +417,7 @@ class ArticleController {
   async deleteArticle(req, res) {
     try {
       const { id } = req.params;
-      const response = await articleService.deleteArticle(id);
+      const response = await articleService.deleteArticle(id, req.articleTransaction);
 
       if (response) {
         await clearCache(`article:${id}`);

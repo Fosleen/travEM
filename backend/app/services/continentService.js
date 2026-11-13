@@ -1,5 +1,6 @@
 import db from "../models/index.js";
 import { Op } from "sequelize";
+import { approvedArticleWhere } from "../utils/articleReviewVisibility.js";
 
 const NEW_COUNTRIES_LIMIT = 3;
 
@@ -13,6 +14,7 @@ const getPublicArticleWhere = (additionalWhere = {}) => ({
   ...additionalWhere,
   is_deal_draft: false,
   [Op.and]: [
+    approvedArticleWhere(),
     ...(additionalWhere[Op.and] || []),
     {
       [Op.or]: [

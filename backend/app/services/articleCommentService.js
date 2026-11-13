@@ -3,6 +3,7 @@ import axios from "axios";
 import { Op } from "sequelize";
 import db from "../models/index.js";
 import { moderateComment } from "../utils/commentModeration.js";
+import articleService from "./articleService.js";
 
 const COMMENT_STATUS = {
   PUBLISHED: "published",
@@ -134,6 +135,7 @@ class ArticleCommentService {
   }
 
   async getPublishedComments(articleId) {
+    if (!await articleService.getArticleById(articleId)) return [];
     const comments = await db.models.ArticleComment.findAll({
       attributes: PUBLIC_COMMENT_ATTRIBUTES,
       where: {
@@ -224,7 +226,7 @@ class ArticleCommentService {
       return { error: validation.error, statusCode: 400 };
     }
 
-    const article = await db.models.Article.findByPk(articleId);
+    const article = await articleService.getArticleById(articleId);
 
     if (!article || article.is_deal_draft) {
       return { error: "Članak nije pronađen", statusCode: 404 };

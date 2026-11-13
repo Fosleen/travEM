@@ -83,6 +83,8 @@
         background-color: rgba(44, 100, 180, 0.12);
         color: #2c64b4;
       }
+      &.pending-review { background: #fff2cc; color: #775600; }
+      &.changes-requested { background: #fde5df; color: #8a2d1a; }
     }
 
     tbody {

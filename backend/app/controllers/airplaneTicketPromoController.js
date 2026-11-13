@@ -1,8 +1,9 @@
 import { clearCache, getOrSetCache } from "../middleware/redis.js";
 import service from "../services/airplaneTicketPromoService.js";
 import jwt from "jsonwebtoken";
+import db from "../models/index.js";
 
-const canIncludeScheduledArticles = (req) => {
+const canIncludeScheduledArticles = async (req) => {
   if (req.query.includeScheduled !== "true") {
     return false;
   }
@@ -14,8 +15,9 @@ const canIncludeScheduledArticles = (req) => {
   }
 
   try {
-    jwt.verify(authHeader.split(" ")[1], process.env.JWT_SECRET_KEY);
-    return true;
+    const decoded = jwt.verify(authHeader.split(" ")[1], process.env.JWT_SECRET_KEY);
+    const user = await db.models.User.findByPk(decoded.id);
+    return Number(user?.is_admin) === 1;
   } catch (error) {
     return false;
   }
@@ -25,7 +27,7 @@ class AirplaneTicketPromoController {
   async getPromo(req, res) {
     try {
       const useCache = req.query.noCache !== "true";
-      const includeScheduled = canIncludeScheduledArticles(req);
+      const includeScheduled = await canIncludeScheduledArticles(req);
       const cacheKey = includeScheduled
         ? "airplane-ticket-promo:admin"
         : "airplane-ticket-promo";

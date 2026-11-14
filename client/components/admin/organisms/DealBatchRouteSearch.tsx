@@ -15,6 +15,7 @@ export default function DealBatchRouteSearch({offer,busy,action,onComplete}:Prop
   const [legacyMode,setLegacyMode]=useState('calendar'),[minimumDays,setMinimumDays]=useState(minimum);
   const [days,setDays]=useState(Math.min(searchWindowDays(source?.start,source?.end)||60,60,Math.max(2,minimum)));
   const [selected,setSelected]=useState<string[]>([]);
+  const [results,setResults]=useState<DealJson[]>([]);
   const [runId,setRunId]=useState<number|null>(offer.flightSearch?.pendingRunId||null),[message,setMessage]=useState(''),[progress,setProgress]=useState('');
   const destinations:{code:string,name:string,country?:string}[]=offer.destinations||[];
   const routes=destinations.map(destination=>({...destination,budget:Boolean(offer.flightSearch?.routes?.find((route:DealJson)=>route.destination===destination.code)?.airlineCodes?.length)}));
@@ -33,7 +34,7 @@ export default function DealBatchRouteSearch({offer,busy,action,onComplete}:Prop
     const timer=setInterval(async()=>{
       try{
         const run=await api(`/runs/${runId}`);if(cancelled)return;
-        if(run.input?.progress)setProgress(`Obrađeno ${run.input.progress.completed} od ${run.input.progress.total} odredišta · ${run.usage} API upita.`);
+        if(run.input?.progress){setProgress(`Obrađeno ${run.input.progress.completed} od ${run.input.progress.total} odredišta · ${run.usage} API upita.`);setResults(run.input.progress.results||[]);}
         if(['completed','failed'].includes(run.status)){
           clearInterval(timer);setRunId(null);setMessage(run.status==='completed'?'Pretraga je završena. Rezultati su spremljeni u ovoj ponudi.':run.error||'Dopuna nije uspjela.');await completion.current();
         }
@@ -51,7 +52,8 @@ export default function DealBatchRouteSearch({offer,busy,action,onComplete}:Prop
     {!valid&&<p className="error">{!selectedRoutes.length?'Odaberi barem jedno odredište.':'Provjeri datume, trajanje i dostupnost budget dopune.'}</p>}
     {valid&&(queries>limit||queries>remaining)&&<p className="error">Plan od {queries} upita prelazi limit po pretrazi ({limit}) ili preostalu mjesečnu kvotu ({remaining}). Odaberi manje odredišta ili prilagodi limit u Postavkama.</p>}
     <p className="df-batch-total"><strong>{selectedRoutes.length} odredišta · ukupno {queries} API upita</strong></p>
-    <Button white disabled={locked||!allowed} onClick={()=>action(async()=>{const run=await api(`/offers/${offer.id}/search-flights`,{destinations:selected,legacyMode,start,end,days,minimumDays,confirmedQueries:queries});setRunId(run.id);setProgress('');setMessage(`Pretraga je pokrenuta · ${queries} API upita.`);})}><MagnifyingGlass size={18}/>{runId!==null?'Tražimo dodatne termine…':`Pronađi još termina · ${queries} API upita`}</Button>
+    <Button white disabled={locked||!allowed} onClick={()=>action(async()=>{const run=await api(`/offers/${offer.id}/search-flights`,{destinations:selected,legacyMode,start,end,days,minimumDays,confirmedQueries:queries});setRunId(run.id);setProgress('');setResults([]);setMessage(`Pretraga je pokrenuta · ${queries} API upita.`);})}><MagnifyingGlass size={18}/>{runId!==null?'Tražimo dodatne termine…':`Pronađi još termina · ${queries} API upita`}</Button>
     {message&&<p role="status">{message}</p>}{progress&&<p role="status">{progress}</p>}
+    {results.map(result=><p key={result.destination}><strong>{destinations.find(d=>d.code===result.destination)?.name||result.destination} ({result.destination})</strong>: {result.returned} {result.mode==='budget_dates'?'povratnih kombinacija':'termina'}{result.mode==='budget_dates'&&<> · polaznih datuma: {result.outboundDates}, povratnih datuma: {result.inboundDates}</>}{result.returned===0&&' · API nije vratio odgovarajuće termine; raniji rezultati ostaju sačuvani.'}</p>)}
   </details>;
 }

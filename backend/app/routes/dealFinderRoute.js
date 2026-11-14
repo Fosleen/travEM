@@ -6,7 +6,7 @@ import {orderedRows} from '../services/dealFinder/orderedRows.js';
 import {templateEditorial} from '../services/dealFinder/textGeneration.js';
 import { editorial, assert, evaluateStay, renderSelection, renderHostel, effectiveSettings,renderAlternativeHotels } from '../services/dealFinder/domain.js';
 import { clearCache, clearCacheByPattern } from '../middleware/redis.js';
-import {searchAirports,offerAirportNames,discoveryDestinationAllowed} from '../services/dealFinder/airports.js';
+import {searchAirports,searchFlightDestinations,offerAirportNames,discoveryDestinationAllowed} from '../services/dealFinder/airports.js';
 const router=Router();
 router.use(verifyToken);
 router.use(async(req,res,next)=>{
@@ -17,7 +17,7 @@ const wrap=fn=>async(req,res)=>{try {res.json(await fn(req));}catch(e){res.statu
 router.get('/settings',wrap(()=>service.settings()));
 router.put('/settings',wrap(req=>service.saveSettings(req.body,req.user.id)));
 router.get('/origins',wrap(()=>service.origins()));
-router.get('/airports',wrap(req=>searchAirports(req.query.q)));
+router.get('/airports',wrap(req=>req.query.includeCities==='true'?searchFlightDestinations(req.query.q):searchAirports(req.query.q)));
 router.get('/budget',wrap(()=>service.budget()));
 router.get('/runs',wrap(()=>orderedRows(db.dealFinder.Run,{order:[['createdAt','DESC'],['id','DESC']],limit:100})));
 router.get('/runs/:id',wrap(async req=>{const run=await db.dealFinder.Run.findByPk(req.params.id);assert(run,'Pretraga ne postoji');return run;}));
@@ -48,6 +48,7 @@ router.post('/search',wrap(req=>service.startSearch(req.body,req.user.id)));
 router.post('/offers/:id/select',wrap(req=>service.select(req.params.id,req.body,req.user.id)));
 router.post('/offers/:id/search-flights',wrap(req=>service.searchOfferFlights(req.params.id,req.body,req.user.id)));
 router.post('/offers/:id/confirm-candidate',wrap(req=>service.confirmFlightCandidate(req.params.id,req.body,req.user.id)));
+router.post('/offers/:id/manual-flight',wrap(req=>service.addManualFlight(req.params.id,req.body,req.user.id)));
 router.post('/offers/:id/verify',wrap(req=>service.verify(req.params.id,req.body,req.user.id)));
 router.post('/offers/:id/generate-draft',wrap(req=>service.generateDraft(req.params.id,req.body,req.user.id)));
 router.post('/offers/:id/build-content',wrap(req=>service.buildContent(req.params.id,req.body,req.user.id)));

@@ -7,6 +7,26 @@ const airports=catalog.airports.map(a=>({...a,city:displayNames[a.code]||aliases
 const byCode=new Map(airports.map(a=>[a.code,a]));
 const indexed=airports.map(a=>({airport:a,city:normalize(a.city),text:normalize([a.code,a.city,a.name,...a.aliases].join(' '))}));
 export function airportByCode(code){return byCode.get(code)||null;}
+// Explicit metro groups also cover airports whose municipality differs from the city served.
+const cityDefinitions=[
+  ['NYC','New York','JFK LGA EWR'],['VCE','Venecija','VCE TSF'],['LON','London','LHR LGW STN LTN LCY SEN'],
+  ['BRU','Bruxelles','BRU CRL'],['MIL','Milano','MXP LIN BGY'],['PAR','Pariz','CDG ORY BVA'],['ROM','Rim','FCO CIA'],
+  ['WAW','Varšava','WAW WMI'],['IST','Istanbul','IST SAW'],['BER','Berlin','BER'],['BUH','Bukurešt','OTP BBU'],
+  ['STO','Stockholm','ARN BMA NYO VST'],['OSL','Oslo','OSL TRF'],['CPH','Kopenhagen','CPH'],
+  ['TYO','Tokyo','HND NRT'],['OSA','Osaka','KIX ITM UKB'],['SEL','Seoul','ICN GMP'],['BKK','Bangkok','BKK DMK'],
+  ['JKT','Jakarta','CGK HLP'],['KUL','Kuala Lumpur','KUL SZB'],['TPE','Taipei','TPE TSA'],['SHA','Shanghai','PVG SHA'],
+  ['BJS','Peking','PEK PKX'],['DXB','Dubai','DXB DWC'],['MOW','Moskva','SVO DME VKO ZIA'],
+  ['YTO','Toronto','YYZ YTZ'],['YMQ','Montreal','YUL YHU'],['CHI','Chicago','ORD MDW'],['WAS','Washington','IAD DCA BWI'],
+  ['BUE','Buenos Aires','EZE AEP'],['SAO','São Paulo','GRU CGH VCP'],['RIO','Rio de Janeiro','GIG SDU'],
+  ['REK','Reykjavik','KEF RKV'],['TCI','Tenerife','TFS TFN'],['DUS','Düsseldorf','DUS NRN'],
+];
+const cityGroups=cityDefinitions.map(([id,city,codes])=>{
+  const members=codes.split(' ').map(airportByCode).filter(Boolean);
+  return {code:`city:${id}`,city,name:'Svi aerodromi',country:members[0]?.country,airports:members.map(a=>a.code)};
+}).filter(group=>group.airports.length>1);
+const citiesByCode=new Map(cityGroups.map(group=>[group.code,group]));
+export function airportCityGroup(code){return citiesByCode.get(code)||null;}
+export function routeDestinations(input){return airportCityGroup(input.destination)?.airports||[input.destination];}
 // Land neighbours for countries represented by the CMS's active origin airports.
 // Maritime neighbours are intentionally excluded: Zagreb -> Milan remains relevant.
 // Editorial exception: Montenegro is useful by air from Croatia and stays eligible.
@@ -26,6 +46,12 @@ export function searchAirports(query){
   const words=q.split(/\s+/);
   return indexed.filter(a=>words.every(w=>a.text.includes(w))).map(a=>({airport:a.airport,score:(a.airport.code.toLowerCase()===q?100:a.airport.code.toLowerCase().startsWith(q)?80:a.city===q?60:a.city.startsWith(q)?40:0)+(a.airport.scheduled?10:0)}))
     .sort((a,b)=>b.score-a.score||a.airport.code.localeCompare(b.airport.code)).slice(0,20).map(a=>a.airport);
+}
+export function searchFlightDestinations(query){
+  const q=normalize(query).trim().slice(0,100);if(q.length<2)return [];
+  const words=q.split(/\s+/);
+  const groups=cityGroups.filter(group=>words.every(word=>normalize([group.city,group.code.slice(5),...group.airports.flatMap(code=>{const a=airportByCode(code);return [code,a.city,...a.aliases];})].join(' ')).includes(word)));
+  return [...groups,...searchAirports(query)].slice(0,30);
 }
 export function offerAirportNames(offer,origins=[]){
   const o=offer.toJSON?offer.toJSON():offer,origin=airportByCode(o.origin),destination=airportByCode(o.destination);

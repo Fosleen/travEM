@@ -1,6 +1,6 @@
-import {money,stayTotal,nights,hostelFeatures} from './domain.js';
+import {stayTotal,nights,hostelFeatures} from './domain.js';
 import {airportByCode} from './airports.js';
-const shortMoney=value=>new Intl.NumberFormat('hr-HR',{maximumFractionDigits:2}).format(value/100)+'€';
+import {editorialMoney as money,editorialShortMoney as shortMoney} from './editorialMoney.js';
 
 // The selected stay, rather than a remembered exampleIndex or a verification
 // timer, identifies the flight used for the editorial package calculation.
@@ -76,7 +76,7 @@ export function editorialFacts(offer){
     seasonalAngle:advent?'Advent':null,
     editorialNotes:offer.destination==='ACE'?'Lanzarote je kanarski otok u Atlantskom oceanu, dio Španjolske. Vulkanima oblikovan krajolik, šetnje i obalna mjesta daju razlog za posjet; zimi je zanimljiv kao bijeg u blažu klimu. Bez izmišljenih temperatura i tvrdnji o Mediteranu.':null,
     packageFlight:matching?{departureDate:matching.departureDate,returnDate:matching.returnDate,priceCents:matching.priceCents,verified:fresh(matching)}:null,
-    flights:flights.map(f=>({destinationName:airportByCode(f.destination)?.city||f.destination,departureDate:f.departureDate,returnDate:f.returnDate})),hotels,hostel:hostel?{checkin:hostel.checkin,checkout:hostel.checkout,adults:2,totalEur:hostel.totalEur,features:hostelFeatures(hostel),cheaperThanHotels:hotels.length>0&&hotels.every(h=>h.totalPriceCents!==null&&hostel.totalEur*100<h.totalPriceCents)}:null}};
+    flights:flights.map(f=>({destinationName:airportByCode(f.destination)?.city||f.destination,departureDate:f.departureDate,returnDate:f.returnDate,airline:f.airline||null,outboundAirlineCode:f.outboundAirlineCode||null,inboundAirlineCode:f.inboundAirlineCode||null})),hotels,hostel:hostel?{checkin:hostel.checkin,checkout:hostel.checkout,adults:2,totalEur:hostel.totalEur,features:hostelFeatures(hostel),cheaperThanHotels:hotels.length>0&&hotels.every(h=>h.totalPriceCents!==null&&hostel.totalEur*100<h.totalPriceCents)}:null}};
 }
 export function editorialSnapshot(offer){
   const selection=offer.selection||{},data=offer.data||{};

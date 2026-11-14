@@ -3,6 +3,7 @@ import {editorialFacts} from './editorialFacts.js';
 import {editorialStyle,editorialStyleVersion} from './editorialStyle.js';
 import {recoverEditorial} from './editorialRecovery.js';
 import {sectionKinds} from './editorialDraft.js';
+import {editorialMoney} from './editorialMoney.js';
 
 const textSchema={type:'string'};
 const arraySchema={type:'array',items:textSchema};
@@ -54,4 +55,4 @@ export class GroqTextGenerator {
     return {...recoverEditorial(parsed,facts,resolveEditorialText),provider:'groq',model,styleVersion:editorialStyleVersion,usage:data.usage||null,reviewRequired:true};
   }
 }
-export function templateEditorial(offer){return {...(offer.selection?.template==='roundup'?recoverEditorial({},editorialFacts(offer),resolveEditorialText):editorial(offer)),provider:'template',reviewRequired:true};}
+export function templateEditorial(offer){return {...(offer.selection?.template==='roundup'?recoverEditorial({},editorialFacts(offer),resolveEditorialText):editorial(offer,editorialMoney)),provider:'template',reviewRequired:true};}

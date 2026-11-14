@@ -145,7 +145,7 @@ export function validateOverrides(s={}) {
 }
 export function effectiveSettings(global,destination,search={}) { return {...global,...global.destinationOverrides[destination],...validateOverrides(search)}; }
 export const escapeHtml = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-export function editorial(offer) {
+export function editorial(offer,formatMoney=money) {
   const destinations={MLA:['Malta','Maltu','na Malti'],FCO:['Rim','Rim','u Rimu'],CIA:['Rim','Rim','u Rimu'],CDG:['Pariz','Pariz','u Parizu'],BVA:['Pariz','Pariz','u Parizu'],IST:['Istanbul','Istanbul','u Istanbulu'],CFU:['Krf','Krf','na Krfu'],ACE:['Lanzarote','Lanzarote','na Lanzaroteu']};
   const destinationLabel=offer.destinationName||offer.data?.destinationName||offer.destination;
   const [destination,to,at]=destinations[offer.destination]||[destinationLabel,destinationLabel,`u destinaciji ${destinationLabel}`];
@@ -156,10 +156,10 @@ export function editorial(offer) {
   const total=hotel?stayTotal(hotel):null;
   const exampleFlight=flights[offer.selection?.exampleIndex||0];
   const stayAligned=hotel && fresh(exampleFlight) && hotel.checkin>=exampleFlight.departureDate && hotel.checkout<=exampleFlight.returnDate;
-  const packagePrice=stayAligned && fresh(hotel) && hotel.ratePolicyVerified===true && typeof hotel.freeCancellation==='boolean' && total!==null && hotel.adults>0 ? money(exampleFlight.priceCents+Math.round(total/hotel.adults)) : null;
+  const packagePrice=stayAligned && fresh(hotel) && hotel.ratePolicyVerified===true && typeof hotel.freeCancellation==='boolean' && total!==null && hotel.adults>0 ? formatMoney(exampleFlight.priceCents+Math.round(total/hotel.adults)) : null;
   const route=destination;
-  const titles=[packagePrice?`${route}: povratni let i smještaj od ${packagePrice} po osobi`:`${route}: povratni letovi i ideja za sljedeći odmor`,flight?`Povratni letovi za ${to} od ${money(flight.priceCents)}`:`Vrijeme je za ${to}: odabrani termini povratnih letova`];
-  const subtitles=[`Bijeg ${['MLA','CFU','ACE'].includes(offer.destination)?'na':'u'} ${to}`,flight?`Povratni letovi od ${money(flight.priceCents)}`:'Letovi i smještaj'];
+  const titles=[packagePrice?`${route}: povratni let i smještaj od ${packagePrice} po osobi`:`${route}: povratni letovi i ideja za sljedeći odmor`,flight?`Povratni letovi za ${to} od ${formatMoney(flight.priceCents)}`:`Vrijeme je za ${to}: odabrani termini povratnih letova`];
+  const subtitles=[`Bijeg ${['MLA','CFU','ACE'].includes(offer.destination)?'na':'u'} ${to}`,flight?`Povratni letovi od ${formatMoney(flight.priceCents)}`:'Letovi i smještaj'];
   return {destinationName:destination,titles:titles.map(t=>t.slice(0,100)),subtitle:subtitles[0],subtitles,descriptions:[
     `${route}: odabrani termini povratnih letova i prijedlog smještaja.`,
     `Isplaniraj odmor ${at}. Pogledaj termine letova i odaberi smještaj za svoj boravak.`,
@@ -187,17 +187,17 @@ export function renderHostel(h,s=defaults) {
   assert(['shared_bed','private_room'].includes(h.roomType),'Navedite krevet u zajedničkoj sobi ili privatnu sobu');
   return `<p>Hostel alternativa: ${escapeHtml(h.name)}. ${h.roomType==='shared_bed'?'Krevet po osobi u zajedničkoj sobi':'Privatna soba'}. ${nights(h.checkin,h.checkout)} noći. ${h.verifiedAt && h.available===true?money(cents(h.totalEur)):'Cijena zahtijeva provjeru'}. <a rel="sponsored noopener" href="${escapeHtml(u.href)}">Pogledaj hostel</a></p>`;
 }
-export function renderSelection(offer,flights,hotel,s=defaults) {
+export function renderSelection(offer,flights,hotel,s=defaults,formatMoney=money) {
   assert((flights.length || hotel) && flights.every(f=>f.origin===offer.origin),'Članak mora imati jedno polazište');
   const day=d=>new Date(date(d)+'T12:00:00Z').toLocaleDateString('hr-HR',{timeZone:'UTC',weekday:'long',day:'numeric',month:'numeric',year:'numeric'});
   const fresh=f=>f?.verifiedAt && f.available===true;
-  const bullets=flights.map(f=>`<li>${escapeHtml(f.destination)}: <a rel="sponsored noopener" href="${escapeHtml(skyscanner(f,s))}">${escapeHtml(day(f.departureDate))} – ${escapeHtml(day(f.returnDate))}</a> | ${fresh(f) ? money(f.priceCents):'Cijena i dostupnost zahtijevaju provjeru'}</li>`).join('');
+  const bullets=flights.map(f=>`<li>${escapeHtml(f.destination)}: <a rel="sponsored noopener" href="${escapeHtml(skyscanner(f,s))}">${escapeHtml(day(f.departureDate))} – ${escapeHtml(day(f.returnDate))}</a> | ${fresh(f) ? formatMoney(f.priceCents):'Cijena i dostupnost zahtijevaju provjeru'}</li>`).join('');
   let html=`<ul>${bullets}</ul>`;
   for(const p of s.airlinePolicies||[]) if(p.validUntil>=new Date().toISOString().slice(0,10) && flights.some(f=>f.airline===p.carrier && f.fareCode===p.fareCode)) html+=`<p>${escapeHtml(p.note)} <a href="${escapeHtml(p.sourceUrl)}" rel="noopener">Uvjeti tarife</a></p>`;
   if(hotel) { const total=stayTotal(hotel), verified=fresh(hotel) && total!==null && hotel.ratePolicyVerified===true && (hotel.editorApproved===true||typeof hotel.freeCancellation==='boolean');
-    html+=`<p>${escapeHtml(hotel.name)}: ${nights(hotel.checkin,hotel.checkout)} noći za ${hotel.adults} osoba. ${verified?money(total):'Ukupna cijena zahtijeva provjeru.'}${verified && cancellable(hotel)?' Besplatno otkazivanje za odabranu tarifu'+(hotel.cancellationDeadline?' do '+escapeHtml(hotel.cancellationDeadline):'')+'.':''}${verified && hotel.breakfast===true?' Doručak je uključen.':''}${verified&&hotel.freeParking===true?' Dostupan je besplatan parking.':verified&&hotel.parking===true?' Dostupan je parking.':''}</p><p><a rel="sponsored noopener" href="${escapeHtml(hotelBookingLink(hotel,s))}">Pogledaj smještaj</a></p>`;
+    html+=`<p>${escapeHtml(hotel.name)}: ${nights(hotel.checkin,hotel.checkout)} noći za ${hotel.adults} osoba. ${verified?formatMoney(total):'Ukupna cijena zahtijeva provjeru.'}${verified && cancellable(hotel)?' Besplatno otkazivanje za odabranu tarifu'+(hotel.cancellationDeadline?' do '+escapeHtml(hotel.cancellationDeadline):'')+'.':''}${verified && hotel.breakfast===true?' Doručak je uključen.':''}${verified&&hotel.freeParking===true?' Dostupan je besplatan parking.':verified&&hotel.parking===true?' Dostupan je parking.':''}</p><p><a rel="sponsored noopener" href="${escapeHtml(hotelBookingLink(hotel,s))}">Pogledaj smještaj</a></p>`;
     const matching=flights.filter(f=>fresh(f)&&f.departureDate===hotel.checkin&&f.returnDate===hotel.checkout).sort((a,b)=>a.priceCents-b.priceCents)[0];
-    if(verified && matching) html+=`<p>Let i smještaj po osobi: ${money(matching.priceCents+Math.round(total/hotel.adults))} (let po osobi + smještaj podijeljen na ${hotel.adults} osoba).</p>`;
+    if(verified && matching) html+=`<p>Let i smještaj po osobi: ${formatMoney(matching.priceCents+Math.round(total/hotel.adults))} (let po osobi + smještaj podijeljen na ${hotel.adults} osoba).</p>`;
   }
   return html+'<p>Poveznice su partnerske. Konačnu cijenu i uvjete provjerite kod prodavatelja prije rezervacije.</p>';
 }

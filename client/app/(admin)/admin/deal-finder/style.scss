@@ -57,12 +57,8 @@
   strong small { font-size: 14px; color: $textPrimary; font-weight: 400; }
 }
 .df-stat-icon, .df-section-icon { width: 42px; height: 42px; display: inline-grid; place-items: center; border-radius: 12px; background: $limeLight; color: $greenHover; flex-shrink: 0; }
-.df-safety { display: flex; align-items: center; gap: 12px; padding: 16px 20px; background: rgba($limeLight,.7); border: 1px solid rgba($green,.2); border-radius: 10px; margin-bottom: 25px; color: $greenHover; }
-.df-safety > div { flex: 1; display: flex; flex-direction: column; gap: 3px; }
-.df-safety strong { font-size: 13px; }
-.df-safety div > span { color: $textPrimary; font-size: 12px; line-height: 1.5; }
 .df-badge { display: inline-flex; align-items: center; padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; background: $greyLight; color: $textPrimary; }
-.df-safety > .df-badge, .status-completed, .status-published { background: rgba($green,.12); color: $greenHover; }
+.status-completed, .status-published { background: rgba($green,.12); color: $greenHover; }
 .status-needs_verification, .status-queued { background: #fff3d7; color: #856119; }
 .status-draft, .status-ready_for_selection { background: $limeLight; color: $greenHover; }
 .status-failed, .status-rejected { background: rgba($delete,.08); color: $delete; }
@@ -264,7 +260,6 @@
   .deal-finder { padding-right: 14px; }
   .df-header { align-items: flex-start; flex-direction: column; }
   .df-heading__icon { display: none; }
-  .df-safety > .df-badge { display: none; }
   .df-panel { padding: 16px; }
   .df-tabs button { padding: 13px 10px; font-size: 12px; }
   .df-overview article { padding: 14px; gap: 8px; }

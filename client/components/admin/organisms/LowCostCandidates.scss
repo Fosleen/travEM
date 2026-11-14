@@ -26,6 +26,9 @@
   fieldset.df-candidate-fields { display: grid; grid-template-columns: minmax(140px,1fr) minmax(200px,1.4fr) auto; align-items: end; gap: 14px; padding: 0; margin: 0; border: 0; }
   .df-candidate-fields > label { margin: 0; }
   .df-candidate-fields .dropdown-wrapper { min-width: 0; }
+  .df-direction-carriers { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 12px; }
+  .df-direction-carriers > label.df-option-check { display: flex; flex-direction: row; align-items: center; gap: 10px; margin: 0; font-size: 13px; }
+  .df-direction-carriers > .dropdown-wrapper { width: 100%; max-width: 440px; }
   .df-candidate-fields .dropdown-label { margin: 0 0 7px; }
   .df-candidate-fields .dropdown-filter-wrapper .dropdown { min-height: 44px; height: 44px; line-height: 1.5; background: white; }
   .df-candidate-fields .dropdown-filter-wrapper { position: relative; }

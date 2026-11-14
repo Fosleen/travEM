@@ -3,9 +3,11 @@ import {Op} from 'sequelize';
 import db from '../../models/index.js';
 import { normalizeSettings, assert, validateSettings, validateOverrides, effectiveSettings, nights, evaluateStay, renderHostel, escapeHtml, cents, scheduleKey, stayTotal } from './domain.js';
 import { SerpApiProvider } from './providers.js';
+import {readSerpApiResponse} from './serpApiResponse.js';
+import {manualFlight} from './manualFlights.js';
 import {aiConfigured,groqModel,GroqTextGenerator,templateEditorial} from './textGeneration.js';
 import {normalizeSearch,matchesSearch,dateSpan,routeQueryCount,discoveryQueryCount} from './searchRules.js';
-import {airportByCode,offerAirportNames} from './airports.js';
+import {airportByCode,airportCityGroup,routeDestinations,offerAirportNames} from './airports.js';
 import {sourceSearchWindow,offerFlightSearchInput,offerBatchSearchInput,mergeOfferFlights} from './offerFlightSearch.js';
 import {budgetCarrierCodes,budgetDatesEnabled,confirmedPairFlight} from './budgetDates.js';
 import {skyscanner,hotelBookingLink} from './domain.js';
@@ -68,7 +70,7 @@ export function validateSearch(input,s,active) {
     assert(process.env.SERPAPI_API_KEY,'SerpApi ključ nije konfiguriran');
     const span=dateSpan(input.start,input.end);
     if(['discover','route'].includes(input.mode))assert(Number.isInteger(input.minimumDays)&&input.minimumDays>=1&&input.minimumDays<=span,'Minimalno trajanje mora stati u odabrani raspon datuma');
-    if(input.mode==='route')assert(airportByCode(input.destination)&&!input.origins.includes(input.destination),'Odaberite odredišni aerodrom različit od polazišta');
+    if(input.mode==='route')assert((airportByCode(input.destination)||(!input.supplemental&&airportCityGroup(input.destination)))&&routeDestinations(input).every(code=>!input.origins.includes(code)),'Odaberite odredišni grad ili aerodrom različit od polazišta');
     if(input.mode==='calendar')assert(Number.isInteger(input.days)&&input.days>=1,'Neispravno trajanje kalendara');
     if(input.mode==='calendar') assert(/^[A-Z]{3}$/.test(input.destination),'Odaberite destinaciju');
     if(input.mode==='hotels') { nights(input.checkin,input.checkout);assert(input.place && input.offerId,'Odaberite ponudu i mjesto');assert(Number.isInteger(input.rooms)&&input.rooms>=1&&input.rooms<=4,'Broj soba mora biti 1–4'); }
@@ -131,7 +133,7 @@ async function saveSupplementResult(result,input,runId){
     assert(offer,'Ponuda je uklonjena; rezultati nisu spremljeni');
     const flights=result.flights.filter(f=>f.origin===offer.origin&&f.destination===input.destination&&matchesSearch(f,input));
     if(input.mode==='budget_dates'){
-      const candidates=isRoundupOffer(offer)?[
+      const candidates=!result.candidates.length?(offer.data.flightCandidates||[]):isRoundupOffer(offer)?[
         ...(offer.data.flightCandidates||[]).filter(c=>c.destination!==input.destination),
         ...result.candidates.map(c=>({...c,id:`${c.destination}:${c.id}`})),
       ]:result.candidates;
@@ -161,19 +163,21 @@ export async function execute(run,s,active,userId) {
       const u=new URL('https://serpapi.com/search.json');
       u.search=new URLSearchParams({...params,engine,api_key:process.env.SERPAPI_API_KEY}).toString();
       let response; try {response=await fetch(u,{signal:AbortSignal.timeout(60000)});} catch {throw new Error('SerpApi mrežna pogreška ili timeout; nema automatskog ponavljanja');}
-      assert(response.ok,`SerpApi HTTP ${response.status}; ponovite ručno nakon provjere kvote`);
-      const data=await response.json();assert(!data.error,'SerpApi je odbio upit; provjerite račun i parametre');return data;
+      return readSerpApiResponse(response,{engine,params,apiKey:process.env.SERPAPI_API_KEY});
     });
     if(input.mode==='batch_routes'){
-      const completedDestinations=[];
+      const completedDestinations=[],results=[];
       for(const route of input.routes){
         const offer=await models().Offer.findByPk(input.offerId);assert(offer,'Ponuda je uklonjena; preostale rute nisu pretražene');
         const expected=offerFlightSearchInput(routeOffer(offer,route.destination),route,await originalWindow(offer));
         assert(JSON.stringify(route)===JSON.stringify(expected),'Ruta je promijenjena tijekom dopune; preostali upiti nisu pokrenuti');
-        const result=await provider.search({...route,minRating:s.minRating});
+        let result;
+        try{result=await provider.search({...route,minRating:s.minRating});}
+        catch(error){throw new Error(`${route.origins[0]} - ${route.destination}: ${error.message}`);}
         await saveSupplementResult(result,route,run.id);
         completedDestinations.push(route.destination);
-        await run.update({input:{...run.input,progress:{completed:completedDestinations.length,total:input.routes.length,completedDestinations:[...completedDestinations]}}});
+        results.push({destination:route.destination,mode:route.mode,returned:route.mode==='budget_dates'?result.candidates.length:result.flights.length,...(route.mode==='budget_dates'?{outboundDates:result.metadata.outboundDates,inboundDates:result.metadata.inboundDates}:{})});
+        await run.update({input:{...run.input,progress:{completed:completedDestinations.length,total:input.routes.length,completedDestinations:[...completedDestinations],results:[...results]}}});
       }
       await run.update({status:'completed'});await audit(userId,'search_completed',{runId:run.id});return;
     }
@@ -215,8 +219,21 @@ export async function detail(id) {
   const flights=o.data.flights.map(f=>({...f,destinationName:airportByCode(f.destination)?.city||f.destinationName||f.destination,destinationCountry:airportByCode(f.destination)?.country,skyscannerUrl:skyscanner(f,s),reviewStatus:f.available===false?'unavailable':f.verifiedAt?'verified':'unverified'}));
   const routes=isRoundupOffer(o)?destinationCodes(o).map(destination=>({destination,airlineCodes:budgetCarrierCodes(routeOffer(o,destination))})):undefined;
   const airlineCodes=budgetCarrierCodes(o),pairing={enabled:budgetDatesEnabled(),eligible:airlineCodes.length>0};
-  const candidates=pairing.enabled?(o.data.flightCandidates||[]).map(c=>({...c,destinationName:airportByCode(c.destination)?.city||c.destination,skyscannerUrl:skyscanner(c,s)})):[];
+  const candidates=pairing.enabled?(o.data.flightCandidates||[]).map(c=>({...c,destinationName:airportByCode(c.destination)?.city||c.destination,destinationCountry:airportByCode(c.destination)?.country,skyscannerUrl:skyscanner(c,s)})):[];
   return {...offerAirportNames(o,await origins()),sectionIcons:await editorialIcons(),flightSearch:{...(routes?{routes}:{}),window:await originalWindow(o),maxQueries:s.maxQueries,budget:await budget(),budgetDates:{enabled:budgetDatesEnabled(),airlineCodes},pairing,pendingRunId:(await pendingOfferSearch(id))?.id||null,enabled:Boolean(process.env.SERPAPI_API_KEY)},capabilities:{cmsDraftsEnabled:process.env.DEAL_FINDER_CMS_DRAFTS_ENABLED==='true',aiConfigured:aiConfigured(s)},effectiveSettings:effective,hotelRanking,data:{...o.data,hotels,flights,flightCandidates:candidates}};
+}
+export async function addManualFlight(id,input,userId){
+  return db.sequelize.transaction(async transaction=>{
+    const offer=await models().Offer.findByPk(id,{transaction,lock:transaction.LOCK.UPDATE});assert(offer,'Ponuda ne postoji');
+    const flight=manualFlight(offer,input),flights=[...offer.data.flights];
+    let index=flights.findIndex(f=>flightKey(f)===flightKey(flight));
+    const previous=index===-1?null:flights[index];
+    const value={...previous,...flight,priceHistory:[...(previous?.priceHistory||[]),{priceCents:flight.priceCents,at:flight.verifiedAt}].slice(-20)};
+    if(index===-1){index=flights.length;flights.push(value);}else flights[index]=value;
+    await offer.update({data:{...offer.data,flights,flightCandidates:(offer.data.flightCandidates||[]).filter(f=>flightKey(f)!==flightKey(flight))}},{transaction});
+    await audit(userId,'add_manual_flight',{offerId:offer.id,index,destination:flight.destination,departureDate:flight.departureDate,returnDate:flight.returnDate,priceCents:flight.priceCents},transaction);
+    return {index};
+  });
 }
 export async function confirmFlightCandidate(id,input,userId) {
   assert(budgetDatesEnabled(),'Kombiniranje je isključeno');
@@ -374,9 +391,9 @@ export async function verify(id,input,userId) {
 
   if(input.kind==='flight'&&input.quickPrice===true){
     const data=structuredClone(o.data),item=data.flights[input.index];assert(item,'Opcija ne postoji');
-    const checked=confirmedPairFlight(item,{priceEur:input.priceEur,airlineCode:input.airlineCode});
+    const checked=confirmedPairFlight(item,{priceEur:input.priceEur,airlineCode:input.airlineCode,outboundAirlineCode:input.outboundAirlineCode,inboundAirlineCode:input.inboundAirlineCode});
     Object.assign(item,{priceCents:checked.priceCents,available:true,verifiedAt:checked.verifiedAt,evidence:checked.evidence,sellers:[],priceHistory:[...(item.priceHistory||[]),{priceCents:checked.priceCents,at:checked.verifiedAt}].slice(-20)});
-    if(Object.hasOwn(input,'airlineCode'))Object.assign(item,{airline:checked.airline,airlineCode:checked.airlineCode,airlineCodes:checked.airlineCodes});
+    if(['airlineCode','outboundAirlineCode','inboundAirlineCode'].some(key=>Object.hasOwn(input,key)))Object.assign(item,{airline:checked.airline,airlineCode:checked.airlineCode,airlineCodes:checked.airlineCodes,outboundAirlineCode:checked.outboundAirlineCode,inboundAirlineCode:checked.inboundAirlineCode});
     await o.update({data},{transaction});await audit(userId,'verify_flight_price',{offerId:id,index:input.index,priceCents:item.priceCents,airlineCode:item.airlineCode},transaction);return o;
   }
   if(input.kind==='hotel'&&input.quickPrice===true){
@@ -386,7 +403,7 @@ export async function verify(id,input,userId) {
       if(recoveredHotel.rawRateMetadata?.featuresVersion===1)item.rawRateMetadata={...item.rawRateMetadata,features:recoveredHotel.rawRateMetadata.features,featuresVersion:1};
     }
     const total=cents(input.priceEur);assert(total>0,'Unesite provjerenu ukupnu cijenu boravka');
-    for(const key of ['parking','freeParking','freeCancellation'])if(input[key]!==undefined){assert(typeof input[key]==='boolean','Oznaka pogodnosti mora biti da ili ne');item[key]=input[key];}
+    for(const key of ['parking','freeParking','freeCancellation','breakfast'])if(input[key]!==undefined){assert(typeof input[key]==='boolean','Oznaka pogodnosti mora biti da ili ne');item[key]=input[key];}
     if(input.freeCancellation===false||input.freeCancellation===true&&item.cancellationDeadline&&Date.parse(item.cancellationDeadline)<=Date.now())item.cancellationDeadline=null;
     if(item.freeParking===true)item.parking=true;
     Object.assign(item,{totalEur:total/100,totalIncludesTaxAndFees:true,additionalTaxesFeesEur:0,available:true,verifiedAt:new Date().toISOString(),editorApproved:true,ratePolicyVerified:true,evidence:'Urednički potvrđena ukupna cijena sa svim naknadama'});

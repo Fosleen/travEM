@@ -3,6 +3,7 @@ import {editorialFacts} from './editorialFacts.js';
 import {renderFlightNotes} from './baggage.js';
 import {hotelPhotos} from './hotels.js';
 import {airportByCode} from './airports.js';
+import {editorialMoney} from './editorialMoney.js';
 
 export const sectionKinds=['flights','hotel','alternatives','hostel','closing'];
 export const sectionDefaults={flights:'Povratne aviokarte',hotel:'Primjer smještaja',alternatives:'Alternativni smještaji',hostel:'Hostelska opcija',closing:'Prije rezervacije'};
@@ -22,10 +23,10 @@ export function validateSections(sections){
 export const paragraphs=text=>String(text||'').split(/\n\s*\n/).map(p=>p.trim()).filter(Boolean).map(p=>`<p>${escapeHtml(p)}</p>`).join('');
 function flightExamples(flights,settings){
  const day=value=>{const date=new Date(value+'T12:00:00Z');return `${date.getUTCDate()}.${date.getUTCMonth()+1}. (${date.toLocaleDateString('hr-HR',{weekday:'long',timeZone:'UTC'})})`;};
- const money=value=>new Intl.NumberFormat('hr-HR',{maximumFractionDigits:2}).format(value/100)+' €';
+ const money=editorialMoney;
  return '<ul>'+flights.map(f=>`<li><a href="${escapeHtml(skyscanner(f,settings))}" rel="sponsored noopener noreferrer" target="_blank">${escapeHtml(day(f.departureDate))} - ${escapeHtml(day(f.returnDate))}: ${Number.isFinite(f.priceCents)&&f.priceCents>0?money(f.priceCents):'Cijena nije dostupna'}</a></li>`).join('')+'</ul>';
 }
-function hotelText(offer,hotel,settings){return renderSelection(offer,[],hotel,settings).replace('<ul></ul>','').replace(/<p><a rel="sponsored noopener" href="[^"]*">Pogledaj smještaj<\/a><\/p>/,'').split('<p>Poveznice su partnerske.')[0];}
+function hotelText(offer,hotel,settings){return renderSelection(offer,[],hotel,settings,editorialMoney).replace('<ul></ul>','').replace(/<p><a rel="sponsored noopener" href="[^"]*">Pogledaj smještaj<\/a><\/p>/,'').split('<p>Poveznice su partnerske.')[0];}
 export function articleSections(offer,flights,hotel,settings,fields={},suggestions={},icons=[]){
  let facts;
  const getFacts=()=>facts??=editorialFacts(typeof offer.toJSON==='function'?offer.toJSON():offer);

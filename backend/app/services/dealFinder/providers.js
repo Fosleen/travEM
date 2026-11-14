@@ -1,5 +1,5 @@
 import { cents, date } from './domain.js';
-import {discoveryQueries,matchesSearch,routeParams,dateSpan} from './searchRules.js';
+import {discoveryQueries,matchesSearch,routeParams,dateSpan,isDiscoveryBudgetCarrier} from './searchRules.js';
 import {discoveryDestinationAllowed,excludedDiscoveryCountries,offerAirportNames} from './airports.js';
 import {searchBudgetDates} from './budgetDates.js';
 import {bookingHotelFeatures,bookingFeatureMetadata,hotelPhotos} from './hotels.js';
@@ -34,11 +34,11 @@ export class SerpApiProvider {
        for(const params of queries) {
         const p=await this.request(calendar?'google_flights_calendar':'google_flights_deals',params);
         for(const d of (calendar?p.prices:p.deals)||[]) {
-          const o=d.departure_airport_code || origin, destination=calendar?input.destination:d.arrival_airport_code;
+          const o=d.departure_airport_code || origin, destination=calendar?params.arrival_id:d.arrival_airport_code;
           if(o!==origin || !/^[A-Z]{3}$/.test(destination||'') || !(Number(d.price)>0)) continue;
           if(!calendar&&!discoveryDestinationAllowed(origin,destination))continue;
           if(!calendar&&input.discoveryStrategy==='cheap_first'){
-            const budget=['FR','W6','W4','W9','PC'].includes(d.airline_code)||/^(ryanair|wizz\s*air(?:\s+(?:malta|uk))?|pegasus(?:\s+airlines)?)$/i.test(d.airline||'');
+            const budget=isDiscoveryBudgetCarrier(d);
             if(!budget&&offerAirportNames({destination}).outsideEurope!==true)continue;
           }
           const departureDate=d.outbound_date||d.start_date,returnDate=d.return_date||d.end_date;

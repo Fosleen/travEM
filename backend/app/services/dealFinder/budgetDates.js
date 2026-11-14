@@ -7,7 +7,7 @@ export const budgetDatesEnabled=()=>process.env.DEAL_FINDER_BUDGET_DATES_ENABLED
 export function budgetCarrierCodes(offer) {
   const codes=new Set();
   for(const f of offer.data?.flights||[]) {
-    if(f.available===false||f.stops!==0)continue;
+    if(f.available===false||(f.stops!=null&&f.stops!==0))continue;
     const values=[f.airlineCode,...(f.airlineCodes||[])];
     if(values.includes('FR')||/^ryanair$/i.test(f.airline||''))codes.add('FR');
     if(values.includes('PC')||/^pegasus(?:\s+airlines)?$/i.test(f.airline||''))codes.add('PC');
@@ -41,7 +41,7 @@ export async function searchBudgetDates(request,input){
       outboundPriceCents:out.priceCents,inboundPriceCents:back.priceCents,outboundSearchId:out.searchId,inboundSearchId:back.searchId,
       priceBasis:'sum_of_oneways_estimate',airline:null,available:null,verifiedAt:null,source:'oneway_calendar_pair',retrievedAt:new Date().toISOString()});
   }
-  return {flights:[],hotels:[],candidates:pairs.sort((a,b)=>a.priceCents-b.priceCents||a.id.localeCompare(b.id)),metadata:{coverage:'oneway_pair_candidates',totalCombinations:pairs.length}};
+  return {flights:[],hotels:[],candidates:pairs.sort((a,b)=>a.priceCents-b.priceCents||a.id.localeCompare(b.id)),metadata:{coverage:'oneway_pair_candidates',totalCombinations:pairs.length,outboundDates:outboundRows.length,inboundDates:inboundRows.length}};
 }
 
 const airlineNames=new Map(dealFinderAirlines.map(a=>[a.id,a.name]));
@@ -53,6 +53,7 @@ export function confirmedPairFlight(candidate,input){
   const price=cents(input.priceEur);assert(price>0,'Unesite stvarnu konačnu cijenu');
   const at=new Date().toISOString();
   return {origin:candidate.origin,destination:candidate.destination,departureDate:candidate.departureDate,returnDate:candidate.returnDate,priceCents:price,
+    outboundAirlineCode:input.outboundAirlineCode??input.airlineCode??null,inboundAirlineCode:input.inboundAirlineCode??input.airlineCode??null,
     airline:codes.length?codes.map(code=>airlineNames.get(code)||code).join(' + '):null,airlineCode:codes.length===1?codes[0]:null,airlineCodes:codes,stops:outboundStops!==null&&inboundStops!==null?Math.max(outboundStops,inboundStops):null,outboundStops,inboundStops,
     priceBasis:'verified_round_trip',source:'manually_verified_pair',available:true,verifiedAt:at,evidence:'Urednički unesena provjerena povratna cijena'};
 }

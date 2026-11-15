@@ -3,6 +3,8 @@
 "use client";
 import { getArticleScheduleHoursError } from "@/utils/articleSchedule";
 import ArticleSchedulePicker from "@/components/admin/organisms/ArticleSchedulePicker";
+import ArticleReadMoreSuggestions from "@/components/admin/organisms/ArticleReadMoreSuggestions";
+import {isReadMoreSection,orderReadMoreSections} from "@/utils/articleReadMore.mjs";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
 import "./AddArticle.scss";
 import { useRouter } from "next/navigation";
@@ -246,7 +248,7 @@ const AddArticlePage = () => {
                 : Promise.resolve(),
 
               Promise.all(
-                values.sections.map(async (section: any, index: number) => {
+                orderReadMoreSections(values.sections,sectionImages).map(async ({section,sourceIndex}, index: number) => {
                   const sectionResponse = await addSection(
                     section.section_text,
                     section.section_subtitle,
@@ -261,7 +263,7 @@ const AddArticlePage = () => {
                   );
 
                   return Promise.all(
-                    sectionImages[index].map((el: any) =>
+                    (sectionImages[sourceIndex]||[]).map((el: any) =>
                       limit(() => addSectionImage(el.url, sectionResponse.id))
                     )
                   );
@@ -703,6 +705,7 @@ const AddArticlePage = () => {
                         <div className="add-article-sections-container">
                           {sections && sections.length > 0
                             ? sections.map((section, index) => {
+                                  if(isReadMoreSection(section,sectionImages[index]||[]))return null;
                                 const selectedIcon = getSelectedSectionIcon(
                                   sectionIcons,
                                   section.section_icon
@@ -1176,6 +1179,7 @@ const AddArticlePage = () => {
                   />
                 </div>
 
+                <ArticleReadMoreSuggestions airportCities={airportCities} sectionImages={sectionImages} setSectionImages={setSectionImages}/>
                 <div className="add-article-gallery-container">
                   <h6>Preostale fotografije na članku:</h6>
 

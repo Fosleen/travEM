@@ -115,6 +115,18 @@ const normalizeSchedulePayload = (
 });
 
 class ArticleService {
+  async getReadMoreGuides(){
+    return db.models.Article.findAll({
+      attributes:['id','title','slug','metatags'],
+      where:getPublicArticleWhere({articleTypeId:1}),
+      include:[
+        {...getArticleScheduleInclude(),attributes:[]},
+        {model:db.models.Place,attributes:['name','name_genitive','name_dative','name_accusative','name_locative']},
+        {model:db.models.Country,attributes:['name']},
+      ],
+      order:[['id','ASC']],
+    });
+  }
   async resetOtherTipsFeaturedArticles(
     articleTypeId,
     currentArticleId,

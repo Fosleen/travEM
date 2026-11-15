@@ -3,6 +3,8 @@
 "use client";
 import { getArticleScheduleHoursError } from "@/utils/articleSchedule";
 import ArticleSchedulePicker from "@/components/admin/organisms/ArticleSchedulePicker";
+import ArticleReadMoreSuggestions from "@/components/admin/organisms/ArticleReadMoreSuggestions";
+import {isReadMoreSection,orderReadMoreSections} from "@/utils/articleReadMore.mjs";
 
 import { useParams, useRouter } from "next/navigation";
 import DealDraftActions from '@/components/admin/organisms/DealDraftActions';
@@ -275,7 +277,7 @@ const EditArticle = () => {
       );
 
       await Promise.all(
-        values.sections.map(async (el, index) => {
+        orderReadMoreSections(values.sections,sectionImages).map(async ({section:el,sourceIndex}, index) => {
           console.log(
             `   Section ${index + 1}:`,
             el.section_id ? "UPDATE" : "CREATE"
@@ -298,7 +300,7 @@ const EditArticle = () => {
             console.log(`   ✅ Section ${index + 1} updated:`, sectionResponse);
 
             const newImages =
-              sectionImages[index]?.filter((img) => !img.id) || [];
+              sectionImages[sourceIndex]?.filter((img) => !img.id) || [];
             console.log(
               `   Adding ${newImages.length} new images to section ${index + 1}`
             );
@@ -331,7 +333,7 @@ const EditArticle = () => {
 
             console.log(`   ✅ Section ${index + 1} created:`, response);
 
-            const newImages = sectionImages[index] || [];
+            const newImages = sectionImages[sourceIndex] || [];
             console.log(`   Adding ${newImages.length} images to new section`);
 
             await Promise.all(
@@ -745,6 +747,7 @@ const flatRemovedImages = removedSectionImages;
                 sections: article.sections
                   ? article.sections.map((el) => ({
                       form_key: `existing-section-${el.id}`,
+                      read_more_only:isReadMoreSection({section_text:el.text,section_subtitle:el.subtitle,section_url_title:el.link_title,section_url_link:el.link_url,section_icon:el.sectionIconId,show_visa_info:el.show_visa_info,show_best_time_to_visit:el.show_best_time_to_visit,show_country_language:el.show_country_language},el.section_images||[]),
                       section_id: el.id,
                       section_subtitle: el.subtitle,
                       section_text: el.text,
@@ -1086,6 +1089,7 @@ const flatRemovedImages = removedSectionImages;
                           <div className="edit-article-sections-container">
                             {sections && sections.length > 0
                               ? sections.map((section, index) => {
+                                  if(isReadMoreSection(section,sectionImages[index]||[]))return null;
                                   const selectedIcon = getSelectedSectionIcon(
                                     sectionIcons,
                                     section.section_icon
@@ -1562,6 +1566,7 @@ const flatRemovedImages = removedSectionImages;
                     />
                   </div>
 
+                  <ArticleReadMoreSuggestions airportCities={airportCities} sectionImages={sectionImages} setSectionImages={setSectionImages} articleId={article.id}/>
                   <div className="edit-article-gallery-container">
                     <h6>Preostale fotografije na članku:</h6>
 

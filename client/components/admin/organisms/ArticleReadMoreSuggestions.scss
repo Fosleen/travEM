@@ -1,0 +1,17 @@
+@use "@/utils/theme.scss" as *;
+.article-related-links {
+  margin: 30px 0; padding: 24px; border: 1px solid $greyMiddle; border-radius: 12px; background: $bg;
+  h3 { margin: 0 0 10px; font-size: 19px; }
+  > p { font-size: 14px; line-height: 1.6; }
+  .button { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+  .article-related-suggestions { margin: 18px 0; }
+  .article-related-suggestions > div { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid $greyMiddle; }
+  .article-related-suggestions > div > div { min-width: 0; }
+  .article-related-suggestions strong { display: block; margin-bottom: 6px; }
+  .article-related-suggestions a { color: $greenHover; font-size: 13px; overflow-wrap: anywhere; }
+  .article-related-link { padding: 18px; margin: 16px 0; background: white; border: 1px solid $greyMiddle; border-radius: 10px; }
+  .edit-article-section-bottom { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.6fr) auto; gap: 16px; align-items: end; }
+  .edit-article-section-bottom > div { min-width: 0; }
+  .article-read-more-wrapper { margin: 16px 0 0; }
+  @media(max-width:700px){ padding: 16px; .edit-article-section-bottom { grid-template-columns: 1fr; } .article-related-suggestions > div { align-items: flex-start; flex-direction: column; } }
+}

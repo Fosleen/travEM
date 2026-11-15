@@ -74,11 +74,11 @@ export const articleValidationSchema = Yup.object().shape({
         100,
         "Podnaslov smije imati max 100 znakova!"
       ),
-      section_url_title: Yup.string().max(
+      section_url_title: Yup.string().when('read_more_only',{is:true,then:schema=>schema.required('Unesi tekst poveznice.')} ).max(
         100,
         "Naslov linka smije imati max 100 znakova!"
       ),
-      section_url_link: Yup.string().max(512, "Poveznica smije imati najviše 512 znaka."),
+      section_url_link: Yup.string().when('read_more_only',{is:true,then:schema=>schema.required('Unesi poveznicu.').url('Unesi valjanu poveznicu.').matches(/^https?:\/\//i,'Poveznica mora počinjati s https:// ili http://.')} ).max(512, "Poveznica smije imati najviše 512 znaka."),
     })
   ),
 });

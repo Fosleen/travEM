@@ -1,5 +1,6 @@
 import { Router } from "express";
 import controller from "../controllers/articleController.js";
+import articleService from '../services/articleService.js';
 import commentController from "../controllers/articleCommentController.js";
 import { verifyToken } from "../middleware/jwt_verify.js";
 import { requireArticleAccess, authorArticleFields, requireAdmin, articleMutation } from "../middleware/articleAccess.js";
@@ -8,6 +9,10 @@ import { commentRateLimit } from "../middleware/commentRateLimit.js";
 import { getCommentFormToken } from "../utils/commentFormToken.js";
 
 const router = new Router();
+router.get('/read-more-guides',verifyToken,async(req,res)=>{
+  try{res.json(await articleService.getReadMoreGuides());}
+  catch{res.status(503).json({error:'Prijedlozi vodiča trenutačno nisu dostupni.'});}
+});
 router.get("/manage", verifyToken, reviewController.list);
 router.get("/manage/:id", verifyToken, reviewController.detail);
 

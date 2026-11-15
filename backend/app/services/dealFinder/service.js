@@ -7,7 +7,7 @@ import {readSerpApiResponse} from './serpApiResponse.js';
 import {manualFlight} from './manualFlights.js';
 import {aiConfigured,groqModel,GroqTextGenerator,templateEditorial} from './textGeneration.js';
 import {normalizeSearch,matchesSearch,dateSpan,routeQueryCount,discoveryQueryCount} from './searchRules.js';
-import {airportByCode,airportCityGroup,routeDestinations,offerAirportNames} from './airports.js';
+import {airportByCode,airportCityGroup,routeDestinations,offerAirportNames,accommodationDestination} from './airports.js';
 import {sourceSearchWindow,offerFlightSearchInput,offerBatchSearchInput,mergeOfferFlights} from './offerFlightSearch.js';
 import {budgetCarrierCodes,budgetDatesEnabled,confirmedPairFlight} from './budgetDates.js';
 import {skyscanner,hotelBookingLink} from './domain.js';
@@ -94,17 +94,20 @@ export async function searchOfferFlights(id,options,userId) {
   assert(!await pendingOfferSearch(id),'Dodatna pretraga ove ponude već je u tijeku');
   return startSearch(input,userId);
 }
+export function hotelSearchInput(offer,input){
+  assert(offer&&Array.isArray(input.origins)&&input.origins.includes(offer.origin),'Odaberite live ponudu iz odabranog polazišta');
+  assert(!isRoundupOffer(offer),'Objedinjena ponuda namijenjena je pregledu letova bez smještaja');
+  assert(input.placeOverride===undefined||typeof input.placeOverride==='string'&&input.placeOverride.length<=200&&!/[\u0000-\u001f\u007f]/.test(input.placeOverride),'Lokacija smještaja smije imati najviše 200 znakova, bez kontrolnih znakova');
+  const placeOverride=(input.placeOverride||'').trim().replace(/\s+/g,' ');
+  return {...input,destination:offer.destination,place:placeOverride||accommodationDestination(offer.destination),placeOverride};
+}
 export async function startSearch(input,userId,{key,source='manual'}={}) {
   input=normalizeSearch(input);
+  if(input.mode==='hotels')input=hotelSearchInput(await models().Offer.findByPk(input.offerId),input);
   const s=await settings(), active=await origins(s); validateSearch(input,s,active);
   {
     const b=await budget(), estimate=estimateQueries(input);
     assert(b.used+estimate<=Math.min(s.monthlyCap,250-s.reserve),'Planirani upiti prelaze preostalu mjesečnu kvotu');
-  }
-  if(input.mode==='hotels') {
-    const o=await models().Offer.findByPk(input.offerId);
-    assert(o && input.origins.includes(o.origin),'Odaberite live ponudu iz odabranog polazišta');
-    assert(!isRoundupOffer(o),'Objedinjena ponuda namijenjena je pregledu letova bez smještaja');
   }
   if(input.mode==='batch_routes'){
     const offer=await models().Offer.findByPk(input.offerId);assert(offer,'Ponuda ne postoji');
@@ -144,7 +147,8 @@ async function saveSupplementResult(result,input,runId){
 
 export async function execute(run,s,active,userId) {
   try {
-    await run.update({status:'running'}); const input=normalizeSearch(run.input);
+    await run.update({status:'running'}); let input=normalizeSearch(run.input);
+    if(input.mode==='hotels')input=hotelSearchInput(await models().Offer.findByPk(input.offerId),input);
     assert(input.mode!=='oneway_pairs','Staro kombiniranje nefiltriranih kalendara je isključeno');
     if(input.mode==='budget_dates')assert(input.calendarPairVersion===2,'Stari plan dopune više ne vrijedi; pokrenite novu pretragu raspona');
     if(input.mode==='batch_routes'){
@@ -203,7 +207,7 @@ export async function execute(run,s,active,userId) {
     }
     if(input.mode==='hotels') {
       const o=await models().Offer.findByPk(input.offerId);assert(o,'Ponuda ne postoji');
-      await o.update({data:{...o.data,hotels:result.hotels},provenance:{...o.provenance,hotelSearch:result.metadata}});
+      await o.update({data:{...o.data,hotels:result.hotels},provenance:{...o.provenance,hotelSearch:{...result.metadata,place:input.place,placeOverride:input.placeOverride,defaultPlace:accommodationDestination(o.destination)}}});
     }
     await run.update({status:'completed'}); await audit(userId,'search_completed',{runId:run.id});
   } catch(e) { await run.update({status:'failed',error:run.input?.mode==='batch_routes'?`${e.message}. Ranije spremljeni rezultati ruta ostaju u ponudi; nema automatskog ponavljanja.`:e.message}); }
@@ -220,7 +224,7 @@ export async function detail(id) {
   const routes=isRoundupOffer(o)?destinationCodes(o).map(destination=>({destination,airlineCodes:budgetCarrierCodes(routeOffer(o,destination))})):undefined;
   const airlineCodes=budgetCarrierCodes(o),pairing={enabled:budgetDatesEnabled(),eligible:airlineCodes.length>0};
   const candidates=pairing.enabled?(o.data.flightCandidates||[]).map(c=>({...c,destinationName:airportByCode(c.destination)?.city||c.destination,destinationCountry:airportByCode(c.destination)?.country,skyscannerUrl:skyscanner(c,s)})):[];
-  return {...offerAirportNames(o,await origins()),sectionIcons:await editorialIcons(),flightSearch:{...(routes?{routes}:{}),window:await originalWindow(o),maxQueries:s.maxQueries,budget:await budget(),budgetDates:{enabled:budgetDatesEnabled(),airlineCodes},pairing,pendingRunId:(await pendingOfferSearch(id))?.id||null,enabled:Boolean(process.env.SERPAPI_API_KEY)},capabilities:{cmsDraftsEnabled:process.env.DEAL_FINDER_CMS_DRAFTS_ENABLED==='true',aiConfigured:aiConfigured(s)},effectiveSettings:effective,hotelRanking,data:{...o.data,hotels,flights,flightCandidates:candidates}};
+  return {...offerAirportNames(o,await origins()),accommodationSearch:{defaultPlace:accommodationDestination(o.destination),placeOverride:o.provenance?.hotelSearch?.placeOverride||''},sectionIcons:await editorialIcons(),flightSearch:{...(routes?{routes}:{}),window:await originalWindow(o),maxQueries:s.maxQueries,budget:await budget(),budgetDates:{enabled:budgetDatesEnabled(),airlineCodes},pairing,pendingRunId:(await pendingOfferSearch(id))?.id||null,enabled:Boolean(process.env.SERPAPI_API_KEY)},capabilities:{cmsDraftsEnabled:process.env.DEAL_FINDER_CMS_DRAFTS_ENABLED==='true',aiConfigured:aiConfigured(s)},effectiveSettings:effective,hotelRanking,data:{...o.data,hotels,flights,flightCandidates:candidates}};
 }
 export async function addManualFlight(id,input,userId){
   return db.sequelize.transaction(async transaction=>{

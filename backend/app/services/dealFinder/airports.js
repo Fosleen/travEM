@@ -25,7 +25,9 @@ const cityGroups=cityDefinitions.map(([id,city,codes])=>{
   return {code:`city:${id}`,city,name:'Svi aerodromi',country:members[0]?.country,airports:members.map(a=>a.code)};
 }).filter(group=>group.airports.length>1);
 const citiesByCode=new Map(cityGroups.map(group=>[group.code,group]));
+const citiesByAirport=new Map(cityGroups.flatMap(group=>group.airports.map(code=>[code,group])));
 export function airportCityGroup(code){return citiesByCode.get(code)||null;}
+export function accommodationDestination(code){return citiesByAirport.get(code)?.city||airportByCode(code)?.city||code;}
 export function routeDestinations(input){return airportCityGroup(input.destination)?.airports||[input.destination];}
 // Land neighbours for countries represented by the CMS's active origin airports.
 // Maritime neighbours are intentionally excluded: Zagreb -> Milan remains relevant.

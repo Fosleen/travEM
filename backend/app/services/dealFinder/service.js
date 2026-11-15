@@ -76,7 +76,7 @@ export function validateSearch(input,s,active) {
     if(input.mode==='hotels') { nights(input.checkin,input.checkout);assert(input.place && input.offerId,'Odaberite ponudu i mjesto');assert(Number.isInteger(input.rooms)&&input.rooms>=1&&input.rooms<=4,'Broj soba mora biti 1–4'); }
   }
 }
-export function estimateQueries(input) { return input.mode==='batch_routes'?input.routes.reduce((sum,route)=>sum+estimateQueries(route),0):input.mode==='budget_dates'?2:input.mode==='hotels'?1:input.origins.length*(input.mode==='oneway_pairs'?2:input.mode==='route'?routeQueryCount(input):input.mode==='calendar'?(input.durations?.length||1):discoveryQueryCount(input)); }
+export function estimateQueries(input) { return input.mode==='batch_routes'?input.routes.reduce((sum,route)=>sum+estimateQueries(route),0):input.mode==='budget_dates'?2:input.mode==='hotels'?2:input.origins.length*(input.mode==='oneway_pairs'?2:input.mode==='route'?routeQueryCount(input):input.mode==='calendar'?(input.durations?.length||1):discoveryQueryCount(input)); }
 async function originalWindow(offer) {
   const stored=sourceSearchWindow(offer);if(stored)return stored;
   const parent=offer.provenance?.runId?await models().Run.findByPk(offer.provenance.runId):null;

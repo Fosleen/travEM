@@ -4,6 +4,7 @@ import {discoveryDestinationAllowed,excludedDiscoveryCountries,offerAirportNames
 import {searchBudgetDates} from './budgetDates.js';
 import {bookingHotelFeatures,bookingFeatureMetadata,hotelPhotos} from './hotels.js';
 import {flightBaggageDetails} from './baggage.js';
+import {repeatedHotelFamilies,diverseHotelResults,isHotelProperty} from './hotelDiversity.js';
 
 // Interfaces are deliberately small: search(input) -> normalized data + provenance.
 // No provider response or request URL containing a credential is persisted.
@@ -15,13 +16,23 @@ export class SerpApiProvider {
     let metadata={};
     if(input.mode==='hotels') {
       const threshold=[9,8,7,6].find(x=>x<=input.minRating);
-      const p=await this.request('booking',{q:input.place,check_in_date:input.checkin,check_out_date:input.checkout,adults:2,rooms:input.rooms,currency:'EUR',...(threshold?{rating:threshold}:{}),sort_by:'price',limit:100});
-      metadata={searchId:p.search_metadata?.id,retrievedAt:new Date().toISOString(),prefilter:threshold??null};
-      for(const h of p.properties||[]) hotels.push({name:h.name,propertyId:h.property_id,propertyType:h.type,bookingUrl:h.link,gpsCoordinates:h.gps_coordinates,rating:h.rating,ratingScale:10,reviews:h.reviews,
+      const params={q:input.place,check_in_date:input.checkin,check_out_date:input.checkout,adults:2,rooms:input.rooms,currency:'EUR',...(threshold?{rating:threshold}:{}),sort_by:'price',limit:100};
+      const first=await this.request('booking',params),sources=[first];
+      let warning=null;
+      if(repeatedHotelFamilies(first.properties||[]).length||!(first.properties||[]).some(isHotelProperty)){
+        try{
+          const second=await this.request('booking',{...params,sort_by:'review_score_and_price',property_types:'204'});
+          sources.push({...second,properties:(second.properties||[]).filter(isHotelProperty)});
+        }
+        catch(error){warning=error.message||'Dodatna pretraga smještaja nije uspjela';}
+      }
+      const result=diverseHotelResults(sources);
+      metadata={searchId:first.search_metadata?.id,retrievedAt:new Date().toISOString(),prefilter:threshold??null,diversity:{initialCount:(first.properties||[]).length,returnedCount:result.properties.length,hotelCount:result.properties.filter(isHotelProperty).length,excludedFamilies:result.excludedFamilies,refined:sources.length>1,searchIds:sources.map(source=>source.search_metadata?.id).filter(Boolean),...(warning?{warning}:{})}};
+      for(const h of result.properties) hotels.push({name:h.name,propertyId:h.property_id,propertyType:h.type,bookingUrl:h.link,gpsCoordinates:h.gps_coordinates,rating:h.rating,ratingScale:10,reviews:h.reviews,
         checkin:h.check_in_date||input.checkin,checkout:h.check_out_date||input.checkout,adults:2,rooms:input.rooms,
         totalEur:h.currency==='EUR'?h.extracted_price??null:null,totalIncludesTaxAndFees:h.currency==='EUR'&&typeof h.extracted_taxes_and_fees==='number'&&Number.isFinite(h.extracted_taxes_and_fees)&&h.extracted_taxes_and_fees>=0?false:/^(?:includes|including) taxes and fees$/i.test(h.price_disclaimer||'')?true:null,additionalTaxesFeesEur:h.currency==='EUR'?h.extracted_taxes_and_fees??null:null,
         images:hotelPhotos(h),rawRateMetadata:{rooms:h.rooms||[],taxesAndFees:h.taxes_and_fees||null,currency:h.currency,priceDisclaimer:h.price_disclaimer||null,features:bookingFeatureMetadata(h),featuresVersion:1,imagesVersion:1},
-        ...bookingHotelFeatures(h),available:h.sold_out?false:null,ratePolicyVerified:false,source:'serpapi_booking',searchId:metadata.searchId});
+        ...bookingHotelFeatures(h),available:h.sold_out?false:null,ratePolicyVerified:false,source:'serpapi_booking',searchId:h._searchId});
     } else {
       const calendar=input.mode==='calendar'||input.mode==='route';
       metadata={coverage:calendar?'route_calendar':'discovery_highlights',retrievedAt:new Date().toISOString()};

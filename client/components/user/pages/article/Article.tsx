@@ -7,6 +7,8 @@ import ArticleHero from "@/components/user/molecules/ArticleHero";
 import ArticleTableOfContents from "@/components/user/molecules/ArticleTableOfContents";
 import "./Article.scss";
 import ArticleReadMore from "@/components/user/atoms/ArticleReadMore";
+import ArticleDestinationPoll from "@/components/user/molecules/ArticleDestinationPoll/ArticleDestinationPoll";
+import {pollInsertIndex} from "@/utils/articlePoll.mjs";
 import CountryPlaces from "@/components/user/molecules/CountryPlaces";
 import React, { useMemo, useState } from "react";
 import { useEffect } from "react";
@@ -101,6 +103,7 @@ const getDomagoInsertIndexes = (
 const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
   const router = useRouter();
   const articleContent = initialArticle;
+  const destinationPollIndex=useMemo(()=>pollInsertIndex(articleContent.sections||[]),[articleContent.sections]);
   const countryPlaces = initialCountryPlaces;
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -234,6 +237,7 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
       <ArticleTableOfContentsDropUp article={articleContent} />
 
       <div className="article-content">
+        {Number(articleContent.articleTypeId) === 2 && !(articleContent.sections||[]).length && <ArticleDestinationPoll key={articleContent.id} articleId={articleContent.id}/>}
         {articleContent?.sections?.map((section, index) => (
           <React.Fragment key={index}>
             <ArticleFragment
@@ -252,6 +256,7 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
             />
 
             {section.link_title !== "" && <ArticleReadMore section={section} />}
+            {Number(articleContent.articleTypeId) === 2 && index === destinationPollIndex && <ArticleDestinationPoll key={articleContent.id} articleId={articleContent.id}/>}
 
             {index === newsletterInsertIndex && (
               <ArticleNewsletterCallToAction />

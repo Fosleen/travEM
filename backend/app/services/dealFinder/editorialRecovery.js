@@ -74,13 +74,21 @@ export function recoverEditorial(answer,facts,resolve){
   const raw=Array.isArray(answer?.sections)?answer.sections.find(s=>s.kind===kind):null;
   let text=raw?read(raw.text,5000,`odlomak ${kind}`)||'':'';
   if(kind==='hotel'){
-   for(const value of [tokens.hotel_name,tokens.hotel_price,tokens.hotel_features].filter(Boolean))if(!text.includes(value))text+=(text?'\n\n':'')+(value===tokens.hotel_features?'Poznate pogodnosti: ':'')+value+'.';
+   if(!text)text=`Za odabrani termin predlažemo ${tokens.hotel_name}. Cijena smještaja iznosi ${tokens.hotel_price}.`;
+   if(tokens.hotel_name&&!text.toLowerCase().includes(tokens.hotel_name.toLowerCase()))text+=`\n\nSmještaj: ${tokens.hotel_name}.`;
+   const priceForms=[tokens.hotel_price,tokens.hotel_price_short,tokens.hotel_price_short?.replace('€',' €'),tokens.hotel_price_short?.replace('€',' EUR')].filter(Boolean);
+   if(tokens.hotel_price&&!priceForms.some(value=>new RegExp(`(?<![\\d.,])${escapeRegex(value)}(?!\\d)`,'i').test(text)))text+=`\n\nCijena smještaja: ${tokens.hotel_price}.`;
+   const primaryFeatures=(facts.context.hotels||[]).find(h=>h.role==='primary')?.features||[];
+   const missing=primaryFeatures.filter(feature=>![feature,...(aliases[feature]||[])].some(value=>text.toLowerCase().includes(value.toLowerCase())));
+   if(missing.length)text+=`\n\nPoznate pogodnosti: ${missing.join(', ')}.`;
   }
   if(kind==='hostel'){
    for(const value of [tokens.hostel_price,tokens.hostel_price_person,tokens.hostel_features].filter(Boolean))if(!text.includes(value))text+=(text?'\n\n':'')+value+'.';
   }
   if(kind==='closing'&&!text)text='Cijene se mogu promijeniti. Aktualnu ponudu i uvjete provjeri na poveznicama prije rezervacije.';
-  sections.push({kind,subtitle:raw?read(raw.subtitle,100,`naslov odlomka ${kind}`)||sectionDefaults[kind]:sectionDefaults[kind],text,sectionIconId:null});
+  let subtitle=raw?read(raw.subtitle,100,`naslov odlomka ${kind}`)||sectionDefaults[kind]:sectionDefaults[kind];
+  if(kind==='closing'&&/zaklju[cč]ak/i.test(subtitle))subtitle=sectionDefaults.closing;
+  sections.push({kind,subtitle,text,sectionIconId:null});
  }
  let tags=list(answer?.tags,40,'SEO oznaka');
  for(const tag of (roundup?['jeftini letovi',origin,'povratne avionske karte','putovanja',angle,...(facts.context.destinations||[]).map(d=>d.name)]:[dest,origin,'jeftini letovi','povratne avionske karte','putovanja',`${dest} ${origin}`]))if(tags.length<5&&tag&&!tags.includes(tag)&&tag.length<=40)tags.push(tag);

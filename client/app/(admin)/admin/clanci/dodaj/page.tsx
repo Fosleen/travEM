@@ -3,6 +3,9 @@
 "use client";
 import { getArticleScheduleHoursError } from "@/utils/articleSchedule";
 import ArticleSchedulePicker from "@/components/admin/organisms/ArticleSchedulePicker";
+import ArticleDestinationPollEditor from "@/components/admin/organisms/ArticleDestinationPollEditor";
+import {articlePollForSave} from "@/utils/articlePoll.mjs";
+import {articlePollApi} from "@/utils/articlePollApi";
 import ArticleReadMoreSuggestions from "@/components/admin/organisms/ArticleReadMoreSuggestions";
 import {isReadMoreSection,orderReadMoreSections} from "@/utils/articleReadMore.mjs";
 import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
@@ -220,6 +223,7 @@ const AddArticlePage = () => {
               isScheduleChecked || !isAdmin ? isNotifySubscribersChecked : undefined
             );
 
+            if (Number(values.article_type)===2 && articlePollForSave(values)) await articlePollApi(`${articleResponse.id}/destination-poll/manage`,articlePollForSave(values),true);
             if (isAdmin && affiliateLinks.length > 0) {
               const persistedAffiliateLinks = await persistAffiliatePartners(
                 affiliateLinks
@@ -1179,6 +1183,7 @@ const AddArticlePage = () => {
                   />
                 </div>
 
+                <ArticleDestinationPollEditor/>
                 <ArticleReadMoreSuggestions airportCities={airportCities} sectionImages={sectionImages} setSectionImages={setSectionImages}/>
                 <div className="add-article-gallery-container">
                   <h6>Preostale fotografije na članku:</h6>

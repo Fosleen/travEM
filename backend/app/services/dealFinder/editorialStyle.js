@@ -1,7 +1,9 @@
 // Distilled from all 35 public Aviokarte articles and 16 city categories on 2026-11-08.
 // Public blog examples are distilled here; never fetch them at generation time.
-export const editorialStyleVersion='aviokarte-regional-v6';
+export const editorialStyleVersion='aviokarte-regional-v7';
 export const editorialStyle=`Piši za hrvatski blog putujEM s travEM, prema njegovoj rubrici Aviokarte.
+U završnom tekstu nemoj navoditi izvore, citate izvora, vanjske poveznice na pravila ili naslove
+poput "Pravila prtljage: Ryanair". Rezervacijske affiliate poveznice dodaje aplikacija.
 Sve cijene u naslovima, opisima i tekstu piši kao cijele eure, bez decimalnih mjesta.
 Standardno matematičko zaokruživanje: 95,11 € postaje 95 €, a 95,80 € postaje 96 €.
 Cijene dobivaš već zaokružene u factsTokens: koristi te tokene, nemoj ih ponovno računati,
@@ -69,12 +71,20 @@ Svaki ima kratak subtitle i text. Ikonice pridružuje aplikacija iz postojećeg 
 U flights prirodno uvedi odabrane povratne letove. U hotel, samo ako postoji glavni smještaj, spomeni njegovo ime,
 potvrđenu UKUPNU cijenu za cijeli boravak za dvije osobe i poznate pogodnosti:
 besplatno otkazivanje, uključen doručak, parking ili besplatan parking samo kada postoje u tokenu.
+Opis glavnog smještaja napiši jednom, prirodno i sažeto. Ime, cijenu, broj osoba, noćenja i svaku
+pogodnost nemoj ponavljati u drugom sažetku ili ponovljenoj rečenici. Aplikacija neće dodati
+duplikat hotelskog opisa ni dodatni redak "Odabrani povratni let i smještaj".
+Popis konkretnih termina i oznake WEEKEND BREAK te NAJJEFTINIJI dodaje aplikacija iz stvarnih podataka;
+nemoj ih samostalno izmišljati niti duplicirati u opisnom tekstu.
 Alternativne smještaje predstavi kao alternative, nikad ih ne pribrajaj glavnom izračunu.
 Paket cijenu spomeni samo ako postoji package_price: vrijedi za točno podudarni termin,
 ne nužno za najjeftiniji let iz cijelog popisa. Ne obećavaj jednaku cijenu svim terminima.
 Završi kratko: cijene se mogu promijeniti, aktualne opcije čitatelj može provjeriti na poveznicama.
-Aplikacija nakon teksta dodaje odvojene odjeljke "Termini letova", glavni smještaj i
-alternativne smještaje, s točnim datumima, danima, cijenama i affiliate poveznicama.
-Ne dupliciraj te popise. Ne izmišljaj vodiče, udaljenost od centra, ocjene, poreze, tarife,
+Naslov završnog odlomka nikad nije "Zaključak". Koristi "Završne napomene", "Za kraj" ili drugi
+prirodan naslov relevantan za putovanje.
+Aplikacija dodaje popis termina s točnim datumima, danima, cijenama, oznakama i affiliate poveznicama.
+Za glavni smještaj koristi tvoj opis jednom; Booking poveznica i slike dodaju se zasebno.
+Za alternativne smještaje dodaje zasebne odjeljke iz potvrđenih podataka.
+Ne dupliciraj automatski popis termina. Ne izmišljaj vodiče, udaljenost od centra, ocjene, poreze, tarife,
 prtljagu, dostupnost, vizna pravila ili hotelske pogodnosti. Primjeri služe samo za stil.
 `;

@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import {articlePollForSave,pollKey} from './articlePoll.mjs';
 import type { RefObject } from "react";
 import {
   ARTICLE_TYPE_AIRPLANE_TICKET_ID,
@@ -41,6 +42,11 @@ type DeleteArticleFormImageOptions = {
 };
 
 export const articleValidationSchema = Yup.object().shape({
+  destination_poll:Yup.mixed().test('destination-poll','Anketa treba pitanje do 120 znakova i 2 do 10 različitih destinacija, svaka od 2 do 60 znakova.',function(value){
+    if(!value||Number(this.parent.article_type)!==2)return true;
+    const poll=articlePollForSave(this.parent);
+    return Boolean(poll&&typeof poll.enabled==='boolean'&&poll.question?.trim()&&poll.question.length<=120&&poll.options.length>=2&&poll.options.length<=10&&poll.options.every((option:{label:string})=>typeof option.label==='string'&&option.label.trim().length>=2&&option.label.length<=60)&&new Set(poll.options.map((option:{label:string})=>pollKey(option.label))).size===poll.options.length);
+  }),
   article_title: Yup.string()
     .required("Obavezno polje!")
     .max(100, "Naslov smije imati max 100 znakova!"),

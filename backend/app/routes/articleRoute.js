@@ -1,6 +1,9 @@
 import { Router } from "express";
 import controller from "../controllers/articleController.js";
 import articleService from '../services/articleService.js';
+import * as articlePoll from '../services/articlePollService.js';
+import {pollRateLimit} from '../middleware/pollRateLimit.js';
+import {requirePollOrigin} from '../utils/articlePollSecurity.js';
 import commentController from "../controllers/articleCommentController.js";
 import { verifyToken } from "../middleware/jwt_verify.js";
 import { requireArticleAccess, authorArticleFields, requireAdmin, articleMutation } from "../middleware/articleAccess.js";
@@ -9,6 +12,12 @@ import { commentRateLimit } from "../middleware/commentRateLimit.js";
 import { getCommentFormToken } from "../utils/commentFormToken.js";
 
 const router = new Router();
+const pollAction=fn=>async(req,res)=>{res.set('Cache-Control','private, no-store');try{const result=await fn(req);return result===null?res.status(204).end():res.json(result);}catch(error){res.status(error.status||503).json({error:error.status?error.message:'Anketa trenutačno nije dostupna. Pokušaj kasnije.'});}};
+router.get('/poll-capabilities',verifyToken,pollAction(()=>articlePoll.pollCapabilities()));
+router.get('/:id/destination-poll',pollAction(req=>articlePoll.getArticlePoll(req.params.id,req.ip||req.socket?.remoteAddress)));
+router.post('/:id/destination-poll/vote',requirePollOrigin,pollRateLimit,pollAction(req=>articlePoll.voteArticlePoll(req.params.id,req.body,req.ip||req.socket?.remoteAddress)));
+router.get('/:id/destination-poll/manage',verifyToken,requireArticleAccess,pollAction(req=>articlePoll.getArticlePoll(req.params.id,null,{manage:true})));
+router.patch('/:id/destination-poll/manage',verifyToken,requireArticleAccess,articleMutation(pollAction(req=>articlePoll.saveArticlePoll(req.params.id,req.body,req.articleTransaction))));
 router.get('/read-more-guides',verifyToken,async(req,res)=>{
   try{res.json(await articleService.getReadMoreGuides());}
   catch{res.status(503).json({error:'Prijedlozi vodiča trenutačno nisu dostupni.'});}

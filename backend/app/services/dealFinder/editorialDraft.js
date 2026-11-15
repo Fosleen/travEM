@@ -4,9 +4,10 @@ import {renderFlightNotes} from './baggage.js';
 import {hotelPhotos} from './hotels.js';
 import {airportByCode} from './airports.js';
 import {editorialMoney} from './editorialMoney.js';
+import {weekendRank} from '../../../../client/utils/dealFinderFlights.mjs';
 
 export const sectionKinds=['flights','hotel','alternatives','hostel','closing'];
-export const sectionDefaults={flights:'Povratne aviokarte',hotel:'Primjer smještaja',alternatives:'Alternativni smještaji',hostel:'Hostelska opcija',closing:'Prije rezervacije'};
+export const sectionDefaults={flights:'Povratne aviokarte',hotel:'Primjer smještaja',alternatives:'Alternativni smještaji',hostel:'Hostelska opcija',closing:'Završne napomene'};
 // Icons already used for these sections in the public Aviokarte archive.
 const iconImages={flights:'53666460054',hotel:'53629517350',alternatives:'53629517350',hostel:'53629517350',closing:'54182086503'};
 export function defaultSectionIcon(kind,icons){return icons.find(icon=>!icon.feature_key&&icon.url.includes(iconImages[kind]))?.id??null;}
@@ -24,7 +25,11 @@ export const paragraphs=text=>String(text||'').split(/\n\s*\n/).map(p=>p.trim())
 function flightExamples(flights,settings){
  const day=value=>{const date=new Date(value+'T12:00:00Z');return `${date.getUTCDate()}.${date.getUTCMonth()+1}. (${date.toLocaleDateString('hr-HR',{weekday:'long',timeZone:'UTC'})})`;};
  const money=editorialMoney;
- return '<ul>'+flights.map(f=>`<li><a href="${escapeHtml(skyscanner(f,settings))}" rel="sponsored noopener noreferrer" target="_blank">${escapeHtml(day(f.departureDate))} - ${escapeHtml(day(f.returnDate))}: ${Number.isFinite(f.priceCents)&&f.priceCents>0?money(f.priceCents):'Cijena nije dostupna'}</a></li>`).join('')+'</ul>';
+ const prices=flights.filter(f=>f.available!==false&&Number.isFinite(f.priceCents)&&f.priceCents>0).map(f=>f.priceCents),cheapest=prices.length?Math.min(...prices):null;
+ return '<ul>'+flights.map(f=>{
+  const labels=[...(weekendRank(f)===0?['WEEKEND BREAK']:[]),...(f.available!==false&&cheapest!==null&&f.priceCents===cheapest?['NAJJEFTINIJI']:[])];
+  return `<li><a href="${escapeHtml(skyscanner(f,settings))}" rel="sponsored noopener noreferrer" target="_blank">${escapeHtml(day(f.departureDate))} - ${escapeHtml(day(f.returnDate))}: ${Number.isFinite(f.priceCents)&&f.priceCents>0?money(f.priceCents):'Cijena nije dostupna'}</a>${labels.length?' · '+labels.map(label=>`<strong>${label}</strong>`).join(' · '):''}</li>`;
+ }).join('')+'</ul>';
 }
 function hotelText(offer,hotel,settings){return renderSelection(offer,[],hotel,settings,editorialMoney).replace('<ul></ul>','').replace(/<p><a rel="sponsored noopener" href="[^"]*">Pogledaj smještaj<\/a><\/p>/,'').split('<p>Poveznice su partnerske.')[0];}
 export function articleSections(offer,flights,hotel,settings,fields={},suggestions={},icons=[]){
@@ -53,9 +58,8 @@ export function articleSections(offer,flights,hotel,settings,fields={},suggestio
    text+=flightExamples(flights,settings)+renderFlightNotes(flights);
   }
   if(kind==='hotel'){
-   text+=hotelText(offer,hotel,settings);link_title='Pogledaj smještaj';link_url=hotelBookingLink(hotel,settings);
-   const packagePrice=getFacts().tokens.package_price;
-   if(packagePrice)text+=`<p>Odabrani povratni let i smještaj: ${escapeHtml(packagePrice)}.</p>`;
+   if(!text)text=hotelText(offer,hotel,settings);
+   link_title='Pogledaj smještaj';link_url=hotelBookingLink(hotel,settings);
   }
   if(kind==='alternatives'){
    offer.selection.extraHotelIndices.forEach((hotelIndex,index)=>{const alternative=offer.data.hotels[hotelIndex];result.push({kind:`alternative_${index+1}`,subtitle:`Alternativni smještaj: ${alternative.name}`.slice(0,100),text:(index===0?text:'')+hotelText(offer,alternative,settings),sectionIconId,link_title:'Pogledaj smještaj',link_url:hotelBookingLink(alternative,settings),images:hotelPhotos(alternative)});});continue;

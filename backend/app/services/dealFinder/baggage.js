@@ -32,7 +32,7 @@ export function renderFlightNotes(flights){
  for(const [carrier,options] of groups){
   const policy=policies[carrier],details=[...new Set(options.flatMap(f=>flightBaggageDetails(f)).map(translatedDetail).filter(Boolean))];
   const name=policy?.name||options[0].airline||carrier;
-  if(policy)html+=`<p>${escapeHtml(policy.text)} <a href="${escapeHtml(policy.url)}" target="_blank" rel="noopener noreferrer">Pravila prtljage: ${escapeHtml(policy.name)}</a></p>`;
+  if(policy)html+=`<p>${escapeHtml(policy.text)}</p>`;
   if(details.length)html+=`<p>${escapeHtml(name)}: ${escapeHtml(details.join(' '))} Prije kupnje provjeri uključenu prtljagu za odabranu tarifu i oba smjera.</p>`;
   else if(!policy)html+=`<p>${escapeHtml(name)}: uključena prtljaga ovisi o odabranoj tarifi. U ovoj pretrazi nema potvrđenog podatka o prtljazi; provjeri dopuštene dimenzije, težinu i moguće doplate prije kupnje.</p>`;
  }

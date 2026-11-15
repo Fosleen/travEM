@@ -3,6 +3,9 @@
 "use client";
 import { getArticleScheduleHoursError } from "@/utils/articleSchedule";
 import ArticleSchedulePicker from "@/components/admin/organisms/ArticleSchedulePicker";
+import ArticleDestinationPollEditor from "@/components/admin/organisms/ArticleDestinationPollEditor";
+import {articlePollForSave} from "@/utils/articlePoll.mjs";
+import {articlePollApi} from "@/utils/articlePollApi";
 import ArticleReadMoreSuggestions from "@/components/admin/organisms/ArticleReadMoreSuggestions";
 import {isReadMoreSection,orderReadMoreSections} from "@/utils/articleReadMore.mjs";
 
@@ -276,6 +279,7 @@ const EditArticle = () => {
         "sections"
       );
 
+      if (Number(values.article_type)===2 && articlePollForSave(values)) await articlePollApi(`${article.id}/destination-poll/manage`,articlePollForSave(values),true);
       await Promise.all(
         orderReadMoreSections(values.sections,sectionImages).map(async ({section:el,sourceIndex}, index) => {
           console.log(
@@ -1566,6 +1570,7 @@ const flatRemovedImages = removedSectionImages;
                     />
                   </div>
 
+                  <ArticleDestinationPollEditor articleId={article.id}/>
                   <ArticleReadMoreSuggestions airportCities={airportCities} sectionImages={sectionImages} setSectionImages={setSectionImages} articleId={article.id}/>
                   <div className="edit-article-gallery-container">
                     <h6>Preostale fotografije na članku:</h6>

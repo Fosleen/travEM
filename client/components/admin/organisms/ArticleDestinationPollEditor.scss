@@ -1,0 +1,14 @@
+@use "@/utils/theme.scss" as *;
+.article-poll-editor {
+  padding: 24px; margin: 30px 0; border: 1px solid $greyMiddle; border-radius: 12px; background: $bg;
+  h3 { margin: 0 0 10px; font-size: 19px; }
+  p, > small { display: block; line-height: 1.6; font-size: 13px; color: $textPrimary; }
+  .input-wrapper, .input-container { width: 100%; }
+  .article-poll-editor-options { display: grid; gap: 12px; margin: 16px 0; }
+  .article-poll-editor-options > div { display: flex; align-items: flex-end; gap: 12px; }
+  .article-poll-editor-options > div > div:first-child { flex: 1; min-width: 0; }
+  .article-poll-editor-options small { white-space: nowrap; margin-bottom: 12px; }
+  .button { display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+  .article-poll-editor-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  @media(max-width:600px){ padding: 16px; .article-poll-editor-options > div { flex-wrap: wrap; } }
+}

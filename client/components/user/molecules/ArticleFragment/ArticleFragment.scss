@@ -73,10 +73,17 @@
       }
     }
 
+    // Deal Finder emits native lists; Quill uses ol with data-list attributes.
+    // Both formats must keep the same typography before and after editing.
+    ul,
     ol {
       margin: 0;
       padding-left: 1.5rem;
-      list-style: none;
+      list-style: disc;
+
+      &:is(ol) {
+        list-style: none;
+      }
 
       li {
         font-size: 16px;
@@ -119,10 +126,11 @@
           }
         }
 
-        &:not([data-list]) {
-          list-style: decimal;
-        }
       }
+    }
+
+    ol > li:not([data-list]) {
+      list-style: decimal;
     }
 
     .ql-ui {

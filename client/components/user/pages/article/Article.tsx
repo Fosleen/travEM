@@ -7,6 +7,7 @@ import ArticleHero from "@/components/user/molecules/ArticleHero";
 import ArticleTableOfContents from "@/components/user/molecules/ArticleTableOfContents";
 import "./Article.scss";
 import ArticleReadMore from "@/components/user/atoms/ArticleReadMore";
+import { isReadMoreSection } from "@/utils/articleReadMore.mjs";
 import ArticleDestinationPoll from "@/components/user/molecules/ArticleDestinationPoll/ArticleDestinationPoll";
 import {pollInsertIndex} from "@/utils/articlePoll.mjs";
 import CountryPlaces from "@/components/user/molecules/CountryPlaces";
@@ -255,7 +256,12 @@ const Article = ({ initialArticle, initialCountryPlaces }: ArticleProps) => {
               countryLanguageCountryId={articleContent?.country?.id}
             />
 
-            {section.link_title !== "" && <ArticleReadMore section={section} />}
+            {section.link_title !== "" && (
+              <ArticleReadMore
+                section={section}
+                featured={Number(articleContent.articleTypeId) === 2 && isReadMoreSection(section, section.section_images || [])}
+              />
+            )}
             {Number(articleContent.articleTypeId) === 2 && index === destinationPollIndex && <ArticleDestinationPoll key={articleContent.id} articleId={articleContent.id}/>}
 
             {index === newsletterInsertIndex && (

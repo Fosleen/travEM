@@ -2,9 +2,9 @@
 import Image from "next/image";
 import "./ArticleReadMore.scss";
 
-const ArticleReadMore = ({ section }) => {
+const ArticleReadMore = ({ section, featured = false }) => {
   return (
-    <div className="article-read-more-wrapper">
+    <div className={`article-read-more-wrapper${featured ? " article-read-more-wrapper--featured" : ""}`}>
       <Image
         src="/images/read_more.png"
         alt="procitaj vise"

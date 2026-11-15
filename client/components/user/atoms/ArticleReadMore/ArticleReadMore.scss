@@ -1,4 +1,5 @@
 @use "@/utils/theme.scss" as *;
+@use "sass:color";
 
 .article-read-more-wrapper {
   display: flex;
@@ -25,6 +26,96 @@
 
     &:hover {
       text-decoration: underline;
+    }
+  }
+}
+
+.article-read-more-wrapper.article-read-more-wrapper--featured {
+  position: relative;
+  isolation: isolate;
+  align-self: flex-start;
+  box-sizing: border-box;
+  width: fit-content;
+  max-width: 100%;
+  gap: 18px;
+  margin: 4px 0 12px;
+  padding: 8px 26px 8px 18px;
+  border: 2px solid color.mix($grey, $lightBlue, 30%);
+  border-radius: 999px;
+  background: $lightBlue;
+  box-shadow: 0 3px 0 rgba($grey, .18);
+  transition: filter 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+
+  img {
+    flex: 0 0 44px;
+    box-sizing: border-box;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: transparent;
+  }
+
+  a {
+    flex: 1;
+    min-width: 0;
+    color: $grey;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+
+    &:focus-visible::after {
+      outline: 2px solid $grey;
+      outline-offset: 4px;
+    }
+  }
+
+  &:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 0 rgba($grey, .18);
+
+    a {
+      text-decoration: none;
+    }
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba($grey, .18);
+  }
+
+  @media screen and (max-width: 579px) {
+    gap: 14px;
+    padding: 8px 22px 8px 16px;
+
+    img {
+      flex-basis: 44px;
+    }
+
+    a {
+      font-size: 16px;
+    }
+
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover,
+    &:active {
+      transform: none;
     }
   }
 }

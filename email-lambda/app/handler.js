@@ -8,6 +8,14 @@ const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
   secure: false, // true for 465, false for other ports
+  pool: true,
+  maxConnections: 2,
+  maxMessages: 1000,
+  rateDelta: 1000,
+  rateLimit: 5,
+  connectionTimeout: 15000,
+  greetingTimeout: 15000,
+  socketTimeout: 30000,
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.PASSWORD_USER,
@@ -16,15 +24,7 @@ const transporter = nodemailer.createTransport({
   logger: false,
 });
 
-transporter.verify((error, success) => {
-  if (error) {
-    console.error("SMTP Connection failed:", error);
-    console.log("Error code:", error.code);
-    console.log("Error command:", error.command);
-  } else {
-    console.log("SMTP Server is ready to take messages!");
-  }
-});
+// Connections authenticate on demand; verify() would add another SMTP login.
 
 const sendEmail = async (to, subject, html) => {
   try {
@@ -34,6 +34,11 @@ const sendEmail = async (to, subject, html) => {
       subject,
       html,
     });
+    if (info.rejected?.length) {
+      const error = new Error("SMTP rejected recipient");
+      error.code = "EENVELOPE";
+      throw error;
+    }
     console.log("Email sent: %s", info.messageId);
     return info;
   } catch (error) {
@@ -43,14 +48,26 @@ const sendEmail = async (to, subject, html) => {
 };
 
 const sendNewsletterToSubscribers = async (subscribers, article) => {
-  const batchSize = 10;
-  const batchDelay = 2000;
+  const batchSize = 2;
   let failedEmails = [];
+  let successful = 0;
+  // Shared budget prevents a blocked account from sleeping/retrying per recipient.
+  const authRetryDelays = [15000, 30000];
+  let authRetries = 0;
+  const isAuthFailure = (error) => error.code === "EAUTH";
+  const isTemporaryAuthFailure = (error) =>
+    isAuthFailure(error) && Number(error.responseCode) === 454;
+  const summarizeError = (error) => ({
+    message: error.message,
+    code: error.code,
+    responseCode: error.responseCode,
+    command: error.command,
+  });
 
   for (let i = 0; i < subscribers.length; i += batchSize) {
     const batch = subscribers.slice(i, i + batchSize);
 
-    const batchPromises = batch.map(async (subscriber) => {
+    const sendToSubscriber = async (subscriber) => {
       try {
         const emailTemplate = createEmailTemplate(article, subscriber.email);
         await sendEmail(
@@ -61,31 +78,64 @@ const sendNewsletterToSubscribers = async (subscribers, article) => {
         return { success: true, email: subscriber.email };
       } catch (error) {
         console.error(`Failed to send to ${subscriber.email}:`, error);
-        return { success: false, email: subscriber.email, error };
+        return { success: false, email: subscriber.email, error: summarizeError(error) };
       }
-    });
+    };
 
-    const results = await Promise.all(batchPromises);
+    let results = await Promise.all(batch.map(sendToSubscriber));
+    while (
+      results.some((result) => !result.success && isTemporaryAuthFailure(result.error)) &&
+      authRetries < authRetryDelays.length
+    ) {
+      const delay = authRetryDelays[authRetries++];
+      console.warn("Newsletter SMTP authentication cooldown", { delay, authRetries });
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      // AUTH failed before delivery, so retrying only these recipients is safe.
+      results = await Promise.all(results.map((result) =>
+        !result.success && isTemporaryAuthFailure(result.error)
+          ? sendToSubscriber({ email: result.email })
+          : result
+      ));
+    }
+    successful += results.filter((result) => result.success).length;
     failedEmails = [...failedEmails, ...results.filter((r) => !r.success)];
 
-    if (i + batchSize < subscribers.length) {
-      await new Promise((resolve) => setTimeout(resolve, batchDelay));
+    if (results.some((result) => !result.success && isAuthFailure(result.error))) {
+      // Stop hammering Gmail once authentication remains blocked.
+      const remaining = subscribers.slice(i + batchSize);
+      failedEmails.push(...remaining.map((subscriber) => ({
+        success: false,
+        email: subscriber.email,
+        attempted: false,
+        error: { code: "SMTP_AUTH_BLOCKED", message: "Not attempted because SMTP authentication failed" },
+      })));
+      console.error("Newsletter stopped: SMTP authentication blocked", { remaining: remaining.length });
+      break;
     }
+
   }
 
-  return {
+  const result = {
     totalProcessed: subscribers.length,
-    successful: subscribers.length - failedEmails.length,
+    successful,
     failed: failedEmails,
   };
+  console.log("Newsletter delivery summary", JSON.stringify({
+    articleId: article.id,
+    total: subscribers.length,
+    successful,
+    failed: failedEmails.length,
+    failedRecipients: failedEmails,
+  }));
+  return result;
 };
 
 const sendNewsletter = async (req, res) => {
   try {
     const { subscribers, article } = req.body;
     const result = await sendNewsletterToSubscribers(subscribers, article);
-    res.status(200).json({
-      message: "Newsletter sent successfully",
+    res.status(result.failed.length ? 502 : 200).json({
+      message: result.failed.length ? "Newsletter delivery incomplete" : "Newsletter sent successfully",
       result,
     });
   } catch (error) {

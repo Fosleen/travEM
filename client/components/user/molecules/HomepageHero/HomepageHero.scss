@@ -37,7 +37,7 @@
     z-index: 0;
   }
 
-  p {
+  .light-color {
     font-size: 16px;
     font-weight: 600;
     text-shadow:
@@ -52,9 +52,7 @@
     max-width: 256px;
     text-align: right;
 
-    &.light-color {
-      color: #888888;
-    }
+    color: #888888;
   }
 
   .homepage-hero-right {
@@ -95,8 +93,8 @@
         margin-right: 16px;
         gap: 8px;
 
-        p,
-        a {
+        > p,
+        > a {
           width: fit-content;
         }
 
@@ -158,7 +156,7 @@
           margin-left: 16px;
         }
 
-        .arrow-icon {
+        .destinations-trigger {
           cursor: pointer;
           background-color: #d2eb64;
           width: 72px;
@@ -180,7 +178,7 @@
 
           &:active,
           &:focus-visible,
-          &.is-open {
+          &[aria-expanded="true"] {
             box-shadow: 0 0 0 3px #2da580;
             transform: translateY(-2px);
           }
@@ -189,37 +187,25 @@
     }
   }
 
-  .homepage-hero-destinations-menu-here-container {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transform: translateY(-6px);
+  .homepage-hero-destinations-dropdown {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    width: 100%;
+  }
 
-    transition:
-      opacity 0.2s ease,
-      transform 0.2s ease,
-      visibility 0.2s ease;
-
+  .homepage-hero-destinations-panel {
+    position: relative;
     z-index: 5;
-
-    p {
-      text-shadow: none;
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    &.is-open {
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      transform: translateY(0);
-    }
+    width: calc(100% + 32px);
+    margin-inline-end: -16px;
+    padding-top: 8px;
   }
 }
 
 @media (hover: hover) and (pointer: fine) {
   .homepage-hero-container {
-    .arrow-icon:hover {
+    .destinations-trigger:hover {
       box-shadow: 0 0 0 3px #2da580;
       transform: translateY(-2px);
     }
@@ -228,9 +214,10 @@
 
 @media screen and ($tabletMedium) {
   .homepage-hero-container {
+    --hero-side-padding: 72px;
     display: flex;
     flex-direction: column;
-    padding-right: 72px;
+    padding-right: var(--hero-side-padding);
 
     .homepage-hero-left {
       left: -70px;
@@ -255,6 +242,13 @@
         }
       }
     }
+  }
+}
+
+@media screen and ($tabletMedium) and (width < 1024px) {
+  .homepage-hero-container .homepage-hero-destinations-panel {
+    width: calc(100% + 32px + var(--hero-side-padding));
+    margin-inline-end: calc(-16px - var(--hero-side-padding));
   }
 }
 
@@ -322,6 +316,11 @@
           flex-direction: row;
           align-items: center;
 
+          p,
+          a {
+            width: fit-content;
+          }
+
           .names-link {
             font-size: 72px;
 
@@ -354,25 +353,26 @@
       }
     }
 
-    .homepage-hero-destinations-menu-here-container {
-      position: absolute;
-      bottom: -344px;
-      left: 0;
-      right: 0;
-      width: fit-content;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: center;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transform: translateY(-6px);
+    .homepage-hero-destinations-dropdown {
+      position: relative;
+      width: auto;
+      flex-shrink: 0;
+    }
 
-      &.is-open {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-        transform: translateY(0);
+    .homepage-hero-destinations-panel {
+      position: absolute;
+      top: 100%;
+      inset-inline-end: 0;
+      width: max-content;
+      max-width: min(1200px, calc(100vw - 104px));
+      margin-inline-end: 0;
+      text-align: center;
+
+      p {
+        max-width: 256px;
+        text-align: right;
+        font-weight: 700;
+        font-size: 14px;
       }
     }
   }

@@ -1,7 +1,7 @@
 import HomepageImage from "../../atoms/HomepageImage";
-import { ArrowDown } from "@phosphor-icons/react";
+import { MapTrifold } from "@phosphor-icons/react";
 import "./HomepageHero.scss";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import DestinationsMenu from "../../organisms/DestinationsMenu";
 import { FC } from "react";
 import { HomepageData } from "../../../../common/types";
@@ -14,7 +14,8 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
   const [isDestinationsMenuHereShown, setIsDestinationsMenuHereShown] =
     useState(false);
 
-  const menuRef = useRef<HTMLDivElement | null>(null);
+  const menuId = useId();
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isDesktopDevice = () => {
@@ -52,12 +53,6 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
     setIsDestinationsMenuHereShown((prev) => !prev);
   };
 
-  const handleArrowClick = () => {
-    if (!isDesktopDevice()) {
-      toggleMenu();
-    }
-  };
-
   const handleDesktopMouseEnter = () => {
     if (isDesktopDevice()) {
       openMenu();
@@ -86,7 +81,7 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
 
       if (!target) return;
 
-      const clickedInsideMenu = menuRef.current?.contains(target);
+      const clickedInsideMenu = dropdownRef.current?.contains(target);
 
       if (!clickedInsideMenu) {
         closeMenu();
@@ -179,36 +174,35 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
               <span className="destination-label">Odaberi destinaciju:</span>
             </p>
 
-            <button
-              type="button"
-              className={`arrow-icon ${
-                isDestinationsMenuHereShown ? "is-open" : ""
-              }`}
-              onClick={handleArrowClick}
-              onMouseEnter={handleDesktopMouseEnter}
+            <div
+              ref={dropdownRef}
+              className="homepage-hero-destinations-dropdown"
+              onMouseEnter={clearCloseTimeout}
               onMouseLeave={handleDesktopMouseLeave}
-              aria-label="Otvori izbornik destinacija"
-              aria-expanded={isDestinationsMenuHereShown}
             >
-              <ArrowDown size={32} color="#333333" weight="thin" />
-            </button>
+              <button
+                type="button"
+                className="destinations-trigger"
+                onClick={(event) => {
+                  if (!isDesktopDevice() || event.detail === 0) toggleMenu();
+                }}
+                onMouseEnter={handleDesktopMouseEnter}
+                aria-label="Otvori izbornik destinacija"
+                aria-expanded={isDestinationsMenuHereShown}
+                aria-controls={menuId}
+              >
+                <MapTrifold size={32} color="#333333" aria-hidden />
+              </button>
+              <div
+                id={menuId}
+                className="homepage-hero-destinations-panel"
+                hidden={!isDestinationsMenuHereShown}
+              >
+                {isDestinationsMenuHereShown && <DestinationsMenu />}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div
-        ref={menuRef}
-        className={`homepage-hero-destinations-menu-here-container ${
-          isDestinationsMenuHereShown ? "is-open" : ""
-        }`}
-        onMouseEnter={handleDesktopMouseEnter}
-        onMouseLeave={handleDesktopMouseLeave}
-      >
-        {isDestinationsMenuHereShown && (
-          <DestinationsMenu
-            setIsDestinationsMenuShown={setIsDestinationsMenuHereShown}
-          />
-        )}
       </div>
     </div>
   );

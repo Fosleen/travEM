@@ -58,6 +58,7 @@ export default async function Page() {
       "https://www.youtube.com/@travem",
       "https://www.facebook.com/putujemstravem",
       "https://www.instagram.com/putujem_s_travem/",
+      "https://www.tiktok.com/@putujem_s_travem",
     ],
   };
 

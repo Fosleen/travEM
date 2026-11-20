@@ -2,6 +2,7 @@ import crypto from "crypto";
 import axios from "axios";
 import { Op } from "sequelize";
 import db from "../models/index.js";
+import { EXTERNAL_COMMENT_LINK_REASON, getCommentLinks, getPublishedCommentLinks } from "../utils/commentLinks.js";
 import { isObviousCommentSpam, moderateComment } from "../utils/commentModeration.js";
 import { verifyCommentSubmission } from "../utils/commentFormToken.js";
 import articleService from "./articleService.js";
@@ -20,6 +21,7 @@ const PUBLIC_COMMENT_ATTRIBUTES = [
   "body",
   "status",
   "is_admin_reply",
+  "moderation_reason",
   "like_count",
   "created_at",
   "updated_at",
@@ -53,6 +55,7 @@ const buildCommentTree = (comments) => {
     parentCommentId: comment.parentCommentId,
     username: comment.username,
     body: comment.body,
+    links: getPublishedCommentLinks(comment),
     status: comment.status,
     isAdminReply: Boolean(comment.is_admin_reply),
     likeCount: comment.like_count || 0,
@@ -155,7 +158,7 @@ class ArticleCommentService {
 
   async isAdminUser(userId) {
     const user = await db.models.User.findByPk(userId);
-    return Boolean(user?.is_admin);
+    return Number(user?.is_admin) === 1;
   }
 
   async getPendingComments(userId) {
@@ -298,35 +301,41 @@ class ArticleCommentService {
     };
   }
 
-  async addAdminReply(articleId, parentCommentId, body, adminUserId) {
+  async addAdminComment(articleId, parentCommentId, body, adminUserId) {
     const normalizedBody = body?.toString().trim();
 
     if (!normalizedBody || normalizedBody.length < 2) {
-      return { error: "Odgovor mora sadržavati najmanje 2 znaka", statusCode: 400 };
+      return { error: "Komentar mora sadržavati najmanje 2 znaka", statusCode: 400 };
     }
 
     if (normalizedBody.length > 3000) {
-      return { error: "Odgovor je predugačak", statusCode: 400 };
+      return { error: "Komentar je predugačak", statusCode: 400 };
     }
 
     if (!(await this.isAdminUser(adminUserId))) {
       return { error: "Potreban je administratorski pristup", statusCode: 403 };
     }
 
-    const parentComment = await db.models.ArticleComment.findOne({
-      where: {
-        id: parentCommentId,
-        articleId,
-        status: COMMENT_STATUS.PUBLISHED,
-        deleted_at: null,
-      },
-    });
-
-    if (!parentComment) {
-      return { error: "Komentar na koji odgovarate nije pronađen", statusCode: 404 };
+    const article = await articleService.getArticleById(articleId);
+    if (!article || article.is_deal_draft) {
+      return { error: "Članak nije pronađen", statusCode: 404 };
     }
 
-    const article = await db.models.Article.findByPk(articleId);
+    let parentComment = null;
+    if (parentCommentId) {
+      parentComment = await db.models.ArticleComment.findOne({
+        where: {
+          id: parentCommentId,
+          articleId,
+          status: COMMENT_STATUS.PUBLISHED,
+          deleted_at: null,
+        },
+      });
+
+      if (!parentComment) {
+        return { error: "Komentar na koji odgovarate nije pronađen", statusCode: 404 };
+      }
+    }
 
     const comment = await db.models.ArticleComment.create({
       articleId,
@@ -340,7 +349,7 @@ class ArticleCommentService {
       adminUserId,
     });
 
-    await this.sendReplyNotification(parentComment, comment, article);
+    if (parentComment) await this.sendReplyNotification(parentComment, comment, article);
 
     return { comment };
   }
@@ -447,6 +456,10 @@ class ArticleCommentService {
 
     await comment.update({
       status,
+      ...(status === COMMENT_STATUS.PUBLISHED &&
+        !comment.moderation_reason &&
+        getCommentLinks(comment.body).some(({ internal }) => !internal) &&
+        { moderation_reason: EXTERNAL_COMMENT_LINK_REASON }),
       updated_at: new Date(),
     });
 

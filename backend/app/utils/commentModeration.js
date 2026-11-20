@@ -1,3 +1,5 @@
+import { EXTERNAL_COMMENT_LINK_REASON, getCommentLinks } from "./commentLinks.js";
+
 const normalizeText = (value = "") =>
   value
     .toString()
@@ -53,7 +55,6 @@ const strongProfanityPatterns = [
 
 const spamPatterns = [
   /\b(crypto|casino|viagra|betting|free money)\b/i,
-  /(https?:\/\/|www\.)/i,
 ];
 
 const hasRepeatedNoise = (text) => /(.)\1{8,}/.test(text);
@@ -109,7 +110,6 @@ export const isObviousCommentSpam = ({ username = "", body = "" }) =>
   hasRandomCase(username) && (hasRandomCase(body) || looksGenerated(body));
 
 export const moderateComment = ({ username, email, body }) => {
-  const normalizedBody = normalizeText(body);
   const rejectPatterns = getConfiguredPatterns("COMMENT_REJECT_PATTERNS");
   const pendingPatterns = getConfiguredPatterns("COMMENT_PENDING_PATTERNS");
 
@@ -127,6 +127,14 @@ export const moderateComment = ({ username, email, body }) => {
     };
   }
 
+  const links = getCommentLinks(body);
+  if (links.some((link) => !link.internal)) {
+    return {
+      status: "pending",
+      reason: EXTERNAL_COMMENT_LINK_REASON,
+    };
+  }
+
   if (pendingPatterns.some((pattern) => pattern.test(body))) {
     return {
       status: "pending",
@@ -134,16 +142,13 @@ export const moderateComment = ({ username, email, body }) => {
     };
   }
 
-  const linkMatches = body.match(/https?:\/\/|www\./gi) || [];
+  const commentText = links.reduceRight(
+    (text, { start, end }) => text.slice(0, start) + " " + text.slice(end),
+    body
+  );
+  const normalizedBody = normalizeText(commentText);
 
-  if (linkMatches.length >= 2) {
-    return {
-      status: "pending",
-      reason: "Više poveznica",
-    };
-  }
-
-  if (spamPatterns.some((pattern) => pattern.test(body))) {
+  if (spamPatterns.some((pattern) => pattern.test(commentText))) {
     return {
       status: "pending",
       reason: "Mogući spam",
@@ -166,7 +171,7 @@ export const moderateComment = ({ username, email, body }) => {
     };
   }
 
-  if (hasRepeatedNoise(body)) {
+  if (hasRepeatedNoise(commentText)) {
     return {
       status: "pending",
       reason: "Ponavljanje znakova",
@@ -180,7 +185,7 @@ export const moderateComment = ({ username, email, body }) => {
     };
   }
 
-  if (looksGenerated(body) || hasRandomCase(body) || hasRandomCase(username)) {
+  if (looksGenerated(commentText) || hasRandomCase(commentText) || hasRandomCase(username)) {
     return {
       status: "pending",
       reason: "Mogući nasumično generiran sadržaj",

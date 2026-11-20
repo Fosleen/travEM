@@ -6,6 +6,7 @@ export interface ArticleComment {
   parentCommentId: number | null;
   username: string;
   body: string;
+  links?: { start: number; end: number; href: string }[];
   status: "published" | "pending" | "rejected";
   isAdminReply: boolean;
   likeCount: number;
@@ -38,6 +39,17 @@ const getToken = () => {
 
   return localStorage.getItem("jwt");
 };
+
+export async function canPostAdminComment() {
+  const token = getToken();
+  if (!token) return false;
+
+  const response = await fetch(`${apiUrl}/me`, {
+    cache: "no-store",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.ok && Number((await response.json()).is_admin) === 1;
+}
 
 export async function getCommentFormToken(articleId: number) {
   const response = await fetch(`${apiUrl}/articles/${articleId}/comments/form-token`, { cache: "no-store" });
@@ -110,14 +122,14 @@ export async function addArticleCommentReply(
   return data;
 }
 
-export async function addAdminCommentReply(
+async function postAdminComment(
   articleId: number,
-  commentId: number,
+  path: string,
   body: string
 ) {
   const token = getToken();
   const response = await fetch(
-    `${apiUrl}/articles/${articleId}/comments/${commentId}/admin-replies`,
+    `${apiUrl}/articles/${articleId}/comments/${path}`,
     {
       method: "POST",
       headers: {
@@ -132,11 +144,17 @@ export async function addAdminCommentReply(
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.error || "Failed to add admin reply");
+    throw new Error(data.error || "Administratorski komentar nije moguće poslati.");
   }
 
   return data;
 }
+
+export const addAdminComment = (articleId: number, body: string) =>
+  postAdminComment(articleId, "admin", body);
+
+export const addAdminCommentReply = (articleId: number, commentId: number, body: string) =>
+  postAdminComment(articleId, `${commentId}/admin-replies`, body);
 
 export async function likeComment(commentId: number, visitorId: string) {
   const response = await fetch(`${apiUrl}/comments/${commentId}/like`, {

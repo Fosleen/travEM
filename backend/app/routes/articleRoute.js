@@ -78,6 +78,7 @@ router.get("/", controller.getArticles);
 router.get("/:articleId/comments/form-token", getCommentFormToken);
 router.get("/:articleId/comments", commentController.getArticleComments);
 router.post("/:articleId/comments", commentRateLimit, commentController.addComment);
+router.post("/:articleId/comments/admin", verifyToken, commentController.addAdminComment);
 router.post(
   "/:articleId/comments/:commentId/replies",
   commentRateLimit,
@@ -86,7 +87,7 @@ router.post(
 router.post(
   "/:articleId/comments/:commentId/admin-replies",
   verifyToken,
-  commentController.addAdminReply
+  commentController.addAdminComment
 );
 
 // GET /api/v1/articles/homepage

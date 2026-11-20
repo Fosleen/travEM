@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "@/utils/theme.scss" as *;
 
 .article-comments {
@@ -206,6 +207,24 @@
     color: $grey;
     line-height: 1.65;
     white-space: pre-wrap;
+    overflow-wrap: anywhere;
+
+    a {
+      color: $lightBlue;
+      text-decoration: underline;
+      text-underline-offset: 0.15em;
+      transition: color 150ms ease;
+
+      &:hover,
+      &:focus-visible {
+        color: color.scale($lightBlue, $lightness: -35%);
+        text-decoration-thickness: 0.12em;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        transition: none;
+      }
+    }
   }
 }
 

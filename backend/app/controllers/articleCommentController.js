@@ -45,11 +45,11 @@ class ArticleCommentController {
     }
   }
 
-  async addAdminReply(req, res) {
+  async addAdminComment(req, res) {
     try {
-      const result = await service.addAdminReply(
+      const result = await service.addAdminComment(
         req.params.articleId,
-        req.params.commentId,
+        req.params.commentId ?? null,
         req.body.body,
         req.user?.id
       );
@@ -60,7 +60,7 @@ class ArticleCommentController {
 
       res.status(201).json(result);
     } catch (error) {
-      console.error("Error adding admin reply:", error);
+      console.error("Error adding admin comment:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   }

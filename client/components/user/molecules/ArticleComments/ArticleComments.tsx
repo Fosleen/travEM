@@ -2,12 +2,14 @@
 // @ts-nocheck
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import {
+  addAdminComment,
   addAdminCommentReply,
   addArticleComment,
   addArticleCommentReply,
   ArticleComment,
+  canPostAdminComment,
   deleteComment,
   getArticleComments,
   getCommentFormToken,
@@ -57,15 +59,23 @@ const getVisitorId = () => {
   return visitorId;
 };
 
-const isTokenExpired = (token: string | null) => {
-  if (!token) return true;
-
-  try {
-    const decodedToken = JSON.parse(atob(token.split(".")[1]));
-    return Date.now() >= decodedToken.exp * 1000;
-  } catch {
-    return true;
-  }
+const CommentBody = ({ body, links = [] }: Pick<ArticleComment, "body" | "links">) => {
+  let cursor = 0;
+  return (
+    <p>
+      {links.map(({ start, end, href }) => {
+        const precedingText = body.slice(cursor, start);
+        cursor = end;
+        return (
+          <Fragment key={start}>
+            {precedingText}
+            <a href={href} rel="ugc nofollow">{body.slice(start, end)}</a>
+          </Fragment>
+        );
+      })}
+      {body.slice(cursor)}
+    </p>
+  );
 };
 
 const formatCommentDate = (value: string) => {
@@ -151,6 +161,11 @@ const CommentForm = ({
         rows={isAdminForm ? 3 : 5}
         required
       />
+      {!isAdminForm && (
+        <span className="article-comments-field-help">
+          Poveznice na druge stranice objavljuju se nakon odobrenja.
+        </span>
+      )}
     </label>
 
     {!isAdminForm && (
@@ -232,9 +247,6 @@ const ArticleComments = ({ articleId }: ArticleCommentsProps) => {
       setMainForm((current) => ({ ...current, username: storedUsername }));
     }
 
-    const token = localStorage.getItem("jwt");
-    setIsAdmin(!isTokenExpired(token));
-
     const urlParams = new URLSearchParams(window.location.search);
     const unsubscribeToken = urlParams.get("commentUnsubscribe");
 
@@ -244,6 +256,14 @@ const ArticleComments = ({ articleId }: ArticleCommentsProps) => {
         .catch(() => setError("Odjava od obavijesti nije uspjela."));
     }
   }, [articleId, loadComments]);
+
+  useEffect(() => {
+    let active = true;
+    canPostAdminComment()
+      .then((allowed) => { if (active) setIsAdmin(allowed); })
+      .catch(() => {});
+    return () => { active = false; };
+  }, []);
 
   const updateMainForm = (event) => {
     const { name, value, type, checked } = event.target;
@@ -280,6 +300,14 @@ const ArticleComments = ({ articleId }: ArticleCommentsProps) => {
     setError("");
 
     try {
+      if (isAdmin) {
+        await addAdminComment(articleId, mainForm.body);
+        setMainForm((current) => ({ ...current, body: "" }));
+        setMessage("Admin komentar je objavljen.");
+        await loadComments();
+        return;
+      }
+
       const result = await addArticleComment(articleId, {
         ...mainForm,
         formToken: formToken || await getCommentFormToken(articleId),
@@ -431,7 +459,7 @@ const ArticleComments = ({ articleId }: ArticleCommentsProps) => {
           </div>
           <time>{formatCommentDate(comment.created_at)}</time>
         </div>
-        <p>{comment.body}</p>
+        <CommentBody body={comment.body} links={comment.links} />
 
         <div className="article-comment-actions">
           <button
@@ -541,8 +569,9 @@ const ArticleComments = ({ articleId }: ArticleCommentsProps) => {
       <CommentForm
         id="main-comment"
         form={mainForm}
-        submitLabel="Objavi komentar"
+        submitLabel={isAdmin ? "Objavi komentar kao admin" : "Objavi komentar"}
         isSubmitting={isSubmitting}
+        isAdminForm={isAdmin}
         onChange={updateMainForm}
         onSubmit={handleMainSubmit}
       />

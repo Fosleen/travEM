@@ -56,18 +56,22 @@ class SubscriberController {
 
   async sendNewsletter(req, res) {
     try {
-      const { subscribers, article } = req.body;
+      const { subscribers, article } = req.body || {};
       if (!article?.id || !await articleService.getArticleById(article.id)) {
         return res.status(400).json({ error: "Newsletter se može poslati samo za odobreni i objavljeni članak." });
       }
-      const result = await service.sendNewsletter(subscribers, article);
-      res.status(200).json({
-        message: "Newsletter sent successfully",
+      const requestKey = req.get('Idempotency-Key') ?? req.body?.newsletter_request_key;
+      if (requestKey !== undefined && (typeof requestKey !== 'string' || !/^[a-zA-Z0-9_-]{1,100}$/.test(requestKey))) {
+        return res.status(400).json({ error: 'Nevaljan ključ zahtjeva.' });
+      }
+      const result = await service.sendNewsletter(subscribers, article, requestKey);
+      res.status(result?.queued ? 202 : 200).json({
+        message: result?.queued ? "Newsletter je dodan u red slanja." : "Newsletter sent successfully",
         result,
       });
     } catch (error) {
-      console.error("Error sending newsletter:", error);
-      res.status(500).json({ error: "Failed to send newsletter" });
+      console.error("Error sending newsletter:", error.message);
+      res.status(error.status || 500).json({ error: error.status ? error.message : "Failed to send newsletter" });
     }
   }
 

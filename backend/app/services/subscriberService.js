@@ -1,6 +1,9 @@
 import db from "../models/index.js";
 import { Op } from "sequelize";
 import axios from "axios";
+import { randomUUID } from 'node:crypto';
+import { newsletterConfig, assertNewsletterProduction } from './newsletter/config.js';
+import { assertNewsletterQueueWrite } from './newsletterService.js';
 
 class SubscriberService {
   async getSubscribers(page, pageSize, search = "") {
@@ -89,7 +92,14 @@ class SubscriberService {
     }
   }
 
-  async sendNewsletter(subscribers, article) {
+  async sendNewsletter(subscribers, article, requestKey) {
+    const config = newsletterConfig();
+    assertNewsletterProduction(config);
+    if (config.mode === 'queue') {
+      const campaign = await assertNewsletterQueueWrite().enqueue(article.id || article.article_id,
+        { key: `manual:${requestKey || randomUUID()}` });
+      return { queued: true, campaignId: campaign.id };
+    }
     const stored = await db.models.Article.findByPk(article.id || article.article_id);
     if (stored?.is_deal_draft) throw new Error('Newsletter nije dopušten za neodobren Deal Finder nacrt');
     const review = stored && await db.models.ArticleReview.findByPk(stored.id);
@@ -99,7 +109,6 @@ class SubscriberService {
         subscribers,
         article,
       };
-      console.log("body", body);
 
       const response = await axios.post(process.env.LAMBDA_URL, body, {
         headers: {
@@ -110,7 +119,7 @@ class SubscriberService {
 
       return response.data;
     } catch (error) {
-      console.error("Error calling Lambda:", error);
+      console.error("Error calling Lambda:", error.message);
       throw error;
     }
   }

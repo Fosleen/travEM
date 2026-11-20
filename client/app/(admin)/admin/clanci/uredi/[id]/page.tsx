@@ -10,6 +10,7 @@ import ArticleReadMoreSuggestions from "@/components/admin/organisms/ArticleRead
 import {isReadMoreSection,orderReadMoreSections} from "@/utils/articleReadMore.mjs";
 
 import { useParams, useRouter } from "next/navigation";
+import Link from 'next/link';
 import DealDraftActions from '@/components/admin/organisms/DealDraftActions';
 import "./EditArticle.scss";
 import { Fragment, useEffect, useRef, useState } from "react";
@@ -528,8 +529,10 @@ const flatRemovedImages = removedSectionImages;
           mainArticleImage: article.main_image_url,
           article_type_id: article.articleTypeId,
         };
-        await sendNewsletterToSubscribers(subscribers, articleDataMapped);
-        notifySuccess("Newsletter uspješno poslan pretplatnicima!");
+        const newsletterResult = await sendNewsletterToSubscribers(subscribers, articleDataMapped);
+        notifySuccess(newsletterResult.result?.queued
+          ? "Newsletter je dodan u red slanja. Napredak je dostupan u pregledu newslettera."
+          : "Newsletter uspješno poslan pretplatnicima!");
       } catch (error) {
         console.error("Error sending newsletter:", error);
         notifyFailure("Došlo je do pogreške prilikom slanja newslettera.");
@@ -1845,6 +1848,8 @@ const flatRemovedImages = removedSectionImages;
                       Odustani
                     </Button>
 
+                    {isAdmin && getScheduleStatus(article).className === 'published' &&
+                      <Link href={`/admin/clanci/newsletter/${article.id}`}>Pregled newslettera</Link>}
                     {isAdmin && getScheduleStatus(article).className === "published" && <Button
                       type="button"
                       adminPrimary

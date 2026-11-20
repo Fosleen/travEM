@@ -174,6 +174,17 @@ const createEmailTemplate = (article, userEmail) => {
         .social-blue {
           background-color: #78a4d7 !important;
         }
+
+        .social-icon .social-symbol-light {
+          display: none !important;
+          max-height: 0 !important;
+          overflow: hidden !important;
+        }
+        .social-icon .social-symbol-dark {
+          display: block !important;
+          max-height: 28px !important;
+          overflow: visible !important;
+        }
         
         /* Preserve text colors */
         .text-dark {
@@ -258,6 +269,8 @@ const createEmailTemplate = (article, userEmail) => {
       [data-ogsc] .announcement-text { color: #2f2936 !important; }
       [data-ogsc] .cta-button { background-color: #2bac82 !important; }
       [data-ogsc] .social-blue { background-color: #78a4d7 !important; }
+      [data-ogsc] .social-icon .social-symbol-light { display: none !important; max-height: 0 !important; overflow: hidden !important; }
+      [data-ogsc] .social-icon .social-symbol-dark { display: block !important; max-height: 28px !important; overflow: visible !important; }
     </style>
   </head>
 
@@ -536,7 +549,7 @@ const createEmailTemplate = (article, userEmail) => {
                         Hrvatske koji putuje od 2020. godine. Kao studenti,
                         naučili smo putovati s ograničenim budžetom. Svaki
                         novčić ulažemo u nova iskustva. Pratite naša putovanja
-                        na blogu i YouTube kanalu!
+                        na blogu, YouTube kanalu, Instagram profilu i TokToku!
                       </p>
                     </td>
                   </tr>
@@ -595,7 +608,7 @@ const createEmailTemplate = (article, userEmail) => {
                                 text-decoration: none;
                               "
                             >
-                              <img
+                              <img class="social-symbol-light"
                                 src="https://img.icons8.com/ios-filled/50/000000/youtube-play.png"
                                 alt="YouTube"
                                 width="24"
@@ -604,6 +617,21 @@ const createEmailTemplate = (article, userEmail) => {
                                   width: 24px;
                                   height: 24px;
                                   display: block;
+                                  margin: 6px auto;
+                                "
+                              />
+                              <img class="social-symbol-dark"
+                                src="https://img.icons8.com/ios-filled/50/ffffff/youtube-play.png"
+                                alt="YouTube"
+                                width="24"
+                                height="24"
+                                style="
+                                  width: 24px;
+                                  height: 24px;
+                                  display: none;
+                                  max-height: 0;
+                                  overflow: hidden;
+                                  mso-hide: all;
                                   margin: 6px auto;
                                 "
                               />
@@ -625,8 +653,8 @@ const createEmailTemplate = (article, userEmail) => {
                                 text-decoration: none;
                               "
                             >
-                              <img
-                                src="https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png"
+                              <img class="social-symbol-light"
+                                src="https://img.icons8.com/ios-filled/50/000000/facebook-new.png"
                                 alt="Facebook"
                                 width="24"
                                 height="24"
@@ -634,6 +662,21 @@ const createEmailTemplate = (article, userEmail) => {
                                   width: 24px;
                                   height: 24px;
                                   display: block;
+                                  margin: 6px auto;
+                                "
+                              />
+                              <img class="social-symbol-dark"
+                                src="https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png"
+                                alt="Facebook"
+                                width="24"
+                                height="24"
+                                style="
+                                  width: 24px;
+                                  height: 24px;
+                                  display: none;
+                                  max-height: 0;
+                                  overflow: hidden;
+                                  mso-hide: all;
                                   margin: 6px auto;
                                 "
                               />
@@ -655,8 +698,8 @@ const createEmailTemplate = (article, userEmail) => {
                                 text-decoration: none;
                               "
                             >
-                              <img
-                                src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png"
+                              <img class="social-symbol-light"
+                                src="https://img.icons8.com/ios-filled/50/000000/instagram-new.png"
                                 alt="Instagram"
                                 width="24"
                                 height="24"
@@ -664,6 +707,66 @@ const createEmailTemplate = (article, userEmail) => {
                                   width: 24px;
                                   height: 24px;
                                   display: block;
+                                  margin: 6px auto;
+                                "
+                              />
+                              <img class="social-symbol-dark"
+                                src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png"
+                                alt="Instagram"
+                                width="24"
+                                height="24"
+                                style="
+                                  width: 24px;
+                                  height: 24px;
+                                  display: none;
+                                  max-height: 0;
+                                  overflow: hidden;
+                                  mso-hide: all;
+                                  margin: 6px auto;
+                                "
+                              />
+                            </a>
+                          </td>
+
+                          <!-- TikTok - Blue -->
+                          <td align="center" style="padding: 0 6px">
+                            <a
+                              href="https://www.tiktok.com/@putujem_s_travem"
+                              target="_blank"
+                              class="social-icon social-blue"
+                              style="
+                                display: inline-block;
+                                width: 48px;
+                                height: 48px;
+                                background-color: #78a4d7;
+                                border-radius: 50%;
+                                text-decoration: none;
+                              "
+                            >
+                              <img class="social-symbol-light"
+                                src="https://img.icons8.com/ios-filled/50/000000/tiktok.png"
+                                alt="TikTok"
+                                width="24"
+                                height="24"
+                                style="
+                                  width: 24px;
+                                  height: 24px;
+                                  display: block;
+                                  margin: 6px auto;
+                                "
+                              />
+                              <img class="social-symbol-dark"
+                                src="https://img.icons8.com/ios-filled/50/ffffff/tiktok.png"
+                                alt="TikTok"
+                                width="24"
+                                height="24"
+                                style="
+                                  width: 24px;
+                                  height: 24px;
+                                  display: none;
+                                  max-height: 0;
+                                  overflow: hidden;
+                                  mso-hide: all;
                                   margin: 6px auto;
                                 "
                               />

@@ -97,12 +97,17 @@ export async function getSubscribersWithoutPagination() {
   }
 }
 
+const pendingNewsletterKeys = new Map<string, string>();
+
 export async function sendNewsletterToSubscribers(
   subscribers: Array<any>,
   article: any
 ) {
   try {
     const token = getToken();
+    const articleKey = String(article.id || article.article_id);
+    const requestKey = pendingNewsletterKeys.get(articleKey) || crypto.randomUUID();
+    pendingNewsletterKeys.set(articleKey, requestKey);
     const response = await fetch(`${apiUrl}/subscribers/send-newsletter`, {
       method: "POST",
       headers: {
@@ -110,7 +115,7 @@ export async function sendNewsletterToSubscribers(
         Accept: "application/json",
         Authorization: token ? `Bearer ${token}` : "",
       },
-      body: JSON.stringify({ subscribers, article }),
+      body: JSON.stringify({ subscribers, article, newsletter_request_key: requestKey }),
     });
 
     if (!response.ok) {
@@ -119,7 +124,7 @@ export async function sendNewsletterToSubscribers(
     }
 
     const data = await response.json();
-    console.log("Newsletter sending started", data);
+    pendingNewsletterKeys.delete(articleKey);
     return data;
   } catch (error) {
     console.error("Error starting newsletter:", error);

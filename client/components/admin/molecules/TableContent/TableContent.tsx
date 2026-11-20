@@ -11,10 +11,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import Button from "../../../atoms/Button";
-import { CaretUpDown, PencilSimpleLine, Trash } from "@phosphor-icons/react";
+import { CaretUpDown, Envelope, PencilSimpleLine, Trash } from "@phosphor-icons/react";
 import { formatDate } from "../../../../utils/global";
 import { deleteSubscriber } from "../../../../utils/subscribers";
 import { useRouter } from "next/navigation";
+import Link from 'next/link';
+import { useDashboardUser } from '@/context/DashboardUserContext';
 import {
   formatDateTimeInTimeZone,
   getScheduleStatus,
@@ -26,6 +28,7 @@ const TableContent = ({ data, type }) => {
   const [tableData, setTableData] = useState(data || []);
   const columnHelper = createColumnHelper();
   const router = useRouter();
+  const { isAdmin } = useDashboardUser();
 
   useEffect(() => {
     setTableData(data || []);
@@ -147,9 +150,21 @@ const TableContent = ({ data, type }) => {
       columnHelper.display({
         id: "actions",
         cell: (row) => (
-          <Button edit onClick={() => handleEdit(row.row.original.id)}>
-            <PencilSimpleLine size={16} color="#333333" />
-          </Button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Button edit onClick={() => handleEdit(row.row.original.id)}>
+              <PencilSimpleLine size={16} color="#333333" />
+            </Button>
+            {isAdmin && getScheduleStatus(row.row.original).className === 'published' && (
+              <Link
+                href={`/admin/clanci/newsletter/${row.row.original.id}`}
+                className="button button-fit button-edit"
+                aria-label="Pregled newslettera"
+                title="Pregled newslettera"
+              >
+                <Envelope size={16} color="#333333" aria-hidden="true" />
+              </Link>
+            )}
+          </div>
         ),
       }),
     ];
@@ -186,7 +201,6 @@ const TableContent = ({ data, type }) => {
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    debugTable: true,
     initialState: {
       pagination: {
         autoResetPageIndex: true,

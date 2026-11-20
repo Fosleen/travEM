@@ -1,11 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+// Original Lambda newsletter markup and styles, preserved for backend delivery.
+export function renderNewsletterHtml(article, badge, unsubscribeUrl) {
+  return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
     <meta name="supported-color-schemes" content="light dark" />
-    <title>Vikend u Rimu</title>
+    <title>${article.article_title}</title>
     <style type="text/css">
       /* Reset styles */
       #outlook a {
@@ -167,6 +169,17 @@
         .social-blue {
           background-color: #78a4d7 !important;
         }
+
+        .social-icon .social-symbol-light {
+          display: none !important;
+          max-height: 0 !important;
+          overflow: hidden !important;
+        }
+        .social-icon .social-symbol-dark {
+          display: block !important;
+          max-height: 28px !important;
+          overflow: visible !important;
+        }
         
         /* Preserve text colors */
         .text-dark {
@@ -251,6 +264,8 @@
       [data-ogsc] .announcement-text { color: #2f2936 !important; }
       [data-ogsc] .cta-button { background-color: #2bac82 !important; }
       [data-ogsc] .social-blue { background-color: #78a4d7 !important; }
+      [data-ogsc] .social-icon .social-symbol-light { display: none !important; max-height: 0 !important; overflow: hidden !important; }
+      [data-ogsc] .social-icon .social-symbol-dark { display: block !important; max-height: 28px !important; overflow: visible !important; }
     </style>
   </head>
 
@@ -367,8 +382,8 @@
                   <tr>
                     <td align="center" style="padding-bottom: 35px">
                       <img
-                        src="https://picsum.photos/1040/600"
-                        alt="Vikend u Rimu"
+                        src="${article.mainArticleImage}"
+                        alt="${article.article_title}"
                         width="520"
                         style="
                           width: 100%;
@@ -396,7 +411,7 @@
                           letter-spacing: -0.3px;
                         "
                       >
-                        Vikend u Rimu
+                        ${article.article_title}
                       </h2>
                     </td>
                   </tr>
@@ -420,7 +435,7 @@
                                 border-radius: 64px;
                                 letter-spacing: 0.5px;
                               "
-                              >🌍&nbsp; DESTINACIJA</span
+                              >${badge.icon}&nbsp;${badge.text}</span
                             >
                           </td>
                         </tr>
@@ -439,7 +454,7 @@
                           margin: 0;
                         "
                       >
-                        Otkrij najbolje lokacije, smještaj i savjete za putovanje u Rim.
+                        ${article.article_description}
                       </p>
                     </td>
                   </tr>
@@ -459,7 +474,9 @@
                           "
                         >
                             <a
-                            href="https://www.putujemstravem.com/clanak/primjer-clanka"
+                            href="https://www.putujemstravem.com/clanak/${
+                            article.slug || article.id
+                            }"
                             target="_blank"
                             class="mobile-button text-white"
                             style="
@@ -527,7 +544,7 @@
                         Hrvatske koji putuje od 2020. godine. Kao studenti,
                         naučili smo putovati s ograničenim budžetom. Svaki
                         novčić ulažemo u nova iskustva. Pratite naša putovanja
-                        na blogu i YouTube kanalu!
+                        na blogu, YouTube kanalu, Instagram profilu i TokToku!
                       </p>
                     </td>
                   </tr>
@@ -586,7 +603,7 @@
                                 text-decoration: none;
                               "
                             >
-                              <img
+                              <img class="social-symbol-light"
                                 src="https://img.icons8.com/ios-filled/50/000000/youtube-play.png"
                                 alt="YouTube"
                                 width="24"
@@ -595,6 +612,21 @@
                                   width: 24px;
                                   height: 24px;
                                   display: block;
+                                  margin: 6px auto;
+                                "
+                              />
+                              <img class="social-symbol-dark"
+                                src="https://img.icons8.com/ios-filled/50/ffffff/youtube-play.png"
+                                alt="YouTube"
+                                width="24"
+                                height="24"
+                                style="
+                                  width: 24px;
+                                  height: 24px;
+                                  display: none;
+                                  max-height: 0;
+                                  overflow: hidden;
+                                  mso-hide: all;
                                   margin: 6px auto;
                                 "
                               />
@@ -616,8 +648,8 @@
                                 text-decoration: none;
                               "
                             >
-                              <img
-                                src="https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png"
+                              <img class="social-symbol-light"
+                                src="https://img.icons8.com/ios-filled/50/000000/facebook-new.png"
                                 alt="Facebook"
                                 width="24"
                                 height="24"
@@ -625,6 +657,21 @@
                                   width: 24px;
                                   height: 24px;
                                   display: block;
+                                  margin: 6px auto;
+                                "
+                              />
+                              <img class="social-symbol-dark"
+                                src="https://img.icons8.com/ios-filled/50/ffffff/facebook-new.png"
+                                alt="Facebook"
+                                width="24"
+                                height="24"
+                                style="
+                                  width: 24px;
+                                  height: 24px;
+                                  display: none;
+                                  max-height: 0;
+                                  overflow: hidden;
+                                  mso-hide: all;
                                   margin: 6px auto;
                                 "
                               />
@@ -646,8 +693,8 @@
                                 text-decoration: none;
                               "
                             >
-                              <img
-                                src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png"
+                              <img class="social-symbol-light"
+                                src="https://img.icons8.com/ios-filled/50/000000/instagram-new.png"
                                 alt="Instagram"
                                 width="24"
                                 height="24"
@@ -655,6 +702,66 @@
                                   width: 24px;
                                   height: 24px;
                                   display: block;
+                                  margin: 6px auto;
+                                "
+                              />
+                              <img class="social-symbol-dark"
+                                src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png"
+                                alt="Instagram"
+                                width="24"
+                                height="24"
+                                style="
+                                  width: 24px;
+                                  height: 24px;
+                                  display: none;
+                                  max-height: 0;
+                                  overflow: hidden;
+                                  mso-hide: all;
+                                  margin: 6px auto;
+                                "
+                              />
+                            </a>
+                          </td>
+
+                          <!-- TikTok - Blue -->
+                          <td align="center" style="padding: 0 6px">
+                            <a
+                              href="https://www.tiktok.com/@putujem_s_travem"
+                              target="_blank"
+                              class="social-icon social-blue"
+                              style="
+                                display: inline-block;
+                                width: 48px;
+                                height: 48px;
+                                background-color: #78a4d7;
+                                border-radius: 50%;
+                                text-decoration: none;
+                              "
+                            >
+                              <img class="social-symbol-light"
+                                src="https://img.icons8.com/ios-filled/50/000000/tiktok.png"
+                                alt="TikTok"
+                                width="24"
+                                height="24"
+                                style="
+                                  width: 24px;
+                                  height: 24px;
+                                  display: block;
+                                  margin: 6px auto;
+                                "
+                              />
+                              <img class="social-symbol-dark"
+                                src="https://img.icons8.com/ios-filled/50/ffffff/tiktok.png"
+                                alt="TikTok"
+                                width="24"
+                                height="24"
+                                style="
+                                  width: 24px;
+                                  height: 24px;
+                                  display: none;
+                                  max-height: 0;
+                                  overflow: hidden;
+                                  mso-hide: all;
                                   margin: 6px auto;
                                 "
                               />
@@ -724,7 +831,7 @@
                             "
                           >
                          <a
-                              href="https://www.putujemstravem.com/otkazi-pretplatu?userToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InByZXZpZXdAZXhhbXBsZS5jb20iLCJpYXQiOjE3OTQ0NzYxMjcsImV4cCI6MTc5NzA2ODEyN30.h8PWKzk8PER_SYiA7c2dlISAhVjdo1QL1w5o5kmsHWY"                              
+                              href="${unsubscribeUrl}"                              
                                 target="_blank"
                                 class="text-footer unsubscribe-button-text"
                                 style="
@@ -771,7 +878,7 @@
                           class="text-medium-gray"
                           style="color: #888888; font-size: 12px; margin: 0"
                         >
-                          © 2026 putujEM s travEM. Sva prava
+                          © ${new Date().getFullYear()} putujEM s travEM. Sva prava
                           pridržana.
                         </p>
                       </div>
@@ -786,3 +893,5 @@
     </table>
   </body>
 </html>
+`;
+}

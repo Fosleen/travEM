@@ -13,6 +13,7 @@ import swaggerDocs from "./app/utils/swagger.js";
 import { initRedis } from "./app/middleware/redis.js";
 import { startArticleScheduleJob } from "./app/jobs/articleScheduleJob.js";
 import { startDealFinderJob } from './app/jobs/dealFinderJob.js';
+import { startNewsletterJob } from './app/jobs/newsletterJob.js';
 
 const app = express();
 
@@ -36,7 +37,8 @@ const corsOptions = {
 (async () => {
   await initRedis();
   startArticleScheduleJob();
-  startDealFinderJob();
+  startDealFinderJob(); 
+  startNewsletterJob();
 })();
 
 app.use(cors(corsOptions));

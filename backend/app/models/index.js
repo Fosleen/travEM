@@ -29,6 +29,7 @@ import VisaInfo from "./visaInfo.js";
 import sequelizeConnection from "../sequelize.js";
 import AirportCity from "./airportCity.js";
 import Subscriber from "./subscriber.js";
+import { defineNewsletterModels } from './newsletter.js';
 import PlaceBestTimeToVisit from "./placeBestTimeToVisit.js";
 import PlaceBestTimeToVisitMonth from "./placeBestTimeToVisitMonth.js";
 import CountryBestTimeToVisit from "./countryBestTimeToVisit.js";
@@ -103,6 +104,7 @@ db.models.ArticleSpecialType = ArticleSpecialType(
 
 db.models.AirportCity = AirportCity(sequelizeConnection, Sequelize.DataTypes);
 db.models.Subscriber = Subscriber(sequelizeConnection, Sequelize.DataTypes);
+Object.assign(db.models, defineNewsletterModels(sequelizeConnection, Sequelize.DataTypes));
 
 db.models.PlaceBestTimeToVisit = PlaceBestTimeToVisit(
   sequelizeConnection,

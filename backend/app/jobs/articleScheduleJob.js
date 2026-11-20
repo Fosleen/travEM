@@ -6,6 +6,9 @@ import {
   clearCacheByPattern,
 } from "../middleware/redis.js";
 import subscriberService from "../services/subscriberService.js";
+import { newsletterConfig } from '../services/newsletter/config.js';
+import { assertNewsletterQueueWrite } from '../services/newsletterService.js';
+import { scheduledNewsletterKey } from '../services/newsletter/queue.js';
 
 const DEFAULT_INTERVAL_MS = 10 * 60 * 1000;
 
@@ -52,10 +55,26 @@ const processSchedule = async (schedule) => {
 
   await clearPublishedArticleCaches(article);
 
+  const newsletter = newsletterConfig();
   const shouldSendNewsletter =
-    schedule.notify_subscribers_on_publish && !schedule.newsletter_sent_at;
+    schedule.notify_subscribers_on_publish && !schedule.newsletter_sent_at && newsletter.production;
 
-  if (shouldSendNewsletter) {
+  if (shouldSendNewsletter && newsletter.mode === 'queue') {
+    try {
+      const campaign = await assertNewsletterQueueWrite().enqueue(article.id, {
+        key: scheduledNewsletterKey(article.id, schedule.publish_at),
+        source: 'scheduled', scheduleId: schedule.id,
+      });
+      await schedule.update({ newsletter_send_started_at: new Date(),
+        // The worker wakes immediately; do not overwrite a result it may have
+        // already persisted while this publication job was still finishing.
+        ...(campaign.status === 'completed'
+          ? { newsletter_sent_at: new Date(), newsletter_send_error: null } : {}) });
+    } catch (error) {
+      // Keep the unstarted marker so the scheduler can retry an enqueue failure.
+      await schedule.update({ newsletter_send_error: error.message });
+    }
+  } else if (shouldSendNewsletter) {
     await schedule.update({
       newsletter_send_started_at: new Date(),
       newsletter_send_error: null,

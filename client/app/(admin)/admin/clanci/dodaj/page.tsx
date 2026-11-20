@@ -292,10 +292,12 @@ const AddArticlePage = () => {
                     article_type_id: articleResponse.articleTypeId,
                   };
 
-                  await sendNewsletterToSubscribers(subscribers, articleData);
+                  const newsletterResult = await sendNewsletterToSubscribers(subscribers, articleData);
 
                   notifySuccess(
-                    "Uspješno objavljen članak i poslan newsletter!"
+                    newsletterResult.result?.queued
+                      ? "Članak je objavljen, a newsletter dodan u red slanja."
+                      : "Uspješno objavljen članak i poslan newsletter!"
                   );
                 }
               } catch (error) {

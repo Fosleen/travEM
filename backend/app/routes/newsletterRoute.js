@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { randomUUID } from 'node:crypto';
 import { verifyToken } from '../middleware/jwt_verify.js';
 import { requireAdmin } from '../middleware/articleAccess.js';
-import { getNewsletterQueue, assertNewsletterQueueWrite } from '../services/newsletterService.js';
+import { getNewsletterArticle, getNewsletterQueue, assertNewsletterQueueWrite } from '../services/newsletterService.js';
 import { newsletterConfig } from '../services/newsletter/config.js';
 
 const router = Router();
@@ -25,9 +25,11 @@ const handler = (action) => async (req, res) => {
 };
 router.get('/articles/:articleId', handler(async (req, res) => {
   const config = newsletterConfig();
-  if (config.mode !== 'queue') return res.json({ enabled: false, canSend: false, campaigns: [] });
+  const article = await getNewsletterArticle(req.params.articleId);
+  if (!article) return res.status(404).json({ error: 'Članak nije pronađen.' });
+  if (config.mode !== 'queue') return res.json({ enabled: false, canSend: false, campaigns: [], article });
   res.json({ enabled: true, canSend: config.production, workerEnabled: config.worker && config.production,
-    campaigns: await getNewsletterQueue().list(req.params.articleId) });
+    campaigns: await getNewsletterQueue().list(req.params.articleId), article });
 }));
 router.post('/articles/:articleId', handler(async (req, res) => {
   const key = req.get('Idempotency-Key') ?? req.body?.request_key;

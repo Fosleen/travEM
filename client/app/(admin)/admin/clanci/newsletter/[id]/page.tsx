@@ -153,7 +153,9 @@ export default function NewsletterDetails() {
     <header className="newsletter-heading">
       <div className="newsletter-heading-main">
         <span className="newsletter-heading-icon"><EnvelopeSimple size={30} weight="duotone" aria-hidden="true" /></span>
-        <div><span className="newsletter-eyebrow">PUTUJEM S TRAVEM · ADMINISTRACIJA</span><h1>Newsletter</h1><p>Pregled slanja i primatelja za članak <strong>#{id}</strong>.</p></div>
+        <div><h1>Newsletter</h1><p>{overview?.article?.title
+          ? <>Pregled slanja i primatelja za članak <strong>{overview.article.title}</strong>.</>
+          : 'Pregled slanja i primatelja za odabrani članak.'}</p></div>
       </div>
       <div className="newsletter-heading-actions">
         <Link className="newsletter-button newsletter-button-secondary" href={`/admin/clanci/uredi/${id}`}>Otvori članak<ArrowUpRight size={17} aria-hidden="true" /></Link>

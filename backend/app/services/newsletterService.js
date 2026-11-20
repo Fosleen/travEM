@@ -5,6 +5,10 @@ import { createNewsletterSmtp } from './newsletter/smtp.js';
 import { notifyNewsletterWork } from './newsletter/workSignal.js';
 
 let queue;
+export function getNewsletterArticle(articleId) {
+  return db.models.Article.findByPk(articleId, { attributes: ['id', 'title'], raw: true });
+}
+
 export function getNewsletterQueue() {
   const config = newsletterConfig();
   if (config.mode !== 'queue') throw Object.assign(new Error('Detaljna evidencija newslettera još nije uključena.'), { status: 503 });

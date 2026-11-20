@@ -7,6 +7,7 @@ export type NewsletterCampaign = {
 };
 export type NewsletterOverview = {
   enabled: boolean; canSend: boolean; workerEnabled?: boolean; campaigns: NewsletterCampaign[];
+  article?: { id: number; title: string };
 };
 export type NewsletterRecipient = {
   id: number; email: string; status: NewsletterStatus; attempts: number;

@@ -1849,7 +1849,7 @@ const flatRemovedImages = removedSectionImages;
                     </Button>
 
                     {isAdmin && getScheduleStatus(article).className === 'published' &&
-                      <Link href={`/admin/clanci/newsletter/${article.id}`}>Pregled newslettera</Link>}
+                      <Link className="button button-fit button-admin-primary" href={`/admin/clanci/newsletter/${article.id}`}>Pregled newslettera</Link>}
                     {isAdmin && getScheduleStatus(article).className === "published" && <Button
                       type="button"
                       adminPrimary

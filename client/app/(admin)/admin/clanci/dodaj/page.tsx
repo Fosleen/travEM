@@ -321,7 +321,9 @@ const AddArticlePage = () => {
                 catch(error){console.warn('Članak je spremljen, ali ponuda nije uklonjena.',error);}
               }
             }
-            router.push("/admin/clanci");
+            router.push(isAdmin && !isScheduleChecked
+              ? `/admin/clanci/newsletter/${articleResponse.id}`
+              : "/admin/clanci");
           } catch (error) {
             console.error("Error publishing article:", error);
             Swal.fire({

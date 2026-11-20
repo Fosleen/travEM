@@ -2,6 +2,7 @@ import db from "../models/index.js";
 import { Op, Sequelize } from "sequelize";
 import { createUniqueArticleSlug } from "../utils/articleSlug.js";
 import { approvedArticleWhere } from "../utils/articleReviewVisibility.js";
+import { rankArticleSearchResults, TOP_COUNTRY_ARTICLE_TYPE_ID } from "./articleSearch.js";
 
 let affiliateTablesAvailable = true;
 const DOMAGO_SPECIAL_TYPE = "domago_partner";
@@ -656,7 +657,7 @@ class ArticleService {
               attributes: [],
             },
             where: {
-              id: 2,
+              id: TOP_COUNTRY_ARTICLE_TYPE_ID,
             },
           },
           {
@@ -709,7 +710,51 @@ class ArticleService {
     }
   }
 
+  async searchPublicArticles(name, page, pageSize, ownerId) {
+    const { Article, Country, ArticleSpecialType } = db.models;
+    const ownerWhere = ownerId ? { userId: ownerId } : {};
+    const candidates = await Article.findAll({
+      attributes: ["id", "title", "metatags", "countryId", "date_written"],
+      where: getPublicArticleWhere(ownerWhere),
+      include: [
+        { ...getArticleScheduleInclude(), attributes: [] },
+        { model: Country, attributes: ["name"] },
+        {
+          model: ArticleSpecialType,
+          attributes: ["id"],
+          through: { attributes: [] },
+          where: { id: TOP_COUNTRY_ARTICLE_TYPE_ID },
+          required: false,
+        },
+      ],
+    });
+
+    const rankedIds = rankArticleSearchResults(candidates, name);
+    const offset = (page - 1) * pageSize;
+    const pageIds = rankedIds.slice(offset, offset + pageSize);
+    const articles = pageIds.length ? await Article.findAll({
+      where: getPublicArticleWhere({
+        ...ownerWhere,
+        [Op.and]: [{ id: { [Op.in]: pageIds } }],
+      }),
+      include: [getArticleScheduleInclude(), { model: Country }],
+    }) : [];
+    const articlesById = new Map(articles.map((article) => [article.id, article]));
+
+    return {
+      total: rankedIds.length,
+      totalPages: Math.ceil(rankedIds.length / pageSize),
+      currentPage: page,
+      pageSize,
+      data: pageIds.map((id) => articlesById.get(id)).filter(Boolean),
+    };
+  }
+
   async getArticleBySearchTerm(name, page, pageSize, includeScheduled = false, ownerId = null) {
+    if (!includeScheduled) {
+      return this.searchPublicArticles(name, Math.max(1, page), Math.max(1, pageSize), ownerId);
+    }
+
     const limit = pageSize;
     const offset = (page - 1) * pageSize;
 
@@ -735,15 +780,13 @@ class ArticleService {
         limit: limit,
         offset: offset,
         include: [
-          ...(includeScheduled ? [{ model: db.models.ArticleReview, as: "review" }] : []),
+          { model: db.models.ArticleReview, as: "review" },
           getArticleScheduleInclude(),
           {
             model: db.models.Country,
           },
         ],
-        where: includeScheduled
-          ? searchWhere
-          : getPublicArticleWhere(searchWhere),
+        where: searchWhere,
       });
 
       return {

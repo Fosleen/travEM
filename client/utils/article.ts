@@ -125,6 +125,10 @@ export async function getArticlesByName(
       }
     );
 
+    if (!includeScheduled && response.status === 404) {
+      return { data: [], total: 0, totalPages: 0 };
+    }
+
     if (!response.ok) {
       const errorData = await response.json();
       console.log(errorData.error);

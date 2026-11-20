@@ -55,7 +55,7 @@ const SearchResults = ({
       )}
       {currentSearchQuery && articles?.length === 0 && (
         <div className="search-results-empty">
-          Ne postoji niti jedan članak s tim nazivom.
+          Nema rezultata za uneseni pojam.
         </div>
       )}
       {articles && articles.length > 0 && (

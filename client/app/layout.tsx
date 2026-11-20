@@ -10,7 +10,6 @@ import "primereact/resources/themes/lara-light-cyan/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import GoogleAnalytics from "@/components/atoms/GoogleAnalytics/GoogleAnalytics";
-import GoogleAdSense from "@/components/atoms/GoogleAdSense/GoogleAdSense";
 import UXTweak from "@/components/atoms/UXTweak/UXTweak";
 import type { Metadata } from "next";
 import { SITE_URL } from "@/utils/site";
@@ -41,7 +40,6 @@ export default function RootLayout({
     >
       <body className={montserrat.className}>
         <GoogleAnalytics />
-        <GoogleAdSense />
         <UXTweak />
         {(process.env.GLOBAL_CONFIG || process.env.EDGE_CONFIG ||
           (process.env.NODE_ENV === "development" && process.env.SITE_MODE)) && (

@@ -9,6 +9,7 @@ import Footer from "@/components/user/molecules/Footer";
 import Newsletter from "@/components/user/molecules/Newsletter";
 import PopUp from "@/components/user/molecules/PopUp";
 import ScrollToTop from "@/components/atoms/ScrollToTop";
+import GoogleAdSense from "@/components/atoms/GoogleAdSense/GoogleAdSense";
 import { ArticleProvider } from "@/context/ArticleContext";
 import "../../components/user/templates/UserViewLayout.scss";
 import { PlaneTicketsProvider } from "@/context/PlaneTicketsMenuContext";
@@ -116,6 +117,7 @@ export default function UserViewLayout({
         <ContinentProvider>
           <CountryProvider>
             <main className="user-view-layout-container">
+              <GoogleAdSense />
               <ScrollToTop />
               <PopUp />
               <Header

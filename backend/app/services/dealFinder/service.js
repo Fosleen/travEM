@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import {Op} from 'sequelize';
 import db from '../../models/index.js';
+import {mergeHotelResults} from './hotelResults.js';
 import { normalizeSettings, assert, validateSettings, validateOverrides, effectiveSettings, nights, evaluateStay, renderHostel, escapeHtml, cents, scheduleKey, stayTotal } from './domain.js';
 import { SerpApiProvider } from './providers.js';
 import {readSerpApiResponse} from './serpApiResponse.js';
@@ -150,6 +151,7 @@ export async function execute(run,s,active,userId) {
     await run.update({status:'running'}); let input=normalizeSearch(run.input);
     if(input.mode==='hotels')input=hotelSearchInput(await models().Offer.findByPk(input.offerId),input);
     assert(input.mode!=='oneway_pairs','Staro kombiniranje nefiltriranih kalendara je isključeno');
+    assert(['discover','route','calendar','hotels','budget_dates','batch_routes'].includes(input.mode),'Ovaj način pretrage više nije podržan. Pokrenite novu pretragu.');
     if(input.mode==='budget_dates')assert(input.calendarPairVersion===2,'Stari plan dopune više ne vrijedi; pokrenite novu pretragu raspona');
     if(input.mode==='batch_routes'){
       const offer=await models().Offer.findByPk(input.offerId);assert(offer,'Ponuda je uklonjena; dopuna nije pokrenuta');
@@ -206,8 +208,11 @@ export async function execute(run,s,active,userId) {
       });
     }
     if(input.mode==='hotels') {
-      const o=await models().Offer.findByPk(input.offerId);assert(o,'Ponuda ne postoji');
-      await o.update({data:{...o.data,hotels:result.hotels},provenance:{...o.provenance,hotelSearch:{...result.metadata,place:input.place,placeOverride:input.placeOverride,defaultPlace:accommodationDestination(o.destination)}}});
+      await db.sequelize.transaction(async transaction=>{
+        const o=await models().Offer.findByPk(input.offerId,{transaction,lock:transaction.LOCK.UPDATE});assert(o,'Ponuda ne postoji');
+        const hotels=mergeHotelResults(o.data.hotels||[],result.hotels,{previousPlace:o.provenance?.hotelSearch?.place,place:input.place});
+        await o.update({data:{...o.data,hotels},provenance:{...o.provenance,hotelSearch:{...result.metadata,place:input.place,placeOverride:input.placeOverride,defaultPlace:accommodationDestination(o.destination)}}},{transaction});
+      });
     }
     await run.update({status:'completed'}); await audit(userId,'search_completed',{runId:run.id});
   } catch(e) { await run.update({status:'failed',error:run.input?.mode==='batch_routes'?`${e.message}. Ranije spremljeni rezultati ruta ostaju u ponudi; nema automatskog ponavljanja.`:e.message}); }

@@ -55,6 +55,8 @@ import {
   addArticleSection,
   createEmptyArticleSection,
   deleteArticleSection,
+  flightOfferExplainer,
+  flightOfferExplainerIconUrl,
   getSectionIconUrl,
   getSelectedSectionIcon,
   insertArticleSectionAfter,
@@ -461,7 +463,7 @@ const AddArticlePage = () => {
             validationSchema={articleValidationSchema}
             onSubmit={handleSave}
           >
-            {({ values, setFieldValue, isSubmitting }) => (
+            {({ values, setFieldValue, setValues, isSubmitting }) => (
               <Form className="add-article-form">
                 <UnsavedChangesGuard active={!isSubmitting} />
                 <div className="add-article-inputs">
@@ -524,25 +526,55 @@ const AddArticlePage = () => {
                         options={articleTypes}
                         value={values.article_type}
                         onChange={(value) => {
-                          setFieldValue("article_type", value);
-                          setFieldValue("article_airport_city_id", null);
-                          setFieldValue("article_place", null);
-                          setFieldValue("article_country", null);
                           setSelectedCountryId("");
 
-                          values.sections.forEach((_section: any, index: number) => {
-                            setFieldValue(
-                              `sections.${index}.show_visa_info`,
-                              false
-                            );
-                            setFieldValue(
-                              `sections.${index}.show_best_time_to_visit`,
-                              false
-                            );
-                            setFieldValue(
-                              `sections.${index}.show_country_language`,
-                              false
-                            );
+                          const sections = values.sections.map((section) => ({
+                            ...section,
+                            show_visa_info: false,
+                            show_best_time_to_visit: false,
+                            show_country_language: false,
+                          }));
+                          const explainerIndex = sections.findIndex(
+                            (section) => "kind" in section && section.kind === flightOfferExplainer.kind
+                          );
+                          const wasFlightArticle = Number(values.article_type) === Number(ARTICLE_TYPE_AIRPLANE_TICKET_ID);
+                          const isFlightArticle = Number(value) === Number(ARTICLE_TYPE_AIRPLANE_TICKET_ID);
+                          const explainerIconId = Array.isArray(sectionIcons)
+                            ? sectionIcons.find((icon) => icon.url === flightOfferExplainerIconUrl)?.id ?? null
+                            : null;
+
+                          if (isFlightArticle && !wasFlightArticle && explainerIndex === -1) {
+                            const explainer = { ...flightOfferExplainer, section_icon: explainerIconId };
+                            const first = sections[0];
+                            if (first && !first.section_subtitle && !first.section_text &&
+                                !first.section_icon && !first.section_url_title && !first.section_url_link &&
+                                !sectionImages[0]?.length) {
+                              sections[0] = { ...first, ...explainer };
+                            } else {
+                              sections.unshift(explainer);
+                              setSectionImages((images) => [[], ...images]);
+                            }
+                          } else if (!isFlightArticle && wasFlightArticle && explainerIndex !== -1) {
+                            const section = sections[explainerIndex];
+                            if (section.section_subtitle === flightOfferExplainer.section_subtitle &&
+                                section.section_text === flightOfferExplainer.section_text &&
+                                section.section_icon === explainerIconId &&
+                                !section.section_url_title && !section.section_url_link &&
+                                !sectionImages[explainerIndex]?.length) {
+                              sections.splice(explainerIndex, 1);
+                              if (!sections.length) sections.push(createEmptyArticleSection());
+                              setSectionImages((images) => images.length === 1
+                                ? [[]]
+                                : images.filter((_, index) => index !== explainerIndex));
+                            }
+                          }
+                          setValues({
+                            ...values,
+                            article_type: value,
+                            article_airport_city_id: null,
+                            article_place: null,
+                            article_country: null,
+                            sections,
                           });
 
                           if (value != ARTICLE_TYPE_AIRPLANE_TICKET_ID) {

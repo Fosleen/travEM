@@ -37,7 +37,17 @@ export function articleSections(offer,flights,hotel,settings,fields={},suggestio
  const getFacts=()=>facts??=editorialFacts(typeof offer.toJSON==='function'?offer.toJSON():offer);
  const edited=fields.sections??suggestions.sections??[];
  const kinds=['flights',...(hotel?['hotel']:[]),...((offer.selection.extraHotelIndices||[]).length?['alternatives']:[]),...(offer.selection.hostel?['hostel']:[]),'closing'];
- const result=[{kind:'intro',subtitle:'',text:paragraphs(fields.intro??suggestions.intro??''),sectionIconId:null,link_title:'',link_url:''}];
+ // Keep the copy in sync with the CMS new-article form.
+ const result=[
+  {
+   kind:'flight_offer_explainer',
+   subtitle:'Kako funkcioniraju naše ponude?',
+   text:paragraphs('putujEM s travEM je putnički blog i nismo turistička agencija. Na blogu dijelimo iskustva s naših putovanja, pišemo vodiče i donosimo ideje za izlete i putovanja u vlastitoj organizaciji. U rubrici Aviokarte dijelimo primjere povoljnih letova koje smo pronašli, a ponekad dodamo i primjer smještaja. Ako vam nešto odgovara, putem poveznica u članku možete provjeriti aktualne cijene i dostupnost te sami rezervirati i platiti na stranici pružatelja usluge.'),
+   sectionIconId:icons.find(icon=>!icon.feature_key&&icon.url==='https://live.staticflickr.com/65535/53629482325_f7a94a3bb9_o.png')?.id??null,
+   link_title:'',link_url:''
+  },
+  {kind:'intro',subtitle:'',text:paragraphs(fields.intro??suggestions.intro??''),sectionIconId:null,link_title:'',link_url:''}
+ ];
  for(const kind of kinds){
   const section=edited.find(s=>s.kind===kind),subtitle=section?.subtitle??sectionDefaults[kind];
   const sectionIconId=section?section.sectionIconId:defaultSectionIcon(kind,icons);

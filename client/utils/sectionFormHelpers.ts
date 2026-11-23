@@ -28,6 +28,17 @@ export const createEmptyArticleSection = (
   ...(options.includeOrder ? { order: 1 } : {}),
 });
 
+// Keep the copy in sync with the DealFinder editorial draft.
+export const flightOfferExplainer = {
+  ...createEmptyArticleSection(),
+  kind: "flight_offer_explainer",
+  section_subtitle: "Kako funkcioniraju naše ponude?",
+  section_text: "<p>putujEM s travEM je putnički blog i nismo turistička agencija. Na blogu dijelimo iskustva s naših putovanja, pišemo vodiče i donosimo ideje za izlete i putovanja u vlastitoj organizaciji. U rubrici Aviokarte dijelimo primjere povoljnih letova koje smo pronašli, a ponekad dodamo i primjer smještaja. Ako vam nešto odgovara, putem poveznica u članku možete provjeriti aktualne cijene i dostupnost te sami rezervirati i platiti na stranici pružatelja usluge.</p>",
+};
+
+export const flightOfferExplainerIconUrl =
+  "https://live.staticflickr.com/65535/53629482325_f7a94a3bb9_o.png";
+
 export const getSectionIconUrl = (icon?: SectionIcon | null) => {
   return icon?.url || icon?.icon_url || icon?.image_url || icon?.src || "";
 };

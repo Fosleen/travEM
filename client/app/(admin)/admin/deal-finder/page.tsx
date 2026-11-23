@@ -18,7 +18,8 @@ import './style.scss';
 type Json = Record<string, any>; // Provider independent admin JSON is validated on the server.
 const statusLabels:Record<string,string>={manual:'Ručno',scheduled:'Automatski',queued:'Na čekanju',running:'U tijeku',completed:'Dovršeno',failed:'Neuspješno',discovered:'Pronađeno',needs_verification:'Za provjeru',ready_for_selection:'Odabrano',draft:'Nacrt',published:'Objavljeno',rejected:'Odbačeno',expired:'Isteklo',verified:'Provjereno',unverified:'Nepotvrđeno',stale:'Provjera je istekla',unavailable:'Nedostupno'};
 const label=(value:string)=>statusLabels[value]||value;
-const tabs=[{name:'Ponude',icon:Tray},{name:'Nova pretraga',icon:MagnifyingGlass},{name:'Postavke',icon:SlidersHorizontal},{name:'Povijest',icon:ClockCounterClockwise}];
+type PollResults={available:boolean;polls:{articleId:number;title:string;question:string;enabled:boolean;totalVotes:number;options:{label:string;votes:number;percentage:number}[]}[]};
+const tabs=[{name:'Ponude',icon:Tray},{name:'Ankete',icon:CheckCircle},{name:'Nova pretraga',icon:MagnifyingGlass},{name:'Postavke',icon:SlidersHorizontal},{name:'Povijest',icon:ClockCounterClockwise}];
 function ActionButton({label:children,onClick,disabled,outlined,severity,icon}:{label:string,onClick?:()=>void,disabled?:boolean,outlined?:boolean,severity?:string,icon?:ReactNode}) {
   return <Button onClick={onClick} disabled={disabled} adminPrimary={!outlined&&severity!=='secondary'} white={outlined||severity==='secondary'}>{icon}{children}</Button>;
 }
@@ -29,7 +30,15 @@ function OfferPrice({summary}:{summary:ReturnType<typeof offerSummary>}) {
   return <span className="df-card-fare"><span className="df-card-price">{Number.isFinite(cheapest)?`Od ${offerPriceFormatter.format(cheapest/100)}`:'Cijena nije dostupna'}</span>{cheapestFlight&&<><AirlineBadge flight={cheapestFlight}/><FlightStopsBadge flight={cheapestFlight}/></>}</span>;
 }
 function OfferBadges({offer,weekend}:{offer:Json,weekend:number}) {
-  return <div className="df-offer-badges">{offer.data?.type==='roundup'&&<span className="df-badge">Više odredišta</span>}{!['needs_verification','discovered','unverified'].includes(offer.status)&&<span className={`df-badge status-${offer.status}`}>{label(offer.status)}</span>}{offer.outsideEurope===true&&<span className="df-badge df-badge-distant">{offer.data?.type==='roundup'?'Uključuje izvan Europe':'Izvan Europe'}</span>}{weekend<2&&<span className="df-badge df-badge-weekend">{weekend===0?'Weekend break':'Produženi vikend'}</span>}</div>;
+  return <div className="df-offer-badges">{offer.data?.type==='roundup'&&<span className="df-badge">Više odredišta</span>}{!['needs_verification','discovered','unverified'].includes(offer.status)&&<span className={`df-badge status-${offer.status}`}>{label(offer.status)}</span>}{offer.outsideEurope===true&&<span className="df-badge df-badge-distant">{offer.data?.type==='roundup'?'Uključuje izvan Europe':'Izvan Europe'}</span>}{weekend<2&&<span className="df-badge df-badge-weekend">{weekend===0?'Weekend break':'Produženi vikend'}</span>}
+    {offer.pollInterest?.map(({destination,votes}:{destination:string;votes:number})=><span key={destination} className="df-badge df-badge-cheap">Ankete · {destination} · {voteCount(votes)}</span>)}
+  </div>;
+}
+function voteCount(votes:number) {
+  const digit=votes%10;
+  const ending=votes%100;
+  const noun=ending>=11&&ending<=14?'glasova':digit===1?'glas':digit>=2&&digit<=4?'glasa':'glasova';
+  return `${votes} ${noun}`;
 }
 function OfferCity({name,code,airportName,country}:{name:string,code:string,airportName?:string,country?:string}) {
   const element=useRef<HTMLElement>(null);
@@ -49,12 +58,14 @@ function OfferCity({name,code,airportName,country}:{name:string,code:string,airp
   return <strong ref={element} title={airportName}><span className="df-city-label">{name.split(/\s+/).map((word,i)=><Fragment key={i}>{i>0?' ':''}<span className="df-city-word">{word}</span></Fragment>)}</span><small><CountryFlag country={country}/> ({code})</small></strong>;
 }
 export default function DealFinder() {
+  const [pollResults,setPollResults]=useState<PollResults|null>(null);
   const [offerSort,setOfferSort]=useState('price');
   const [tab,setTab]=useState('Ponude'),[offers,setOffers]=useState<Json[]>([]),[runs,setRuns]=useState<Json[]>([]),[origins,setOrigins]=useState<Json[]>([]),[budget,setBudget]=useState<Json>({}),[settings,setSettings]=useState(''),[error,setError]=useState(''),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[offer,setOffer]=useState<Json|null>(null),[filter,setFilter]=useState('');
   const [search,setSearch]=useState<Json>(()=>({...defaultSearchWindow(),origins:[],minimumDays:1,mode:'discover',discoveryStrategy:'cheap_first',maxPriceEur:100,combineDestinations:false}));
   const [destination,setDestination]=useState<FlightDestination|null>(null);
   const reload=useCallback(async()=>{
-    const [o,r,a,b]=await Promise.all([api('/offers'),api('/runs'),api('/origins'),api('/budget')]);setOffers(o);setRuns(r);setOrigins(a);setBudget(b);
+    const [result,r,a,b]=await Promise.all([api('/offers?includePolls=true'),api('/runs'),api('/origins'),api('/budget')]);
+    setOffers(result.offers);setPollResults(result.pollResults);setRuns(r);setOrigins(a);setBudget(b);
   },[]);
   const action=useCallback(async(fn:()=>Promise<void>)=>{setBusy(true);setError('');setNotice('');try{await fn();}catch(e){const message=e instanceof Error?e.message:'Pogreška';setError(/doesn't exist|no such table|unknown column|unknown database/i.test(message)?'Baza još nije pripremljena za Deal Finder. Prvo pokrenite potrebne SQL migracije; pretrage nisu pokrenute.':message);}finally{setBusy(false);}},[]);
   useEffect(()=>{action(async()=>{await reload();setSettings(JSON.stringify(await api('/settings'),null,2));});},[action,reload]);
@@ -78,6 +89,24 @@ export default function DealFinder() {
     <header className="df-header"><div className="df-heading"><span className="df-heading__icon"><AirplaneTilt size={30}/></span><div><span className="df-eyebrow">PONUDE PUTOVANJA</span><h1>Deal Finder</h1><p>Pronađi dobru ponudu. Odaberi detalje. Pripremi članak.</p></div></div><ActionButton label="Nova pretraga" icon={<Plus size={19}/>} onClick={()=>{setOffer(null);setTab('Nova pretraga');}}/></header>
     <div className="df-overview"><article><span className="df-stat-icon"><Tray size={23}/></span><div><span>Ponude za pregled</span><strong>{offers.filter(o=>!['rejected','expired','published'].includes(o.status)).length}</strong></div></article><article><span className="df-stat-icon"><CheckCircle size={23}/></span><div><span>Odabrane ponude</span><strong>{offers.filter(o=>o.status==='ready_for_selection').length}</strong></div></article><article><span className="df-stat-icon"><MagnifyingGlass size={23}/></span><div><span>API upiti ovog mjeseca</span><strong>{budget.used??'—'} <small>/ {budget.limit??'—'}</small></strong></div></article><article><span className="df-stat-icon"><ShieldCheck size={23}/></span><div><span>Preostalo upita</span><strong>{budget.remaining??'—'}</strong></div></article></div>
     <nav className="df-tabs" aria-label="Deal Finder">{tabs.map(({name,icon:Icon})=><button type="button" key={name} className={tab===name?'is-active':''} aria-current={tab===name?'page':undefined} onClick={()=>setTab(name)}><Icon size={20}/>{name}</button>)}</nav>
+    {tab==='Ankete'&&<section className="df-panel">
+      <div className="df-panel-heading">
+        <h2>Ankete o sljedećoj destinaciji</h2>
+        <ActionButton label="Osvježi" outlined disabled={busy} icon={<ArrowClockwise size={18}/>} onClick={()=>action(reload)}/>
+      </div>
+      {!pollResults&&busy&&<p>Učitavanje anketa…</p>}
+      {pollResults?.available===false&&<p>Ankete će biti dostupne nakon primjene migracije article-destination-polls.sql.</p>}
+      {pollResults?.available&&!pollResults.polls.length&&<p>Još nema spremljenih anketa.</p>}
+      <div className="df-run-list">{pollResults?.polls.map(poll=><article key={poll.articleId}>
+        <span className="df-section-icon"><CheckCircle size={22}/></span>
+        <div>
+          <strong><Link href={`/admin/clanci/uredi/${poll.articleId}`}>{poll.title}</Link></strong>
+          <p>{poll.question}{!poll.enabled&&' · Zatvorena'}</p>
+          {[...poll.options].sort((a,b)=>b.votes-a.votes).map(option=><p key={option.label}>{option.label} · {voteCount(option.votes)} · {option.percentage}%</p>)}
+        </div>
+        <span className="df-run-usage"><strong>{voteCount(poll.totalVotes)}</strong> ukupno</span>
+      </article>)}</div>
+    </section>}
     {error&&<div role="alert" className="df-alert error"><WarningCircle size={22}/><span>{error}</span></div>}{notice&&<div role="status" className="df-alert success"><CheckCircle size={22}/><span>{notice}</span></div>}
     {tab==='Nova pretraga'&&<section className="df-panel">
       <div className="df-panel-heading"><span className="df-section-icon"><MagnifyingGlass size={23}/></span><div><h2>Nova pretraga letova</h2><p>Odaberi polazišta i razdoblje putovanja.</p></div></div>

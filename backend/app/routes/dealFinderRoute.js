@@ -7,6 +7,8 @@ import {templateEditorial} from '../services/dealFinder/textGeneration.js';
 import { editorial, assert, evaluateStay, renderSelection, renderHostel, effectiveSettings,renderAlternativeHotels } from '../services/dealFinder/domain.js';
 import { clearCache, clearCacheByPattern } from '../middleware/redis.js';
 import {searchAirports,searchFlightDestinations,offerAirportNames,discoveryDestinationAllowed} from '../services/dealFinder/airports.js';
+import {dealFinderPollResults} from '../services/articlePollService.js';
+import {offerPollMatcher} from '../services/dealFinder/pollInterest.js';
 const router=Router();
 router.use(verifyToken);
 router.use(async(req,res,next)=>{
@@ -21,11 +23,15 @@ router.get('/airports',wrap(req=>req.query.includeCities==='true'?searchFlightDe
 router.get('/budget',wrap(()=>service.budget()));
 router.get('/runs',wrap(()=>orderedRows(db.dealFinder.Run,{order:[['createdAt','DESC'],['id','DESC']],limit:100})));
 router.get('/runs/:id',wrap(async req=>{const run=await db.dealFinder.Run.findByPk(req.params.id);assert(run,'Pretraga ne postoji');return run;}));
-router.get('/offers',wrap(async()=>{
+router.get('/offers',wrap(async req=>{
   const priority=db.sequelize.literal("CASE WHEN status = 'ready_for_selection' THEN -1 WHEN status IN ('needs_verification','discovered','unverified','stale') THEN 0 WHEN status = 'rejected' THEN 2 ELSE 1 END");
   const offers=await orderedRows(db.dealFinder.Offer,{order:[[priority,'ASC'],['updatedAt','DESC'],['id','DESC']],limit:200});
   const origins=await service.origins();
-  return offers.filter(o=>o.provenance?.coverage!=='discovery_highlights'||discoveryDestinationAllowed(o.origin,o.destination)).map(o=>offerAirportNames(o,origins));
+  const visible=offers.filter(o=>o.provenance?.coverage!=='discovery_highlights'||discoveryDestinationAllowed(o.origin,o.destination)).map(o=>offerAirportNames(o,origins));
+  if(req.query.includePolls!=='true')return visible;
+  const pollResults=await dealFinderPollResults();
+  const match=offerPollMatcher(pollResults.polls);
+  return {offers:visible.map(offer=>({...offer,pollInterest:match(offer)})),pollResults};
 }));
 router.post('/offers/delete-all',wrap(async req=>{
   assert(req.body.confirm===true,'Potvrdite trajno brisanje svih ponuda');

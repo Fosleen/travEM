@@ -35,6 +35,33 @@ export async function pollCapabilities(){
   try{await Promise.all([Poll.findOne({attributes:['article_id']}),Option.findOne({attributes:['id']}),Vote.findOne({attributes:['id']})]);return {available:true};}
   catch(e){if(missingTable(e))return {available:false,migrationRequired:true};throw e;}
 }
+export async function dealFinderPollResults(){
+  try {
+    const polls=await Poll.findAll({order:[['article_id','DESC']],raw:true});
+    const ids=polls.map(poll=>poll.article_id);
+    if(!ids.length)return {available:true,polls:[]};
+    const [articles,options,votes]=await Promise.all([
+      db.models.Article.findAll({attributes:['id','title'],where:{id:ids},raw:true}),
+      Option.findAll({where:{article_id:ids},order:[['sort_order','ASC'],['id','ASC']],raw:true}),
+      Vote.findAll({attributes:['option_id',[fn('COUNT',col('id')),'total']],where:{article_id:ids},group:['option_id'],raw:true}),
+    ]);
+    const articlesById=new Map(articles.map(article=>[article.id,article]));
+    const votesByOption=new Map(votes.map(vote=>[Number(vote.option_id),Number(vote.total)]));
+    const optionsByArticle=new Map(ids.map(id=>[id,[]]));
+    for(const option of options)optionsByArticle.get(option.article_id).push(option);
+    return {available:true,polls:polls.filter(poll=>articlesById.has(poll.article_id)).map(poll=>{
+      const options=optionsByArticle.get(poll.article_id);
+      const counts=options.map(option=>votesByOption.get(option.id)||0);
+      const percentages=pollPercentages(counts);
+      return {articleId:poll.article_id,title:articlesById.get(poll.article_id).title,
+        question:poll.question,enabled:poll.enabled,totalVotes:counts.reduce((sum,count)=>sum+count,0),
+        options:options.map((option,index)=>({label:option.label,votes:counts[index],percentage:percentages[index]}))};
+    })};
+  }catch(error){
+    if(missingTable(error))return {available:false,polls:[]};
+    throw error;
+  }
+}
 export async function getArticlePoll(value,ip,{manage=false}={}){
   const id=idValue(value),article=manage?await db.models.Article.findByPk(id):await publicArticle(id);
   if(!article||Number(article.articleTypeId)!==2)throw pollError('Anketa nije pronađena.',404);

@@ -172,6 +172,10 @@
     }
   }
 
+  .hero-crop-shade-controls {
+    margin-block: 0 12px;
+  }
+
   @media (min-width: 1000px) {
     .hero-crop-previews {
       grid-template-columns: minmax(0, 1920px) minmax(0, min(34%, 440px));

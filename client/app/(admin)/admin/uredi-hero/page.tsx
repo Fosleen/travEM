@@ -90,6 +90,7 @@ const EditHero = () => {
         crop={crop}
         editable={isUrlShown && !isSaving}
         onChange={(device, frameCrop) => setCrop((previous) => ({ ...previous, [device]: frameCrop }))}
+        onShadeChange={(topShade) => setCrop((previous) => ({ ...previous, topShade }))}
       />
       {isUrlShown && (
         <div className="edit-hero-buttons">

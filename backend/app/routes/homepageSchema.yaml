@@ -18,6 +18,11 @@ components:
               $ref: "#/components/schemas/HeroCrop"
             mobile:
               $ref: "#/components/schemas/HeroCrop"
+            topShade:
+              type: integer
+              minimum: 0
+              maximum: 100
+              default: 0
         banner_image_url:
           type: string
           example: https://live.staticflickr.com/65535/53459370055_b26d27f7e5_b.jpg

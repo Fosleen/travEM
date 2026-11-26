@@ -14,9 +14,18 @@
   }
 
   .homepage-image-mask {
+    position: relative;
     clip-path: url("#homepage-clip-custom");
     width: 100%;
     height: 100%;
+  }
+
+  .homepage-image-top-shade {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 180px;
+    background: linear-gradient(to bottom, #000, transparent);
+    pointer-events: none;
   }
 
   img {

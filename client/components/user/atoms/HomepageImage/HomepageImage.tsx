@@ -35,6 +35,13 @@ const HomepageImage: FC<{ url: string; crop?: HeroImageCrop | null }> = ({ url, 
           alt="homepage-hero-image"
           style={{ objectPosition: position, transformOrigin: position, scale: zoom }}
         />
+        {!!crop?.topShade && (
+          <div
+            className="homepage-image-top-shade"
+            style={{ opacity: crop.topShade / 100 }}
+            aria-hidden="true"
+          />
+        )}
       </div>
       <svg
         className="homepage-clip scalableSvg"

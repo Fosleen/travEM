@@ -162,7 +162,9 @@ function PreviewFrame({
   );
 }
 
-export default function HeroCropPreview({ url, ...props }: PreviewProps) {
+export default function HeroCropPreview({
+  url, onShadeChange, ...props
+}: PreviewProps & { onShadeChange: (value: number) => void }) {
   const [previewUrl, setPreviewUrl] = useState(url);
   const [mobileSizeIndex, setMobileSizeIndex] = useState(0);
   const [mobileWidth, mobileHeight] = mobileSizes[mobileSizeIndex];
@@ -173,10 +175,29 @@ export default function HeroCropPreview({ url, ...props }: PreviewProps) {
   }, [url]);
 
   if (!url || !previewUrl) return null;
+  const topShade = props.crop.topShade ?? 0;
 
   return (
     <section aria-label="Pregled izreza">
       {props.editable && <p className="hero-crop-help">Povuci fotografiju ili prilagodi kadar klizačima.</p>}
+      {props.editable && (
+        <fieldset className="hero-crop-controls hero-crop-shade-controls">
+          <legend>Zatamnjenje vrha</legend>
+          <label>
+            <span>Jačina zatamnjenja</span>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              value={topShade}
+              aria-valuetext={`${topShade}%`}
+              style={{ "--hero-crop-fill": `${topShade}%` } as CSSProperties}
+              onChange={(event) => onShadeChange(event.target.valueAsNumber)}
+            />
+            <span className="hero-crop-value" aria-hidden="true">{topShade}%</span>
+          </label>
+        </fieldset>
+      )}
       <div className="hero-crop-previews">
         <PreviewFrame label="Desktop" width={1920} height={1080} device="desktop" url={previewUrl} {...props} />
         <PreviewFrame

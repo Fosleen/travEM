@@ -55,6 +55,7 @@ class HomepageController {
     const crop = hero_image_crop == null ? null : {
       desktop: { x: hero_image_crop.desktop.x, y: hero_image_crop.desktop.y, zoom: hero_image_crop.desktop.zoom },
       mobile: { x: hero_image_crop.mobile.x, y: hero_image_crop.mobile.y, zoom: hero_image_crop.mobile.zoom },
+      ...(hero_image_crop.topShade === undefined ? {} : { topShade: hero_image_crop.topShade }),
     };
     const response = await service.patchHomepage(
       hero_image_url,

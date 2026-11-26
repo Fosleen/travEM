@@ -1,8 +1,9 @@
 "use client";
 import "./HomepageImage.scss";
 import { FC, useEffect, useState } from "react";
+import { defaultHeroCrop, type HeroImageCrop } from "@/utils/heroImageCrop";
 
-const HomepageImage: FC<{ url: string }> = ({ url }) => {
+const HomepageImage: FC<{ url: string; crop?: HeroImageCrop | null }> = ({ url, crop }) => {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -23,9 +24,18 @@ const HomepageImage: FC<{ url: string }> = ({ url }) => {
     return null;
   }
 
+  const { x, y, zoom } = crop?.[isMobile ? "mobile" : "desktop"] ?? defaultHeroCrop;
+  const position = `${x}% ${y}%`;
+
   return (
     <div className="homepage-image-container">
-      <img src={url} alt="homepage-hero-image" />
+      <div className="homepage-image-mask">
+        <img
+          src={url}
+          alt="homepage-hero-image"
+          style={{ objectPosition: position, transformOrigin: position, scale: zoom }}
+        />
+      </div>
       <svg
         className="homepage-clip scalableSvg"
         width="61"

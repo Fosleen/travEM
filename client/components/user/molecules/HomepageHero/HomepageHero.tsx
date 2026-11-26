@@ -8,7 +8,7 @@ import { HomepageData } from "../../../../common/types";
 import Image from "next/image";
 import Link from "next/link";
 
-const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
+const HomepageHero: FC<{ homepageContent: Pick<HomepageData, "hero_image_url" | "hero_image_crop"> }> = ({
   homepageContent,
 }) => {
   const [isDestinationsMenuHereShown, setIsDestinationsMenuHereShown] =
@@ -127,7 +127,7 @@ const HomepageHero: FC<{ homepageContent: HomepageData }> = ({
       />
 
       <div className="homepage-hero-left">
-        <HomepageImage url={homepageContent.hero_image_url} />
+        <HomepageImage url={homepageContent.hero_image_url} crop={homepageContent.hero_image_crop} />
 
         <Image
           className="overlay-icon-2"

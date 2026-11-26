@@ -1,0 +1,13 @@
+@use "@/utils/theme.scss" as *;
+
+.hero-preview-stage {
+  // Include the portion of the photo that extends above the hero content.
+  padding-top: 90px;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: $bg;
+}
+
+.hero-preview-error {
+  padding: 16px;
+}

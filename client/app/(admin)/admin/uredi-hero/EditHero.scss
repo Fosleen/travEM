@@ -6,22 +6,176 @@
   gap: 16px;
   padding-right: 12px;
 
-  .edit-hero-image-container {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-
-    img {
-      max-width: 800px;
-    }
-  }
-
   .edit-hero-input-container {
     max-width: 800px;
   }
 
-  p {
-    margin-top: 24px;
+  .hero-crop-previews {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 16px;
+
+    figure:last-child {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    figcaption {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 40px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+  }
+
+  .hero-crop-size,
+  .hero-crop-size-select {
+    border: 1px solid $greyMiddle;
+    border-radius: 8px;
+    background: $bg;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .hero-crop-size-select {
+    cursor: pointer;
+    min-height: 36px;
+
+    &:hover {
+      border-color: $green;
+    }
+  }
+
+  .hero-crop-viewport {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    outline: 1px solid $greyMiddle;
+
+    iframe {
+      position: absolute;
+      inset: 0 auto auto 0;
+      border: 0;
+      transform-origin: top left;
+    }
+  }
+
+  .hero-crop-help {
+    margin-bottom: 12px;
+  }
+
+  .hero-crop-drag {
+    position: absolute;
+    inset: 0;
+    touch-action: none;
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  .hero-crop-controls {
+    width: 100%;
+    min-width: 0;
+    max-width: 520px;
+    margin-top: 16px;
+    padding: 10px 12px 12px;
+    border: 1px solid $greyMiddle;
+    border-radius: 8px;
+    background: $bg;
+    display: grid;
+    gap: 4px;
+
+    legend {
+      font-weight: 600;
+      padding-inline: 6px;
+    }
+
+    label {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      column-gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .hero-crop-value {
+      grid-area: 1 / 2;
+      color: $greenHover;
+      font-variant-numeric: tabular-nums;
+    }
+
+    input[type="range"] {
+      appearance: none;
+      grid-column: 1 / -1;
+      width: 100%;
+      min-width: 0;
+      height: 26px;
+      background: transparent;
+      border-radius: 32px;
+      cursor: pointer;
+
+      &::-webkit-slider-runnable-track {
+        height: 6px;
+        border-radius: 32px;
+        background: linear-gradient(to right, $green 0 var(--hero-crop-fill), $greyMiddle var(--hero-crop-fill) 100%);
+      }
+
+      &::-moz-range-track {
+        height: 6px;
+        border-radius: 32px;
+        background: linear-gradient(to right, $green 0 var(--hero-crop-fill), $greyMiddle var(--hero-crop-fill) 100%);
+      }
+
+      &::-webkit-slider-thumb {
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        margin-top: -6px;
+        border: 2px solid white;
+        border-radius: 50%;
+        background: $greenHover;
+        box-shadow: 0 0 0 1px $greenHover;
+      }
+
+      &::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        border: 2px solid white;
+        border-radius: 50%;
+        background: $greenHover;
+        box-shadow: 0 0 0 1px $greenHover;
+      }
+    }
+
+    button {
+      justify-self: start;
+      margin-top: 4px;
+      padding-inline: 14px;
+      font-size: 12px;
+    }
+  }
+
+  .hero-crop-size-select,
+  .hero-crop-controls input,
+  .hero-crop-controls button {
+    &:focus-visible {
+      outline: 2px solid $greenHover;
+      outline-offset: 2px;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .hero-crop-previews {
+      grid-template-columns: minmax(0, 1920px) minmax(0, min(34%, 440px));
+    }
   }
 
   .edit-hero-buttons {

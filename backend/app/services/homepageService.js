@@ -57,12 +57,14 @@ class HomepageService {
     videos_nmbr,
     distance_nmbr,
     banner_image_url,
-    button_url
+    button_url,
+    hero_image_crop
   ) {
     try {
       await db.models.Homepage.update(
         {
           hero_image_url: hero_image_url,
+          hero_image_crop,
           banner_title: banner_title,
           banner_small_text: banner_small_text,
           banner_description: banner_description,

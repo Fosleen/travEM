@@ -109,6 +109,7 @@ export interface GalleryImage {
 }
 
 export interface HomepageData {
+  hero_image_crop?: import("@/utils/heroImageCrop").HeroImageCrop | null;
   id: number;
   hero_image_url: string;
   banner_image_url: string;

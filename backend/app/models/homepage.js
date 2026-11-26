@@ -3,6 +3,7 @@ export default (sequelize, DataTypes) => {
     "homepage",
     {
       hero_image_url: { type: DataTypes.STRING(225), allowNull: false },
+      hero_image_crop: { type: DataTypes.JSON, allowNull: true },
       banner_image_url: { type: DataTypes.STRING(255), allowNull: false },
       banner_title: { type: DataTypes.STRING(45), allowNull: false },
       banner_small_text: { type: DataTypes.STRING(45), allowNull: false },

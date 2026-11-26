@@ -1,5 +1,6 @@
 import { clearCache, getOrSetCache } from "../middleware/redis.js";
 import service from "../services/homepageService.js";
+import { isHeroImageCrop } from "../utils/heroImageCrop.js";
 
 class HomepageController {
   async getHomepage(req, res) {
@@ -45,8 +46,18 @@ class HomepageController {
   }
 
   async patchHomepage(req, res) {
+    const { hero_image_url, hero_image_crop } = req.body;
+    if (hero_image_crop !== undefined &&
+        (typeof hero_image_url !== "string" || !hero_image_url.trim() || !isHeroImageCrop(hero_image_crop))) {
+      return res.status(400).json({ error: "Invalid hero image crop" });
+    }
+
+    const crop = hero_image_crop == null ? null : {
+      desktop: { x: hero_image_crop.desktop.x, y: hero_image_crop.desktop.y, zoom: hero_image_crop.desktop.zoom },
+      mobile: { x: hero_image_crop.mobile.x, y: hero_image_crop.mobile.y, zoom: hero_image_crop.mobile.zoom },
+    };
     const response = await service.patchHomepage(
-      req.body.hero_image_url,
+      hero_image_url,
       req.body.banner_title,
       req.body.banner_small_text,
       req.body.banner_description,
@@ -55,7 +66,8 @@ class HomepageController {
       req.body.videos_nmbr,
       req.body.distance_nmbr,
       req.body.banner_image_url,
-      req.body.button_url
+      req.body.button_url,
+      hero_image_url === undefined ? undefined : crop
     );
     if (response == undefined) {
       res.status(500).json({ error: "Error updating homepage" });

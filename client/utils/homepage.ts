@@ -1,4 +1,5 @@
 import { apiUrl } from "./api";
+import type { HeroImageCrop } from "./heroImageCrop";
 
 // Helper function to get token (only on client side)
 const getToken = () => {
@@ -34,7 +35,7 @@ export async function getHomepageStats(noCache: boolean = false) {
   return data;
 }
 
-export async function updateHeroImage(url: string) {
+export async function updateHeroImage(url: string, crop: HeroImageCrop) {
   const token = getToken();
 
   const response = await fetch(`${apiUrl}/homepage`, {
@@ -46,6 +47,7 @@ export async function updateHeroImage(url: string) {
     method: "PATCH",
     body: JSON.stringify({
       hero_image_url: url,
+      hero_image_crop: crop,
     }),
   });
   const data = await response.json();

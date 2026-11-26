@@ -9,6 +9,15 @@ components:
         hero_image_url:
           type: string
           example: https://live.staticflickr.com/65535/53459370055_b26d27f7e5_b.jpg
+        hero_image_crop:
+          type: object
+          nullable: true
+          required: [desktop, mobile]
+          properties:
+            desktop:
+              $ref: "#/components/schemas/HeroCrop"
+            mobile:
+              $ref: "#/components/schemas/HeroCrop"
         banner_image_url:
           type: string
           example: https://live.staticflickr.com/65535/53459370055_b26d27f7e5_b.jpg
@@ -36,6 +45,23 @@ components:
         button_url:
           type: string
           example: "https://fosleen.com/"
+
+    HeroCrop:
+      type: object
+      required: [x, y, zoom]
+      properties:
+        x:
+          type: number
+          minimum: 0
+          maximum: 100
+        y:
+          type: number
+          minimum: 0
+          maximum: 100
+        zoom:
+          type: number
+          minimum: 1
+          maximum: 3
 
     HomepageStats:
       type: object

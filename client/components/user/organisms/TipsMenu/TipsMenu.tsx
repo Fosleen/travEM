@@ -2,32 +2,33 @@ import TipsMenuItem from "../../molecules/TipsMenuItem";
 import "./TipsMenu.scss";
 import { FC } from "react";
 import { TipsMenuProps } from "@/common/types";
+import { TIPS_CATEGORY_ICONS } from "@/utils/articleTypeHelpers";
 
 const menuItems = [
   {
     title: "Pakiranje",
-    icon: "/images/luggage-icon.png",
+    icon: TIPS_CATEGORY_ICONS.pakiranje,
   },
   {
     title: "Let avionom",
-    icon: "/images/airport-icon.png",
+    icon: TIPS_CATEGORY_ICONS["let-avionom"],
   },
   {
     title: "Novosti i organizacija puta",
     slugTitle: "Organizacija puta",
-    icon: "/images/travel-org-icon.png",
+    icon: TIPS_CATEGORY_ICONS["organizacija-puta"],
   },
   {
     title: "Aplikacije",
-    icon: "/images/travel-app-icon.png",
+    icon: TIPS_CATEGORY_ICONS.aplikacije,
   },
   {
     title: "Smještaj",
-    icon: "/images/bed-icon.png",
+    icon: TIPS_CATEGORY_ICONS.smjestaj,
   },
   {
     title: "Revolut",
-    icon: "/images/cards-icon.png",
+    icon: TIPS_CATEGORY_ICONS.revolut,
   },
 ];
 

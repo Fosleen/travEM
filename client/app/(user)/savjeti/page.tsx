@@ -4,17 +4,18 @@ import TipsMenuItem from "@/components/user/molecules/TipsMenuItem/TipsMenuItem"
 import "@/components/user/pages/contentHubs/ContentHubs.scss";
 import { getArticleTypes } from "@/utils/articleTypes";
 import { SITE_URL } from "@/utils/site";
+import { TIPS_CATEGORY_ICONS } from "@/utils/articleTypeHelpers";
 
 const tipVisuals: Record<string, { title: string; icon: string }> = {
-  pakiranje: { title: "Pakiranje", icon: "/images/luggage-icon.png" },
-  "let-avionom": { title: "Let avionom", icon: "/images/airport-icon.png" },
+  pakiranje: { title: "Pakiranje", icon: TIPS_CATEGORY_ICONS.pakiranje },
+  "let-avionom": { title: "Let avionom", icon: TIPS_CATEGORY_ICONS["let-avionom"] },
   "organizacija-puta": {
     title: "Novosti i organizacija puta",
-    icon: "/images/travel-org-icon.png",
+    icon: TIPS_CATEGORY_ICONS["organizacija-puta"],
   },
-  aplikacije: { title: "Aplikacije", icon: "/images/travel-app-icon.png" },
-  smjestaj: { title: "Smještaj", icon: "/images/bed-icon.png" },
-  revolut: { title: "Revolut", icon: "/images/cards-icon.png" },
+  aplikacije: { title: "Aplikacije", icon: TIPS_CATEGORY_ICONS.aplikacije },
+  smjestaj: { title: "Smještaj", icon: TIPS_CATEGORY_ICONS.smjestaj },
+  revolut: { title: "Revolut", icon: TIPS_CATEGORY_ICONS.revolut },
 };
 
 const tipOrder = [
@@ -76,7 +77,7 @@ export default async function TipsPage() {
           {articleTypes.map((type) => {
             const visual = tipVisuals[type.name] || {
               title: type.name,
-              icon: "/images/travel-org-icon.png",
+              icon: TIPS_CATEGORY_ICONS["organizacija-puta"],
             };
             return (
               <TipsMenuItem

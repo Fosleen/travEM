@@ -10,6 +10,7 @@ import { Article, ArticleType, Nullable } from "@/common/types";
 import Pagination from "@/components/atoms/Pagination";
 import { parseBooleanValue } from "@/utils/parseBooleanValue";
 import { getArticleUrl } from "@/utils/articleUrl";
+import { TIPS_CATEGORY_ICONS } from "@/utils/articleTypeHelpers";
 
 interface TipsAndTricksProps {
   initialArticleTypes: Array<ArticleType>;
@@ -29,37 +30,37 @@ const tipsMenuItems = [
     title: "Pakiranje",
     displayTitle: "Pakiranje",
     slugTitle: "pakiranje",
-    icon: "/images/luggage-icon.png",
+    icon: TIPS_CATEGORY_ICONS.pakiranje,
   },
   {
     title: "Let avionom",
     displayTitle: "Let avionom",
     slugTitle: "let-avionom",
-    icon: "/images/airport-icon.png",
+    icon: TIPS_CATEGORY_ICONS["let-avionom"],
   },
   {
     title: "Organizacija puta",
     displayTitle: "Novosti i organizacija puta",
     slugTitle: "organizacija-puta",
-    icon: "/images/travel-org-icon.png",
+    icon: TIPS_CATEGORY_ICONS["organizacija-puta"],
   },
   {
     title: "Aplikacije",
     displayTitle: "Aplikacije",
     slugTitle: "aplikacije",
-    icon: "/images/travel-app-icon.png",
+    icon: TIPS_CATEGORY_ICONS.aplikacije,
   },
   {
     title: "Smještaj",
     displayTitle: "Smještaj",
     slugTitle: "smjestaj",
-    icon: "/images/bed-icon.png",
+    icon: TIPS_CATEGORY_ICONS.smjestaj,
   },
   {
     title: "Revolut",
     displayTitle: "Revolut",
     slugTitle: "revolut",
-    icon: "/images/cards-icon.png",
+    icon: TIPS_CATEGORY_ICONS.revolut,
   },
 ];
 
@@ -75,7 +76,7 @@ const tipVisualMap: Record<
   }
 > = {
   pakiranje: {
-    icon: "/images/luggage-icon.png",
+    icon: TIPS_CATEGORY_ICONS.pakiranje,
     heroImage: "/images/TipsAndTricks/Pakiranje.png",
     modifier: "packing",
     eyebrow: "Pametno spremanje",
@@ -83,7 +84,7 @@ const tipVisualMap: Record<
       "Pametno pakiranje štedi vrijeme, novac i živce. Pronađite praktične savjete, checkliste i trikove koji će vam olakšati svako putovanje.",
   },
   "let-avionom": {
-    icon: "/images/airport-icon.png",
+    icon: TIPS_CATEGORY_ICONS["let-avionom"],
     heroImage: "/images/TipsAndTricks/Let avionom.png",
     modifier: "flight",
     eyebrow: "Bez stresa u zraku",
@@ -91,7 +92,7 @@ const tipVisualMap: Record<
       "Sve što trebate znati prije leta, od pripreme za zračnu luku do sigurnosne kontrole i prvog ulaska u avion.",
   },
   "organizacija-puta": {
-    icon: "/images/travel-org-icon.png",
+    icon: TIPS_CATEGORY_ICONS["organizacija-puta"],
     heroImage: "/images/TipsAndTricks/Organizacija_puta.png",
     modifier: "organization",
     eyebrow: "Planiranje putovanja",
@@ -100,7 +101,7 @@ const tipVisualMap: Record<
       "Savjeti, novosti, alati i ideje koje vam mogu pomoći da putovanje isplanirate jednostavnije, pametnije i povoljnije.",
   },
   aplikacije: {
-    icon: "/images/travel-app-icon.png",
+    icon: TIPS_CATEGORY_ICONS.aplikacije,
     heroImage: "/images/TipsAndTricks/Aplikacije.png",
     modifier: "apps",
     eyebrow: "Digitalni alati",
@@ -108,7 +109,7 @@ const tipVisualMap: Record<
       "Korisne aplikacije i digitalni alati koji olakšavaju snalaženje, planiranje, plaćanje i komunikaciju na putovanju.",
   },
   smjestaj: {
-    icon: "/images/bed-icon.png",
+    icon: TIPS_CATEGORY_ICONS.smjestaj,
     heroImage: "/images/TipsAndTricks/Smjestaj.png",
     modifier: "stay",
     eyebrow: "Pametniji booking",
@@ -117,7 +118,7 @@ const tipVisualMap: Record<
       "Savjeti za pronalazak smještaja, rezervacije i stvari na koje treba paziti prije nego što potvrdite booking.",
   },
   revolut: {
-    icon: "/images/cards-icon.png",
+    icon: TIPS_CATEGORY_ICONS.revolut,
     heroImage: "/images/TipsAndTricks/Revolut.png",
     modifier: "revolut",
     eyebrow: "Novac na putu",

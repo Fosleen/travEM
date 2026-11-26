@@ -123,6 +123,12 @@ a {
           object-fit: cover;
           display: block;
         }
+
+        .favorite-post-item-category-icon {
+          width: 76%;
+          height: 76%;
+          object-fit: contain;
+        }
       }
     }
   }

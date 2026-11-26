@@ -5,6 +5,8 @@ a {
 }
 
 .favorite-post-item-container {
+  --favorite-flag-size: 64px;
+  --favorite-flag-inset: 0.82;
   position: relative;
   width: 100%;
   padding: 12px 16px;
@@ -46,8 +48,13 @@ a {
         font-size: 18px;
         line-height: 1.25;
         text-align: center;
+        overflow-wrap: anywhere;
         color: $grey;
       }
+    }
+
+    &:has(.favorite-post-item-icon-container) .favorite-post-item-content-text p {
+      width: calc(100% - 2 * (var(--favorite-flag-size) * var(--favorite-flag-inset) + 4px));
     }
 
     .favorite-post-item-content-image {
@@ -94,8 +101,8 @@ a {
         left: 0;
         top: 0;
         z-index: 4;
-        width: 64px;
-        height: 64px;
+        width: var(--favorite-flag-size);
+        height: var(--favorite-flag-size);
         padding: 6px;
         background-color: $bg;
         border-radius: 50%;
@@ -153,6 +160,8 @@ a {
 /* ===== TABLET ===== */
 @media screen and ($tablet) {
   .favorite-post-item-container {
+    --favorite-flag-size: 96px;
+    --favorite-flag-inset: 0.65;
     padding: 16px;
 
     .favorite-post-item-content {
@@ -169,8 +178,6 @@ a {
         height: 320px;
 
         .favorite-post-item-icon-container {
-          width: 96px;
-          height: 96px;
           padding: 8px;
           transform: translate(-35%, -35%);
         }
@@ -187,6 +194,7 @@ a {
 /* ===== DESKTOP ===== */
 @media screen and ($desktop) {
   .favorite-post-item-container {
+    --favorite-flag-size: 80px;
     padding: 12px 0;
 
     .favorite-post-item-content {
@@ -203,8 +211,6 @@ a {
         height: 200px;
 
         .favorite-post-item-icon-container {
-          width: 80px;
-          height: 80px;
           padding: 6px;
           transform: translate(-35%, -35%);
         }
@@ -221,6 +227,7 @@ a {
 /* ===== DESKTOP LARGE ===== */
 @media screen and ($desktopLarge) {
   .favorite-post-item-container {
+    --favorite-flag-size: 96px;
     .favorite-post-item-content {
       .favorite-post-item-content-text {
         p {
@@ -232,8 +239,6 @@ a {
         height: 240px;
 
         .favorite-post-item-icon-container {
-          width: 96px;
-          height: 96px;
           padding: 8px;
           transform: translate(-35%, -35%);
         }
@@ -299,6 +304,6 @@ a {
   }
 
   .favorite-post-item-container:hover .favorite-post-item-icon-container {
-    transform: translate(-18%, -35%);
+    transform: translate(calc((var(--favorite-flag-inset) - 1) * 100%), -35%);
   }
 }
